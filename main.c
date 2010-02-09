@@ -38,7 +38,7 @@
 #    endif
 #  endif
 
-char ldgliteVersion[] = "Version 1.2.4      ";
+char ldgliteVersion[] = "Version 1.2.5      ";
 
 // Use Glut popup menus if MUI is not available.
 #ifndef OFFSCREEN_ONLY

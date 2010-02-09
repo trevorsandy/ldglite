@@ -226,7 +226,11 @@ struct L3StatS
    char                 Str[200];         /* Mainly for debug messages       */
 };
 
+#ifdef USE_OPENGL
+#define MAX_COLORS 4096
+#else
 #define MAX_COLORS 200
+#endif
 #ifdef __TURBOC__
 #define MAX_PARTS  880
 #else
