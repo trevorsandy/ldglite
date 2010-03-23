@@ -28,6 +28,8 @@
 990518 lch Release v1.2: Skip "~Moved to xxx" by default
 20000703 lch Release v1.3: Added -i and -o
 20030625 dmh Release v1.4: Ported to gcc.
+200????? ??? Release v1.5: ??? Lost track of this one...
+20090928 dmh Release v1.6: Added -f -q -v -8 and allow 25 chars in filenames.
                                                                              */
 
 /* Compile with Borland Turbo C 2.0: tcc -mc -d -f -k- -N -v- -y- -wrvl -wstv
@@ -42,8 +44,72 @@
 #include "dir.h"
 #include "conio.h"
 
-char                *ProgVer = "mklist  v1.4 20030625  (C) 1999-2003 Lars C. Hassing  lch@ccieurope.com";
+char                *ProgVer = "mklist  v1.6beta1 20090928  (C) 1999-2009 Lars C. Hassing  lch@ccieurope.com";
 
+int	forceit = 0;
+int	quiet = 0;
+
+/*****************************************************************/
+/* Filename length compatibility stuff */
+/*****************************************************************/
+#ifndef _MAX_PATH
+#define _MAX_PATH 256
+#endif
+char    shortfilepath[MAX_PATH];
+char    shortfilename[MAX_PATH];
+
+
+#ifdef __BORLANDC__
+#define LACKS_BASENAME 1
+int     numlines = 1000; /* Use small chunks for DOS */
+int 	namelen = 12; /* Set to 12 for 8.3 DOS compatibility. */
+#else
+#ifdef __TURBOC__
+#define LACKS_BASENAME 1
+int     numlines = 1000; /* Use small chunks for DOS */
+int 	namelen = 12; /* Set to 12 for 8.3 DOS compatibility. */
+#else
+int     numlines = 16384;  /* Allocate lines in bigger chunks if not DOS. */
+int 	namelen = 25; /* LSC specs allow 25 chars in filename.   */
+#endif
+#endif
+
+
+#ifdef _WIN32
+#include <windows.h>
+#define LACKS_BASENAME 1
+
+#else
+int GetShortPathName(char *longpath, char * shortpath, int psize)
+{
+    strncpy(shortpath, longpath, psize);
+    return(strlen(shortpath);
+}
+#endif
+
+
+#if LACKS_BASENAME
+char *basename( const char *filepath )
+{
+  char *tmpstr, *ptr;
+
+  if (filepath == NULL)
+  {
+    return NULL;
+  }
+  if ( (ptr = strrchr(filepath, '\\')) || (ptr = strrchr(filepath, '/')) )
+  {
+    /* If there isn't anything after the last separator, the result is a 0-length string */
+    tmpstr = strdup(ptr+1);
+  }
+  else
+  {
+    /* dup the string, so caller can safely free whatever we return */
+    tmpstr = strdup(filepath);
+  }
+  return tmpstr;
+}
+#endif
 
 /*****************************************************************/
 int                  CmpNumber(const void *p1, const void *p2)
@@ -82,15 +148,30 @@ int                  CmpNumber(const void *p1, const void *p2)
 /*****************************************************************/
 int                  CmpDescription(const void *p1, const void *p2)
 {
+   char                *s1 = *((char **) p1);
+   char                *s2 = *((char **) p2);
    int                  Res;
 
-   Res = stricmp(*((char **) p1) + 14, *((char **) p2) + 14);
+#if 0
+   Res = stricmp(s1 + (namelen+2), s2 + (namelen+2));
+#else
+   s1 += strcspn(s1, " \t"); /* Find the beginning of whitespace. */
+   s1 += strspn(s1, " \t");  /* Skip to end of whitespace (start of description). */
+   s2 += strcspn(s2, " \t"); /* Find the beginning of whitespace. */
+   s2 += strspn(s2, " \t");  /* Skip to end of whitespace (start of description). */
+   Res = stricmp(s1, s2);
+#endif
+
    return (Res ? Res : CmpNumber(p1, p2));
 }
 
 /*****************************************************************/
 void                 PressAnyKey(void)
 {
+   if (forceit)
+      return;
+   if (quiet)
+      return;
    printf("  Press any key to continue");
    getch();
    printf("\n");
@@ -108,6 +189,10 @@ void                 PrintUsage(void)
   printf("  -~        Skip parts with ~ description, e.g. \"~Winch  2 x  4 x  2 Top\"\n");
   printf("  -i <dir>  input directory, default is \"PARTS\" in current directory\n");
   printf("  -o <file> output filename, default is \"parts.lst\" in current directory\n");
+  printf("  -f        Force it to finish.  No prompts.\n");
+  printf("  -q        Quiet mode.  No warnings, and no prompts.\n");
+  printf("  -8        Use 8.3 names for compatibility.\n");
+  printf("  -v        Print verbose info.  Useful for debugging.\n");
 }
 
 /*****************************************************************/
@@ -130,9 +215,9 @@ int                  main(int argc, char **argv)
    int                  nLines;
    int                  pathlen;
    char                 Line[200];
-   char                 Dirname[200];
-   char                 Filename[200];
-   char                 OutFilename[200];
+   char                 Dirname[MAX_PATH];
+   char                 Filename[MAX_PATH];
+   char                 OutFilename[MAX_PATH];
    char                *s;
    char                *Description;
    char                *FormattedLine;
@@ -140,6 +225,9 @@ int                  main(int argc, char **argv)
    unsigned long        farcoreleftEnd;
    long                 FileSize;
    struct stat		statbuf;
+   int 			verbose;
+   int 			ragged;
+   int 			terminalsized;
 
    printf("%s\n", ProgVer);
    printf("Replacement for James Jessiman's makelist\n");
@@ -147,6 +235,10 @@ int                  main(int argc, char **argv)
 
    strcpy(Dirname, "PARTS"); /* Default input directory path */
    strcpy(OutFilename, "parts.lst"); /* Default output filename */
+
+   verbose = 0;
+   ragged = 1; /* Steve wants it ragged by default */
+   terminalsized = 1; /* Steve wants it to fit in 80 chars by default */
 
    CheckDuplicateDescriptions = 0;
    SortBy = 0;
@@ -163,6 +255,9 @@ int                  main(int argc, char **argv)
             case 'h':
                PrintUsage();
                exit(1);
+               break;
+            case '8':
+               namelen = 12;
                break;
             case 'c':
                CheckDuplicateDescriptions = 1;
@@ -197,6 +292,20 @@ int                  main(int argc, char **argv)
 		 exit(1);
 	       }
                break;
+            case 'q':
+               quiet = 1;
+            case 'f':
+               forceit = 1;
+               break;
+            case 'r':
+               ragged = ragged ^ 1;
+               break;
+            case 't':
+               terminalsized = terminalsized ^ 1;
+               break;
+            case 'v':
+               verbose = 1;
+               break;
             default:
                PrintUsage();
                printf("*** Unknown option '%s'.\n", arg);
@@ -211,7 +320,7 @@ int                  main(int argc, char **argv)
       }
    }
 
-   // Do a stat to see if Dirname exists and is a directory.
+   /* Do a stat to see if Dirname exists and is a directory. */
    if (stat(Dirname, &statbuf) < 0)
    {
      printf("*** Could not stat input directory \"%s\".\n", Dirname);
@@ -226,6 +335,14 @@ int                  main(int argc, char **argv)
 
    if (CheckDuplicateDescriptions)
       SortBy = 'd';
+   if (!SortBy)
+   {
+      if (forceit)
+        SortBy = 'd';
+      if (!quiet)
+         printf("Sorting by [D]escription.\n");
+   }
+
    if (!SortBy)
    {
       printf("Sort by [N]umber or [D]escription: ");
@@ -246,7 +363,7 @@ int                  main(int argc, char **argv)
    farcoreleftStart = farcoreleft();
 
    nLines = 0;
-   maxLines = 1000;
+   maxLines = numlines;
    Lines = farmalloc(maxLines * sizeof(char *));
    if (!Lines)
    {
@@ -261,16 +378,21 @@ int                  main(int argc, char **argv)
    strcat(Filename, "*.*");
    for (done = findfirst(Filename, &ffb, 0); !done; done = findnext(&ffb))
    {
+      if (verbose)
+      {
+         printf("Processing file: \"%s\"\n", ffb.ff_name);
+      }
       strcpy(Filename + pathlen, ffb.ff_name);
       fp = fopen(Filename, "rt");
       if (!fp)
       {
-         printf("Cannot open \"%s\"", ffb.ff_name);
+         if (!quiet) printf("Cannot open \"%s\"", ffb.ff_name);
          PressAnyKey();
          continue;
       }
       fgets(Line, sizeof(Line), fp);
       fclose(fp);
+
       s = Line + strlen(Line) - 1;
       while (s >= Line && (*s == '\n' || *s == '\r' || *s == '\t' || *s == ' '))
          *s-- = '\0';                     /* clear newline and trailing tabs
@@ -280,7 +402,7 @@ int                  main(int argc, char **argv)
          *s++;
       if (*s++ != '0')
       {
-         printf("Line type 0 expected in \"%s\", skipping...", ffb.ff_name);
+         if (!quiet)          printf("Line type 0 expected in \"%s\", skipping...", ffb.ff_name);
          PressAnyKey();
          continue;
       }
@@ -294,19 +416,25 @@ int                  main(int argc, char **argv)
       Len = strlen(Description);
       if (Len == 0)
       {
-         printf("Empty description in \"%s\"", ffb.ff_name);
+         if (!quiet)          printf("Empty description in \"%s\"", ffb.ff_name);
          PressAnyKey();
       }
       if (Len > 64)
       {
          /* Original makelist truncates to 64 characters. */
-         printf("Description in \"%s\" will be truncated to 64 characters:\n",
-                ffb.ff_name);
-         printf("Before: \"%s\"\n", Description);
-         printf("After:  \"%-64.64s\"\n", Description);
+         if (!quiet) 
+         {
+            printf("Description in \"%s\" will be truncated to 64 characters:\n",
+                   ffb.ff_name);
+            printf("Before: \"%s\"\n", Description);
+            printf("After:  \"%-64.64s\"\n", Description);
+         }
          PressAnyKey();
       }
-      FormattedLine = farmalloc(79);
+      if (namelen == 12)
+         FormattedLine = farmalloc(79);
+      else
+         FormattedLine = farmalloc(128);
       if (!FormattedLine)
       {
          printf("Out of memory after %d parts\n", nLines);
@@ -314,11 +442,70 @@ int                  main(int argc, char **argv)
                 (farcoreleftStart + 1023) / 1024);
          exit(1);
       }
-      sprintf(FormattedLine, "%-12s  %-64.64s", ffb.ff_name, Description);
+
+
+      if (namelen > 12) 
+         strcpy(shortfilename, ffb.ff_name);
+      else
+      {
+         GetShortPathName(Filename, shortfilepath, MAX_PATH);
+         s = basename(shortfilepath);
+         strcpy(shortfilename, s);    
+         if (s != NULL)
+            free(s);
+         if (strcmp(ffb.ff_name, shortfilename))
+         {
+            if (!quiet) 
+               printf("Filename \"%s\" will be shortened to %s\n", 
+                      ffb.ff_name, shortfilename);
+            PressAnyKey();
+         }
+      }
+
+      Len = strlen(shortfilename); 
+      if (Len > namelen)
+      {
+         if (!quiet)          
+            printf("Filename \"%s\" will be truncated to %d characters.\n",
+                   shortfilename, namelen);
+         PressAnyKey();
+      }
+      shortfilename[namelen] = 0;
+      if (namelen == 12)
+         sprintf(FormattedLine, "%-12s  %-64.64s", shortfilename, Description);
+      else if (ragged && terminalsized)
+      {
+         if (Len > 14) /* Squeeze every last char out of the 80. */
+            sprintf(FormattedLine, "%s %-64.64s", shortfilename, Description);
+         else
+            sprintf(FormattedLine, "%-14s  %-64.64s", shortfilename, Description);
+      }
+      else if (ragged)
+      {
+         if (Len > 12)
+            sprintf(FormattedLine, "%s %-64.64s", shortfilename, Description);
+         else
+            sprintf(FormattedLine, "%-12s  %-64.64s", shortfilename, Description);
+      }
+      else
+         sprintf(FormattedLine, "%-25s  %-64.64s", shortfilename, Description);
+    
+      if (terminalsized)
+      {
+         if (namelen == 12)
+            FormattedLine[78] = 0;
+         else
+            FormattedLine[80] = 0;
+      }
+
+      if (verbose)
+      {
+         printf("%d:\t%s\n", nLines, FormattedLine);
+      }
       if (nLines >= maxLines)
       {
          /* Let's have another 1000 pointers */
-         maxLines += 1000;
+         maxLines += numlines;
          Lines = farrealloc(Lines, maxLines * sizeof(char *));
          if (!Lines)
          {
@@ -350,7 +537,7 @@ int                  main(int argc, char **argv)
       {
          for (j = 1; i + j < nLines; j++)
          {
-            if (stricmp(Lines[i] + 14, Lines[i + j] + 14) != 0)
+            if (stricmp(Lines[i] + (namelen+2), Lines[i + j] + (namelen+2)) != 0)
                break;                     /* OK to break, lines are sorted   */
             if (j == 1)                   /* First duplicate                 */
                printf("%s\n", Lines[i]);
@@ -376,13 +563,16 @@ int                  main(int argc, char **argv)
              (FileSize + 1023) / 1024);
    }
 
-#ifndef HAVE_GCC
+   if (numlines > 1000) /* if not Borland DOS compiler then skip the mem msg. */
+   {
+       return (0);
+   }
+
    farcoreleftEnd = farcoreleft();
 
    printf("Maximum memory usage: %ld kBytes of %ld kBytes available\n",
           (farcoreleftStart - farcoreleftEnd + 1023) / 1024,
           (farcoreleftStart + 1023) / 1024);
-#endif
 
    return (0);
 }
