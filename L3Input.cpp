@@ -1261,6 +1261,7 @@ but they do not have three points on a line. The det is very big however.    */
 #define METATYPE_ROTATE    2
 #define METATYPE_SCALE     3
 #define METATYPE_TRANSFORM 4
+#define METATYPE_TEXMAP    5
 
 static char         *MetaKeywords[] = {
    NULL,
@@ -1268,12 +1269,13 @@ static char         *MetaKeywords[] = {
    "ROTATE",
    "SCALE",
    "TRANSFORM",
+   "!TEXMAP",
 };
 /* Return MetaType, negative if END */
 static int           ReadMetaLine(struct L3LineS * LinePtr)
 {
    int                  n;
-   static int           nArgumentsExpected[] = {0, 3, 4, 1, 12};
+   static int           nArgumentsExpected[] = {0, 3, 4, 1, 12, 12};
    register int         i;
    static char          MetaStr[200];     /* static to save stack            */
    int                  MetaType;
@@ -1284,6 +1286,9 @@ static int           ReadMetaLine(struct L3LineS * LinePtr)
    float                a;
    float                b;
 
+     static char          TexStr[200];     /* static to save stack            */
+     static char          TexTyp[200];     /* static to save stack            */
+     static char          TexNam[200];     /* static to save stack            */
 
 
 /*
@@ -1312,6 +1317,14 @@ static int           ReadMetaLine(struct L3LineS * LinePtr)
         putting the lines in a subfile and using a Type-1 line to
         include them. x, y, and z specify translation values, and
         a,b,c,d,e,f,g,h,i specify the scale/rotation matrix.
+
+    0 !TEXMAP x1 y1 z1 x2 y2 z2 x3 y3 z3 filename
+    0 !: geometry for mapping texture 
+    0 !TEXMAP FALLBACK
+    surrounded lines
+    0 !TEXMAP END
+        This command optionally replaces all surrounded lines by the texture.
+
                                                                              */
    if (LinePtr->LineType != 0)
       return (0);
@@ -1328,7 +1341,25 @@ static int           ReadMetaLine(struct L3LineS * LinePtr)
        && strcmp(MetaStr, "END") == 0)
       return (-MetaType);
 
+   // Hmmm, FALLBACK is sorta between START and END.  What to do here...
+   if (sscanf(IInfo.InputStr, "%*d %*s %s", MetaStr) == 1
+       && strcmp(MetaStr, "FALLBACK") == 0)
+      return (0);
+
    memset(LinePtr, 0, sizeof(struct L3LineS));
+
+   if (MetaType == METATYPE_TEXMAP)
+   {
+     n = sscanf(IInfo.InputStr,
+		"%*d %*s %s %s %f %f %f %f %f %f %f %f %f %s",
+		TexStr, TexTyp,
+		&LinePtr->v[0][0], &LinePtr->v[0][1], &LinePtr->v[0][2],
+		&LinePtr->v[1][0], &LinePtr->v[1][1], &LinePtr->v[1][2],
+		&LinePtr->v[2][0], &LinePtr->v[2][1], &LinePtr->v[2][2],
+		TexNam);
+   }
+   else
+
    n = sscanf(IInfo.InputStr,
               "%*d %*s %f %f %f %f %f %f %f %f %f %f %f %f",
               &LinePtr->v[0][3], &LinePtr->v[1][3], &LinePtr->v[2][3],
@@ -1384,8 +1415,29 @@ Exercise 5.15 p. 227. There is a sign error in the book!                     */
          break;
       case METATYPE_TRANSFORM:
          break;
+      case METATYPE_TEXMAP:
+	 {
+	   int texture;
+	   int w, h;
+	   extern int loadTexture(char *, int *, int *);
+	   
+	   sprintf(MetaStr, "textures\\%s", TexNam);
+	   printf("TEXMAP %s\n", MetaStr);
+	   texture = loadTexture(MetaStr, &w, &h);
+	   printf("TEXMAP %s = %d (%dx%d pixels)\n", TexNam, texture, w, h);
+	 }
+	 // Fake an identity transform for now.  Gotta store the texture number somewhere.
+	 memset(LinePtr, 0, sizeof(struct L3LineS));
+         LinePtr->v[0][0] = LinePtr->v[1][1] = LinePtr->v[2][2] = LinePtr->v[3][3] = 1;
+         break;
    }
    LinePtr->v[3][3] = 1.0;
+#ifdef USE_OPENGL
+   // Preserve leading whitespace in unused RandomColor field. 
+   LinePtr->RandomColor = strspn(IInfo.InputStr, " \t"); // Was wiped by memset above.
+   // Save a copy of the original ldlite macro for LEDIT mode saves.
+   LinePtr->Comment = Strdup(IInfo.InputStr);
+#endif
    return (MetaType);
 }
 
@@ -1436,8 +1488,10 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
    {
       ++IInfo.LineNo;
       TrimRight(IInfo.InputStr);
+#ifndef USE_OPENGL
       if (!IInfo.InputStr[0])
          continue;                        /* Empty line                      */
+#endif
 
       MetaType = 0;
       memset(&Data, 0, sizeof(Data));
@@ -1459,15 +1513,27 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
                  &Data.v[3][0], &Data.v[3][1], &Data.v[3][2], SubPartDatName);
       if (n < 1)
       {
+#ifndef USE_OPENGL
          if (FileType != HEADER)
          {
             ErrorInInput(0, II_SKIPPING, "Bad line");
             continue;
          }
+#else
+	 // Save ALL empty lines as comments (for LEDIT mode).
+         //Data.Comment = Strdup(" ");
+         /* Reuse the 64 bytes of float v[4][4] */
+         Data.Comment = (char *) Data.v;
+         strcpy(Data.Comment, " ");
+#endif
          Data.LineType = 0;               /* HEADER,save bad line as comment */
       }
       else
       {
+#ifdef USE_OPENGL
+         // Preserve leading whitespace in unused RandomColor field.
+         Data.RandomColor = strspn(IInfo.InputStr, " \t");  
+#endif
          switch (Data.LineType)
          {
             case 0:                       /* Comment                         */
@@ -1742,8 +1808,19 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
 #ifndef __TURBOC__
          Data.LineNo = 0;
 #endif
+#ifndef USE_OPENGL
          sprintf(SubPartDatName, "L3Transf%d", InternID++);
          Data.PartPtr = FindPart(1, SubPartDatName);
+#else
+	 // Make it easier in LEDIT mode to tell what metatype is in the internal file.
+	 if (MetaType == METATYPE_ROTATE)
+	   sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
+	 else if (MetaType < METATYPE_TEXMAP)
+	   sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
+	 else
+	   sprintf(SubPartDatName, "L3_TEXMAP_%d", MetaKeywords[MetaType],InternID++);
+         Data.PartPtr = FindPart(MetaType, SubPartDatName);
+#endif
          if (!Data.PartPtr)
             continue;
          if (SaveLine(&LinePtrPtr, &Data, NULL))

@@ -120,9 +120,12 @@ struct L3PartS
    unsigned int         Recursion:1;      /* Used for recursion check        */
    unsigned int         Empty:1;
    unsigned int         Investigated:1;
+#ifndef USE_OPENGL
    unsigned int         Internal:1;       /* For transforms, not in Parts[]  */
    unsigned int         IsStud:1;         /* The part is a stud              */
-#ifdef USE_OPENGL
+#else
+   unsigned int         Internal:3;       /* For transforms, not in Parts[]  */
+   unsigned int         IsStud:1;         /* The part is a stud              */
    unsigned int         IsMPD:1;          /* This is an MPD internal file    */
 #endif
 };

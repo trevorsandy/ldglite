@@ -871,11 +871,59 @@ int DrawCurPart(int Color)
     return Draw1PartPtr(SelectedLinePtr, Color);
 }
 
+#if 0
+/*****************************************************************************/
+#define METATYPE_TRANSLATE 1
+#define METATYPE_ROTATE    2
+#define METATYPE_SCALE     3
+#define METATYPE_TRANSFORM 4
+#define METATYPE_TEXMAP    5
+
+static char         *MetaKeywords[] = {
+   NULL,
+   "TRANSLATE",
+   "ROTATE",
+   "SCALE",
+   "TRANSFORM",
+   "!TEXMAP",
+};
+#endif
+
+/*****************************************************************************/
+int Print1Internal(FILE *f, struct L3PartS *PartPtr)
+{
+  struct L3LineS *LinePtr;
+  
+  if (!PartPtr)
+    return 0;
+
+  for (LinePtr = PartPtr->FirstLine; LinePtr; LinePtr = LinePtr->NextLine)
+  {
+    if (LinePtr && (LinePtr->LineType == 1) && LinePtr->Comment)
+    {
+      Print1Internal(f, LinePtr->PartPtr);
+    }
+    else
+    {
+      char s[1024];
+      int i;
+      Print1LineP(LinePtr, s);
+      for (i = 0; i < LinePtr->RandomColor; i++)
+	fprintf(f, " ");
+      fprintf(f, "%s\n", s);
+    }
+  }
+
+  //fprintf(f, "0 %s END\n", MetaKeywords[PartPtr->Internal]);
+  return 0;
+}
+
 /*****************************************************************************/
 int Print1Model(char *filename)
 {
     FILE *f;
     struct L3LineS *LinePtr;
+    int j;
     char s[1024];
     
     printf("Write DAT %s\n", filename);
@@ -889,7 +937,14 @@ int Print1Model(char *filename)
 
     for (LinePtr = Parts[0].FirstLine; LinePtr; LinePtr = LinePtr->NextLine)
     {
+      if (LinePtr && (LinePtr->LineType == 1) && LinePtr->Comment)
+      {
+	Print1Internal(f, LinePtr->PartPtr);
+	continue;
+      }
       Print1LineP(LinePtr, s);
+      for (j = 0; j < LinePtr->RandomColor; j++)
+	fprintf(f, " ");
       fprintf(f, "%s\n", s);
 
       //if (ldraw_commandline_opts.debug_level == 1)
@@ -925,6 +980,8 @@ int Print1Model(char *filename)
 		 LinePtr = LinePtr->NextLine)
 	    {
 	      Print1LineP(LinePtr, s);
+	      for (j = 0; j < LinePtr->RandomColor; j++)
+		fprintf(f, " ");
 	      fprintf(f, "%s\n", s);
 	      
 	      //if (ldraw_commandline_opts.debug_level == 1)
