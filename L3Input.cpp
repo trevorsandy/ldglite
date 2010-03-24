@@ -1417,6 +1417,7 @@ Exercise 5.15 p. 227. There is a sign error in the book!                     */
          break;
       case METATYPE_TEXMAP:
 	 {
+#if 0
 	   int texture;
 	   int w, h;
 	   extern int loadTexture(char *, int *, int *);
@@ -1425,6 +1426,7 @@ Exercise 5.15 p. 227. There is a sign error in the book!                     */
 	   printf("TEXMAP %s\n", MetaStr);
 	   texture = loadTexture(MetaStr, &w, &h);
 	   printf("TEXMAP %s = %d (%dx%d pixels)\n", TexNam, texture, w, h);
+#endif
 	 }
 	 // Fake an identity transform for now.  Gotta store the texture number somewhere.
 	 memset(LinePtr, 0, sizeof(struct L3LineS));

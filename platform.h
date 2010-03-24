@@ -28,8 +28,9 @@
 #define LACKS_STRICMP 1
 #define LACKS_STRNICMP 1
 #define LACKS_DIRNAME 1
+#ifndef AGL_OFFSCREEN_OPTION
 #define LACKS_BASENAME 1
-
+#endif
 
 #elif defined(UNIX) 
 
