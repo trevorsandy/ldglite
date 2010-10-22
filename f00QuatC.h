@@ -9,6 +9,7 @@
 
 // System includes.
 #include "glwinkit.h" //#include <GL/glut.h>
+#include "platform.h"
 
 #ifndef WINDOWS
 // This stuff gets pulled in by glut.h for windows.

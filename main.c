@@ -8101,7 +8101,7 @@ void myGlutIdle( void )
 #endif
 
 #ifdef WINDOWS
-    sleep(1); // Glut is a CPU hog.  Give back a millisecond.
+    Sleep(1); // Glut is a CPU hog.  Give back a millisecond.
     // need to use usleep on other platforms (add to platform.c)
 #endif
 

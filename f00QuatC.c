@@ -244,7 +244,8 @@ f00Quat_getMatrix(f00Quat *thisQ, GLfloat matrix[ 16 ] )
   M( 2, 3 ) = 0.0;
   M( 3, 3 ) = 1.0;
   
-#undef M( x, y )
+//#undef M( x, y )
+#undef M
 }
 
 

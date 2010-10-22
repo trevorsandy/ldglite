@@ -2,8 +2,12 @@ CC=gcc
 
 # Comment these out to disable PNG output if no PNG lib is available.
 #
-PNG_FLAGS=-DUSE_PNG -I./win
-PNG_LIBS=-L./win -lpng -lz
+# Devcpp has static packages for libpng, libz, and glut so use them.  Need -lgdi though.
+#PNG_FLAGS=-DUSE_PNG -I./win
+#PNG_LIBS=-L./win -lpng -lz
+#
+PNG_FLAGS=-DUSE_PNG
+PNG_LIBS= -static -lpng -lz
 
 # Comment these out to disable tile rendering option.
 #
@@ -49,7 +53,7 @@ OBJS = $(SRCS:.c=.o) $(RES_SRC:.rc=.o)
 all	: ldglite
 
 ldglite:   $(OBJS) $(LIBS)
-	$(CC) $(CFLAGS) $(OBJS) -o ldglite.exe -I. $(PNG_LIBS) $(OFFSCREEN_LIBS) $(GUI_LIBS) -lglut32 -lglu32 -lopengl32 -lwinmm
+	$(CC) $(CFLAGS) $(OBJS) -o ldglite.exe -I. $(PNG_LIBS) $(OFFSCREEN_LIBS) $(GUI_LIBS) -lglut32 -lglu32 -lopengl32 -lwinmm -lgdi32
 	cp ldglite.exe l3glite.exe
 	cp ldglite.exe l3gledit.exe
 
