@@ -187,7 +187,10 @@ double dotprod(float a[3], float b[3])
 //**********************************************************************
 void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 {
-  if (((c > 32) && (c < 64)) || (zcs->a == 0)) // Translucent colors
+//  if (((c > 32) && (c < 64)) || (zcs->a == 0)) // Translucent colors
+// Some bonehead at ldraw.org defined chrome colors in the translucent range.
+// And I had a bug for color 32 (I am a bonehead too)
+  if (((c > 31) && (c < 60)) || (zcs->a < 255)) // Translucent colors
   {
     glEnable(GL_POLYGON_STIPPLE);
     glPolygonStipple(halftone);
@@ -229,7 +232,10 @@ void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 //**********************************************************************
 void unset_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 {
-  if (((c > 32) && (c < 64)) || (zcs->a == 0)) // Translucent colors
+//  if (((c > 32) && (c < 60)) || (zcs->a == 0)) // Translucent colors
+// Some bonehead at ldraw.org defined chrome colors in the translucent range.
+// And I had a bug for color 32 (I am a bonehead too)
+  if (((c > 31) && (c < 64)) || (zcs->a < 255)) // Translucent colors
   {
     glDisable(GL_POLYGON_STIPPLE);
     //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, no_shininess);
