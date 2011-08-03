@@ -38,7 +38,7 @@
 #    endif
 #  endif
 
-char ldgliteVersion[] = "Version 1.2.5      ";
+char ldgliteVersion[] = "Version 1.2.6      ";
 
 // Use Glut popup menus if MUI is not available.
 #ifndef OFFSCREEN_ONLY
@@ -3069,6 +3069,13 @@ int ldlite_parse_with_rc(char *filename)
     if (filename[0] == '.') // I hate the ./filename thing.
       strcpy(filename, "ldconfig.ldr");
     fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
+    if (fp == NULL)
+    {
+      strcpy(filename, primitivepath);
+      filename[strlen(filename)-1] = 0;
+      strcat(filename, "ldconfig.ldr");
+      fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
+    }   
   }
   if (fp == NULL)
     fp = fopen("ldliterc.dat","rb"); // If that fails, try the ldliterc file.

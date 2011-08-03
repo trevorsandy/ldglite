@@ -598,6 +598,13 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
          strcat(Path, Extension);
          fp = fopen(Path, "rt");
       }
+      /* If still not found, try LDRAWDIR itself for ldconfig.ldr */
+      if (!fp && (stricmp(DatName, "ldconfig.ldr") == 0))
+      {
+    	 concat_path(LDrawDir, DatName, Path);
+         strcat(Path, Extension);
+         fp = fopen(Path, "rt");
+      }
    }
    return (fp);
 }
