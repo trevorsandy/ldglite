@@ -142,7 +142,8 @@ static char          SubPartDatName[_MAX_PATH];
 static char          ErrStr[400];
 #ifdef USE_OPENGL
 char                *Dirs[] = {"\\P\\", "\\Parts\\", "\\Models\\", 
-			       "\\Unofficial\\P\\", "\\Unofficial\\Parts\\"};
+			       "\\Unofficial\\P\\", "\\Unofficial\\Parts\\",
+                               "\\Unofficial\\Lsynth\\"};
 #else
 char                *Dirs[] = {"\\P\\", "\\Parts\\", "\\Models\\"};
 #endif
@@ -569,6 +570,12 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
 	   concat_path(PrePath, DatName, Path);
 	 }
 	 if (stricmp(Dirs[i], "\\Unofficial\\Parts\\") == 0)
+	 {
+	   char PrePath[_MAX_PATH];
+	   concat_path(LDrawDir, Dirs[i], PrePath);
+	   concat_path(PrePath, DatName, Path);
+	 }
+	 if (stricmp(Dirs[i], "\\Unofficial\\LSynth\\") == 0)
 	 {
 	   char PrePath[_MAX_PATH];
 	   concat_path(LDrawDir, Dirs[i], PrePath);
