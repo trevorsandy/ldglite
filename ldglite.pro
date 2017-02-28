@@ -1,7 +1,9 @@
 # Created by and for Qt Creator. This file was created for editing the project sources only.
 # You may attempt to use it for building too, by modifying this file here.
+
 QT -= core gui
 TEMPLATE = app
+
 # The ABI version.
 win32: VERSION = 1.3.1.0  # major.minor.patch.build
 else: VERSION = 1.3.1     # major.minor.patch
@@ -33,12 +35,12 @@ DEFINES += USE_BMP8
 ENABLE_PNG {
     DEFINES += USE_PNG
     INCLUDEPATH += \
-    $$PWD/png/include
+    $$PWD/win/png/include
     win32 {
-        equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/png/lib/x64 -lpng
-        else: LIBS += -L$$_PRO_FILE_PWD_/png/lib -lpng
+        equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/png/lib/x64 -lpng
+        else: LIBS += -L$$_PRO_FILE_PWD_/win/png/lib -lpng
     } else {
-        LIBS += -L$$_PRO_FILE_PWD_/png/lib -lpng
+        LIBS += -lpng
     }
     LIBS +=  -lz
 }
@@ -55,12 +57,12 @@ win32 {
     DEFINES += USING_FREEGLUT
     DEFINES += FREEGLUT_STATIC
     INCLUDEPATH += \
-    $$PWD/freeglut/include
+    $$PWD/win/freeglut/include
 
     RC_FILE = ldglite.rc
 
-    equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/freeglut/lib/x64 -lfreeglut_static
-    else: LIBS += -L$$_PRO_FILE_PWD_/freeglut/lib -lfreeglut_static
+    equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib/x64 -lfreeglut_static
+    else: LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib -lfreeglut_static
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
     LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32
