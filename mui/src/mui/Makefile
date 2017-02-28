@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS= -I.
+CFLAGS= -I../../src
 
 AR = ar
 RANLIB = ranlib
@@ -14,4 +14,7 @@ libmui.a: $(OBJS)
 	-rm -f libmui.a
 	$(AR) cru libmui.a $(OBJS)
 	$(RANLIB) libmui.a
+	
+clean:
+	rm *.o libmui.a
 

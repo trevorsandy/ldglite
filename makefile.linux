@@ -69,7 +69,8 @@ l3glite:   ldglite
 l3gledit:   ldglite
 
 clean:
-	rm *.o *.a
+	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile $@ ; fi
+	rm *.o ldglite l3glite l3gledit
 
 install:
 	mkdir -p $(DESTDIR)$(PREFIX)/bin
