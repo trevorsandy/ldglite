@@ -1,0 +1,29 @@
+windows only:
+Locate your installation of mingw
+	= 
+Add paths to PATH in Projects/Build Environment
+- Modify environment variable values for build or run environments in QtCreatpr.
+  Select Batch Edit in the build or run settings and enter environment 
+  variables in the Edit Environment dialog.
+ 
+Download, compile and install libpng headers and libraries
+	= libpng.a 		=> mingw/lib
+	= png.h 		=> mingw/include
+	= pngconf.h		=> mingw/include
+	= pngdebug.h	=> mingw/include
+	= pnginfo.h		=> mingw/include
+	= pngpriv.h		=> mingw/include
+	= pnglibconf.h 	=> mingw/include 
+	= pngstruct.h 	=> mingw/include 
+		
+Download, compile and install freeglut/ headers and libraries
+	= freeglut.dll					=> mingw/bin
+	= include/GL/freeglut.h  	 	=> mingw/include/GL/freeglut.h
+	= include/GL/glut				=> mingw/include/GL/glut.h 
+	= include/GL/freeglut_ext.h 	=> mingw/include/GL/freeglut_ext.h 
+	= include/GL/freeglut_std.h 	=> mingw/include/GL/freeglut_std.h 
+
+
+
+  
+  

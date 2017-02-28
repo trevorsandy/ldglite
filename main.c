@@ -9586,14 +9586,19 @@ void capturePasteEvents(void)
     return;
 
   DragAcceptFiles(hwnd, TRUE);
-  
-#if 0
-  wpOrigMsgProc = 
-    (WNDPROC) SetWindowLong(NULL, GWL_WNDPROC, (long) MsgSubClassProc);
-#else
-  wpOrigMsgProc = 
-    (WNDPROC) SetWindowLong(hwnd, GWL_WNDPROC, (long) MsgSubClassProc);
-#endif
+
+// old code not x86_64 compatable
+//#if 0
+//  wpOrigMsgProc =
+//    (WNDPROC) SetWindowLong(NULL, GWL_WNDPROC, (long) MsgSubClassProc);
+//#else
+//  wpOrigMsgProc =
+//    (WNDPROC) SetWindowLong(hwnd, GWL_WNDPROC, (long) MsgSubClassProc);
+//#endif
+
+  // x86_64 compatable
+  wpOrigMsgProc =
+    (WNDPROC) SetWindowLongPtr(hwnd, GWLP_WNDPROC, (long) MsgSubClassProc);
 
 #endif
 }

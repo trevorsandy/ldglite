@@ -1,7 +1,0 @@
-LIBRARY pluginldlist
-DESCRIPTION "ldlist plugin"
-VERSION 1.0
-EXPORTS
-	Plugin_Info=Plugin_Info@12
-	ProcessText=ProcessText@28
-
