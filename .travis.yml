@@ -61,7 +61,7 @@ install:
       fi
     fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-	  if [ ! -f /usr/include/GL/glut.h ]; then sudo apt-get install freeglut3-dev; fi
+      if [ ! -f /usr/include/GL/glut.h ]; then sudo apt-get install freeglut3-dev; fi
     fi
 
 script:
