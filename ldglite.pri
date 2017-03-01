@@ -41,14 +41,13 @@ SOURCES += \
    $$PWD/plugstub.c \
    $$PWD/qbuf.c \
    $$PWD/quant.c \
-#   $$PWD/StdAfx.cpp \
    $$PWD/stub.c \
    $$PWD/y.tab.c
 
 OTHER_FILES += \
     $$PWD/Info.plist \
-    $$PWD/ldglite.1 \
-    $$PWD/readme.txt \
+    $$PWD/doc/ldglite.1 \
+    $$PWD/doc/README.TXT \
     $$PWD/ldglite_osxwrapper.sh \
     $$PWD/set-ldrawdir-command \
     $$PWD/make-ldglite-bundle.sh
