@@ -1,0 +1,194 @@
+.\" Author: Henrik Christian Grove <grove@sslug.dk>
+.\" 
+.\" First version (Sep 14th 2002): Converted parts of the
+.\"   readme.txt into a manpage
+.\"
+.\" Sep 17th 2002: Added the options inherited from LDraw
+.\"   Jacob Sparre Andersen told me about those.
+.\"   Updates to version 0.9.1d
+.\"
+.TH ldglite 1 "17 Sep 2002"
+.SH NAME
+ldglite \- Display (LEGO) brick models
+.SH SYNOPSIS
+.B ldglite
+[
+.BI \-xpq
+]
+[
+.BI \-a "orientation"
+]
+[
+.BI \-e "offset"
+]
+[
+.BI \-fh
+]
+[
+.BI \-fs
+]
+[
+.BI \-i "type"
+]
+[
+.BI \-l "parser"
+]
+[
+.BI \-m "mode"
+]
+[
+.BI \-o "x,y"
+]
+[
+.BI \-u "x,y"
+]
+[
+.BI \-v "size"
+]
+[
+.BI \-w "width"
+]
+.IR file " ... | --"
+.SH DESCRIPTION
+.B ldglite
+reads a file 
+(or standard input if ``\-\-'' is specified)
+containing a (LEGO) brick model i LDRAW DAT format and displays the model.
+.SH OPTIONS
+.B ldglite
+takes the following options
+.TP
+\fB\-a\fIorientation\fR
+Nine comma-separated floating point
+numbers, which make up a matrix used for
+scaling and rotating the presented model.
+The default is <1,0,1,0.5,1,-0.5,-1,0,1>.
+.TP
+\fB\-e\fIoffset\fR
+Fixes polyline offset driver errors.  Try \fB-e0.95\fR if lines look bad.
+.TP
+.BR \-fh
+Turns on shading mode.
+.TP
+.BR \-fs
+Turns off stud drawing. (l3glite only)
+.TP
+\fB\-i\fIsize\fR
+Picks output image type.
+.br
+\fB1\fR for PNG.
+.br
+\fB2\fR for transparent PNG.
+.br
+\fB3\fR for BMP8.
+.br
+\fB4\fR for BMP24.
+.br
+\fB5\fR for PPM.
+.br
+Prefix the number with a \fB\-\fR to turn off cropping.
+.TP
+\fB\-l\fIparser\fR
+Select parser, use \fBd\fR for the ldlite parser, or \fB3\fR for the
+l3 parser. \fBe\fR starts the program in LEDIT emulation mode, \fBE\fR
+starts the program in LEDIT emulation mode with soild moving
+pieces. \-ledit or -LEDIT do the same but with draw-to-current and
+stud-as-line on. 
+.TP
+\fB\-m\fImode\fR
+Picks operation mode.
+.br
+\fBp\fR for pause at each step.
+.br
+\fBc\fR for continous rendering of the whole model.
+.br
+\fBs\fR for save an image of each step. 
+.br
+\fBS\fR for save an image of each step with off-screen rendering.
+.br
+The default is \fBp\fR.
+.TP
+\fB\-o\fIx\fR,\fIy\fR
+Changes the centre of the picture. The value for
+<x> moves across and the value for <y> moves
+down.
+.TP
+.BR \-p
+Turns on polling mode.
+.TP
+.BR \-q
+Quality lines (antialiased)
+.TP
+\fB\-u\fIx\fR,\fIy\fR
+Saves a huge output image from window sized tiles. (see notes below)
+.TP
+\fB\-v\fIsize\fR
+Picks the window size.
+.br
+\fB-2\fR for fullscreen gamemode (no menus).
+.br
+\fB-1\fR for fullscreen with no decorations.
+.br
+\fB0\fR for 320×200 pixels.
+.br
+\fB1\fR for 640×200 pixels.
+.br
+\fB2\fR for 640×350 pixels.
+.br
+\fB3\fR for 640×480 pixels.
+.br
+\fB4\fR for 800×600 pixels.
+.br
+\fB5\fR for 1024×768 pixels.
+.br
+\fB6\fR for 1600×1200 pixels (should only be 1280×1024).
+.br
+The default is a full-screen window.
+.TP
+\fB\-w\fIwidth\fR
+Set line width.
+.TP
+.BR \-x
+Displays the x,y,z axis.
+.SH "SEE ALSO"
+.BR /usr/share/doc/ldglite/readme.txt
+.SH NOTES
+You should set the environment variable \fILDRAWDIR\fR to a directory
+containing the basic ldraw files.
+
+A click on the right mouse button gives a menu.
+
+Use -uX,Y on the command line to build and save an image larger than
+the screen made out of several tiles, each the size of the ldglite
+window.  This can be used in combination with the -w option for wide
+lines and/or the -w switch for antialiased lines to generate high
+quality instructions.  Currently this dumps PPM files instead of BMP
+files.  PNG works, but transparent backgrounds and cropping are not
+supported in tiled mode.  Ldglite automatically exits after saving the
+images (much like the -MS mode).  The following command renders
+the model in double size and saves a 2000 by 2000 PNG file.  It uses
+the l3 parser so it only has to parse the mpd file once for the multiple
+rendering passes required for the tiles.
+
+  ldglite -l3 -i2 -s2 -w2 -u2000,2000 model.mpd
+.SH BUGS
+.P
+This manual page is based on an old version of ldglite (0.8 I think).
+.SH FILES
+.TP
+/usr/share/doc/ldglite/readme.txt.gz
+.SH AUTHORS
+.TP
+Ldglite is written by:
+.br
+Don Heyse <dheyse@hotmail.com>
+.TP
+This manual page was written by Henrik Christian Grove
+<grove@sslug.dk>, for the Debian GNU/Linux system (but may be used by
+others).
+.P
+Manual page partially based on parts of the readme.txt file in the source
+distribution.
+
+
+

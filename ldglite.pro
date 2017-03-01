@@ -19,18 +19,17 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ./ldrawini
 
-LIBS += -lopengl32
-CONFIG += static
-LIBS += -static
-
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
 !contains(CONFIG, ENABLE_TILE_RENDERING): CONFIG += ENABLE_TILE_RENDERING
 !contains(CONFIG, ENABLE_OFFSCREEN_RENDERING): CONFIG += ENABLE_OFFSCREEN_RENDERING
 !contains(CONFIG, ENABLE_TEST_GUI): CONFIG += ENABLE_TEST_GUI
 
+unix:!macx: DEFINES += UNIX
 DEFINES += USE_OPENGL
 DEFINES += USE_L3_PARSER
 DEFINES += USE_BMP8
+
+include($$PWD/ldglite.pri)
 
 ENABLE_PNG {
     DEFINES += USE_PNG
@@ -59,84 +58,50 @@ win32 {
     INCLUDEPATH += \
     $$PWD/win/freeglut/include
 
-    RC_FILE = ldglite.rc
-
     equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib/x64 -lfreeglut_static
     else: LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib -lfreeglut_static
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
     LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32
 }
+
 unix:!macx {
+
+    DEFINES += USE_ALPHA_BUFFER
     ENABLE_OFFSCREEN_RENDERING: DEFINES += OSMESA_OPTION
     LIBS += -lOSMesa -lglut -lGLU -lGL -lX11 -lXext -lm
+
+    MAKE_LDGLITE_BUNDLE_TARGET = $$PWD/make-ldglite-bundle.sh
+    MAKE_LDGLITE_BUNDLE_COMMAND = $$MAKE_LDGLITE_BUNDLE_TARGET $$VERSION
+    CHMOD_COMMAND = chmod 755 $$MAKE_LDGLITE_BUNDLE_TARGET
+    QMAKE_POST_LINK += $$escape_expand(\n\t)  \
+                       $$shell_quote$${CHMOD_COMMAND} \
+                       $$escape_expand(\n\t)  \
+                       $$shell_quote$${MAKE_LDGLITE_BUNDLE_COMMAND}
 }
 
 CONFIG += skip_target_version_ext
 TARGET = ldglite
 CONFIG(debug, debug|release) {
-        DESTDIR = debug
+    message("~~~ LDGLITE DEBUG build ~~~")
+    DESTDIR = debug
 } else {
-        DESTDIR = release
+    DESTDIR = release
+    message("~~~ LDGLITE RELEASE build ~~~")
 }
 
 OBJECTS_DIR = $$DESTDIR/.obj
-RCC_DIR = $$DESTDIR/.qrc
 
-ENABLE_TEST_GUI {
-    DEFINES += TEST_MUI_GUI
-    INCLUDEPATH += \
-    $$PWD/mui/src
-    include(mui/mui.pri)
-}
 ENABLE_TILE_RENDERING {
     DEFINES += TILE_RENDER_OPTION
     HEADERS += $$PWD/tr.h
     SOURCES += $$PWD/tr.c
 }
 
-HEADERS += \
-   $$PWD/ldrawini/LDrawIni.h \
-   $$PWD/ldrawini/LDrawInP.h \
-   $$PWD/dirscan.h \
-   $$PWD/f00QuatC.h \
-   $$PWD/getargv.h \
-   $$PWD/glext.h \
-   $$PWD/glui.h \
-   $$PWD/glwinkit.h \
-   $$PWD/L3Def.h \
-   $$PWD/ldlite.h \
-   $$PWD/ldliteVR.h \
-   $$PWD/platform.h \
-   $$PWD/qbuf.h \
-   $$PWD/quant.h \
-   $$PWD/StdAfx.h \
-   $$PWD/stub.h \
-   $$PWD/y.tab.h \
-
-SOURCES += \
-   $$PWD/ldrawini/LDrawIni.c \
-   $$PWD/camera.c \
-   $$PWD/dirscan.c \
-   $$PWD/f00QuatC.c \
-   $$PWD/gleps.c \
-   $$PWD/hoser.c \
-   $$PWD/L3Edit.c \
-   $$PWD/L3Input.c \
-   $$PWD/L3Math.c \
-   $$PWD/L3View.c \
-   $$PWD/lcolors.c \
-   $$PWD/ldglgui.c \
-   $$PWD/ldglmenu.c \
-   $$PWD/ldglpr.c \
-   $$PWD/ldliteVR_main.c \
-   $$PWD/ldsearch.c \
-   $$PWD/lex.yy.c \
-   $$PWD/main.c \
-   $$PWD/platform.c \
-   $$PWD/plugstub.c \
-   $$PWD/qbuf.c \
-   $$PWD/quant.c \
-   $$PWD/StdAfx.cpp \
-   $$PWD/stub.c \
-   $$PWD/y.tab.c
+ENABLE_TEST_GUI {
+    DEFINES += TEST_MUI_GUI
+    INCLUDEPATH += \
+    $$PWD/mui/src
+    include(mui/mui.pri)
+    SOURCES += $$PWD/ldglgui.c
+}
