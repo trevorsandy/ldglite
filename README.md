@@ -8,10 +8,10 @@ making it portable to many operating systems.  It currently runs in
 Windows, Linux, MacOS, and BSD unix, and operates in several
 compatibility modes. Orignial Soruce by Don Heyse and Lars C Hassing Copyright (c) 2016 
 
-**[LPub3D][lpub3d]** uses Ldglite as a pre-packaged image renderer.
+**[LPub3D][lpub3d]** uses this instance of Ldglite as a pre-packaged image renderer.
 
 ### License
-LPub3D is available for free under the [GNU Public License version 2.0 (GPLv2)][copying]. 
+Ldglite is available for free under the [GNU Public License version 2.0 (GPLv2)][copying]. 
 
 [icon]:			        https://github.com/trevorsandy/ldglite/blob/master/res/ldglite64x64.png
 [changelog]:		    https://github.com/trevorsandy/ldglite/blob/master/doc/README.TXT
