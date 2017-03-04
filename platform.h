@@ -37,7 +37,7 @@
 // unistd.h declares chdir() on Mac, Unix?
 #include <unistd.h>
 // when compiling with qmake, strdup is available.
-#if defined(USING_QMAKE)
+#if defined(HAVE_STRDUP)
     #define LACKS_STRDUP 0
 #else
     #define LACKS_STRDUP 1

@@ -1670,13 +1670,15 @@ int edit_mode_gui()
     // Is that what happens when dirtyWindow is 0?
     dirtyWindow = 1;
     glutPostRedisplay();
-    return;
+	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    return 0;
   }
   // If nothing is happening and hiding the LEDIT GUI just return.
   else if ((show_edit_mode_gui == 0) && (ecommand[0] == 0))
   {
     printf("glFlush(edit_mode_gui(middle))\n"); glFlush();
-    return;
+	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    return 0;
   }
   show_edit_mode_gui &= 1;  // Clear the clear gui bit (2).
 

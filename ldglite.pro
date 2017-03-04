@@ -13,7 +13,10 @@ contains(QT_ARCH, x86_64) {
 } else {
     ARCH = 32
 }
+unix:!macx: DEFINES += UNIX
+macx: DEFINES += MACOS_X
 
+message("~~~ LDGLITE $$ARCH-bit EXECUTABLE ~~~")
 TARGET +=
 DEPENDPATH += .
 INCLUDEPATH += .
@@ -24,11 +27,10 @@ INCLUDEPATH += ./ldrawini
 !contains(CONFIG, ENABLE_OFFSCREEN_RENDERING): CONFIG += ENABLE_OFFSCREEN_RENDERING
 !contains(CONFIG, ENABLE_TEST_GUI): CONFIG += ENABLE_TEST_GUI
 
-DEFINES += USING_QMAKE
-unix:!macx: DEFINES += UNIX
 DEFINES += USE_OPENGL
 DEFINES += USE_L3_PARSER
 DEFINES += USE_BMP8
+DEFINES += HAVE_STRDUP
 
 include($$PWD/ldglite.pri)
 
@@ -39,6 +41,7 @@ ENABLE_PNG {
     win32 {
         equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/png/lib/x64 -lpng
         else: LIBS += -L$$_PRO_FILE_PWD_/win/png/lib -lpng
+        message("~~~ USING LOCAL COPY OF FREEGLUT ~~~")
     } else {
         LIBS += -lpng
     }
@@ -61,19 +64,25 @@ win32 {
 
     equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib/x64 -lfreeglut_static
     else: LIBS += -L$$_PRO_FILE_PWD_/win/freeglut/lib -lfreeglut_static
+    message("~~~ USING LOCAL COPY OF FREEGLUT ~~~")
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
     LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32
 }
 
 unix:!macx {
-    CONFIG+= -ansi
     DEFINES += USE_ALPHA_BUFFER
+
     ENABLE_OFFSCREEN_RENDERING: DEFINES += OSMESA_OPTION
     LIBS += -lOSMesa -lglut -lGLU -lGL -lX11 -lXext -lm
 }
 
 macx {
+
+    INCLUDEPATH += \
+    $$PWD/macx/include
+    message("~~~ USING LOCAL COPY OF GL HEADERS ~~~")
+
     MAKE_LDGLITE_BUNDLE_TARGET = $$PWD/make-ldglite-bundle.sh
     MAKE_LDGLITE_BUNDLE_COMMAND = $$MAKE_LDGLITE_BUNDLE_TARGET $$VERSION
     CHMOD_COMMAND = chmod 755 $$MAKE_LDGLITE_BUNDLE_TARGET
@@ -86,11 +95,11 @@ macx {
 CONFIG += skip_target_version_ext
 TARGET = ldglite
 CONFIG(debug, debug|release) {
-    message("~~~ LDGLITE DEBUG build ~~~")
+    message("~~~ LDGLITE DEBUG BUILD ~~~")
     DESTDIR = debug
 } else {
     DESTDIR = release
-    message("~~~ LDGLITE RELEASE build ~~~")
+    message("~~~ LDGLITE RELEASE BUILD ~~~")
 }
 
 OBJECTS_DIR = $$DESTDIR/.obj

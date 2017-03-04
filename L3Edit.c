@@ -43,7 +43,8 @@ int StashPart0(void)
   if (Parts0.DatName)
   {
     RestorePart0();
-    return;
+	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    return 0;
   }
   memcpy(&Parts0, &Parts[0], sizeof(struct L3PartS));
   memset(&Parts[0], 0, sizeof(struct L3PartS));
