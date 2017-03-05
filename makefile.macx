@@ -2,7 +2,7 @@ CC=cc
 
 # Comment these out to disable PNG output if no PNG lib is available.
 #
-# You will need libpng. To install follow these instructions:
+# To install libpng follow these instructions:
 # 1. Press Command+Space and type Terminal and press enter/return key.
 # 2. [Optional - if you don't already have Homebrew installed] Run in Terminal app:
 #    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
@@ -31,32 +31,28 @@ PNG_LIBS += -lz
 TR_FLAGS = -DTILE_RENDER_OPTION
 TR_SRC = tr.c
 
-# UnComment this to build in support for Mesa Offscreen rendering
+# UnComment this to build in support for Offscreen rendering
 #
 OFFSCREEN_FLAGS = -DCGL_OFFSCREEN_OPTION
-OFFSCREEN_LIBS =
 
 # Comment these out to disable the test GUI made with MUI.
 #
 # Define both MUI and GLUT to access the MUI GUI via the GLUT menu.
-GUI_FLAGS = -DTEST_MUI_GUI -I./mui/src -DUSE_GLUT_MENUS -I./macx/glut/include
+GUI_FLAGS = -DTEST_MUI_GUI -Imui/src -DUSE_GLUT_MENUS -Imacx/glut/include
 GUI_SRC = ldglgui.c
-GUI_LIBS = -L./mui/src/mui -lmui
+GUI_LIBS = -Lmui/src/mui -lmui
 LIBS = libmui.a
 
-# C memory allocation header
-#
-MALLOC_FLAGS = -I./macx/include
+GL_LIBS = -lobjc -lstdc++
 
 # Because we are using Carbon (legacy framework), we can only build i386 - there is no x86_64 port
-TARGET_ARCH = -arch i386
+MACOSX_TARGET_ARCH = -arch i386
 MACOSX_SDK = -mmacosx-version-min=10.7 -isysroot /Developer/SDKs/MacOSX10.7.sdk
+MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon
 
-GL_LIBS = -framework OpenGL -framework GLUT -framework Carbon -lobjc -lstdc++ $(OFFSCREEN_LIBS) 
+CFLAGS = -g -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) Imacx/include -Ildrawini
 
-CFLAGS = -g -I./osx -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(MALLOC_FLAGS) $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) -Ildrawini
-
-CFLAGS += -DNOT_WARPING -DVISIBLE_SPIN_CURSOR -DSAVE_DEPTH_ALL -DSAVE_COLOR_ALL -DMACOS_X_TEST2 -DHAVE_STRDUP $(TARGET_ARCH) $(MACOSX_SDK)
+CFLAGS += -DNOT_WARPING -DVISIBLE_SPIN_CURSOR -DSAVE_DEPTH_ALL -DSAVE_COLOR_ALL -DMACOS_X_TEST2 -DHAVE_STRDUP $(MACOSX_TARGET_ARCH) $(MACOSX_SDK)
 
 SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c getargv.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC)
 OBJS = $(SRCS:.c=.o)
@@ -64,11 +60,7 @@ OBJS = $(SRCS:.c=.o)
 all: ldglite
 
 ldglite:   $(OBJS) $(LIBS)
-	$(CC) $(CFLAGS) -force_cpusubtype_ALL $(OBJS) -o ldglite $(GL_LIBS) $(PNG_LIBS) $(GUI_LIBS) -lm
-	rm -rf l3glite
-	ln -s ldglite l3glite
-	rm -rf l3gledit
-	ln -s ldglite l3gledit
+	$(CC) $(CFLAGS) -force_cpusubtype_ALL $(OBJS) -o ldglite $(MACOSX_FRAMEWORKS) $(GL_LIBS) $(PNG_LIBS) $(GUI_LIBS) -lm
 
 libmui.a:
 	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile.macx $@ ; fi
@@ -81,7 +73,6 @@ l3glitepng:   ldglite
 
 clean:
 	rm *.o 
-	if [ -a ldglite ]; then rm ldglite; fi
-	if [ -a l3glite ]; then rm -rf l3glite; fi
-	if [ -a l3gledit ]; then rm	-rf l3gledit; fi
+	if [ -a ldglite ] ; then rm ldglite ; fi
+	if [ -a ldrawini/LDrawini.o ] ; rm ldrawini/LDrawini.o ; fi
 	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile $@ ; fi
