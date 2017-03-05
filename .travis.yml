@@ -26,7 +26,8 @@ addons:
     - freeglut3-dev
     - libOSMesa-dev
     - libpng-dev
-   brew:
+  brew:
+    packages:
     - libpng --universal
 
 before_install:
