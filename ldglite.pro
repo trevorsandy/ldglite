@@ -14,7 +14,7 @@ contains(QT_ARCH, x86_64) {
 } else {
     ARCH = 32
 }
-message("~~~ LDGLITE $$ARCH-bit EXECUTABLE ~~~")
+message("~~~ LDGLITE $$ARCH-bit EXECUTABLE VERSION $$VERSION ~~~")
 
 unix:!macx: DEFINES += UNIX
 macx: DEFINES += MACOS_X
@@ -43,7 +43,7 @@ ENABLE_PNG {
     win32 {
         equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/png/lib/x64 -lpng
         else: LIBS += -L$$_PRO_FILE_PWD_/win/png/lib -lpng
-        message("~~~ USING LOCAL COPY OF FREEGLUT ~~~")
+        message("~~~ USING LOCAL COPY OF PNG ~~~")
     } else {
         macx {
             # To install libpng follow these instructions:
@@ -111,6 +111,8 @@ macx {
     INCLUDEPATH += \
     $$PWD/macx/include \
     $$PWD/macx/glut/include
+    QMAKE_CXXFLAGS += -F/System/Library/Frameworks
+    
     message("~~~ USING LOCAL COPY OF GL HEADERS ~~~")
     
     ENABLE_OFFSCREEN_RENDERING: DEFINES += CGL_OFFSCREEN_OPTION
@@ -127,10 +129,10 @@ macx {
     # As we are using Carbon (legacy framework), we can only build i386 for MacOSX - there is no x86_64 port
     MACOSX_TARGET_ARCH = -arch i386
     MACOSX_SDK = -mmacosx-version-min=10.7 -isysroot /Developer/SDKs/MacOSX10.7.sdk
-    MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon      
-    CONFIG += $$MACOSX_FRAMEWORKS $$MACOSX_TARGET_ARCH $$MACOSX_SDK
-    
-    LIBS += -lobjc -lstdc++ -lm
+    MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon
+       
+    CONFIG += $$MACOSX_TARGET_ARCH $$MACOSX_SDK
+    LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
     
     MAKE_LDGLITE_BUNDLE_TARGET = $$PWD/make-ldglite-bundle.sh
     MAKE_LDGLITE_BUNDLE_COMMAND = $$MAKE_LDGLITE_BUNDLE_TARGET $$VERSION
