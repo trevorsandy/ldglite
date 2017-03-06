@@ -12,7 +12,7 @@ libmui.a: $(OBJS) $(GL_LIBS)
 	/usr/bin/libtool -static -o libmui.a $(OBJS)
 
 clean:
-	rm *.o 
+	rm *.o
 	if [ -a libmui.a ]; then rm -f libmui.a; fi 
 
 

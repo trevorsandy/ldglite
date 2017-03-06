@@ -16,13 +16,13 @@ SYSTEM_PNG_HEADERS = /usr/local/include/png.h
 ifneq "$(wildcard $(SYSTEM_PNG_HEADERS) )" ""
    PNG_FLAGS += -I/usr/local/include
 else
-   PNG_FLAGS += -I./macx/png/include
+   PNG_FLAGS += -Imacx/png/include
 endif
 SYSTEM_PNG_LIB = /usr/local/lib/libpng.a
 ifneq "$(wildcard $(SYSTEM_PNG_LIB) )" ""
    PNG_LIBS += /usr/local/lib/libpng.a
 else
-   PNG_LIBS += ./macx/png/lib/libpng.a
+   PNG_LIBS += macx/png/lib/libpng.a
 endif
 PNG_LIBS += -lz
 
@@ -50,7 +50,7 @@ MACOSX_TARGET_ARCH = -arch i386
 MACOSX_SDK = -mmacosx-version-min=10.7 -isysroot /Developer/SDKs/MacOSX10.7.sdk
 MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon
 
-CFLAGS = -g -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) Imacx/include -Ildrawini
+CFLAGS = -g -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) -Imacx/include -Ildrawini
 
 CFLAGS += -DNOT_WARPING -DVISIBLE_SPIN_CURSOR -DSAVE_DEPTH_ALL -DSAVE_COLOR_ALL -DMACOS_X_TEST2 -DHAVE_STRDUP $(MACOSX_TARGET_ARCH) $(MACOSX_SDK)
 
@@ -61,6 +61,7 @@ all: ldglite
 
 ldglite:   $(OBJS) $(LIBS)
 	$(CC) $(CFLAGS) -force_cpusubtype_ALL $(OBJS) -o ldglite $(MACOSX_FRAMEWORKS) $(GL_LIBS) $(PNG_LIBS) $(GUI_LIBS) -lm
+	@echo "makefile.macx build execution completed."
 
 libmui.a:
 	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile.macx $@ ; fi
@@ -74,5 +75,6 @@ l3glitepng:   ldglite
 clean:
 	rm *.o 
 	if [ -a ldglite ] ; then rm ldglite ; fi
-	if [ -a ldrawini/LDrawini.o ] ; rm ldrawini/LDrawini.o ; fi
+	if [ -a ldrawini/LDrawini.o ] ; then rm ldrawini/LDrawini.o ; fi
 	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile $@ ; fi
+	@echo "makefile.macx clean execution completed."
