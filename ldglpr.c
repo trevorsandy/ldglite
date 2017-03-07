@@ -69,7 +69,11 @@ AGLContext ctx;
 #ifdef CGL_OFFSCREEN_OPTION
 //#include <CGL/CGLCurrent.h>
 //#include <CGL/CGLTypes.h>
-#include <Carbon/Carbon.h>
+#if defined(USING_CARBOM)
+#  include <Carbon/Carbon.h>
+#elif defined(USING_COCOA)
+//#  include <Cocoa/Cocoa.h>
+#endif
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl.h>
 void *OSbuffer = NULL;
@@ -80,6 +84,7 @@ char *pix;
 #ifdef MACOS_X
 void GetAvailablePos(int *w, int *h)
 {
+  /*
   //HIWindowGetAvailablePositioningBounds() // Leopard only?
   //Prior to Leopard, just use GetAvailableWindowPositioningBounds
   Rect rect;
@@ -87,6 +92,13 @@ void GetAvailablePos(int *w, int *h)
   GetAvailableWindowPositioningBounds( NULL, &rect ); //GetMainDevice() is old.
   *w = rect.right - rect.left;
   *h = rect.bottom - rect.top;
+
+  */
+
+  // test only
+  *w = 640;
+  *h = 480;
+
 }
 #endif
 

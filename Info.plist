@@ -1,134 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>ldglite</string>
-	<key>CFBundleIconFile</key>
-	<string>ldglite.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>net.sf.ldglite</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>ldglite</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleSignature</key>
-	<string>LdGL</string>
-	<key>CFBundleVersion</key>
-	<string>1.3.1</string>
-	<key>CSResourcesFileMapped</key>
-	<true/>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-		  	<key>CFBundleTypeExtensions</key>
-			<array>
-			  <string>ldr</string>
-			  <string>dat</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>ldr.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>LDraw file</string>
-			<key>CFBundleTypeOSTypes</key>		<array><string>LDR </string></array>
-			<key>NSDocumentClass</key>      
-			<string>BrowserDocument</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>org.ldraw.ldr</string>
-				<string>dk.hassings.ldr</string>
-			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<!-- Uncomment the this key to rule the mime type. -->
-			<!-- <key>LSIsAppleDefaultForType</key>	<true/> -->
-		</dict>
-		<dict>
-		  	<key>CFBundleTypeExtensions</key>
-			<array>
-			  <string>mpd</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>mpd.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>LDraw mpd file</string>
-			<key>CFBundleTypeOSTypes</key>		<array><string>MPD </string></array>
-			<key>NSDocumentClass</key>      
-			<string>BrowserDocument</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>org.ldraw.mpd</string>
-				<string>dk.hassings.mpd</string>
-			</array>
-			<key>LSTypeIsPackage</key>
-			<false/>
-		</dict>
-	</array>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>org.ldraw.ldr</string>
-				<string>dk.hassings.ldr</string>
-				<string>public.plain-text</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>LDraw file</string>
-			<key>UTTypeIconFile</key>
-			<string>ldr.icns</string>
-			<key>UTTypeIdentifier</key>
-			<string>org.ldraw.ldr</string>
-			<key>UTTypeReferenceURL</key>
-			<string>http://www.ldraw.org</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>ldr</string>
-					<string>dat</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-ldraw</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>org.ldraw.mpd</string>
-				<string>dk.hassings.mpd</string>
-				<string>public.plain-text</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>LDraw mpd file</string>
-			<key>UTTypeIconFile</key>
-			<string>mpd.icns</string>
-			<key>UTTypeIdentifier</key>
-			<string>org.ldraw.mpd</string>
-			<key>UTTypeReferenceURL</key>
-			<string>http://www.ldraw.org</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>mpd</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/x-multi-part-ldraw</string>
-				</array>
-			</dict>
-		</dict>
-	</array>
-</dict>
+  <dict>
+    <key>CFBundleDevelopmentRegion</key>        <string>English</string>
+    <key>CFBundleInfoDictionaryVersion</key>    <string>6.0</string>
+    <key>CFBundleExecutable</key>               <string>ldglite</string>
+    <key>CFBundlePackageType</key>              <string>APPL</string>
+    <key>CFBundleSignature</key>                <string>LdGL</string>
+    <key>CFBundleName</key>                     <string>ldglite</string>
+    <key>CFBundleVersion</key>                  <string>${VERSION}</string>
+    <key>CFBundleShortVersionString</key>       <string>ldglite ${VERSION}</string>
+    <key>CFBundleGetInfoString</key>            <string>ldglite ${VERSION} ${URL}</string>
+    <key>CFBundleIconFile</key>                 <string>ldglite.icns</string>
+    <key>CFBundleIdentifier</key>               <string>org.ldraw.ldglite</string>
+    <key>CSResourcesFileMapped</key>            <true/>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+         <key>CFBundleTypeExtensions</key>
+           <array>
+             <string>LDR</string>
+             <string>ldr</string>
+             <string>MPD</string>
+             <string>mpd</string>
+             <string>DAT</string>
+             <string>dat</string>
+           </array>
+         <key>CFBundleTypeIconFile</key>        <string>ldraw_document.icns</string>
+         <key>CFBundleTypeName</key>            <string>Ldraw Document</string>
+         <key>CFBundleTypeMIMETypes</key>    
+           <array>      
+             <string>application/x-ldraw</string>    
+           </array>    
+         <key>CFBundleTypeOSTypes</key>         <array><string>LDR</string></array>
+         <key>CFBundleTypeRole</key>            <string>Viewer</string>
+         <key>NSDocumentClass</key>             <string>BrowserDocument</string>
+      </dict>
+    </array>
+  </dict>
 </plist>

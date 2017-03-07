@@ -6,14 +6,11 @@
  *    non-standard library functions                                   
 */
 
-
-
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
 #include <string.h>
 #include <stdlib.h>
-
 
 // Flags indicating what functions are lacking on this platform
 
@@ -23,6 +20,9 @@
 
 // unistd.h declares chdir() on Mac, Unix?
 #include <unistd.h>
+
+// Suppress all those pesty unused errors
+#define UNUSED(x) (void)(x)
 
 #define LACKS_STRDUP 0
 #define LACKS_STRICMP 1
@@ -132,6 +132,9 @@ void platform_comment(char *message, int level);
 int platform_startup(int *argcp, char ***argv);
 
 int GetExecName(char *argv0, char *buf, int buflen);
+
+
+
 
 #endif // PLATFORM_H
 

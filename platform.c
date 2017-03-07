@@ -151,7 +151,11 @@ char *dirname( const char *filepath )
   }
   else
   {
-#if defined(MAC)
+#if defined(MACOS_X)
+
+    tmpstr = strdup("./");
+
+#elif defined(MAC)
 
     tmpstr = strdup("");
 
@@ -240,7 +244,10 @@ localize_path(char *inoutPath)
 {
 #if defined(UNIX)
   char separator = '/';
-  
+
+#elif defined(MACOS_X)
+  char separator = '/';
+
 #elif defined(MAC)
   char separator = ':';
   
@@ -334,7 +341,10 @@ char *platform_getenv(const char *var)
 {
 #if defined(UNIX)
   return getenv(var);
-  
+
+#elif defined(MACOS_X)
+  return getenv(var);
+
 #elif defined(MAC)
   return macprefs_getenv(var);
   

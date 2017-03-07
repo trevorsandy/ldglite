@@ -4,10 +4,14 @@
 # to run ldglite with the app bundle settings and avoid the popup error msgs.
 # I tend to run ldglite on the command line.  This makes that work on OSX.
 # 
-# Set this to executable and copy it to somewhere like /usr/local/bin.
+# This wrapper is installed in the ldglite applicatin bundle  and
+# can be run from there - e.g. ldglite.app/Contents/MacOS/ldglite_w.sh.
+#
+# Alternatively, you can set this to executable and copy
+# it to somewhere like /usr/local/bin.
 # 
-#   chmod a+x ldglite_osxwrapper.sh
-#   sudo cp ldglite_osxwrapper.sh /usr/local/bin/ldglite
+#   chmod a+x ldglite_w.sh
+#   sudo cp lldglite_w.sh /usr/local/bin/ldglite
 
 
 args=""

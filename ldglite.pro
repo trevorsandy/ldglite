@@ -5,12 +5,16 @@ QT -= core gui
 TEMPLATE = app
 
 # The ABI version.
-win32: VERSION = 1.3.2.0  # major.minor.patch.build
-else: VERSION = 1.3.2     # major.minor.patch
+VER_MAJ = 1
+VER_MIN = 3
+VER_PAT = 2
+VER_BLD = 0
+win32: VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT"."$$VER_BLD # major.minor.patch.build
+else: VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT              # major.minor.patch
+DEFINES += VERSION_INFO=\\\"$$VERSION\\\"
 
 contains(QT_ARCH, x86_64) {
-    !macx:ARCH = 64
-    macx:ARCH = 32
+    macx:ARCH = 64
 } else {
     ARCH = 32
 }
@@ -23,6 +27,16 @@ TARGET +=
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ldrawini
+
+CONFIG += skip_target_version_ext
+TARGET = ldglite
+CONFIG(debug, debug|release) {
+    message("~~~ LDGLITE DEBUG BUILD ~~~")
+    DESTDIR = debug
+} else {
+    DESTDIR = release
+    message("~~~ LDGLITE RELEASE BUILD ~~~")
+}
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
 !contains(CONFIG, ENABLE_TILE_RENDERING): CONFIG += ENABLE_TILE_RENDERING
@@ -38,12 +52,13 @@ include($$PWD/ldglite.pri)
 
 ENABLE_PNG {
     DEFINES += USE_PNG
-    INCLUDEPATH += \
-    $$PWD/win/png/include
     win32 {
+        INCLUDEPATH += \
+        $$PWD/win/png/include
+
         equals (ARCH, 64): LIBS += -L$$_PRO_FILE_PWD_/win/png/lib/x64 -lpng
         else: LIBS += -L$$_PRO_FILE_PWD_/win/png/lib -lpng
-        message("~~~ USING LOCAL COPY OF PNG ~~~")
+        message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
     } else {
         macx {
             # To install libpng follow these instructions:
@@ -59,7 +74,7 @@ ENABLE_PNG {
             exists(SYSTEM_PNG_HEADERS) {
                  INCLUDEPATH += /usr/local/include
             } else {
-                message("~~~ USING LOCAL COPY PNG HEADERS ~~~")
+                message("~~~ USING LOCAL COPY OF PNG HEADERS ~~~")
                 INCLUDEPATH += $$PWD/macx/png/include
             }
             SYSTEM_PNG_LIB = /usr/local/lib/libpng.a
@@ -67,13 +82,28 @@ ENABLE_PNG {
                 LIBS += /usr/local/lib/libpng.a
             } else {
                 message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
-                LIBS += ./macx/png/lib/libpng.a
+                LIBS += $$PWD/macx/png/lib/libpng.a
             }
         } else {
             LIBS += -lpng
         }
     }
     LIBS +=  -lz
+}
+
+ENABLE_TILE_RENDERING {
+    DEFINES += TILE_RENDER_OPTION
+    HEADERS += $$PWD/tr.h
+    SOURCES += $$PWD/tr.c
+}
+
+ENABLE_TEST_GUI {
+    DEFINES += TEST_MUI_GUI
+    macx: DEFINES += USE_GLUT_MENUS
+    INCLUDEPATH += \
+    $$PWD/mui/src
+    include(mui/mui.pri)
+    SOURCES += $$PWD/ldglgui.c
 }
 
 win32 {
@@ -112,60 +142,50 @@ macx {
     $$PWD/macx/include \
     $$PWD/macx/glut/include
     QMAKE_CXXFLAGS += -F/System/Library/Frameworks
-    
+    # Using local glut headers because source originally written
+    # for developer-defined glut library so $$PWD/macx/glut/include above.
     message("~~~ USING LOCAL COPY OF GL HEADERS ~~~")
     
     ENABLE_OFFSCREEN_RENDERING: DEFINES += CGL_OFFSCREEN_OPTION
     
-    DEFINES += USING_CARBON
+    DEFINES += USING_COCOA
     DEFINES += NEED_MIN_MAX
     DEFINES += NOT_WARPING
     DEFINES += VISIBLE_SPIN_CURSOR
     DEFINES += SAVE_DEPTH_ALL
     DEFINES += SAVE_COLOR_ALL
     DEFINES += MACOS_X_TEST2
-    DEFINES += HAVE_STRDUP
 
-    # As we are using Carbon (legacy framework), we can only build i386 for MacOSX - there is no x86_64 port
-    MACOSX_TARGET_ARCH = -arch i386
-    MACOSX_SDK = -mmacosx-version-min=10.7 -isysroot /Developer/SDKs/MacOSX10.7.sdk
-    MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon
-       
-    CONFIG += $$MACOSX_TARGET_ARCH $$MACOSX_SDK
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+
+    MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Cocoa
     LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
-    
-    MAKE_LDGLITE_BUNDLE_TARGET = $$PWD/make-ldglite-bundle.sh
-    MAKE_LDGLITE_BUNDLE_COMMAND = $$MAKE_LDGLITE_BUNDLE_TARGET $$VERSION
-    CHMOD_COMMAND = chmod 755 $$MAKE_LDGLITE_BUNDLE_TARGET
-    QMAKE_POST_LINK += $$escape_expand(\n\t)  \
-                       $$shell_quote$${CHMOD_COMMAND} \
-                       $$escape_expand(\n\t)  \
-                       $$shell_quote$${MAKE_LDGLITE_BUNDLE_COMMAND}
-}
 
-CONFIG += skip_target_version_ext
-TARGET = ldglite
-CONFIG(debug, debug|release) {
-    message("~~~ LDGLITE DEBUG BUILD ~~~")
-    DESTDIR = debug
-} else {
-    DESTDIR = release
-    message("~~~ LDGLITE RELEASE BUILD ~~~")
+    ICON = ldglite.icns
+    QMAKE_INFO_PLIST = Info.plist
+
+    ldglite_osxwrapper.files += ldglite_w.command
+    ldglite_osxwrapper.path = Contents/MacOS
+
+    QMAKE_BUNDLE_DATA += \
+        ldglite_osxwrapper
+
+    INFO_PLIST_FILE = $$shell_quote($$DESTDIR/ldglite.app/Contents/Info.plist)
+    PLIST_COMMAND = /usr/libexec/PlistBuddy -c
+    TYPEINFO_COMMAND = /bin/echo "APPLLdGL" > $$DESTDIR/ldglite.app/Contents/PkgInfo
+    WRAPPER_TARGET = $$DESTDIR/ldglite.app/Contents/MacOS/ldglite_w.command
+    WRAPPER_CHMOD_COMMAND = chmod 755 $$WRAPPER_TARGET
+    QMAKE_POST_LINK += $$escape_expand(\n\t)   \
+                       $$PLIST_COMMAND \"Set :CFBundleShortVersionString $${VERSION}\" $${INFO_PLIST_FILE}  \
+                       $$escape_expand(\n\t)   \
+                       $$PLIST_COMMAND \"Set :CFBundleVersion $${VERSION}\" $${INFO_PLIST_FILE} \
+                       $$escape_expand(\n\t)   \
+                       $$PLIST_COMMAND \"Set :CFBundleGetInfoString ldglite $${VERSION} https://github.com/trevorsandy/ldglite\" $${INFO_PLIST_FILE} \
+                       $$escape_expand(\n\t)  \
+                       $$shell_quote$${TYPEINFO_COMMAND} \
+                       $$escape_expand(\n\t)  \
+                       $$shell_quote$${WRAPPER_CHMOD_COMMAND}
 }
 
 OBJECTS_DIR = $$DESTDIR/.obj
 
-ENABLE_TILE_RENDERING {
-    DEFINES += TILE_RENDER_OPTION
-    HEADERS += $$PWD/tr.h
-    SOURCES += $$PWD/tr.c
-}
-
-ENABLE_TEST_GUI {
-    DEFINES += TEST_MUI_GUI
-    macx: DEFINES += USE_GLUT_MENUS
-    INCLUDEPATH += \
-    $$PWD/mui/src
-    include(mui/mui.pri)
-    SOURCES += $$PWD/ldglgui.c
-}

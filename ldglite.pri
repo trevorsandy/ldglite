@@ -24,6 +24,7 @@ SOURCES += \
    $$PWD/camera.c \
    $$PWD/dirscan.c \
    $$PWD/f00QuatC.c \
+#   $$PWD/getargv.c \               # Carbon only (Qt default is Cocoa)
    $$PWD/gleps.c \
    $$PWD/hoser.c \
    $$PWD/L3Edit.c \
@@ -46,11 +47,10 @@ SOURCES += \
 
 OTHER_FILES += \
     $$PWD/Info.plist \
+    $$PWD/ldglite_w.command \
     $$PWD/doc/ldglite.1 \
     $$PWD/doc/README.TXT \
-    $$PWD/ldglite_osxwrapper.sh \
-    $$PWD/set-ldrawdir-command \
-    $$PWD/make-ldglite-bundle.sh
+    $$PWD/set-ldrawdir.command
 
 RC_FILE  += \
     $$PWD/ldglite.rc

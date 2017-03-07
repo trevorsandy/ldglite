@@ -39,7 +39,11 @@
 #    endif
 #  endif
 
-char ldgliteVersion[] = "Version 1.3.1      ";
+#ifdef VERSION_INFO
+char ldgliteVersion[] = "Version "VERSION_INFO"      ";
+#else
+char ldgliteVersion[] = "Version 1.3.2      ";
+#endif
 
 // Use Glut popup menus if MUI is not available.
 #ifndef OFFSCREEN_ONLY
@@ -1110,6 +1114,8 @@ void printPOVMatrix(FILE *f)
   char orthographicstr[] = "\torthographic\n";
   char perspectivestr[] = "\t//orthographic\n";
   char *projectionstr = orthographicstr;
+  UNUSED(lp);
+  UNUSED(lpp);
 
   ZCOLOR zcp, zcs;
 
@@ -1242,6 +1248,7 @@ void printPOVMatrix(FILE *f)
   {
     char filename[256];
     char *s;
+    UNUSED(s);
 
     concat_path(datfilepath, datfilename, filename);
     if (filename[0] == '.') // I hate the ./filename thing.
@@ -1763,6 +1770,7 @@ int edit_mode_gui()
   }
 
   printf("glFlush(edit_mode_gui(bottom))\n"); glFlush();
+  return 0;
 }
 
 /***************************************************************/
@@ -1835,6 +1843,7 @@ int platform_write_step_comment(char *comment_string)
   glMatrixMode( GL_MODELVIEW );
 #endif
   dirtyWindow = savedirty; 
+  return 0;
 }
 
 /***************************************************************/
@@ -1842,6 +1851,7 @@ int platform_step_comment(char *comment_string)
 {
   printf("%s\n", comment_string);
   platform_write_step_comment(comment_string);
+  return 0;
 }
 
 /***************************************************************/
@@ -2105,15 +2115,19 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
 /***************************************************************/
 void platform_zDraw(ZIMAGE *zp,void *zDC)
 {
+  UNUSED(zp);
+  UNUSED(zDC);
   if (ldraw_commandline_opts.debug_level == 1)
     printf("zdraw\n");
 }
 
-#if defined(UNIX) || defined(MAC)
+#if defined(UNIX) || defined(MAC) || defined(MACOS_X)
 // These should really move to platform.c and platform.h
 /***************************************************************/
 int GetProfileInt(char *appName, char *appVar, int varDefault)
 {
+  UNUSED(appName);
+  UNUSED(appVar);
   // This should look up appVar in some .INI or .RC file for appName.
   // Windows uses reg key HKCU\Software\Gyugyi Cybernetics\ldlite\Settings
   // Just return the default for now.
@@ -2123,6 +2137,9 @@ int GetProfileInt(char *appName, char *appVar, int varDefault)
 /***************************************************************/
 int GetPrivateProfileInt(char *appName, char *appVar, int varDefault, char *fileName)
 {
+  UNUSED(appName);
+  UNUSED(appVar);
+  UNUSED(fileName);
   // Just return the default for now.
   return (varDefault);
 }
@@ -2131,6 +2148,10 @@ int GetPrivateProfileInt(char *appName, char *appVar, int varDefault, char *file
 int GetPrivateProfileString(char *appName, char *appVar, char *varDefault, 
 			    char *retString, int strSize, char *fileName)
 {
+  UNUSED(appName);
+  UNUSED(appVar);
+  UNUSED(strSize);
+  UNUSED(fileName);
   // Just return the default for now.
   strcpy (retString, varDefault);
   return (strlen(varDefault));
@@ -2578,6 +2599,7 @@ void colormenu(int c)
 void init(void)
 {
   int i;
+  UNUSED(i);
 
     // glSelectBuffer(SELECT_BUFFER, select_buffer);
 
@@ -2804,6 +2826,14 @@ void reproject()
 void reshape(int width, int height)
 {
     GLdouble left, right, top, bottom, aspect, znear, zfar, fov;
+    UNUSED(left);
+    UNUSED(right);
+    UNUSED(top);
+    UNUSED(bottom);
+    UNUSED(aspect);
+    UNUSED(znear);
+    UNUSED(zfar);
+    UNUSED(fov);
 
     printf("reshape(debugging)\n");
 
@@ -3983,6 +4013,7 @@ int NukeSavedDepthBuffer(void)
     free (cbufdata);  // NOTE: gotta free this when finished editing.
     cbufdata = NULL;
   }
+  return 0;
 }
 
 /***************************************************************/
@@ -5268,6 +5299,7 @@ char *stristr(char *src, char *dst)
 int limitpartlist(char *str)
 {
   int i, j, n;
+  UNUSED(i);
 
   j = 0;
   for (n = 0; n < partlisttotal; n++)
@@ -5283,6 +5315,8 @@ int limitpartlist(char *str)
   }
   else
     resetpartlist();
+
+  return 0;
 }
 
 /***************************************************************/
@@ -5291,6 +5325,8 @@ int resetpluglist()
   memcpy(pluglistptr, plugliststr, sizeof (char *) *pluglisttotal);
   pluglistsize = pluglisttotal;
   pluglookup = 1;
+
+  return 0;
 }
 
 /***************************************************************/
@@ -5431,6 +5467,7 @@ char *loadpluglist(void)
 /***************************************************************/
 int runplugin(int n)
 {
+  UNUSED(n);
   int i;
   char pline[4][100];
   char *partname;
@@ -5517,12 +5554,14 @@ int runplugin(int n)
       Print1Part(curpiece, stdout);
 #endif
   }
+  return 0;
 }
 
 /***************************************************************/
 int limitpluglist(char *str)
 {
   int i, j, n;
+  UNUSED(i);
 
   j = 0;
   for (n = 0; n < pluglisttotal; n++)
@@ -5538,10 +5577,11 @@ int limitpluglist(char *str)
   }
   else
     resetpluglist();
+  return 0;
 }
 
 /***************************************************************/
-move1matrix(float m[4][4], float dx, float dy, float dz)
+void move1matrix(float m[4][4], float dx, float dy, float dz)
 {
 #if 0
   // Consider projecting (dx,dy,dz) from modelview to world coords.
@@ -5675,6 +5715,8 @@ void leaveEditMode()
 /***************************************************************/
 int edit_mode_fnkeys(int key, int x, int y)
 {
+  UNUSED(x);
+  UNUSED(y);
   int i;
   float m[4][4] = {
     {1.0,0.0,0.0,0.0},
@@ -5965,6 +6007,9 @@ char *getfilename(char *s, char *filename)
 /***************************************************************/
 int edit_mode_keyboard(int key, int x, int y)
 {
+  UNUSED(x);
+  UNUSED(y);
+
   int newview = 0;
   char c;
   
@@ -6302,7 +6347,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	return 1;
       case 'c':
 	{
-	  clear_edit_mode_gui(curpiece);
+      clear_edit_mode_gui();
 	  if (Find1PartMatrix(curpiece, m))
 	  {
 	    //gluProject((GLdouble)x, (GLdouble)y, (GLdouble)z, model, proj, view, &sx, &sy, &sz);
@@ -6962,6 +7007,10 @@ int edit_mode_keyboard(int key, int x, int y)
 void fnkeys(int key, int x, int y)
 {
   GLdouble pan_x, pan_y, pan_z;
+  UNUSED(pan_x);
+  UNUSED(pan_y);
+  UNUSED(pan_z);
+
   float angle;
 
   glutModifiers = glutGetModifiers(); // Glut doesn't like this in motion() fn.
@@ -7205,6 +7254,10 @@ void menuKeyEvent(int key, int x, int y)
   float f;
   int i, color;
   char partname[256];
+  UNUSED(m);
+  UNUSED(angle);
+  UNUSED(color);
+  UNUSED(partname);
 
   glutModifiers = glutGetModifiers(); // Glut doesn't like this in motion() fn.
 
@@ -7698,7 +7751,7 @@ void old_rotate_about(float x, float y, float z, float angle)
 }
 
 /***************************************************************/
-UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
+void UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
 {
   GLdouble model[4*4];
   GLdouble proj[4*4];
@@ -7741,10 +7794,11 @@ UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
 }
 
 /***************************************************************/
-void
-mouse(int button, int state, int x, int y)
+void mouse(int button, int state, int x, int y)
 {
   GLdouble pan_x, pan_y, pan_z, x_angle, y_angle, angle, depth;
+  UNUSED(x_angle);
+  UNUSED(y_angle);
 
   glutModifiers = glutGetModifiers(); // Glut doesn't like this in motion() fn.
 
@@ -8416,6 +8470,8 @@ void ParseParams(int *argc, char **argv)
   strcpy(datfilename, " ");
 #if defined(UNIX)
   strcpy(datfilepath, "./");
+#elif defined(MACOS_X)
+  strcpy(datfilepath, "./");
 #elif defined(MAC)
   strcpy(datfilepath, "");
 #elif defined(WINDOWS)
@@ -8752,6 +8808,7 @@ void ParseParams(int *argc, char **argv)
 	  lightcolor0[0] = v[1][0];
 	  lightcolor0[1] = v[1][1];
 	  lightcolor0[2] = v[1][2];
+      UNUSED(colorstring);
 	}
 	else if (pszParam[1] == 'C') // Ambient light color
 	{
@@ -8953,6 +9010,8 @@ void ParseParams(int *argc, char **argv)
 	  for (p = pszParam; p; p = strchr(p, ','))
 	  {
 	    int j, n;
+        UNUSED(n);
+
 	    if (*p == ',')
 	      p++; // skip over the comma char.
 	    if (2 == sscanf(p,"%d%c",&j, &type)) {
@@ -9022,6 +9081,10 @@ void ParseParams(int *argc, char **argv)
     double distance;
     double lo, la;
     double x, y, z;
+    UNUSED(distance);
+    UNUSED(x);
+    UNUSED(y);
+    UNUSED(z);
 
     if (camera_distance <= 0.0)
     {
@@ -9145,7 +9208,7 @@ int InitInstance()
     if (i >1)
       ParseParams(&i, argv);
   }
-
+  return 0;
 }
 
 /***************************************************************/
@@ -9157,6 +9220,7 @@ int setfilename(char *newfile)
   strcpy(dirfilepath, datfilepath);
 
   platform_setdir();
+  return 0;
 }
 
 
@@ -9175,6 +9239,7 @@ int setGlutCallbacks()
   glutWindowStatusFunc(visibility);
   glutVisibilityFunc(VISIBILITY);
   glutMenuStateFunc(NULL); //#ifdef TEST_MUI_GUI
+  return 0;
 }
 
 /***************************************************************/
@@ -9186,6 +9251,7 @@ int registerGlutCallbacks()
   glutSetMenu(mainmenunum); // Reset the current menu to the main menu.
   glutAttachMenu(GLUT_RIGHT_BUTTON); // And reattach it
 #endif
+  return 0;
 }
 
 /***************************************************************/
@@ -9618,6 +9684,12 @@ main(int argc, char **argv)
   unsigned int displaymode;
   int i;
   int needargs = 0;
+  UNUSED(str);
+  UNUSED(verstr);
+  UNUSED(extstr);
+  UNUSED(vendstr);
+  UNUSED(rendstr);
+  UNUSED(i);
 
 #if 0
   for (i = 0; i < argc; i++)
@@ -9640,6 +9712,18 @@ main(int argc, char **argv)
 
 #if !defined(MAC)
 #  ifdef MACOS_X
+     // Ignore function to get dropped files in this version of ldglite - Trevor Sandy Mar, 7 2017
+     // getargv.h is a Carbon based set of functions which limit us to
+     // 32-bit and cannot be compiled by a default Qt instance because
+     // Qt is default compiled with Cocoa. That's all not so important,
+     // what is important is that drag and drop is nice to have but not
+     // required in this inistance of ldglite as it positioned as an
+     // LPub3d renderer and called from that app. If one wished to test
+     // from the UI, then manually defining input file is possible. Lastly,
+     // I can restore drag and drop functionality by moving the getargv
+     // set of functions to cocoa but this requires an c interface and is
+     // a bit more complicated so as we don't need it, I'll not do it now.
+#    ifndef USING_COCOA
   // I hope OSX glutinit() will ADD the filename of a dropped file to argv.
   // (I know it removes some things.)
   // So I call glutInit ahead of ParseParams.
@@ -9670,6 +9754,7 @@ main(int argc, char **argv)
     glutInit(&argc, argv);
     chdir(cwdpath); // problem with chdir to dir with spaces in win32.
   }
+#     endif
 #  endif
 #endif
 

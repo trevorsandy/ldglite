@@ -1204,7 +1204,7 @@ void calc_zplane_z(ZPLANE *zpl, ZPOINT *p)
 
 #ifdef USE_OPENGL
 
-#if defined(UNIX) || defined(MAC) 
+#if defined(UNIX) || defined(MAC) || defined(MACOS_X)
 // Stub out a few windows structs for now. 
 // Should go back and remove them with #ifdef USE_OPENGL someday.
 #include "wstubs.h" 

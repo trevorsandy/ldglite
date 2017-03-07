@@ -141,6 +141,9 @@ void DrawPartBox(struct L3PartS *PartPtr,int CurColor,float m[4][4],int wire)
   int            i, Color;
   float          r2[4];
   vector3d       bb3d[8];
+  UNUSED(r);
+  UNUSED(i);
+  UNUSED(r2);
 
 #ifdef SIXTEEN_EDGE_COLORS
   if (0 <= CurColor  &&  CurColor <= 15)
@@ -194,6 +197,7 @@ void DrawPartLine(struct L3PartS *PartPtr,int CurColor,float m[4][4])
   int            i, Color;
   float          r2[4];
   vector3d       bb3d[8];
+  UNUSED(i);
 
 #ifdef SIXTEEN_EDGE_COLORS
   if (0 <= CurColor  &&  CurColor <= 15)
@@ -367,7 +371,13 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 			  extern int curpiece;
 			  extern int DrawToCurPiece;
 			  void DrawModel(void);
-			   
+              UNUSED(opts);
+              UNUSED(dcp);
+              UNUSED(cp);
+              UNUSED(curpiece);
+              UNUSED(DrawToCurPiece);
+              UNUSED(DrawModel);
+
 			  if (IsModel)
 			  {
 			    n = BufA1Retrieve(IsModel,LinePtr);
@@ -781,8 +791,10 @@ int Draw1Part(int partnum, int Color)
 	int            i;
 	struct L3LineS *LinePtr;
 	int SaveColor;
-
 	int CurColor = ldraw_commandline_opts.C;
+    UNUSED(m1);
+    UNUSED(SaveColor);
+    UNUSED(CurColor);
 
 	InitViewMatrix();
 

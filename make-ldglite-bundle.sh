@@ -4,11 +4,13 @@ ME="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
 WORK_DIR=`pwd`
 
 # logging stuff
-LOG="$PWD/../builds/utilities/$ME.log"
+LOG="${PWD}/../ldglite/$ME.log"
 if [ -f ${LOG} -a -r ${LOG} ]
 then
         rm ${LOG}
 fi
+touch ${LOG}
+
 exec > >(tee -a ${LOG} )
 exec 2> >(tee -a ${LOG} >&2)
 
@@ -17,7 +19,7 @@ if [ "$1" = "" ]
 then
         echo "Warning: Did not receive VERSION INFO."
         echo "Using Default Version: 1.3.1"
-        VERSION="1.3.1"
+        VERSION="1.3.2"
 else
         echo "1. capture version info - using $1..."
         VERSION=$1
@@ -25,7 +27,6 @@ fi
 
 echo "2. create bundle directory structure..."
 rm -rf ldglite.app
-mkdir -p ldglite.app/Contents
 mkdir -p ldglite.app/Contents/MacOS
 mkdir -p ldglite.app/Contents/Resources
 
@@ -74,18 +75,18 @@ cat <<END > ldglite.app/Contents/Info.plist
   </dict>
 </plist>
 END
+echo "4. write PkgInfo..."
 echo "APPLLdGL" > ldglite.app/Contents/PkgInfo
 
-echo "4. move executable and icon to bundle..."
-cp ldglite ldglite.app/Contents/MacOS
-cp ldglite.icns ldglite.app/Contents/Resources
+echo "5. move executable, wrapper and icon to bundle..."
+EXE="ldglite"
+ICON="ldglite.icns"
+WRAPPER="ldglite_w.command"
+cp ${EXE} ldglite.app/Contents/MacOS
+cp ${ICON} ldglite.app/Contents/Resources
+cp ${WRAPPER} ldglite.app/Contents/MacOS
 
-echo "5. create wrapper command..."
-cat <<DONE > ldglite.app/Contents/MacOS/ldgliteWrapper.command
-#!/bin/sh
-pwd
-ldglite -l3 -v4 $@
-DONE
-chmod 755 ldglite.app/Contents/MacOS/ldgliteWrapper.command
+echo "6. update wrapper permissions..."
+chmod 755 ldglite.app/Contents/MacOS/${WRAPPER}
 
 echo "Script $ME execution finshed."

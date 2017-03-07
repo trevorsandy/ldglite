@@ -152,6 +152,7 @@ int LDrawIniErrorCode;
 void GetLDrawSearchDirs(int *ErrorCode)
 {
   int i;
+  UNUSED(ErrorCode);
 
   //LDrawIniSetFileCaseCallback(&platform_fixcase);
 
@@ -450,6 +451,8 @@ void StripQuotes(char *s, char *SubPartDatName)
 void          FixDatName(register char *DatName)
 {
    register int         i;
+   UNUSED(DatName);
+   UNUSED(i);
 
 #ifdef USE_OPENGL
    platform_fixcase(SubPartDatName); // Should NOT do this for model files.
@@ -903,9 +906,7 @@ static int           CheckLine(struct L3LineS * LinePtr,
    int                  A,
                         B,
                         C;
-
-
-
+    UNUSED(PartPtr);
 
    /* Now do some argument checking */
    switch (LinePtr->LineType)
@@ -1945,6 +1946,7 @@ void                 CalcPartBBox(struct L3PartS * PartPtr, int DoBBox, int DoCa
    register int         xyz;
    float                r[4];
    float                BBcorner[4];
+   UNUSED(DoCamera);
 
    if (DoBBox)
    {
@@ -2257,6 +2259,7 @@ int                  LoadModel(const char *lpszPathName)
 {
    struct L3PartS      *PartPtr;
    int                  i;
+   UNUSED(i);
 
 #ifdef USE_OPENGL
    if (!LDrawDir[0])
