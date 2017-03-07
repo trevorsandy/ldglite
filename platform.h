@@ -12,6 +12,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+// Suppress all those pesty unused errors
+#define UNUSED(x) (void)(x)
+
 // Flags indicating what functions are lacking on this platform
 
 #if defined(MACOS_X) 
@@ -20,9 +23,6 @@
 
 // unistd.h declares chdir() on Mac, Unix?
 #include <unistd.h>
-
-// Suppress all those pesty unused errors
-#define UNUSED(x) (void)(x)
 
 #define LACKS_STRDUP 0
 #define LACKS_STRICMP 1
