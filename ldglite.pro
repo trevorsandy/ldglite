@@ -14,7 +14,7 @@ else: VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT              # major.minor.pat
 DEFINES += VERSION_INFO=\\\"$$VERSION\\\"
 
 contains(QT_ARCH, x86_64) {
-    macx:ARCH = 64
+    ARCH = 64
 } else {
     ARCH = 32
 }
@@ -31,12 +31,13 @@ INCLUDEPATH += ldrawini
 CONFIG += skip_target_version_ext
 TARGET = ldglite
 CONFIG(debug, debug|release) {
-    message("~~~ LDGLITE DEBUG BUILD ~~~")
     DESTDIR = debug
+    BUILD = DEBUG
 } else {
     DESTDIR = release
-    message("~~~ LDGLITE RELEASE BUILD ~~~")
+    BUILD = RELEASE
 }
+message("~~~ LDGLITE $$BUILD BUILD ~~~")
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
 !contains(CONFIG, ENABLE_TILE_RENDERING): CONFIG += ENABLE_TILE_RENDERING
@@ -147,8 +148,20 @@ macx {
     message("~~~ USING LOCAL COPY OF GL HEADERS ~~~")
     
     ENABLE_OFFSCREEN_RENDERING: DEFINES += CGL_OFFSCREEN_OPTION
-    
-    DEFINES += USING_COCOA
+    MACOSX_FRAMEWORKS += -framework OpenGL -framework GLUT
+
+    equals(QT_MAJOR_VERSION,4):equals(QT_MINOR_VERSION,7):equals(ARCH,32) {    # qt 4.7 carbon (32bit only)
+        DEFINES += USING_CARBON
+        MACOSX_FRAMEWORKS += -framework Carbon
+        HEADERS += $$PWD/getargv.h
+        SOURCES += $$PWD/getargv.c
+        message("~~~ USING CARBON FRAMEWORK ~~~")
+    } else {
+        DEFINES += USING_COCOA
+        MACOSX_FRAMEWORKS += -framework Cocoa
+        message("~~~ USING COCOA FRAMEWORK ~~~")
+    }
+
     DEFINES += NEED_MIN_MAX
     DEFINES += NOT_WARPING
     DEFINES += VISIBLE_SPIN_CURSOR
@@ -157,8 +170,6 @@ macx {
     DEFINES += MACOS_X_TEST2
 
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
-
-    MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Cocoa
     LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
 
     ICON = ldglite.icns
@@ -167,24 +178,31 @@ macx {
     ldglite_osxwrapper.files += ldglite_w.command
     ldglite_osxwrapper.path = Contents/MacOS
 
-    QMAKE_BUNDLE_DATA += \
-        ldglite_osxwrapper
+    set_ldraw_directory.files += set-ldrawdir.command
+    set_ldraw_directory.path = Contents/Resources
 
-    INFO_PLIST_FILE = $$shell_quote($$DESTDIR/ldglite.app/Contents/Info.plist)
+    QMAKE_BUNDLE_DATA += \
+        ldglite_osxwrapper set_ldraw_directory
+
+    INFO_PLIST_FILE = $$shell_quote$$DESTDIR/ldglite.app/Contents/Info.plist
     PLIST_COMMAND = /usr/libexec/PlistBuddy -c
     TYPEINFO_COMMAND = /bin/echo "APPLLdGL" > $$DESTDIR/ldglite.app/Contents/PkgInfo
     WRAPPER_TARGET = $$DESTDIR/ldglite.app/Contents/MacOS/ldglite_w.command
     WRAPPER_CHMOD_COMMAND = chmod 755 $$WRAPPER_TARGET
+    LDRAWDIR_TARGET = $$DESTDIR/ldglite.app/Contents/Resources/set-ldrawdir.command
+    LDRAWDIR_CHMOD_COMMAND = chmod 755 $$LDRAWDIR_TARGET
     QMAKE_POST_LINK += $$escape_expand(\n\t)   \
                        $$PLIST_COMMAND \"Set :CFBundleShortVersionString $${VERSION}\" $${INFO_PLIST_FILE}  \
                        $$escape_expand(\n\t)   \
                        $$PLIST_COMMAND \"Set :CFBundleVersion $${VERSION}\" $${INFO_PLIST_FILE} \
                        $$escape_expand(\n\t)   \
                        $$PLIST_COMMAND \"Set :CFBundleGetInfoString ldglite $${VERSION} https://github.com/trevorsandy/ldglite\" $${INFO_PLIST_FILE} \
-                       $$escape_expand(\n\t)  \
+                       $$escape_expand(\n\t)   \
                        $$shell_quote$${TYPEINFO_COMMAND} \
-                       $$escape_expand(\n\t)  \
-                       $$shell_quote$${WRAPPER_CHMOD_COMMAND}
+                       $$escape_expand(\n\t)   \
+                       $$shell_quote$${WRAPPER_CHMOD_COMMAND} \
+                       $$escape_expand(\n\t)   \
+                       $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
 }
 
 OBJECTS_DIR = $$DESTDIR/.obj

@@ -5,7 +5,6 @@ HEADERS += \
    $$PWD/ldrawini/LDrawInP.h \
    $$PWD/dirscan.h \
    $$PWD/f00QuatC.h \
-   $$PWD/getargv.h \
    $$PWD/glext.h \
    $$PWD/glui.h \
    $$PWD/glwinkit.h \
@@ -24,7 +23,6 @@ SOURCES += \
    $$PWD/camera.c \
    $$PWD/dirscan.c \
    $$PWD/f00QuatC.c \
-#   $$PWD/getargv.c \               # Carbon only (Qt default is Cocoa)
    $$PWD/gleps.c \
    $$PWD/hoser.c \
    $$PWD/L3Edit.c \

@@ -69,11 +69,6 @@ AGLContext ctx;
 #ifdef CGL_OFFSCREEN_OPTION
 //#include <CGL/CGLCurrent.h>
 //#include <CGL/CGLTypes.h>
-#if defined(USING_CARBOM)
-#  include <Carbon/Carbon.h>
-#elif defined(USING_COCOA)
-//#  include <Cocoa/Cocoa.h>
-#endif
 #include <OpenGL/OpenGL.h>
 #include <OpenGL/gl.h>
 void *OSbuffer = NULL;
@@ -82,9 +77,10 @@ CGLContextObj ctx;
 char *pix;
 
 #ifdef MACOS_X
+#  if defined(USING_CARBON)
+#include <Carbon/Carbon.h>
 void GetAvailablePos(int *w, int *h)
 {
-  /*
   //HIWindowGetAvailablePositioningBounds() // Leopard only?
   //Prior to Leopard, just use GetAvailableWindowPositioningBounds
   Rect rect;
@@ -92,14 +88,18 @@ void GetAvailablePos(int *w, int *h)
   GetAvailableWindowPositioningBounds( NULL, &rect ); //GetMainDevice() is old.
   *w = rect.right - rect.left;
   *h = rect.bottom - rect.top;
-
-  */
-
-  // test only
-  *w = 640;
-  *h = 480;
-
 }
+#  elif defined(USING_COCOA)
+// I don't need to get the available position bounds
+// because LPub3D will use ldglite as a CLI program
+// So I just set a static size of 800 x 600.
+// The use can resize manually if needed.
+void GetAvailablePos(int *w, int *h)
+{
+  *w = 800;
+  *h = 600;
+}
+#  endif
 #endif
 
 /***************************************************************/

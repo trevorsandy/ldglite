@@ -9712,38 +9712,35 @@ main(int argc, char **argv)
 
 #if !defined(MAC)
 #  ifdef MACOS_X
-     // Ignore function to get dropped files in this version of ldglite - Trevor Sandy Mar, 7 2017
-     // getargv.h is a Carbon based set of functions which limit us to
-     // 32-bit and cannot be compiled by a default Qt instance because
-     // Qt is default compiled with Cocoa. That's all not so important,
-     // what is important is that drag and drop is nice to have but not
-     // required in this inistance of ldglite as it positioned as an
-     // LPub3d renderer and called from that app. If one wished to test
-     // from the UI, then manually defining input file is possible. Lastly,
-     // I can restore drag and drop functionality by moving the getargv
-     // set of functions to cocoa but this requires an c interface and is
-     // a bit more complicated so as we don't need it, I'll not do it now.
-#    ifndef USING_COCOA
   // I hope OSX glutinit() will ADD the filename of a dropped file to argv.
   // (I know it removes some things.)
   // So I call glutInit ahead of ParseParams.
-#include "getargv.h"
   /* put paths of all files dropped onto the app into argv */
   // Probably should look for one of those -psn* args before doing this.
   // (glutInit() removes -psn* args, but does not insert the filenames)
   for (i = 1; i < argc; i++)
-    if (!strncmp(argv[i], "-psn_", 5)) 
+    if (!strncmp(argv[i], "-psn_", 5))
     {
       needargs = 1;
       break;
     }
+#    ifdef USING_CARBON
+#include "getargv.h"
   // This replaces all args with stuff from the finder.
   // Assume there will be no other args if if comes from the finder.
   // That may not be the case if I figure out how to get ldglite.command
   // script to call the ldglite executable in the bundle.
   // Maybe I should call the bundled executable l3glite.
   if (needargs)
+  {
     argc = FTMac_GetArgv(&argv);
+  }
+#  elif defined(USING_COCOA)
+// TODO - define Cocoa version of drag and drop
+// For LPub3D this feature is not needed.
+// However, just to maintain backward compatability
+// I'll take a look at this later.
+#  endif
 
   if (OffScreenRendering == 0)
   {
@@ -9754,7 +9751,6 @@ main(int argc, char **argv)
     glutInit(&argc, argv);
     chdir(cwdpath); // problem with chdir to dir with spaces in win32.
   }
-#     endif
 #  endif
 #endif
 
