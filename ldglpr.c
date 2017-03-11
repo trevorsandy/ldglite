@@ -1379,27 +1379,35 @@ static CGLContextObj setupCGL(void)
 
   /* Choose an rgb pixel format */
   CGLChoosePixelFormat (attribs, &pixelFormatObj, &numPixelFormats);
-  if( pixelFormatObj == NULL )
+  if( pixelFormatObj == NULL ) {
+    printf("CGLChoosePixelFormat failed, PixelFormatObj is NULL!\n");
     return NULL;
+  }
 
   /* Create a CGL context */
   CGLCreateContext (pixelFormatObj, NULL, &ctx);
-  if( ctx == NULL )
+  if( ctx == NULL ) {
+    printf("CGLCreateContext failed, CGLContextObj ctx is NULL!\n");
     return NULL;
+  }
 
   /* The pixel format is no longer needed */
   CGLDestroyPixelFormat (pixelFormatObj);
 
   /* Make the context the current context */
   ok = CGLSetCurrentContext (ctx);
-  if ( ok != kCGLNoError )
+  if ( ok != kCGLNoError ) {
+    printf("CGLSetCurrentContext returnerd CGLError!\n");
     return NULL;
+  }
 
   /* Attach the off screen area to the context */
   rowbytes = Width * 4; // * sizeof(GLubyte);
   ok = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
-  if ( ok != kCGLNoError )
+  if ( ok != kCGLNoError ) {
+    printf("CGLSetOffScreen returnerd CGLError!\n");
     return NULL;
+  }
 
   return ctx;
 }

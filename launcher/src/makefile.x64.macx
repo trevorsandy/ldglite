@@ -1,0 +1,17 @@
+CC=clang
+
+CFLAGS = -g -I. -arch x86_64
+
+SRCS = ldglite_launcher.c
+OBJS = $(SRCS:.c=.o)
+
+all	: ldglite_launcher
+
+ldglite_launcher:  $(OBJS)
+	$(CC) $(CFLAGS) -force_cpusubtype_ALL $(OBJS) -o ldglite_launcher -lm
+	@echo "==> makefile.x64.macx build ldglite_launcher execution completed."
+
+clean:
+	rm *.o 
+	if [ -a ldglite_launcher ]; then rm -f ldglite_launcher ; fi
+	@echo "==> makefile.x64.macx clean ldglite_launcher execution completed."

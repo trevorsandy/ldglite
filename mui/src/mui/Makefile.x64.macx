@@ -1,6 +1,6 @@
 CC=cc
 
-CFLAGS = -I../../src -I../../../macx/glut/include -arch i386
+CFLAGS = -I../../src -I../../../macx/glut/include -arch x86_64
 
 SRCS = gizmo.c glutmui.c displaylist.c uicolor.c miscui.c mui.c vslider.c textlist.c button.c pulldown.c hslider.c
 OBJS = $(SRCS:.c=.o)
@@ -14,7 +14,5 @@ libmui.a: $(OBJS) $(GL_LIBS)
 
 clean:
 	rm *.o
-	if [ -a libmui.a ]; then rm -f libmui.a; fi
+	if [ -a libmui.a ]; then rm -f libmui.a; fi 
 	@echo "==> makefile.x64.macx clean libmui.a execution completed."
-
-

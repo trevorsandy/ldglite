@@ -20,7 +20,7 @@ contains(QT_ARCH, x86_64) {
 }
 message("~~~ LDGLITE $$ARCH-bit EXECUTABLE VERSION $$VERSION ~~~")
 
-unix:!macx: DEFINES += UNIX
+unix: DEFINES += UNIX
 macx: DEFINES += MACOS_X
 
 TARGET +=

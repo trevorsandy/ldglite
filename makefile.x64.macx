@@ -46,28 +46,28 @@ LIBS = libmui.a
 GL_LIBS = -lobjc -lstdc++
 
 # Because we are using Carbon (legacy framework), we can only build i386 - there is no x86_64 port
-MACOSX_TARGET_ARCH = -arch i386
-MACOSX_SDK = -mmacosx-version-min=10.7 -isysroot /Developer/SDKs/MacOSX10.7.sdk
-MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Carbon
+MACOSX_TARGET_ARCH = -arch x86_64
+MACOSX_SDK = -mmacosx-version-min=10.9 -isysroot /Developer/SDKs/MacOSX10.9.sdk
+MACOSX_FRAMEWORKS = -framework OpenGL -framework GLUT -framework Cocoa
 
-CFLAGS = -g -Imacx/include -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) -Ildrawini
+CFLAGS = -g -Imacx/include -DUNIX -DMACOS_X -DUSING_COCOA -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 -DNEED_MIN_MAX $(PNG_FLAGS) $(TR_FLAGS) $(OFFSCREEN_FLAGS) $(GUI_FLAGS) -Ildrawini
 
 CFLAGS += -DNOT_WARPING -DVISIBLE_SPIN_CURSOR -DSAVE_DEPTH_ALL -DSAVE_COLOR_ALL -DMACOS_X_TEST2 -DHAVE_STRDUP $(MACOSX_TARGET_ARCH) $(MACOSX_SDK)
 
-SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c getargv.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC)
+SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC)
 OBJS = $(SRCS:.c=.o)
 
-all: ldglite
+all:   ldglite
 
-ldglite:   $(OBJS) $(LIBS) ldglite_launcher
+ldglite:    $(OBJS) $(LIBS) ldglite_launcher
 	$(CC) $(CFLAGS) -force_cpusubtype_ALL $(OBJS) -o ldglite $(MACOSX_FRAMEWORKS) $(GL_LIBS) $(PNG_LIBS) $(GUI_LIBS) -lm
-	@echo "==> makefile.macx ldglite build execution completed."
+	@echo "==> makefile.x64.macx build ldglite execution completed."
 
 libmui.a:
-	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile.macx $@ ; fi
+	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile.x64.macx $@ ; fi
 
 ldglite_launcher:
-	if [ -d launcher/src ] ; then cd launcher/src ; $(MAKE) -f Makefile.macx $@ ; fi
+	if [ -d launcher/src ] ; then cd launcher/src ; $(MAKE) -f Makefile.x64.macx $@ ; fi
 
 ldglitepng:   ldglite
 
@@ -75,6 +75,6 @@ clean:
 	rm *.o 
 	if [ -a ldglite ] ; then rm ldglite ; fi
 	if [ -a ldrawini/LDrawini.o ] ; then rm ldrawini/LDrawini.o ; fi
-	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile $@ ; fi
-	if [ -d launcher/src ] ; then cd launcher/src ; $(MAKE) -f Makefile.macx $@ ; fi
-	@echo "==> makefile.macx ldglite clean execution completed."
+	if [ -d mui/src/mui ] ; then cd mui/src/mui ; $(MAKE) -f Makefile.x64.macx $@ ; fi
+	if [ -d launcher/src ] ; then cd launcher/src ; $(MAKE) -f Makefile.x64.macx $@ ; fi
+	@echo "==> makefile.x64.macx clean ldglite execution completed."
