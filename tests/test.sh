@@ -28,7 +28,7 @@ echo "exporting LDRAWDIR: $LDRAWDIR LDSEARCHDIRS: $LDSEARCHDIRS..."
 export LDRAWDIR
 export LDSEARCHDIRS
 
-ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1
+ARGS="-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1"
 
 echo "NORMAL PART TEST-----------------------------------"
 if [[ $1 -eq 2 ]]; then
@@ -54,8 +54,8 @@ elif [[ $1 -eq 4 ]]; then
    fi 
 elif [[ $1 -eq 5 ]]; then
    echo "Executing ldglite clang x86_64 SDK10.12 Qt5.7 qmake build..."
-   if [ -d 05/ldglite ]; then   
-       05/ldglite $ARGS -mFTestResult_clang_x86_64_SDK10.12_Qt5.7_qmake_Foo2.png Foo2.ldr 
+   if [ -d 05/ldglite.app ]; then   
+       05/ldglite.app/Contents/MacOS/ldglite $ARGS -mFTestResult_clang_x86_64_SDK10.12_Qt5.7_qmake_Foo2.png Foo2.ldr 
    else
        echo "==> ldglite clang x86_64 SDK10.12 Qt5.7 bundle does not exist in directory ./05 "
    fi 

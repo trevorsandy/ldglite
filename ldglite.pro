@@ -169,7 +169,6 @@ macx {
     DEFINES += SAVE_COLOR_ALL
     DEFINES += MACOS_X_TEST2
 
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
     LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
 
     ICON = ldglite.icns

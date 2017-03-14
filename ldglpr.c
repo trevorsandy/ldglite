@@ -67,9 +67,9 @@ AGLContext ctx;
 // NOTE:  Apple currently lists aglSetOffScreen() as unsupported by Carbon.
 #endif
 #ifdef CGL_OFFSCREEN_OPTION
-//#include <CGL/CGLCurrent.h>
-//#include <CGL/CGLTypes.h>
 #include <OpenGL/OpenGL.h>
+//#include <OpenGL/CGLTypes.h>
+//#include <OpenGL/CGLCurrent.h>
 #include <OpenGL/gl.h>
 void *OSbuffer = NULL;
 CGLContextObj ctx;
@@ -89,15 +89,15 @@ void GetAvailablePos(int *w, int *h)
   *w = rect.right - rect.left;
   *h = rect.bottom - rect.top;
 }
-#  elif defined(USING_COCOA)
-// I don't need to get the available position bounds
-// because LPub3D will use ldglite as a CLI program
-// So I just set a static size of 800 x 600.
-// The use can resize manually if needed.
+#  else
+// Interesting, CGDirectDisplay header has been around since 10.0
+// Note sure why it was not used but is seems to work just fine.
+#include <ApplicationServices/ApplicationServices.h>
 void GetAvailablePos(int *w, int *h)
 {
-  *w = 800;
-  *h = 600;
+   CGRect rect = CGDisplayBounds(kCGDirectMainDisplay);
+   *w = rect.size.width;
+   *h = rect.size.height;
 }
 #  endif
 #endif
@@ -1329,21 +1329,39 @@ void CleanupAGL( AGLContext ctx )
 
 #ifdef CGL_OFFSCREEN_OPTION
 //************************************************************************
+#include <Availability.h>         // OSX Versions
 static CGLContextObj setupCGL(void)
 {
   int numPixelFormats = 0; // long numPixelFormats = 0;
   CGLPixelFormatObj pixelFormatObj;
   CGLContextObj  ctx;
-  CGLError       ok;
+  CGLError       err;
   GLsizei        rowbytes;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
+  printf("Using Pixel Format Attribute for OSX/SDK 10.7 or earlier\n");
   CGLPixelFormatAttribute attribs[] = {
-                                       kCGLPFAOffScreen,
-                                       //kCGLPFAColorSize, 32,
-                                       kCGLPFAColorSize, 24,
-                                       kCGLPFAAlphaSize, 8,
-				       kCGLPFADepthSize, 32,
-                                       //kCGLRGB888A8Bit,
-                                       0}; //NULL};
+                                           kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
+                                           kCGLPFAOffScreen,
+                                           kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
+                                           kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
+                                           kCGLPFADepthSize,     (CGLPixelFormatAttribute)32,
+                                                                 (CGLPixelFormatAttribute)0
+                                      };
+# else                                     // MacOSX 10.8 or later
+//#include <OpenGL/CGLTypes.h>
+//#include <OpenGL/CGLCurrent.h>
+  printf("Using Pixel Format Attribute for OSX/SDK 10.8 or later\n");
+  CGLPixelFormatAttribute attribs[] = {
+
+                                           kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
+                                           kCGLPFAOffScreen,
+                                           kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
+                                           kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
+                                           kCGLPFADepthSize,     (CGLPixelFormatAttribute)32,
+                                                                 (CGLPixelFormatAttribute)0
+                                      };
+#endif
 
 #if 0
    //kCGLRGB888A8Bit,
@@ -1378,16 +1396,22 @@ static CGLContextObj setupCGL(void)
   }
 
   /* Choose an rgb pixel format */
-  CGLChoosePixelFormat (attribs, &pixelFormatObj, &numPixelFormats);
-  if( pixelFormatObj == NULL ) {
-    printf("CGLChoosePixelFormat failed, PixelFormatObj is NULL!\n");
+  err = CGLChoosePixelFormat (attribs, &pixelFormatObj, &numPixelFormats);
+  if( err != kCGLNoError) {
+    printf("CGLChoosePixelFormat returnerd CGLError (%s)\n", CGLErrorString(err));
+  }
+  if ( pixelFormatObj == NULL ) {
+    printf("CGLChoosePixelFormat returned pixelFormatObj = NULL\n");
     return NULL;
   }
 
   /* Create a CGL context */
-  CGLCreateContext (pixelFormatObj, NULL, &ctx);
-  if( ctx == NULL ) {
-    printf("CGLCreateContext failed, CGLContextObj ctx is NULL!\n");
+  err = CGLCreateContext (pixelFormatObj, NULL, &ctx);
+  if( err != kCGLNoError ) {
+    printf("CGLCreateContext returnerd CGLError (%s)\n", CGLErrorString(err));
+  }
+  if ( ctx == NULL ) {
+    printf("CGLCreateContext returned ctx = NULL\n");
     return NULL;
   }
 
@@ -1395,19 +1419,29 @@ static CGLContextObj setupCGL(void)
   CGLDestroyPixelFormat (pixelFormatObj);
 
   /* Make the context the current context */
-  ok = CGLSetCurrentContext (ctx);
-  if ( ok != kCGLNoError ) {
-    printf("CGLSetCurrentContext returnerd CGLError!\n");
+  err = CGLSetCurrentContext (ctx);
+  if ( err != kCGLNoError ) {
+    printf("CGLSetCurrentContext returnerd CGLError (%s)\n", CGLErrorString(err));
     return NULL;
   }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
   /* Attach the off screen area to the context */
   rowbytes = Width * 4; // * sizeof(GLubyte);
-  ok = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
-  if ( ok != kCGLNoError ) {
-    printf("CGLSetOffScreen returnerd CGLError!\n");
+  err = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
+  if ( err != kCGLNoError ) {
+    printf("CGLSetOffScreen returnerd CGLError (%s)\n", CGLErrorString(err));
     return NULL;
   }
+#else
+  /* Attach the off screen area to the context */
+  rowbytes = Width * 4; // * sizeof(GLubyte);
+  err = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
+  if ( err != kCGLNoError ) {
+    printf("CGLSetOffScreen returnerd CGLError (%s)\n", CGLErrorString(err));
+    return NULL;
+  }
+#endif
 
   return ctx;
 }
