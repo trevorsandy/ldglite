@@ -48,7 +48,8 @@ OTHER_FILES += \
     $$PWD/ldglite_w.command \
     $$PWD/doc/ldglite.1 \
     $$PWD/doc/README.TXT \
-    $$PWD/set-ldrawdir.command
+    $$PWD/set-ldrawdir.command \
+    $$PWD/.travis.yml
 
 RC_FILE  += \
     $$PWD/ldglite.rc
