@@ -137,6 +137,8 @@ int
 /***************************************************************/
 specialFunc( int key, int x, int y )
 {
+  UNUSED(x);
+  UNUSED(y);
   int retval = 1;
 
   int glutModifiers = glutGetModifiers();

@@ -115,6 +115,8 @@ FILE *start_bmp(char *filename, int width, int height)
   BITMAPFILEHEADER bmfh;
   LPBITMAPINFOHEADER bmh;
   char *p, c;
+  UNUSED(c);
+
   FILE *fp;
   char hdr[54];
 
@@ -312,6 +314,7 @@ FILE *start_ppm(char *filename, int width, int height)
 void write_ppm(char *filename)
 {
   int i, j;
+  UNUSED(j);
 
   FILE *fp;
   int width = Width;
@@ -425,6 +428,7 @@ write_targa(char *filename, const GLubyte *buffer, int width, int height)
 /***************************************************************/
 static void png_error_fn(png_structp png_ptr, const char *err_msg)
 {
+    UNUSED(err_msg);
 	jmp_buf *j;
 	j= (jmp_buf*) png_get_error_ptr(png_ptr);
 	longjmp(*j, -1);
@@ -432,6 +436,8 @@ static void png_error_fn(png_structp png_ptr, const char *err_msg)
 
 static void png_warning_fn(png_structp png_ptr, const char *warn_msg)
 {
+    UNUSED(png_ptr);
+    UNUSED(warn_msg);
 	return;
 }
 
@@ -451,6 +457,7 @@ FILE *start_png(char *filename, int width, int height,
     *p = 0;
   strcat(filename, use_uppercase ? ".PNG" : ".png");
 
+  printf("\n===================\n");
   printf("Write PNG %s\n", filename);
   
   // Write header stuff
@@ -1166,7 +1173,7 @@ int SetOffScreenRendering()
 /***************************************************************/
 int OffScreenDisplay()
 {
-   char filename[256];
+   //char filename[256];
 
 #ifdef OSMESA_OPTION
    DrawScene();
@@ -1355,7 +1362,7 @@ static CGLContextObj setupCGL(void)
   CGLPixelFormatAttribute attribs[] = {
 
                                            kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
-                                           kCGLPFAOffScreen,
+                                           kCGLPFAPBuffer,
                                            kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
                                            kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
                                            kCGLPFADepthSize,     (CGLPixelFormatAttribute)32,

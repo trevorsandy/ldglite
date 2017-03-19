@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
 #include <sys/stat.h> // for polling datfile for updates.
 
 #include "glwinkit.h" //#include <GL/glut.h>
@@ -399,6 +400,8 @@ char *verstr = "";
 char *extstr = "";
 char *vendstr = "";
 char *rendstr = "";
+char *glslverstr = "";
+int fbosupport = 1;
 
 // Camera movement variables
 #define MOVE_SPEED 10.0
@@ -3577,7 +3580,7 @@ void DrawScene(void)
     }
   }
   
-
+  printf("\n====================\n");
   printf("glFlush(DrawScene)\n"); glFlush();
 
   dirtyWindow = 0;  // The window is nice and squeaky clean now.
@@ -3599,6 +3602,7 @@ void TiledDisplay(void)
    long foffset = 0;
    char *p, c;
    char filename[256];
+   UNUSED(i);
 
 #ifdef USE_PNG
    png_structp png_ptr;
@@ -7254,6 +7258,8 @@ void menuKeyEvent(int key, int x, int y)
   float f;
   int i, color;
   char partname[256];
+  UNUSED(f);
+  UNUSED(i);
   UNUSED(m);
   UNUSED(angle);
   UNUSED(color);
@@ -9293,22 +9299,47 @@ int getDisplayProperties()
     newcontext = 1;
     rendstr = strdup(str);
   }
+  str = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+  if (str && strcmp(str, glslverstr))
+  {
+    newcontext = 1;
+    glslverstr = strdup(str);
+  }
 #endif
 
   // Reset all context dependent stuff when new context detected
   if (!newcontext)
     return newcontext;
-
+  printf("\nOpenGL Driver Info\n");
+  printf("====================\n");
+  printf("GL_VENDOR = %s\n", vendstr);
   printf("GL_VERSION = %s\n", verstr);
-  printf("GL_EXTENSIONS = %s\n", extstr);
-  printf("GL_VENDOR ='%s'\n", vendstr);
-  printf("GL_RENDERER ='%s'\n", rendstr);
-  
+  printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
+  printf("GL_RENDERER = %s\n", rendstr);
+  printf("\nOpenGL Extensions\n");
+  printf("===================\n");
+  // split up the extensions and check
+  // for specific attributes
+  char *tok[256];
+  int i = 0;
+  tok[i] = strtok(extstr, " ");
+  while(tok[i]!=NULL)
+  {
+      printf("%s\n", tok[i]);
+      if (tok[i] == "GL_ARB_framebuffer_object" )
+      {
+         fbosupport = 0;
+      }
+      tok[++i] = strtok(NULL, " ");
+  }
+  printf("Number of OpenGL Extensions = %d\n", i);
+  printf("===================\n");
+  printf("\n");
   glGetIntegerv(GL_RED_BITS, &rBits);
   glGetIntegerv(GL_GREEN_BITS, &gBits);
   glGetIntegerv(GL_BLUE_BITS, &bBits);
   glGetIntegerv(GL_ALPHA_BITS, &aBits);
-  printf("GL_RGBA_BITS: (%d, %d, %d, %d)\n", rBits, gBits, bBits, aBits);
+  printf("GL_RGBA_BITS = (%d, %d, %d, %d)\n", rBits, gBits, bBits, aBits);
 
   glGetIntegerv(GL_DEPTH_BITS, &DepthBits);
   printf("GL_DEPTH_BITS = %d\n", DepthBits);
@@ -9453,6 +9484,14 @@ int getDisplayProperties()
 #endif
     glDrawBuffer(GL_FRONT);  // Effectively disable double buffer.
 #endif
+
+  printf("\n");
+  if (fbosupport)
+  {
+      printf("Video card supports GL_ARB_framebuffer_object.\n");
+  } else {
+      printf("Video card does NOT support GL_ARB_framebuffer_object.\n");
+  }
 
   return newcontext;
 }
@@ -9697,7 +9736,9 @@ main(int argc, char **argv)
   printf("\n");
 #endif
   
+  printf("\n");
   printf("Ldglite %s\n", ldgliteVersion);
+  printf("====================\n");
 
   platform_startup(&argc, &argv);
 	

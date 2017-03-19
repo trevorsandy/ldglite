@@ -53,14 +53,23 @@ elif [[ $1 -eq 4 ]]; then
        echo "==> ldglite clang x86 SDK10.7 Qt4.7 qmake bundle does not exist in directory ./04 "
    fi 
 elif [[ $1 -eq 5 ]]; then
-   echo "Executing ldglite clang x86_64 SDK10.11 Qt5.7 qmake (Travis CI) build..."
+   echo "Executing ldglite bundle on clang x86_64 SDK10.11 Qt5.7 qmake (Travis CI) build..."
    if [ ! -d 05 ]; then mkdir -p 05/bin ; else rm -rf 05 ; mkdir -p 05/bin ; fi
    if [ -d ../release/ldglite.app ] && [ -f ../release/ldglite.app/Contents/MacOS/ldglite ]; then  
-	   cp -rf ../release/ldglite.app 05/bin 
+       cp -rf ../release/ldglite.app 05/bin 
        05/bin/ldglite.app/Contents/MacOS/ldglite $ARGS -mFTestResult_clang_x86_64_SDK10.11_Qt5.7_qmake_Foo2.png Foo2.ldr 
    else
-       echo "==> ldglite clang x86_64 SDK10.11 Qt5.7 bundle (Travis CI) does not exist in directory ./05 "
-   fi    
+       echo "==> ldglite bundle on clang x86_64 SDK10.11 Qt5.7 bundle (Travis CI) does not exist in directory ./05 "
+   fi 
+elif [[ $1 -eq 6 ]]; then
+   echo "Executing ldglite bundle on clang x86_64 SDK10.12 Qt5.7 qmake build..."
+   if [ ! -d 05 ]; then mkdir -p 05/bin ; else rm -rf 05 ; mkdir -p 05/bin ; fi
+   if [ -d ../../build-ldglite-Desktop_Qt_5_7_1_clang_64bit-Release/release/ldglite.app ] && [ -f ../../build-ldglite-Desktop_Qt_5_7_1_clang_64bit-Release/release/ldglite.app/Contents/MacOS/ldglite ]; then  
+       cp -rf ../../build-ldglite-Desktop_Qt_5_7_1_clang_64bit-Release/release/ldglite.app 05/bin 
+       05/bin/ldglite.app/Contents/MacOS/ldglite $ARGS -mFTestResult_clang_x86_64_SDK10.12_Qt5.7_qmake_Foo2.png Foo2.ldr 
+   else
+       echo "==> ldglite bundle on clang x86_64 SDK10.12 Qt5.7 bundle does not exist in directory ./05 "
+   fi 
 elif [[ $1 -eq 9 ]]; then
    echo "Cleanup."
    rm *.log

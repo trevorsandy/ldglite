@@ -1,6 +1,6 @@
 CC=clang
 
-CFLAGS = -g -I. -arch x86
+CFLAGS = -g -I. -arch i386
 
 SRCS = ldglite_launcher.c
 OBJS = $(SRCS:.c=.o)
