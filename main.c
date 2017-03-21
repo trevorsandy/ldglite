@@ -41,7 +41,11 @@
 #  endif
 
 #ifdef VERSION_INFO
+#ifdef ARCH
+char ldgliteVersion[] = "Version "VERSION_INFO" ("ARCH")      ";
+#else
 char ldgliteVersion[] = "Version "VERSION_INFO"      ";
+#endif
 #else
 char ldgliteVersion[] = "Version 1.3.2      ";
 #endif
@@ -401,7 +405,6 @@ char *extstr = "";
 char *vendstr = "";
 char *rendstr = "";
 char *glslverstr = "";
-int fbosupport = 0;
 
 // Camera movement variables
 #define MOVE_SPEED 10.0
@@ -2772,6 +2775,7 @@ void VISIBILITY(int state)
 
 /***************************************************************/
 int getDisplayProperties();
+void printExtensions(char * ptr);
 
 /***************************************************************/
 void reshapeCB(int width, int height)
@@ -2838,7 +2842,7 @@ void reshape(int width, int height)
     UNUSED(zfar);
     UNUSED(fov);
 
-    // printf("reshape(debugging)\n");
+    printf("reshape(debugging)\n");
 
     // Check for new opengl context on reshape() calls.
     // Should probably also do this when entering/leaving game mode.
@@ -3580,7 +3584,8 @@ void DrawScene(void)
     }
   }
 
-  glFlush();
+  printf("glFlush(DrawScene)"); glFlush();
+
   dirtyWindow = 0;  // The window is nice and squeaky clean now.
 
   if (ldraw_commandline_opts.M == 'F')
@@ -4838,9 +4843,9 @@ void display(void)
     {
       sprintf(buf,"Step %d of %d.  ",curstep+1, stepcount+1);
       if (stepcount == curstep)
-	strcat(buf, "Finished.");
+         strcat(buf, "Finished.");
       else 
-	strcat(buf, "Click on drawing to continue.");
+         strcat(buf, "Click on drawing to continue.");
       platform_step_comment(buf);
       
 #ifndef ALWAYS_REDRAW
@@ -9259,9 +9264,40 @@ int registerGlutCallbacks()
 }
 
 /***************************************************************/
+void printExtensions(char * ptr)
+{
+    printf("\n");
+    printf("OpenGL Extensions\n");
+    printf("====================\n");
+    printf("%s\n", ptr);
+
+//    // split up the extensions
+//    char *tok;
+//    int i;
+//    for (i = 0, tok = strtok(ptr, " "); tok != NULL; tok = strtok(NULL, " "), i++)
+//    {
+//        printf("%s\n", tok);
+//    }
+//    printf("Number of OpenGL Extensions = %d\n", i);
+
+//    // for specific attributes
+//    char *tok[256];
+//    int i = 0;
+//    tok[i] = strtok(ptr, " ");
+//    while(tok[i]!=NULL)
+//    {
+//        printf("%s\n", tok[i]);
+//        tok[++i] = strtok(NULL, " ");
+//    }
+//    printf("Number of OpenGL Extensions = %d\n", i);
+    ptr = NULL;
+}
+
+/***************************************************************/
 int getDisplayProperties()
 {
   char *str;
+  char *fboSupport;
   int newcontext = 0;
 
 #ifdef SIMULATE_APPLE_BUGS
@@ -9279,23 +9315,11 @@ int getDisplayProperties()
     newcontext = 1;
     verstr = strdup(str);
   }
-  str = (char *) glGetString(GL_EXTENSIONS);
-  if (str && strcmp(str, extstr))
-  {
-    newcontext = 1;
-    extstr = strdup(str);
-  }
   str = (char *)glGetString(GL_VENDOR);
   if (str && strcmp(str, vendstr))
   {
     newcontext = 1;
     vendstr = strdup(str);
-  }
-  str = (char *)glGetString(GL_RENDERER);
-  if (str && strcmp(str, rendstr))
-  {
-    newcontext = 1;
-    rendstr = strdup(str);
   }
   str = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
   if (str && strcmp(str, glslverstr))
@@ -9303,11 +9327,25 @@ int getDisplayProperties()
     newcontext = 1;
     glslverstr = strdup(str);
   }
+  str = (char *)glGetString(GL_RENDERER);
+  if (str && strcmp(str, rendstr))
+  {
+    newcontext = 1;
+    rendstr = strdup(str);
+  }
+  str = (char *) glGetString(GL_EXTENSIONS);
+  if (str && strcmp(str, extstr))
+  {
+    newcontext = 1;
+    extstr = strdup(str);
+    fboSupport = strstr(extstr, "GL_ARB_framebuffer_object");
+  }
 #endif
 
   // Reset all context dependent stuff when new context detected
   if (!newcontext)
     return newcontext;
+
   printf("\n");
   printf("OpenGL Driver Info\n");
   printf("====================\n");
@@ -9315,24 +9353,7 @@ int getDisplayProperties()
   printf("GL_VERSION = %s\n", verstr);
   printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
   printf("GL_RENDERER = %s\n", rendstr);
-  printf("\n");
-  printf("OpenGL Extensions\n");
-  printf("====================\n");
-  // split up the extensions and check for specific attributes
-  char *tok[256];
-  int i = 0;
-  tok[i] = strtok(extstr, " ");
-  char *glfbo = "GL_ARB_framebuffer_object";
-  while(tok[i] != NULL)
-  {
-      printf("%s\n", tok[i]);
-      if (strcmp(tok[i], glfbo) == 0)
-      {
-         fbosupport = 1;
-      }
-      tok[++i] = strtok(NULL, " ");
-  }
-  printf("Number of OpenGL Extensions = %d\n", i);
+  printExtensions(extstr);
   printf("\n");
   printf("OpenGL Bits\n");
   printf("====================\n");
@@ -9489,13 +9510,16 @@ int getDisplayProperties()
     glDrawBuffer(GL_FRONT);  // Effectively disable double buffer.
 #endif
 
-  if (fbosupport)
+  if (fboSupport)
   {
       printf("OpenGL Framebuffer Object supported.\n");
   } else {
       printf("GL framebuffer object NOT supported.\n");
   }
 
+  printf("\n");
+  printf("LDGLite Processing\n");
+  printf("====================\n");
   return newcontext;
 }
 
@@ -10166,6 +10190,4 @@ main(int argc, char **argv)
   
   return exitcode;
 }
-
-
 

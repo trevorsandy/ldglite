@@ -18,6 +18,7 @@ contains(QT_ARCH, x86_64) {
 } else {
     ARCH = 32
 }
+DEFINES += ARCH=\\\"$$ARCH-bit\\\"
 message("~~~ LDGLITE $$ARCH-bit EXECUTABLE VERSION $$VERSION ~~~")
 
 unix: DEFINES += UNIX
@@ -152,12 +153,14 @@ macx {
 
     equals(QT_MAJOR_VERSION,4):equals(QT_MINOR_VERSION,7):equals(ARCH,32) {    # qt 4.7 carbon (32bit only)
         DEFINES += USING_CARBON
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
         MACOSX_FRAMEWORKS += -framework Carbon
         HEADERS += $$PWD/getargv.h
         SOURCES += $$PWD/getargv.c
         message("~~~ USING CARBON FRAMEWORK ~~~")
     } else {
         DEFINES += USING_COCOA
+        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
         MACOSX_FRAMEWORKS += -framework Cocoa
         message("~~~ USING COCOA FRAMEWORK ~~~")
     }

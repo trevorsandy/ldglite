@@ -44,7 +44,6 @@ for f in *.png; do
    [ -e "$f" ] && echo rm *.png
    break
 done
-echo " "
 if [[ $1 -eq 2 ]]; then
    echo "Executing ldglite legacy 1.3.1 bundle build..."
    if [ -d 00/ldglite.app ]; then
