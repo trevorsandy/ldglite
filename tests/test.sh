@@ -27,7 +27,7 @@ if [ ! -d ${LDRAWDIR}/parts ]; then
     echo "LDRAWDIR not found in ${LDRAWDIR}. Downloading ldraw library..."
     curl -O http://www.ldraw.org/library/updates/complete.zip
     echo "Extracting ldraw library into ${LDRAWDIR}..."
-    unzip -d ${LDRAWDIR} complete.zip
+    unzip -d ${LDRAWDIR} -q complete.zip
     echo "set LDRAWDIR environment variable..."
     ../set-ldrawdir.command
 fi
