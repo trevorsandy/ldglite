@@ -401,7 +401,7 @@ char *extstr = "";
 char *vendstr = "";
 char *rendstr = "";
 char *glslverstr = "";
-int fbosupport = 1;
+int fbosupport = 0;
 
 // Camera movement variables
 #define MOVE_SPEED 10.0
@@ -2776,15 +2776,15 @@ int getDisplayProperties();
 /***************************************************************/
 void reshapeCB(int width, int height)
 {
-  printf("reshape(%d, %d) -> (Width=%d, Height=%d)\n", 
-	 Width, Height, width, height);
-  reshape(width, height);
+    printf("reshape(%d, %d) -> (Width=%d, Height=%d)\n",
+           Width, Height, width, height);
+    reshape(width, height);
 
-  // On OSX I seem to need this flush when the shape changes on startup.
-  // Thats usually done to avoid the dock and the menu.
-  // Without the flush I lose some of the early geometry.
-  // Maybe I should only do this if the size actually changes?
-  printf("glFlush(reshapeCB)\n"); glFlush();
+    // On OSX I seem to need this flush when the shape changes on startup.
+    // Thats usually done to avoid the dock and the menu.
+    // Without the flush I lose some of the early geometry.
+    // Maybe I should only do this if the size actually changes?
+    printf("glFlush(reshapeCB)\n"); glFlush();
 }
 
 /***************************************************************/
@@ -2838,7 +2838,7 @@ void reshape(int width, int height)
     UNUSED(zfar);
     UNUSED(fov);
 
-    printf("reshape(debugging)\n");
+    // printf("reshape(debugging)\n");
 
     // Check for new opengl context on reshape() calls.
     // Should probably also do this when entering/leaving game mode.
@@ -2846,11 +2846,11 @@ void reshape(int width, int height)
     // and the dirtyWindow when I just want to reset the projection matrix.
     if (getDisplayProperties())
     {
-      // Uh Oh.  The graphics mode changed.  Dump saved buffers & redraw.
-      if (editing)
-	NukeSavedDepthBuffer();
-      dirtyWindow = 1;
-      glutPostRedisplay();
+        // Uh Oh.  The graphics mode changed.  Dump saved buffers & redraw.
+        if (editing)
+            NukeSavedDepthBuffer();
+        dirtyWindow = 1;
+        glutPostRedisplay();
     }
 
 #if 0
@@ -3579,10 +3579,8 @@ void DrawScene(void)
       merge_extents();
     }
   }
-  
-  printf("\n====================\n");
-  printf("glFlush(DrawScene)\n"); glFlush();
 
+  glFlush();
   dirtyWindow = 0;  // The window is nice and squeaky clean now.
 
   if (ldraw_commandline_opts.M == 'F')
@@ -9310,36 +9308,39 @@ int getDisplayProperties()
   // Reset all context dependent stuff when new context detected
   if (!newcontext)
     return newcontext;
-  printf("\nOpenGL Driver Info\n");
+  printf("\n");
+  printf("OpenGL Driver Info\n");
   printf("====================\n");
   printf("GL_VENDOR = %s\n", vendstr);
   printf("GL_VERSION = %s\n", verstr);
   printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
   printf("GL_RENDERER = %s\n", rendstr);
-  printf("\nOpenGL Extensions\n");
-  printf("===================\n");
-  // split up the extensions and check
-  // for specific attributes
+  printf("\n");
+  printf("OpenGL Extensions\n");
+  printf("====================\n");
+  // split up the extensions and check for specific attributes
   char *tok[256];
   int i = 0;
   tok[i] = strtok(extstr, " ");
-  while(tok[i]!=NULL)
+  char *glfbo = "GL_ARB_framebuffer_object";
+  while(tok[i] != NULL)
   {
       printf("%s\n", tok[i]);
-      if (tok[i] == "GL_ARB_framebuffer_object" )
+      if (strcmp(tok[i], glfbo) == 0)
       {
-         fbosupport = 0;
+         fbosupport = 1;
       }
       tok[++i] = strtok(NULL, " ");
   }
   printf("Number of OpenGL Extensions = %d\n", i);
-  printf("===================\n");
   printf("\n");
+  printf("OpenGL Bits\n");
+  printf("====================\n");
   glGetIntegerv(GL_RED_BITS, &rBits);
   glGetIntegerv(GL_GREEN_BITS, &gBits);
   glGetIntegerv(GL_BLUE_BITS, &bBits);
   glGetIntegerv(GL_ALPHA_BITS, &aBits);
-  printf("GL_RGBA_BITS = (%d, %d, %d, %d)\n", rBits, gBits, bBits, aBits);
+  printf("GL_RGBA_BITS (R,G,B,A) = (%d, %d, %d, %d)\n", rBits, gBits, bBits, aBits);
 
   glGetIntegerv(GL_DEPTH_BITS, &DepthBits);
   printf("GL_DEPTH_BITS = %d\n", DepthBits);
@@ -9474,6 +9475,9 @@ int getDisplayProperties()
   buffer_swap_mode = SWAP_TYPE_UNDEFINED;
 #endif
 
+  printf("\n");
+  printf("OpenGL Buffer Status\n");
+  printf("====================\n");
   printf("Buffer Swap Mode = %d\n", buffer_swap_mode);
 
 #ifdef USE_DOUBLE_BUFFER
@@ -9485,12 +9489,11 @@ int getDisplayProperties()
     glDrawBuffer(GL_FRONT);  // Effectively disable double buffer.
 #endif
 
-  printf("\n");
   if (fbosupport)
   {
-      printf("Video card supports GL_ARB_framebuffer_object.\n");
+      printf("OpenGL Framebuffer Object supported.\n");
   } else {
-      printf("Video card does NOT support GL_ARB_framebuffer_object.\n");
+      printf("GL framebuffer object NOT supported.\n");
   }
 
   return newcontext;
@@ -9730,15 +9733,14 @@ main(int argc, char **argv)
   UNUSED(rendstr);
   UNUSED(i);
 
-#if 0
+  printf("\n");
+  printf("LDGLite %s\n", ldgliteVersion);
+  printf("====================\n");
+
+  printf("Arguments = ");
   for (i = 0; i < argc; i++)
     printf("%s ", argv[i]);
   printf("\n");
-#endif
-  
-  printf("\n");
-  printf("Ldglite %s\n", ldgliteVersion);
-  printf("====================\n");
 
   platform_startup(&argc, &argv);
 	

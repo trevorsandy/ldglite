@@ -457,7 +457,9 @@ FILE *start_png(char *filename, int width, int height,
     *p = 0;
   strcat(filename, use_uppercase ? ".PNG" : ".png");
 
-  printf("\n===================\n");
+  printf("\n");
+  printf("LDGLite Output\n");
+  printf("====================\n");
   printf("Write PNG %s\n", filename);
   
   // Write header stuff
@@ -465,14 +467,14 @@ FILE *start_png(char *filename, int width, int height,
 				    png_error_fn, png_warning_fn);
   if (!png_ptr) 
   {
-    printf("No Memory", filename);
+    printf("No memory to write %s", filename);
     return(NULL);
   }
 
   info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr) {
     png_destroy_write_struct(&png_ptr,(png_infopp)NULL);
-    printf("No Memory", filename);
+    printf("No memory to write %s", filename);
     return(NULL);
   }
 
@@ -1343,30 +1345,23 @@ static CGLContextObj setupCGL(void)
   CGLPixelFormatObj pixelFormatObj;
   CGLContextObj  ctx;
   CGLError       err;
-  GLsizei        rowbytes;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
-  printf("Using Pixel Format Attribute for OSX/SDK 10.7 or earlier\n");
+  printf("Using GL Pixel Format Attributes for OSX/SDK 10.7 or earlier\n");
   CGLPixelFormatAttribute attribs[] = {
-                                           kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
                                            kCGLPFAOffScreen,
-                                           kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
-                                           kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
-                                           kCGLPFADepthSize,     (CGLPixelFormatAttribute)32,
-                                                                 (CGLPixelFormatAttribute)0
+                                           kCGLPFADepthSize, (CGLPixelFormatAttribute)32,
+                                           kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
+                                           kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
+                                                             (CGLPixelFormatAttribute)0
                                       };
-# else                                     // MacOSX 10.8 or later
-//#include <OpenGL/CGLTypes.h>
-//#include <OpenGL/CGLCurrent.h>
-  printf("Using Pixel Format Attribute for OSX/SDK 10.8 or later\n");
+# else
+  printf("Using GL Pixel Format Attributes for OSX/SDK 10.8 or later\n");
   CGLPixelFormatAttribute attribs[] = {
-
-                                           kCGLPFAOpenGLProfile, (CGLPixelFormatAttribute)kCGLOGLPVersion_Legacy,
-                                           kCGLPFAPBuffer,
-                                           kCGLPFAColorSize,     (CGLPixelFormatAttribute)24,
-                                           kCGLPFAAlphaSize,     (CGLPixelFormatAttribute)8,
-                                           kCGLPFADepthSize,     (CGLPixelFormatAttribute)32,
-                                                                 (CGLPixelFormatAttribute)0
+                                           kCGLPFADepthSize, (CGLPixelFormatAttribute)32,
+                                           kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
+                                           kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
+                                                             (CGLPixelFormatAttribute)0
                                       };
 #endif
 
@@ -1392,15 +1387,6 @@ static CGLContextObj setupCGL(void)
    	(CGLPixelFormatAttribute)0
    };
 #endif
-
-  /* Allocate the image buffer */
-  // NOTE:  4 bytes RGBA + 4 bytes depth per pixel?
-  OSbuffer = malloc(Width * Height * 8);
-
-  if (!OSbuffer) {
-    printf("Alloc image buffer failed!\n");
-    return NULL;
-  }
 
   /* Choose an rgb pixel format */
   err = CGLChoosePixelFormat (attribs, &pixelFormatObj, &numPixelFormats);
@@ -1433,7 +1419,17 @@ static CGLContextObj setupCGL(void)
   }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
+  /* Allocate an image buffer */
+  // NOTE:  4 bytes RGBA + 4 bytes depth per pixel?
+  OSbuffer = malloc(Width * Height * 8);
+
+  if (!OSbuffer) {
+    printf("Alloc image buffer failed!\n");
+    return NULL;
+  }
+
   /* Attach the off screen area to the context */
+  GLsizei rowbytes;
   rowbytes = Width * 4; // * sizeof(GLubyte);
   err = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
   if ( err != kCGLNoError ) {
@@ -1441,12 +1437,66 @@ static CGLContextObj setupCGL(void)
     return NULL;
   }
 #else
-  /* Attach the off screen area to the context */
-  rowbytes = Width * 4; // * sizeof(GLubyte);
-  err = CGLSetOffScreen (ctx, Width, Height, rowbytes, OSbuffer);
-  if ( err != kCGLNoError ) {
-    printf("CGLSetOffScreen returnerd CGLError (%s)\n", CGLErrorString(err));
-    return NULL;
+  /* Allocate frame and renderbuffer */
+  GLuint framebuffer, renderbuffer;
+  glGenFramebuffersEXT(1, &framebuffer);
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
+  glGenRenderbuffersEXT(1, &renderbuffer);
+  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbuffer);
+
+  glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, Width, Height);
+  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                               GL_RENDERBUFFER_EXT, renderbuffer);
+  GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+
+  // Get depth going
+  GLuint depthRenderbuffer;
+  glGenRenderbuffersEXT(1, &depthRenderbuffer);
+  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, Width, Height);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+  if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+  {
+      printf("Uh oh, bad status from glCheckFramebufferStatusEXT!\n");
+      // Handle returned status
+      if (status == GL_FRAMEBUFFER_UNDEFINED)
+      {
+          printf("The specified framebuffer is the default read or draw framebuffer, but the default framebuffer does not exist.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
+      {
+          printf("One or more of the framebuffer attachment points are framebuffer incomplete.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
+      {
+          printf("The framebuffer does not have at least one image attached to it.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
+      {
+          printf("The value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
+                 "for any color attachment point(s) named by GL_DRAW_BUFFER.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
+      {
+          printf("GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
+                 "for the color attachment point named by GL_READ_BUFFER.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_UNSUPPORTED)
+      {
+          printf("The combination of internal formats of the attached images violates an implementation-dependent set of restrictions.\n");
+      }
+      else if (status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
+      {
+          printf("The value of GL_RENDERBUFFER_SAMPLES is not the same for all attached renderbuffers;\n"
+                 "Altenatively, the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not the same for all attached textures;\n");
+      }
+      // returned errors
+      else if (status == GL_INVALID_ENUM)
+      {
+          printf("Target (GL_FRAMEBUFFER_EXT) is not GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER or GL_FRAMEBUFFER.\n");
+      }
+      return NULL;
   }
 #endif
 
@@ -1510,7 +1560,7 @@ int OffScreenRender()
     }
 #endif
 
-    getDisplayProperties();
+    //getDisplayProperties(); // remark here because called in reshape(W,H)
 
     initCamera();
     init();
@@ -1545,8 +1595,10 @@ int OffScreenRender()
    CleanupAGL( ctx );
 #endif
 #ifdef CGL_OFFSCREEN_OPTION
+#  if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
    /* free the image buffer */
    free( OSbuffer );
+#  endif
 
    CleanupCGL( ctx );
 #endif
