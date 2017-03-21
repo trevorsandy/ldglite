@@ -22,23 +22,23 @@ echo " "
 echo "START----------------------------------------------"
 echo " "
 LDRAWDIR=~/Library/ldraw
-LDSEARCHDIRS=
 if [ ! -d ${LDRAWDIR}/parts ]; then
-    echo "LDRAWDIR not found in ${LDRAWDIR}. Downloading ldraw library..."
+    echo "LDraw library not found in ${LDRAWDIR}. Downloading library..."
     curl -O http://www.ldraw.org/library/updates/complete.zip
-    echo "Extracting ldraw library into ${LDRAWDIR}..."
-    unzip -d ${LDRAWDIR} -q complete.zip
-    echo "set LDRAWDIR environment variable..."
-    ../set-ldrawdir.command
+    echo "Extracting LDraw library into ${LDRAWDIR}..."
+    unzip -d ~/Library -q complete.zip
 fi
-echo "LDRAWDIR:     ${LDRAWDIR}"
-echo "LDSEARCHDIRS: ${LDSEARCHDIRS}"
+echo "set LDRAWDIR in environment.plist..."
+../set-ldrawdir.command
+grep -A1 -e 'LDRAWDIR' ~/.MacOSX/environment.plist
+echo "export LDRAWDIR:     ${LDRAWDIR}"
 export LDRAWDIR
-export LDSEARCHDIRS
+echo "set LDRAWDIR Completed."
+
 ARGS="-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1"
 
 echo " "
-echo "NORMAL PART TEST-----------------------------------"
+echo "ASSEMBLY TEST--------------------------------------"
 echo " "
 for f in *.png; do
    [ -e "$f" ] && echo rm *.png

@@ -39,7 +39,7 @@ END2
 else
 if test -f ~/Library/ldraw/parts/3001.dat
 then
-echo "Setting LDRAWDIR to ~/Library/ldraw"
+echo "Setting LDRAWDIR to $PWD/Library/ldraw"
 cat <<END3  >>~/.MacOSX/environment.plist
 	<key>LDRAWDIR</key>
 	<string>$PWD/Library/ldraw</string>
@@ -86,7 +86,7 @@ END5
 else
 if test -f ~/Library/ldraw/parts/3001.dat
 then
-echo "Setting LDRAWDIR to ~/Library/ldraw"
+echo "Setting LDRAWDIR to $PWD/Library/ldraw"
 cat <<END6  >>~/.MacOSX/environment.plist
 	<key>LDRAWDIR</key>
 	<string>$PWD/Library/ldraw</string>
