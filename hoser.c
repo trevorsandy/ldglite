@@ -10,6 +10,9 @@
 #include <math.h>
 #include <stdio.h>
 
+// Suppress all those pesty unused errors
+#define UNUSED(x) (void)(x)
+
 void hoseout(void);
 
 //************************************************************************
@@ -406,7 +409,7 @@ void hoseout(void)
   {
     FILE *fp;
     int bytes = 0;
-    
+    UNUSED(bytes);
     fp = fopen("hoseout.dat","w+");
     fprintf(fp, maintext);
     fclose(fp);

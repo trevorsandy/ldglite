@@ -214,6 +214,11 @@ void dirmenu(int item)
 
   extern char modelspath[];
 
+  UNUSED(i);
+  UNUSED(len1);
+  UNUSED(len3);
+  UNUSED(filename);
+
   if (item == 15) // Real Refresh
     minfilenum = 0;
   if (item == 0) // Nothing (seperator line)
@@ -291,6 +296,11 @@ void filemenu(int item)
   char filename[256];
 
   extern char modelspath[];
+
+  UNUSED(i);
+  UNUSED(len1);
+  UNUSED(len3);
+  UNUSED(filename);
 
   if (item == 15) // Real Refresh
     minfilenum = 0;

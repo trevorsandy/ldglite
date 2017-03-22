@@ -79,6 +79,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
   int   lenDir;
   int   filecount = 0;
   int   i;
+  UNUSED(lenDir);
 #ifdef _WIN32_NATIVE_FILE_OPS
   HANDLE            searchPath = NULL;
   // LPCTSTR == const char *
@@ -91,6 +92,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
   size_t cnt, length;
   glob_t glob_results;
   char **p;
+  UNUSED(length);
 #endif
 
   for(i = 0; i < MAX_DIR_ENTRIES; i++)
@@ -202,6 +204,7 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
   int   lenDir;
   int   filecount = 0;
   int   i;
+  UNUSED(lenDir);
 #ifdef _WIN32_NATIVE_FILE_OPS
   HANDLE            searchPath = NULL;
   // LPCTSTR == const char *
@@ -214,6 +217,7 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
   size_t cnt, length;
   glob_t glob_results;
   char **p;
+  UNUSED(length);
 #endif
     
   for(i = 0; i < MAX_DIR_ENTRIES; i++)

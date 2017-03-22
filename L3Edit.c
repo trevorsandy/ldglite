@@ -149,6 +149,7 @@ int Delete1Part(int partnum)
       return -1;
     free(SelectedLinePtr);
     SelectedLinePtr = NULL;
+    UNUSED(partnum);
 
     return 0;
 }
@@ -335,7 +336,8 @@ int Translate1Part(int partnum, float m[4][4])
     float          m1[4][4];
     int            i = 0;
     struct L3LineS *LinePtr;
-    
+    UNUSED(m1);
+
     if (SelectedLinePtr)
 	LinePtr = SelectedLinePtr;
 
@@ -1079,6 +1081,7 @@ int Init1LineCounter()
 {
   LineNoCounter = 0;
   BufALineNo = -1;
+  return 0;
 }
 
 /*****************************************************************************/
@@ -1087,6 +1090,7 @@ int BufA1Store(int IsModel, struct L3LineS *LinePtr)
   if (!IsModel)
     return 0;
   
+  UNUSED(LinePtr);
   BufALineNo = LineNoCounter;
 
   return BufALineNo;
@@ -1099,6 +1103,7 @@ int BufA1Retrieve(int IsModel, struct L3LineS *LinePtr)
   if (!IsModel)
     return 0;
   
+  UNUSED(LinePtr);
   return BufALineNo;
 }
 
@@ -1108,6 +1113,7 @@ int Skip1Line(int IsModel, struct L3LineS *LinePtr)
   if (!IsModel)
     return 0;
   
+  UNUSED(LinePtr);
   LineNoCounter++;
 
   if (!editing)
@@ -1648,6 +1654,10 @@ int Hose1Part(int partnum, int steps)
     double         angle;
     int            drawlines = 0;
 
+    UNUSED(n);
+    UNUSED(Color);
+    UNUSED(Comment);
+
     if (steps < 0)
     {
       drawlines = 1;
@@ -1964,6 +1974,10 @@ int hoseseg(char *segname, int color, float m[4][4])
       {0.0,0.0,1.0,0.0},
       {0.0,0.0,0.0,1.0}
     };
+    UNUSED(PrevPtr);
+    UNUSED(FirstPtr);
+    UNUSED(LastPtr);
+    UNUSED(m1);
 
     LinePtr = SelectedLinePtr;
 
@@ -1996,6 +2010,8 @@ int hoseseg(char *segname, int color, float m[4][4])
     // Switch to part 755.dat
     SelectedLinePtr = NextPtr;
     Swap1Part(0, segname);
+
+    return 0;
 }
 
 /*****************************************************************************/
@@ -2187,6 +2203,7 @@ int CreateZeroBase()
   lp->v[1][0] = -.04; lp->v[1][1] =  0; lp->v[1][2] =  -1.08;
 
   ZeroBase = PartPtr;
+  return 0;
 }
 
 /*****************************************************************************/
@@ -2211,6 +2228,7 @@ int CreateTurnAxis()
   LinePtr->PartPtr = ZeroBase;
 
   TurnAxis = PartPtr;
+  return 0;
 }
 
 /*****************************************************************************/

@@ -371,6 +371,7 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 			  extern int curpiece;
 			  extern int DrawToCurPiece;
 			  void DrawModel(void);
+              UNUSED(j);
               UNUSED(opts);
               UNUSED(dcp);
               UNUSED(cp);

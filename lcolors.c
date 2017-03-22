@@ -204,6 +204,7 @@ int alias_peeron_colors(void)
   zcolor_alias(UNKNOWN_COLOR, "Violet");
   zcolor_alias(15, "White");
   zcolor_alias(14, "Yellow");
+  return 0;
 }
 #endif
 

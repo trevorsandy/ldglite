@@ -315,6 +315,7 @@ int renderbuffer = GL_FRONT;
 GLint rBits, gBits, bBits, aBits;
 GLint DepthBits = 0;
 GLint StencilBits = 0;
+GLint ColorAttachments = 0;
 GLuint cbuffer_region = 0;
 GLuint zbuffer_region = 0;
 //static float *zbufdata = NULL;   // NOTE: gotta free when finished editing.
@@ -2775,7 +2776,6 @@ void VISIBILITY(int state)
 
 /***************************************************************/
 int getDisplayProperties();
-void printExtensions(char * ptr);
 
 /***************************************************************/
 void reshapeCB(int width, int height)
@@ -2842,7 +2842,7 @@ void reshape(int width, int height)
     UNUSED(zfar);
     UNUSED(fov);
 
-    printf("reshape(debugging)\n");
+    //printf("reshape(debugging)\n");
 
     // Check for new opengl context on reshape() calls.
     // Should probably also do this when entering/leaving game mode.
@@ -3583,8 +3583,10 @@ void DrawScene(void)
       merge_extents();
     }
   }
+  printf("DrawScene\n");
 
-  printf("glFlush(DrawScene)"); glFlush();
+  //printf("glFlush(DrawScene)\n");
+  glFlush();
 
   dirtyWindow = 0;  // The window is nice and squeaky clean now.
 
@@ -9264,41 +9266,50 @@ int registerGlutCallbacks()
 }
 
 /***************************************************************/
-void printExtensions(char * ptr)
-{
-    printf("\n");
-    printf("OpenGL Extensions\n");
-    printf("====================\n");
-    printf("%s\n", ptr);
+char *
+str_replace ( const char *string, const char *substr, const char *replacement, int *tokcount){
+  char *tok = NULL;
+  char *newstr = NULL;
+  char *oldstr = NULL;
+  char *head = NULL;
+  int count = 0;
 
-//    // split up the extensions
-//    char *tok;
-//    int i;
-//    for (i = 0, tok = strtok(ptr, " "); tok != NULL; tok = strtok(NULL, " "), i++)
-//    {
-//        printf("%s\n", tok);
-//    }
-//    printf("Number of OpenGL Extensions = %d\n", i);
-
-//    // for specific attributes
-//    char *tok[256];
-//    int i = 0;
-//    tok[i] = strtok(ptr, " ");
-//    while(tok[i]!=NULL)
-//    {
-//        printf("%s\n", tok[i]);
-//        tok[++i] = strtok(NULL, " ");
-//    }
-//    printf("Number of OpenGL Extensions = %d\n", i);
-    ptr = NULL;
+  /* if either substr or replacement is NULL, duplicate string a let caller handle it */
+  if ( substr == NULL || replacement == NULL ) return strdup (string);
+  newstr = strdup (string);
+  head = newstr;
+  while ( (tok = strstr ( head, substr ))){
+    oldstr = newstr;
+    newstr = malloc ( strlen ( oldstr ) - strlen ( substr ) + strlen ( replacement ) + 1 );
+    /*failed to alloc mem, free old string and return NULL */
+    if ( newstr == NULL ){
+      free (oldstr);
+      return NULL;
+    } else {
+      count++;
+    }
+    memcpy ( newstr, oldstr, tok - oldstr );
+    memcpy ( newstr + (tok - oldstr), replacement, strlen ( replacement ) );
+    memcpy ( newstr + (tok - oldstr) + strlen( replacement ), tok + strlen ( substr ), strlen ( oldstr ) - strlen ( substr ) - ( tok - oldstr ) );
+    memset ( newstr + strlen ( oldstr ) - strlen ( substr ) + strlen ( replacement ) , 0, 1 );
+    /* move back head right after the last replacement */
+    head = newstr + (tok - oldstr) + strlen( replacement );
+    free (oldstr);
+  }
+  *tokcount = count;
+  return newstr;
 }
 
 /***************************************************************/
 int getDisplayProperties()
 {
-  char *str;
-  char *fboSupport;
+  char *str = NULL;
+  char *fboSupport = NULL;
+  char *formatted_extstr = NULL;
+  char substr[] = " ";
+  char replacement[] = "\n";
   int newcontext = 0;
+  int extcount = 0;
 
 #ifdef SIMULATE_APPLE_BUGS
   if (strcmp(verstr, "1.1 APPLE-1.1"))
@@ -9339,6 +9350,7 @@ int getDisplayProperties()
     newcontext = 1;
     extstr = strdup(str);
     fboSupport = strstr(extstr, "GL_ARB_framebuffer_object");
+    formatted_extstr = str_replace (extstr, substr, replacement, &extcount);
   }
 #endif
 
@@ -9353,8 +9365,11 @@ int getDisplayProperties()
   printf("GL_VERSION = %s\n", verstr);
   printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
   printf("GL_RENDERER = %s\n", rendstr);
-  printExtensions(extstr);
   printf("\n");
+  printf("OpenGL Extensions\n");
+  printf("====================\n");
+  printf("Number of OpenGL Extensions = %d\n", extcount);
+  printf("%s\n", formatted_extstr);
   printf("OpenGL Bits\n");
   printf("====================\n");
   glGetIntegerv(GL_RED_BITS, &rBits);
@@ -9496,11 +9511,6 @@ int getDisplayProperties()
   buffer_swap_mode = SWAP_TYPE_UNDEFINED;
 #endif
 
-  printf("\n");
-  printf("OpenGL Buffer Status\n");
-  printf("====================\n");
-  printf("Buffer Swap Mode = %d\n", buffer_swap_mode);
-
 #ifdef USE_DOUBLE_BUFFER
   // NOTE: Mesa segfaults if I do this BEFORE CreateWindow/EnterGameMode
   //glDrawBuffer(GL_FRONT_AND_BACK); // Hmm, why did I want FRONT_AND_BACK? 
@@ -9510,12 +9520,20 @@ int getDisplayProperties()
     glDrawBuffer(GL_FRONT);  // Effectively disable double buffer.
 #endif
 
+  printf("\n");
+  printf("OpenGL Buffer Status\n");
+  printf("====================\n");
   if (fboSupport)
   {
       printf("OpenGL Framebuffer Object supported.\n");
+      glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS_EXT, &ColorAttachments);
+      printf("OpenGL Max Color Attachments = %d\n", ColorAttachments);
   } else {
-      printf("GL framebuffer object NOT supported.\n");
+      printf("OpenGL framebuffer object NOT supported.\n");
   }
+  printf("Buffer Swap Mode = %d\n", buffer_swap_mode);
+
+  free (formatted_extstr);
 
   printf("\n");
   printf("LDGLite Processing\n");

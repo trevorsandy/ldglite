@@ -71,7 +71,12 @@ AGLContext ctx;
 //#include <OpenGL/CGLTypes.h>
 //#include <OpenGL/CGLCurrent.h>
 #include <OpenGL/gl.h>
+#include <Availability.h>         // OSX Versions
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
 void *OSbuffer = NULL;
+# else
+GLuint framebuffer, fb_renderbuffer, fb_depthRenderbuffer;
+#endif
 CGLContextObj ctx;
 #endif
 char *pix;
@@ -1338,7 +1343,6 @@ void CleanupAGL( AGLContext ctx )
 
 #ifdef CGL_OFFSCREEN_OPTION
 //************************************************************************
-#include <Availability.h>         // OSX Versions
 static CGLContextObj setupCGL(void)
 {
   int numPixelFormats = 0; // long numPixelFormats = 0;
@@ -1437,67 +1441,80 @@ static CGLContextObj setupCGL(void)
     return NULL;
   }
 #else
-  /* Allocate frame and renderbuffer */
-  GLuint framebuffer, renderbuffer;
-  glGenFramebuffersEXT(1, &framebuffer);
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
-  glGenRenderbuffersEXT(1, &renderbuffer);
-  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbuffer);
-
-  glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, Width, Height);
-  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
-                               GL_RENDERBUFFER_EXT, renderbuffer);
-  GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-
-  // Get depth going
-  GLuint depthRenderbuffer;
-  glGenRenderbuffersEXT(1, &depthRenderbuffer);
-  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, Width, Height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-
-  if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+  /* Perform Renderer Checks */
+  char *str = NULL;
+  char *fboSupport = NULL;
+  str = (char *) glGetString(GL_EXTENSIONS);
+  if (str)
   {
-      printf("Uh oh, bad status from glCheckFramebufferStatusEXT!\n");
-      // Handle returned status
-      if (status == GL_FRAMEBUFFER_UNDEFINED)
+    fboSupport = strstr(str, "GL_ARB_framebuffer_object");
+  }
+  str = NULL;
+  if (fboSupport) {
+      /* Allocate frame and renderbuffer */
+      glGenFramebuffersEXT(1, &framebuffer);
+      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, framebuffer);
+      glGenRenderbuffersEXT(1, &fb_renderbuffer);
+      glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fb_renderbuffer);
+
+      glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA8, Width, Height);
+      glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                                   GL_RENDERBUFFER_EXT, fb_renderbuffer);
+      GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+
+      /* Get depth going */
+      glGenRenderbuffersEXT(1, &fb_depthRenderbuffer);
+      glBindRenderbuffer(GL_RENDERBUFFER, fb_depthRenderbuffer);
+      glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, Width, Height);
+      glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, fb_depthRenderbuffer);
+
+      if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
       {
-          printf("The specified framebuffer is the default read or draw framebuffer, but the default framebuffer does not exist.\n");
+          printf("Uh oh, bad status from glCheckFramebufferStatusEXT!\n");
+          // Handle returned status
+          if (status == GL_FRAMEBUFFER_UNDEFINED)
+          {
+              printf("The specified framebuffer is the default read or draw framebuffer, but the default framebuffer does not exist.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
+          {
+              printf("One or more of the framebuffer attachment points are framebuffer incomplete.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
+          {
+              printf("The framebuffer does not have at least one image attached to it.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
+          {
+              printf("The value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
+                     "for any color attachment point(s) named by GL_DRAW_BUFFER.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
+          {
+              printf("GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
+                     "for the color attachment point named by GL_READ_BUFFER.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_UNSUPPORTED)
+          {
+              printf("The combination of internal formats of the attached images violates an implementation-dependent set of restrictions.\n");
+          }
+          else if (status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
+          {
+              printf("The value of GL_RENDERBUFFER_SAMPLES is not the same for all attached renderbuffers;\n"
+                     "Altenatively, the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not the same for all attached textures;\n");
+          }
+          // returned errors
+          else if (status == GL_INVALID_ENUM)
+          {
+              printf("Target (GL_FRAMEBUFFER_EXT) is not GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER or GL_FRAMEBUFFER.\n");
+          }
+          return NULL;
       }
-      else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT)
-      {
-          printf("One or more of the framebuffer attachment points are framebuffer incomplete.\n");
-      }
-      else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
-      {
-          printf("The framebuffer does not have at least one image attached to it.\n");
-      }
-      else if (status == GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER)
-      {
-          printf("The value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
-                 "for any color attachment point(s) named by GL_DRAW_BUFFER.\n");
-      }
-      else if (status == GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER)
-      {
-          printf("GL_READ_BUFFER is not GL_NONE and the value of GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE is GL_NONE\n"
-                 "for the color attachment point named by GL_READ_BUFFER.\n");
-      }
-      else if (status == GL_FRAMEBUFFER_UNSUPPORTED)
-      {
-          printf("The combination of internal formats of the attached images violates an implementation-dependent set of restrictions.\n");
-      }
-      else if (status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE)
-      {
-          printf("The value of GL_RENDERBUFFER_SAMPLES is not the same for all attached renderbuffers;\n"
-                 "Altenatively, the value of GL_TEXTURE_FIXED_SAMPLE_LOCATIONS is not the same for all attached textures;\n");
-      }
-      // returned errors
-      else if (status == GL_INVALID_ENUM)
-      {
-          printf("Target (GL_FRAMEBUFFER_EXT) is not GL_DRAW_FRAMEBUFFER, GL_READ_FRAMEBUFFER or GL_FRAMEBUFFER.\n");
-      }
+  } else {
+      printf("OpenGL framebuffer object NOT supported.\n");
       return NULL;
   }
+
 #endif
 
   return ctx;
@@ -1598,8 +1615,12 @@ int OffScreenRender()
 #  if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
    /* free the image buffer */
    free( OSbuffer );
+#else
+   /* clean up framebuffer and renderbuffer */
+   glDeleteRenderbuffersEXT(1, &fb_depthRenderbuffer);
+   glDeleteRenderbuffersEXT(1, &fb_renderbuffer);
+   glDeleteFramebuffersEXT(1, &framebuffer);
 #  endif
-
    CleanupCGL( ctx );
 #endif
 
