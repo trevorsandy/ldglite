@@ -1,5 +1,5 @@
 ![Icon][icon]
-#Ldglite  [![Build Status][travis-badge]][travis]
+# Ldglite  [![Build Status][travis-badge]][travis]
 
 **Ldglite** is a program that lets you create, edit, and view Lego brick
 models stored in LDRAW format. It was created by connecting the LDLite
