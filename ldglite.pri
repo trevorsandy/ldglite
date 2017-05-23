@@ -50,6 +50,3 @@ OTHER_FILES += \
     $$PWD/doc/README.TXT \
     $$PWD/set-ldrawdir.command \
     $$PWD/.travis.yml
-
-RC_FILE  += \
-    $$PWD/ldglite.rc

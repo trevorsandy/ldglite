@@ -297,9 +297,10 @@ Command line options (see also the original ldlite docs for more):
 -2g,2x will also scale up the image (and edge lines) by 2 first.
    The result is a nice pretty antialiased image.  Edges are smooth.
    Transparent parts are blended instead of dithered.
-=LDConfig.ldr file. You can also include an optional LDConfig.ldr filename.
-    eg. -@\foo\CustomLDConfig.ldr. If not used, ldglite will attempt to load
-	the LDConfig.ldr from the default locations (LDRAWDIR and CWD).
+=LDConfig.ldr file. Optionally, you can include an LDConfig.ldr filename
+   as an command line argument. e.g. =foo\\CustomLDConfig.ldr. If not used, 
+   ldglite will attempt to load the LDConfig.ldr from the default locations 
+   (LDRAWDIR and CWD).
 
 Hot Keys (especially useful in fullscreen gamemode):
 NOTE:  A few keys were changed in 0.9.0 to accomodate LEDIT emulation mode.
