@@ -7,7 +7,7 @@ TEMPLATE = app
 # The ABI version.
 VER_MAJ = 1
 VER_MIN = 3
-VER_PAT = 2
+VER_PAT = 3
 VER_BLD = 0
 win32: VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT"."$$VER_BLD # major.minor.patch.build
 else: VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT              # major.minor.patch
@@ -29,6 +29,7 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ldrawini
 
+CONFIG += static
 CONFIG += skip_target_version_ext
 TARGET = ldglite
 CONFIG(debug, debug|release) {
@@ -38,6 +39,7 @@ CONFIG(debug, debug|release) {
     DESTDIR = release
     BUILD = RELEASE
 }
+
 message("~~~ LDGLITE $$BUILD BUILD ~~~")
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
@@ -112,9 +114,13 @@ win32 {
     CONFIG += windows
     CONFIG += debug_and_release
 
+    QMAKE_LFLAGS += -static
+    QMAKE_LFLAGS += -static-libgcc
+    QMAKE_LFLAGS += -static-libstdc++
+
     QMAKE_TARGET_COMPANY = "Don Heyse"
     QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
-    QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2016  Don Heyse"
+    QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017  Don Heyse"
     QMAKE_TARGET_PRODUCT = "LDGLite ($$ARCH-bit)"
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
