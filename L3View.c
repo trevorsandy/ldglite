@@ -70,6 +70,8 @@ extern int ldlite_parse_colour_meta(char *s);
 extern int include_stack_ptr;
 extern int hardcolor;
 
+extern char ldconfigfilename[256];
+
 //************************************************************************
 void MakePartBox(struct L3PartS *PartPtr,float m[4][4], vector3d bb3d[8])
 {
@@ -445,7 +447,7 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 					(int)m1[1][0], (int)m1[1][1], (int)m1[1][2], (int)m1[1][3]);
 			}
 
-			// Intercept the ldconfig.ldr !COLOUR meta command.
+			// Intercept the LDConfig.ldr !COLOUR meta command.
 			if (ldlite_parse_colour_meta(s))
 			  break;
 #else
@@ -822,7 +824,7 @@ struct L3PartS *LoadRC()
 
   struct L3PartS *PartPtr;
 
-  PartPtr = FindPart(0, "ldconfig.ldr");
+  PartPtr = FindPart(0, ldconfigfilename);
   if (PartPtr)
     if (LoadPart(PartPtr, false, NULL) != 2)
       return(PartPtr);

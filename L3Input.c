@@ -89,6 +89,9 @@ extern char partspath[256];
 extern char modelspath[256];
 extern char datfilepath[256];
 extern int use_uppercase;
+
+extern char ldconfig[256];
+extern char ldconfigfilename[256];
 #endif
 
 #ifdef LOGFP
@@ -675,11 +678,13 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
          fp = fopen(Path, "rt");
       }
 #endif
-      /* If still not found, try LDRAWDIR itself for ldconfig.ldr */
-      if (!fp && (stricmp(DatName, "ldconfig.ldr") == 0))
+      /* If still not found, try LDConfig.ldr */
+      if (!fp && (stricmp(DatName, ldconfigfilename) == 0))
       {
-    	 concat_path(pathname, DatName, Path);
+         strcpy(Path, ldconfig);
          fp = fopen(Path, "rt");
+         if (!fp)
+           printf("Could not open LDConfig (%s)\n", ldconfig);
       }
    }
    return (fp);

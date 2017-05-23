@@ -256,7 +256,9 @@ Command line options (see also the original ldlite docs for more):
    through ldglite and produce an image file.  For example ldrawmode for
    emacs could possibly be extended to use this to send a dat file in the
    buffer out to the printer.  (especially if I add postscript output)
-
+=LDConfig.ldr file. You can also include an optional LDConfig.ldr filename.
+   eg. -@\foo\CustomLDConfig.ldr. If not used, ldglite will attempt to load
+   the LDConfig.ldr from the default locations (LDRAWDIR and CWD).
 
 Hot Keys (especially useful in fullscreen gamemode):
 NOTE:  A few keys were changed in 0.9.0 to accomodate LEDIT emulation mode.

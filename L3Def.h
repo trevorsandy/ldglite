@@ -325,6 +325,10 @@ extern int           SaveLine(struct L3LineS *** LinePtrPtrPtr,
                               struct L3LineS * Data, char *Comment);
 extern void         GetLDrawSearchDirs(int *ErrorCode);
 
+/* Expose to Main.c and L3Input.c */
+extern char          ldconfig[256];
+extern char          ldconfigfilename[256];
+
 /* L3PoV.cpp */
 extern struct PovPartS *FindPovPart(char *DatName);
 extern void          PrintPovPartsList(FILE *fp);

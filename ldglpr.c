@@ -125,6 +125,9 @@ FILE *start_bmp(char *filename, int width, int height)
   FILE *fp;
   char hdr[54];
 
+  printf("\n");
+  printf("LDGLite Output\n");
+  printf("====================\n");
   printf("Write BMP %s\n", filename);
   if ((fp = fopen(filename,"wb+"))==NULL) {
     printf("Could not open %s\n", filename);
@@ -293,7 +296,10 @@ FILE *start_ppm(char *filename, int width, int height)
   if ((p = strrchr(filename, '.')) != NULL)
     *p = 0;
   strcat(filename, use_uppercase ? ".PPM" : ".ppm");
-  
+
+  printf("\n");
+  printf("LDGLite Output\n");
+  printf("====================\n");
   printf("Write PPM %s\n", filename);
   
   fp = fopen(filename, "wb");  // open in binary mode (to use unix \n chars)

@@ -35,7 +35,7 @@ echo "export LDRAWDIR:     ${LDRAWDIR}"
 export LDRAWDIR
 echo "set LDRAWDIR Completed."
 
-ARGS="-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1"
+ARGS="-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l"
 
 echo " "
 echo "ASSEMBLY TEST--------------------------------------"

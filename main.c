@@ -77,6 +77,9 @@ extern char partspath[256];
 extern char modelspath[256];
 extern char datfilepath[256];
 
+char ldconfig[256] = {0};
+char ldconfigfilename[256] = {0};
+
 char userpath[256];
 char bitmappath[256];
 
@@ -3135,19 +3138,19 @@ int ldlite_parse_with_rc(char *filename)
   FILE *fp;
   int bytes = 0;
 
-  fp = fopen("ldconfig.ldr","rb"); // Try the official ldconfig.ldr first.
+  fp = fopen(ldconfigfilename,"rb"); // Try the official LDConfig.ldr first.
   if (fp == NULL)
   {
     char filename[256];
-    concat_path(datfilepath, "ldconfig.ldr", filename);
+    concat_path(datfilepath, ldconfigfilename, filename);
     if (filename[0] == '.') // I hate the ./filename thing.
-      strcpy(filename, "ldconfig.ldr");
+      strcpy(filename, ldconfigfilename);
     fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
     if (fp == NULL)
     {
       strcpy(filename, primitivepath);
       filename[strlen(filename)-1] = 0;
-      strcat(filename, "ldconfig.ldr");
+      strcat(filename, ldconfigfilename);
       fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
     }   
   }
@@ -3187,7 +3190,7 @@ int ldlite_parse_colour_meta(char *s)
 	break;
     }
 
-    // Intercept the ldconfig.ldr !COLOUR meta command.
+    // Intercept the LDConfig.ldr !COLOUR meta command.
     if (strncmp(s,"!COLOUR",7) == 0)
     {
       // 0 !COLOUR Phosphor_White    CODE  21  VALUE #E0FFB0  EDGE #77CC00  ALPHA 250  LUMINANCE 15
@@ -8506,6 +8509,20 @@ void ParseParams(int *argc, char **argv)
       if ((n > 2) && (wy >= 0))
 	YwinPos = wy;
     }
+    else if (pszParam[0] == '=')
+    {
+      // remove '='
+      memmove(pszParam, pszParam+1, strlen(pszParam));
+      if (pszParam[0])
+      {
+         char ldconfigfilepath[256];
+         strcpy(ldconfigfilename, basename(pszParam));
+         strcpy(ldconfigfilepath, dirname(pszParam));
+         strcat(ldconfigfilepath, ldconfigfilename);
+         strcpy(ldconfig, localize_path(ldconfigfilepath));
+         printf("LDConfig = (%s)\n", ldconfig);
+      }
+    }
     else if (pszParam[0] != '-') 
     {
       // It must be a filename.  Save it for parsing.
@@ -8775,11 +8792,13 @@ void ParseParams(int *argc, char **argv)
 	{
 	  parsername = L3_PARSER;
 	  use_quads = 1;
+	  printf("Parser = L3\n");
 	}
 	else if (toupper(pszParam[1]) == 'D')
 	{
 	  parsername = LDLITE_PARSER;
 	  use_quads = 0;
+	  printf("Parser = LDLite\n");
 	}
 	else if (pszParam[1] == 'e')
 	{
@@ -9039,6 +9058,14 @@ void ParseParams(int *argc, char **argv)
     }
   }
   
+  // Init ldconfigfilename and ldconfig with LDraw LDConfig default if not set yet
+  if (!strlen(ldconfig))
+  {
+    sprintf(ldconfigfilename, "LDConfig.ldr");
+    concat_path(pathname, ldconfigfilename, ldconfig);
+    printf("Using default LDConfig (%s)\n", ldconfig);
+  }
+
   // Tiled rendering does not work offscreen.  Just use one big bitmap.
   if (OffScreenRendering && tiledRendering)
   {
@@ -9332,12 +9359,14 @@ int getDisplayProperties()
     newcontext = 1;
     vendstr = strdup(str);
   }
+#ifndef WIN_DIB_OPTION
   str = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
   if (str && strcmp(str, glslverstr))
   {
     newcontext = 1;
     glslverstr = strdup(str);
   }
+#endif
   str = (char *)glGetString(GL_RENDERER);
   if (str && strcmp(str, rendstr))
   {
@@ -9363,13 +9392,16 @@ int getDisplayProperties()
   printf("====================\n");
   printf("GL_VENDOR = %s\n", vendstr);
   printf("GL_VERSION = %s\n", verstr);
-  printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
   printf("GL_RENDERER = %s\n", rendstr);
+#ifndef WIN_DIB_OPTION
+  printf("GL_SHADING_LANGUAGE_VERSION = %s\n", glslverstr);
+#endif
   printf("\n");
   printf("OpenGL Extensions\n");
   printf("====================\n");
   printf("Number of OpenGL Extensions = %d\n", extcount);
   printf("%s\n", formatted_extstr);
+  printf("\n");
   printf("OpenGL Bits\n");
   printf("====================\n");
   glGetIntegerv(GL_RED_BITS, &rBits);
@@ -9523,6 +9555,7 @@ int getDisplayProperties()
   printf("\n");
   printf("OpenGL Buffer Status\n");
   printf("====================\n");
+#ifndef WIN_DIB_OPTION
   if (fboSupport)
   {
       printf("OpenGL Framebuffer Object supported.\n");
@@ -9531,6 +9564,7 @@ int getDisplayProperties()
   } else {
       printf("OpenGL framebuffer object NOT supported.\n");
   }
+#endif
   printf("Buffer Swap Mode = %d\n", buffer_swap_mode);
 
   free (formatted_extstr);
