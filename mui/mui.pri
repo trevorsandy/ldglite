@@ -19,4 +19,5 @@ SOURCES += \
     $$PWD/src/mui/pulldown.c \
     $$PWD/src/mui/textlist.c \
     $$PWD/src/mui/uicolor.c \
-    $$PWD/src/mui/vslider.c
+    $$PWD/src/mui/vslider.c \
+	$$PWD/../ldglgui.c

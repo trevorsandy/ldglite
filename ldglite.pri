@@ -1,8 +1,6 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 HEADERS += \
-   $$PWD/ldrawini/LDrawIni.h \
-   $$PWD/ldrawini/LDrawInP.h \
    $$PWD/dirscan.h \
    $$PWD/f00QuatC.h \
    $$PWD/glext.h \
@@ -19,7 +17,6 @@ HEADERS += \
    $$PWD/y.tab.h \
 
 SOURCES += \
-   $$PWD/ldrawini/LDrawIni.c \
    $$PWD/camera.c \
    $$PWD/dirscan.c \
    $$PWD/f00QuatC.c \

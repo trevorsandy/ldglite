@@ -53,6 +53,7 @@ DEFINES += USE_BMP8
 DEFINES += HAVE_STRDUP
 
 include($$PWD/ldglite.pri)
+include(ldrawini/ldrawini.pri)
 
 ENABLE_PNG {
     DEFINES += USE_PNG
@@ -97,8 +98,7 @@ ENABLE_PNG {
 
 ENABLE_TILE_RENDERING {
     DEFINES += TILE_RENDER_OPTION
-    HEADERS += $$PWD/tr.h
-    SOURCES += $$PWD/tr.c
+    include(tiles.pri)
 }
 
 ENABLE_TEST_GUI {
@@ -107,7 +107,6 @@ ENABLE_TEST_GUI {
     INCLUDEPATH += \
     $$PWD/mui/src
     include(mui/mui.pri)
-    SOURCES += $$PWD/ldglgui.c
 }
 
 win32 {
@@ -163,8 +162,7 @@ macx {
         DEFINES += USING_CARBON
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.7
         MACOSX_FRAMEWORKS += -framework Carbon
-        HEADERS += $$PWD/getargv.h
-        SOURCES += $$PWD/getargv.c
+        include(carbon.pri)
         message("~~~ USING CARBON FRAMEWORK ~~~")
     } else {
         DEFINES += USING_COCOA
