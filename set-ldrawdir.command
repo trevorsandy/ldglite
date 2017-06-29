@@ -113,4 +113,3 @@ tail -n2 ~/.MacOSX/environment.plist | cat >> ~/Library/Preferences/org.ldraw.pl
 else
 echo "org.ldraw.plist already exists"
 fi
-

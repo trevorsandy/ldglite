@@ -18,8 +18,8 @@ contains(QT_ARCH, x86_64) {
 } else {
     ARCH = 32
 }
-DEFINES += ARCH=\\\"$$ARCH-bit\\\"
-message("~~~ LDGLITE $$ARCH-bit EXECUTABLE VERSION $$VERSION ~~~")
+DEFINES += ARCH=\\\"$$join(ARCH,,,bit)\\\"
+message("~~~ LDGLITE $$join(ARCH,,,bit) EXECUTABLE VERSION $$VERSION ~~~")
 
 unix: DEFINES += UNIX
 macx: DEFINES += MACOS_X
@@ -120,7 +120,7 @@ win32 {
     QMAKE_TARGET_COMPANY = "Don Heyse"
     QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
     QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017 Don Heyse, Trevor SANDY"
-    QMAKE_TARGET_PRODUCT = "LDGLite ($$ARCH-bit)"
+    QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
     RC_LANG = "English (United Kingdom)"
     RC_ICONS = "ldglite.ico"
 
@@ -211,6 +211,32 @@ macx {
                        $$shell_quote$${WRAPPER_CHMOD_COMMAND} \
                        $$escape_expand(\n\t)   \
                        $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
+}
+
+# some funky processing to get the prefix passed in on the command line
+# qmake argument: CONFIG+=3RD_PARTY_INSTALL=../<external location>
+3RD_ARG = $$find(CONFIG, 3RD_PARTY_INSTALL.*)
+!isEmpty(3RD_ARG): CONFIG -= $$3RD_ARG
+CONFIG += $$section(3RD_ARG, =, 0, 0)
+
+3RD_PARTY_INSTALL {
+    3RD_PREFIX                           = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
+    isEmpty(3RD_PREFIX):3RD_PREFIX       = $$_PRO_FILE_PWD_/3rdPartyInstall
+    isEmpty(3RD_DESTDIR):3RD_DESTDIR     = $$TARGET-$$VER_MAJ"."$$VER_MIN
+    isEmpty(3RD_BINDIR):3RD_BINDIR       = $$3RD_PREFIX/bin/$$3RD_DESTDIR/$$QT_ARCH
+    isEmpty(3RD_DOCDIR):3RD_DOCDIR       = $$3RD_PREFIX/docs/$$3RD_DESTDIR
+    isEmpty(3RD_RESOURCES):3RD_RESOURCES = $$3RD_PREFIX/resources/$$3RD_DESTDIR
+
+    message("~~~ LDGLITE 3RD INSTALL PREFIX $${3RD_PREFIX} ~~~")
+
+    target.path                 = $${3RD_BINDIR}
+    documentation.path          = $${3RD_DOCDIR}
+    documentation.files         = doc/ldglite.1 doc/LICENCE doc/README.TXT
+    resources.path              = $${3RD_RESOURCES}
+    resources.files             = res/ldglite128x128.png
+    unix: resources.files      += set-ldrawdir.command
+
+    INSTALLS += target documentation resources
 }
 
 OBJECTS_DIR = $$DESTDIR/.obj
