@@ -1,4 +1,5 @@
-                                LdGLite
+                                
+				LdGLite
                (a platform independent version of LdLite)
 
 Contents of readme.txt:
