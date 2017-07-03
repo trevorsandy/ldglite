@@ -25,7 +25,7 @@ addons:
   apt:
     packages:
     - freeglut3-dev
-    - libOSMesa-dev
+    - libOSMesa6-dev
     - libpng-dev
   brew:
     packages:
