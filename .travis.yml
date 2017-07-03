@@ -1,5 +1,3 @@
-group: deprecated-2017Q2
-
 language: cpp
 
 sudo: required
@@ -25,7 +23,7 @@ addons:
   apt:
     packages:
     - freeglut3-dev
-    - libOSMesa-dev
+    - libosmesa-dev
     - libpng-dev
   brew:
     packages:
