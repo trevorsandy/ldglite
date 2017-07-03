@@ -1,4 +1,3 @@
-TEST
                                 LdGLite
                (a platform independent version of LdLite)
 
