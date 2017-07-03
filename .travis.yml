@@ -6,11 +6,6 @@ cache: ccache
 
 dist: trusty
 
-notifications:
-  email:
-    on_success: never
-    on_failure: always
-
 os:
   - linux
   - osx
@@ -23,53 +18,13 @@ addons:
   apt:
     packages:
     - freeglut3-dev
-    - libOSMesa6-dev
+    - libOSMesa-dev
     - libpng-dev
   brew:
     packages:
        - libpng --universal
-
-env:
-  - QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=8597b61b2674159dc19086e7fb61c62947f4a62d 
-  - QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd  
-  - QT=57 PPA=beineri/opt-qt571-trusty BREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5
-  - QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9
-  
-matrix:
-  exclude:
-    - { os: osx, compiler: gcc, env: QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd } # Exclude gcc on osx
-    - { os: osx, compiler: gcc, env: QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd }
-    - { os: osx, compiler: gcc, env: QT=57 PPA=beineri/opt-qt571-trusty BBREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5 } 
-    - { os: osx, compiler: gcc, env: QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9 } 
-    - { os: linux, compiler: clang, env: QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd } # Exclude clang on linux
-    - { os: linux, compiler: clang, env: QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd }
-    - { os: linux, compiler: clang, env: QT=57 PPA=beineri/opt-qt571-trusty BREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5 } 
-    - { os: linux, compiler: clang, env: QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9 }
-
-before_install:
-  - '[[ "$TRAVIS_OS_NAME" != linux || -z "$PPA" ]] || sudo add-apt-repository -y ppa:$PPA'
-  - '[ "$TRAVIS_OS_NAME" != linux ] || sudo apt-get -qy update'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-
-install:
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || sudo apt-get -qy install qt${QT}base'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || sudo apt-get -qy install qt5-qmake qtbase5-dev'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/${BREW_QT_VER_SHA}/Formula/qt5.rb'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install qt5.rb'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew link --force qt5'
-
-before_script:
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != clang++ ]] || export QMAKESPEC=linux-clang'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != g++     ]] || export QMAKESPEC=linux-g++'
-  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != clang++ ]] || export QMAKESPEC=macx-clang'
-  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != g++     ]] || export QMAKESPEC=macx-g++'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || . /opt/qt$QT/bin/qt$QT-env.sh'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || export QT_SELECT=qt5'
-  - qmake -v
-  - qmake -r 
+       
 
 script:
-  - make
+  - cat /etc/apt/sources.list
 
-after_script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd tests; bash test.sh 5; fi
