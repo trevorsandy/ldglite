@@ -147,9 +147,9 @@ unix:!macx {
 }
 
 # some funky processing to get the prefix passed in on the command line
-# CONFIG+=3RD_PARTY_INSTALL=../lpub3d-linux-3rdparty
-# CONFIG+=3RD_PARTY_INSTALL=../lpub3d-macos-3rdparty
-# CONFIG+=3RD_PARTY_INSTALL=../lpub3d-windows-3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../lpub3d_linux_3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../lpub3d_macos_3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../lpub3d_windows_3rdparty
 3RD_ARG = $$find(CONFIG, 3RD_PARTY_INSTALL.*)
 !isEmpty(3RD_ARG): CONFIG -= $$3RD_ARG
 CONFIG += $$section(3RD_ARG, =, 0, 0)
