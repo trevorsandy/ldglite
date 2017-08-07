@@ -249,7 +249,7 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # Test
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
 QMAKE_POST_LINK += $$escape_expand(\n\t)                                  \
-                        ./$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
+                        ./$$DESTDIR/$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
                         -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l \
                         ="tests/LDConfigCustom01.ldr" \
                         -mF"tests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr"
