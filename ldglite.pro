@@ -125,7 +125,7 @@ win32 {
     RC_ICONS = "ldglite.ico"
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
-    
+
     DEFINES += USING_FREEGLUT
     DEFINES += FREEGLUT_STATIC
     INCLUDEPATH += \
@@ -155,13 +155,13 @@ unix:!macx {
 CONFIG += $$section(3RD_ARG, =, 0, 0)
 
 3RD_PARTY_INSTALL {
-    macx: CONFIG                        -= app_bundle   # don't creatre app bundle
-    3RD_PREFIX                           = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
-    isEmpty(3RD_PREFIX):3RD_PREFIX       = $$_PRO_FILE_PWD_/3rdPartyInstall
-    isEmpty(3RD_DESTDIR):3RD_DESTDIR     = $$TARGET-$$VER_MAJ"."$$VER_MIN
-    isEmpty(3RD_BINDIR):3RD_BINDIR       = $$3RD_PREFIX/bin/$$3RD_DESTDIR/$$QT_ARCH
-    isEmpty(3RD_DOCDIR):3RD_DOCDIR       = $$3RD_PREFIX/docs/$$3RD_DESTDIR
-    isEmpty(3RD_RESOURCES):3RD_RESOURCES = $$3RD_PREFIX/resources/$$3RD_DESTDIR
+    macx: CONFIG                            -= app_bundle   # don't creatre app bundle
+    3RD_PREFIX                               = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
+    isEmpty(3RD_PREFIX):3RD_PREFIX           = $$_PRO_FILE_PWD_/3rdPartyInstall
+    isEmpty(3RD_PACKAGE_VER):3RD_PACKAGE_VER = $$TARGET-$$VER_MAJ"."$$VER_MIN
+    isEmpty(3RD_BINDIR):3RD_BINDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/bin/$$QT_ARCH
+    isEmpty(3RD_DOCDIR):3RD_DOCDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/docs
+    isEmpty(3RD_RESOURCES):3RD_RESOURCES     = $$3RD_PREFIX/$$3RD_PACKAGE_VER/resources
 
     message("~~~ LDGLITE 3RD INSTALL PREFIX $${3RD_PREFIX} ~~~")
 
@@ -183,7 +183,7 @@ macx {
     # Using local glut headers because source originally written
     # for developer-defined glut library so $$PWD/macx/glut/include above.
     message("~~~ USING LOCAL COPY OF GL HEADERS ~~~")
-    
+
     ENABLE_OFFSCREEN_RENDERING: DEFINES += CGL_OFFSCREEN_OPTION
     MACOSX_FRAMEWORKS += -framework OpenGL -framework GLUT
 
@@ -246,3 +246,10 @@ macx {
 
 OBJECTS_DIR = $$DESTDIR/.obj
 
+# Test
+# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
+QMAKE_POST_LINK += $$escape_expand(\n\t)                                  \
+                        ./$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
+                        -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l \
+                        ="tests/LDConfigCustom01.ldr" \
+                        -mF"tests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr"
