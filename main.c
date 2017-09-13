@@ -2853,15 +2853,15 @@ void reshape(int width, int height)
     // and the dirtyWindow when I just want to reset the projection matrix.
     if (getDisplayProperties())
     {
-        // HACK: Exclude from WIN_DIB_OPTION to suppess freeglut ERROR: Function
-        // <glutPostRedisplay> called without first calling 'glutInit'. on Windows
-#ifndef WIN_DIB_OPTION
         // Uh Oh.  The graphics mode changed.  Dump saved buffers & redraw.
         if (editing)
           NukeSavedDepthBuffer();
+
         dirtyWindow = 1;
-        glutPostRedisplay();
-#endif
+
+        // Avoid <glutPostRedisplay> called without first calling 'glutInit'
+        if (OffScreenRendering == 0)
+            glutPostRedisplay();
     }
 
 #if 0
@@ -10029,7 +10029,7 @@ main(int argc, char **argv)
 
 
   if (OffScreenRendering == 1)
-  {
+  {    
     OffScreenRender();
     exit(0);
   }

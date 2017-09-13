@@ -33,10 +33,10 @@ CONFIG += static
 CONFIG += skip_target_version_ext
 TARGET = ldglite
 CONFIG(debug, debug|release) {
-    DESTDIR = debug
+    DESTDIR = $$join(ARCH,,,bit_debug)
     BUILD = DEBUG
 } else {
-    DESTDIR = release
+    DESTDIR = $$join(ARCH,,,bit_release)
     BUILD = RELEASE
 }
 
@@ -250,9 +250,50 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # CONFIG+=BUILD_CHECK
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
 BUILD_CHECK {
-    QMAKE_POST_LINK += $$escape_expand(\n\t)                                  \
-                            ./$$DESTDIR/$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
-                            -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l \
-                            ="tests/LDConfigCustom01.ldr" \
-                            -mF"tests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr"
+    QMAKE_POST_LINK += $$escape_expand(\n\t)                                    \
+                    ./$$DESTDIR/$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
+                    -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l                      \
+                    ="$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr"              \
+                    -mF"$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr"
 }
+
+# suppress warnings
+QMAKE_CFLAGS_WARN_ON =  -Wall -W \
+                        -Wno-unused-parameter \
+                        -Wno-unused-but-set-parameter \
+                        -Wno-unused-result \
+                        -Wno-implicit-int \
+                        -Wno-unused-variable \
+                        -Wno-unused-but-set-variable \
+                        -Wno-implicit-function-declaration \
+                        -Wno-parentheses \
+                        -Wno-switch \
+                        -Wno-maybe-uninitialized \
+                        -Wno-sign-compare \
+                        -Wno-discarded-qualifiers \
+                        -Wno-incompatible-pointer-types \
+                        -Wno-return-type \
+                        -Wno-uninitialized \
+                        -Wno-format \
+                        -Wno-format-security \
+                        -Wno-pointer-sign \
+                        -Wno-missing-braces \
+                        -Wno-unused-function \
+                        -Wno-unused-label \
+                        -Wno-strict-aliasing \
+                        -Wno-format-zero-length \
+                        -Wno-format-extra-args \
+                        -Wno-unknown-pragmas \
+                        -Wno-comment \
+                        -Wno-unused-value
+macx {
+QMAKE_CFLAGS_WARN_ON +=  \
+                        -Wno-incompatible-pointer-types-discards-qualifiers \
+                        -Wno-undefined-bool-conversion \
+                        -Wno-invalid-source-encoding \
+                        -Wno-mismatched-new-delete \
+                        -Wno-for-loop-analysis \
+                        -Wno-int-conversion \
+                        -Wno-reorder
+}
+QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
