@@ -260,17 +260,13 @@ BUILD_CHECK {
 # suppress warnings
 QMAKE_CFLAGS_WARN_ON =  -Wall -W \
                         -Wno-unused-parameter \
-                        -Wno-unused-but-set-parameter \
                         -Wno-unused-result \
                         -Wno-implicit-int \
                         -Wno-unused-variable \
-                        -Wno-unused-but-set-variable \
                         -Wno-implicit-function-declaration \
                         -Wno-parentheses \
                         -Wno-switch \
-                        -Wno-maybe-uninitialized \
                         -Wno-sign-compare \
-                        -Wno-discarded-qualifiers \
                         -Wno-incompatible-pointer-types \
                         -Wno-return-type \
                         -Wno-uninitialized \
@@ -288,12 +284,7 @@ QMAKE_CFLAGS_WARN_ON =  -Wall -W \
                         -Wno-unused-value
 macx {
 QMAKE_CFLAGS_WARN_ON +=  \
-                        -Wno-incompatible-pointer-types-discards-qualifiers \
-                        -Wno-undefined-bool-conversion \
-                        -Wno-invalid-source-encoding \
-                        -Wno-mismatched-new-delete \
-                        -Wno-for-loop-analysis \
-                        -Wno-int-conversion \
-                        -Wno-reorder
+                        -Wno-macro-redefined \
+                        -Wno-deprecated-declarations
 }
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
