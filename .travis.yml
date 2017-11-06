@@ -74,7 +74,7 @@ install:
 script:
   # Compile and install - this will be the MacOS logic, linux will move to Docker
   - qmake -v;
-  - qmake CONFIG+=3RD_PARTY_INSTALL=../${LDGL_REPO_NAME} CONFIG+=release;
+  - qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_REPO_NAME} CONFIG+=release;
   - make && make install;
 
 # after_script:
@@ -84,8 +84,8 @@ before_deploy:
   # create a tarball of the lpub3d_linux_3rdparty folder
   - if [ "$LDGL_BUILD_PKG" = "yes" ]; then
       if [ -d ${LDGL_REPO_NAME} ]; then
-        tar -czf ${LDGL_REPO_NAME}.tar.gz ${LDGL_REPO_NAME} && echo "Tarball ${LDGL_REPO_NAME}.tar.gz created."
-      fi
+        tar -czf ${LDGL_REPO_NAME}.tar.gz ${LDGL_REPO_NAME} && echo "Tarball ${LDGL_REPO_NAME}.tar.gz created.";
+      fi;
     fi
 
 deploy:
