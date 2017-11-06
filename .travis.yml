@@ -1,75 +1,124 @@
 language: cpp
-
 sudo: required
-
+dist: trusty
 cache: ccache
 
-dist: trusty
+git:
+  depth: 200
+
+branches:
+  only:
+  - master
+
+# addons:
+#   apt:
+#     packages:
+#     - libosmesa6-dev
+#     - freeglut3-dev
+#     - libpng-dev
+
+matrix:
+ fast_finish: true
+ include:
+  - os: linux
+    compiler: gcc
+    env:
+     - QT_BASE=59
+  - os: osx
+    compiler: clang
+    env:
+     - QT_BASE=59
+
+before_install:
+  # Skip build if the commit message contains [skip travis] or [travis skip]
+  - >
+      echo "$TRAVIS_COMMIT_MESSAGE"
+      | grep -E  '\[(skip travis|travis skip)\]'
+      && echo "[skip travis] detected, exiting."
+      && exit 0 || true
+  # Build package if commit message contains [build pkg]
+  - >
+      echo "$TRAVIS_COMMIT_MESSAGE"
+      | grep -E  '\[build pkg\]'
+      && echo "[build pkg] detected."
+      && export LDGL_BUILD_PKG=yes || true
+  # Build and deploy package if commit message contains [deploy pkg]
+  - >
+      echo "$TRAVIS_COMMIT_MESSAGE"
+      | grep -E  '\[deploy pkg\]'
+      && echo "[deploy pkg] detected."
+      && export LDGL_BUILD_PKG=yes
+      && export LDGL_DEPLOY_PKG=yes || true
+  # Add private qt repositories
+  - if [[ "$QT_BASE" = "52" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt521-trusty -y; fi
+  - if [[ "$QT_BASE" = "53" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt532-trusty -y; fi
+  - if [[ "$QT_BASE" = "54" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt542-trusty -y; fi
+  - if [[ "$QT_BASE" = "55" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt551-trusty -y; fi
+  - if [[ "$QT_BASE" = "56" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt562-trusty -y; fi
+  - if [[ "$QT_BASE" = "57" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y; fi
+  - if [[ "$QT_BASE" = "58" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt58-trusty  -y; fi
+  - if [[ "$QT_BASE" = "59" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo add-apt-repository ppa:beineri/opt-qt592-trusty -y; fi
+  # Update repository index and download package dependencies/docker-engine if required
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      sudo apt-get update -qq;
+      export LDGL_REPO_NAME=lpub3d_linux_3rdparty;
+    else
+      brew update;
+      brew install ccache;
+      export PATH="/usr/local/opt/ccache/libexec:$PATH";
+      export LDGL_REPO_NAME=lpub3d_macos_3rdparty;
+    fi
+
+install:
+  # Install qt5 on Linux
+  - if [[ "$QT_BASE" = "52" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt52base; source /opt/qt52/bin/qt52-env.sh; fi
+  - if [[ "$QT_BASE" = "53" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt53base; source /opt/qt53/bin/qt53-env.sh; fi
+  - if [[ "$QT_BASE" = "54" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt54base; source /opt/qt54/bin/qt54-env.sh; fi
+  - if [[ "$QT_BASE" = "55" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt55base; source /opt/qt55/bin/qt55-env.sh; fi
+  - if [[ "$QT_BASE" = "56" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt56base; source /opt/qt56/bin/qt56-env.sh; fi
+  - if [[ "$QT_BASE" = "57" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt57base; source /opt/qt57/bin/qt57-env.sh; fi
+  - if [[ "$QT_BASE" = "58" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt58base; source /opt/qt58/bin/qt58-env.sh; fi
+  - if [[ "$QT_BASE" = "59" && "$TRAVIS_OS_NAME" = "linux" && "$LDGL_BUILD_PKG" = "" ]]; then sudo apt-get install -qq qt59base; source /opt/qt59/bin/qt59-env.sh; fi
+  # Install qt5 on MacOS, clone lpub3d_macos_3rd party repository and download LDraw library archive files
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      if [ "$QT_BASE" = "55" ]; then
+        brew install qt55;
+        brew link --force qt55;
+      else
+        brew install qt5;
+        brew link --force qt5;
+      fi;
+    fi
+
+script:
+  # Compile and install - this will be the MacOS logic, linux will move to Docker
+  - qmake -v;
+  - qmake CONFIG+=3RD_PARTY_INSTALL=../${LDGL_REPO_NAME} CONFIG+=release;
+  - make && make install;
+
+# after_script:
+#   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd tests; bash test.sh 5; fi
+
+before_deploy:
+  # create a tarball of the lpub3d_linux_3rdparty folder
+  - if [ "$LDGL_BUILD_PKG" = "yes" ]; then
+      if [ -d ${LDGL_REPO_NAME} ]; then
+        tar -czf ${LDGL_REPO_NAME}.tar.gz ${LDGL_REPO_NAME} && echo "Tarball ${LDGL_REPO_NAME}.tar.gz created."
+      fi
+    fi
+
+deploy:
+  provider: releases
+  api_key:
+    secure: GRl0LOJ8M5ow1qik8t2+tJsqMDo53v/TRfxprWg5C+3DR3ny/CgR5mODMtpR4LgSyMeD5yhGovxHAbzgUyutne9PT0BagI8zdt/ZMqcLnvPQyzJlhfy3t2TVcJRoVXcoUUF0ZJHrpr9WD8C7xnjMp7w/j+HThQuX+8CD3gCwZhYkDRuNgtJY/PT+nwITjC4WJuF0xxYOyLJROebQZ1LJ24HY0zVtg+JJZPslkQHgoBg/ozO8JNXgYaYe3VgcyQSnUMqE/SjMBGYMR9RlNwYXCJLeYHiY3fej33z7UPZOH/kPQ8RhKpJi9qqOTtYj38dTxmpiJjOJ4SyeKXvsyymc5ekwSdlJe6rVWKKAXFMegH/4i3Nk8HKmfxMPLklprusFEMQo2CdA5UeNRuWJ/HfDpywbQwFLC6ThNZcS6wqOqf2Rzy6QRNFWlH9eJoiSMyQRVTFGwQ3bf2MXXJSloFuxRpGYoejWt36O+rNZnTR6+Xz1r2KyaaFizCGen082klzmfdoCl0mh+m9Jix7ypzgNBKISFI5DTbjr6Qt+D5dVdp5PWGBAbhTd6JtcG64P9fDUWq5X9ypFj6Jb1626sHFlYQKCSX+lEpjbd4UTSbTxO35NMTO1g90xKMJeIpvsCwm9DcWl+jGmt9cwSHxTQuWkeEaUcoywYvA4kTjIpDuIaR8=
+  file: ${LDGL_REPO_NAME}.tar.gz
+  overwrite: true
+  skip_cleanup: true
+  on:
+    repo: trevorsandy/ldglite
+    condition: $LDGL_DEPLOY_PKG = yes
 
 notifications:
   email:
     on_success: never
     on_failure: always
-
-os:
-  - linux
-  - osx
-
-compiler:
-  - clang
-  - gcc
-
-addons:
-  apt:
-    packages:
-    - freeglut3-dev
-    - libosmesa-dev
-    - libpng-dev
-  brew:
-    packages:
-       - libpng --universal
-
-env:
-  - QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=8597b61b2674159dc19086e7fb61c62947f4a62d 
-  - QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd  
-  - QT=57 PPA=beineri/opt-qt571-trusty BREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5
-  - QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9
-  
-matrix:
-  exclude:
-    - { os: osx, compiler: gcc, env: QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd } # Exclude gcc on osx
-    - { os: osx, compiler: gcc, env: QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd }
-    - { os: osx, compiler: gcc, env: QT=57 PPA=beineri/opt-qt571-trusty BBREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5 } 
-    - { os: osx, compiler: gcc, env: QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9 } 
-    - { os: linux, compiler: clang, env: QT=55 PPA=beineri/opt-qt551-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd } # Exclude clang on linux
-    - { os: linux, compiler: clang, env: QT=56 PPA=beineri/opt-qt562-trusty BREW_QT_VER_SHA=fdfc724dd532345f5c6cdf47dc43e99654e6a5fd }
-    - { os: linux, compiler: clang, env: QT=57 PPA=beineri/opt-qt571-trusty BREW_QT_VER_SHA=805b2e0b0201b2560235eb3ee5c724d241ba42d5 } 
-    - { os: linux, compiler: clang, env: QT=58 PPA=beineri/opt-qt58-trusty BREW_QT_VER_SHA=e8d5c92686cb4b9f3462dfa946c1f48c74b867f9 }
-
-before_install:
-  - '[[ "$TRAVIS_OS_NAME" != linux || -z "$PPA" ]] || sudo add-apt-repository -y ppa:$PPA'
-  - '[ "$TRAVIS_OS_NAME" != linux ] || sudo apt-get -qy update'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew update'
-
-install:
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || sudo apt-get -qy install qt${QT}base'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || sudo apt-get -qy install qt5-qmake qtbase5-dev'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/${BREW_QT_VER_SHA}/Formula/qt5.rb'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew install qt5.rb'
-  - '[ "$TRAVIS_OS_NAME" != osx ] || brew link --force qt5'
-
-before_script:
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != clang++ ]] || export QMAKESPEC=linux-clang'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$CXX" != g++     ]] || export QMAKESPEC=linux-g++'
-  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != clang++ ]] || export QMAKESPEC=macx-clang'
-  - '[[ "$TRAVIS_OS_NAME" != osx   || "$CXX" != g++     ]] || export QMAKESPEC=macx-g++'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" != */opt-* ]] || . /opt/qt$QT/bin/qt$QT-env.sh'
-  - '[[ "$TRAVIS_OS_NAME" != linux || "$PPA" == */opt-* ]] || export QT_SELECT=qt5'
-  - qmake -v
-  - qmake -r 
-
-script:
-  - make
-
-after_script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd tests; bash test.sh 5; fi
