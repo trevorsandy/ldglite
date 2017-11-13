@@ -54,12 +54,12 @@ before_install:
   # Update repository index and download package dependencies/docker-engine if required
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo apt-get update -qq;
-      export LDGL_REPO_NAME=lpub3d_linux_3rdparty;
+      export LDGL_DIST_DIR=lpub3d_linux_3rdparty;
     else
       brew update;
       brew install ccache;
       export PATH="/usr/local/opt/ccache/libexec:$PATH";
-      export LDGL_REPO_NAME=lpub3d_macos_3rdparty;
+      export LDGL_DIST_DIR=lpub3d_macos_3rdparty;
     fi
 
 install:
@@ -73,9 +73,9 @@ install:
 
 script:
   # Compile and install - this will be the MacOS logic, linux will move to Docker
-  - qmake -v;
-  - qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_REPO_NAME} CONFIG+=release;
-  - make && make install;
+  - qmake -v
+  - qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_DIST_DIR} CONFIG+=release CONFIG+=BUILD_CHECK
+  - make && make install
 
 # after_script:
 #   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then cd tests; bash test.sh 5; fi
@@ -83,8 +83,8 @@ script:
 before_deploy:
   # create a tarball of the lpub3d_linux_3rdparty folder
   - if [ "$LDGL_BUILD_PKG" = "yes" ]; then
-      if [ -d ${LDGL_REPO_NAME} ]; then
-        tar -czf ${LDGL_REPO_NAME}.tar.gz ${LDGL_REPO_NAME} && echo "Tarball ${LDGL_REPO_NAME}.tar.gz created.";
+      if [ -d ${LDGL_DIST_DIR} ]; then
+        tar -czf ${LDGL_DIST_DIR}.tar.gz ${LDGL_DIST_DIR} && echo "Tarball ${LDGL_DIST_DIR}.tar.gz created.";
       fi;
     fi
 
@@ -92,8 +92,11 @@ deploy:
   provider: releases
   api_key:
     secure: UyhlW/S9cht1ffke3ucqW+R8sag7F4irEBOiUUGmvnJcd5Mol9J/ExOOb+olzct5//sa4jDJ4N4vqFhcdrdWAs23gtlLxNK7S13kNB3Zbuwn3CSYsoT+vBvueBiQgj9GZCC9U+HODUap97ziwNvoc2TFajMBGgvcQXu5VWfJ9BzaP+HwRlXowbBbxc4pHl+Mv96BWNFugvNHkbGtPlwNHQ0eMVemvUMX9QwiJoFHTiN0wgTDXtQoYJWfHQdVtRiRME/+bp9ustzaoe7iWJnTj7QD8mLcEmjQi3ZGX0jhMkPJndXck0E/S/ojTloRnfUJl8B0qkZ+I4Iux9vS34w7EI80ZjOomyUPNyDpPew/WDEkft2tOeCEszZGATgiee8W+4hhneIzUYMik9LdiqX96Gr1nlez0A36W7Jm7vVEH/ahpjDXZt7QtOiOPkVuy6diyudKSitS3EIcsuBheezohQxOc1MEBeoS8An2L7baqUFLVYF6WeNJHfjIpbjtw0A7eKK5YEyI7dP4Z+EUG4GVwdL9TVnWo+LAZAhYKUsyjH92BQKm1xpHD59YkC4HR84pQP8dlDho2XpN4Nm0nxmdC4UIcnzTD3faZGQ8kvPZemcAz1FC6di5XrB7vDPfUYOeGu3S+/xa3rIDheFeFAn5Yq1zqWua9j7uLqyz1UXTkSQ=
-  file: ${LDGL_REPO_NAME}.tar.gz
+  file: ${LDGL_DIST_DIR}.tar.gz
   overwrite: true
+  name: ${LDGL_DIST_DIR}
+  body: 'LDGLite - `uname` archive package of LPub3D image renderer'
+  prerelease: true
   skip_cleanup: true
   on:
     repo: trevorsandy/ldglite
