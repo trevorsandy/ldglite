@@ -278,11 +278,19 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
 BUILD_CHECK {
     # LDraw library path - needed for tests
-    win32 {
+    _APPVEYOR = $$(APPVEYOR)
+    _TRAVIS   = $$(TRAVIS)
+    contains(_APPVEYOR, True) {
+        # Appveyor CI check
+        exists($$(APPVEYOR_BUILD_FOLDER)\\ldraw\\parts\\3001.dat): \
+        LDRAW_PATH = $$(APPVEYOR_BUILD_FOLDER)\\ldraw
+    } else: contains(_TRAVIS, true){
+        # Travis Ci check
+        exists($$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw/parts/3001.dat): \
+        LDRAW_PATH = $$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw
+    } else:win32 {
         # Windows local check
         exists($$(USERPROFILE)\\ldraw\\parts\\3001.dat): LDRAW_PATH = $$(USERPROFILE)\\ldraw
-        # Appveyor CI check
-        exists($$(APPVEYOR_BUILD_FOLDER)\\ldraw\\parts\\3001.dat): LDRAW_PATH = $$(APPVEYOR_BUILD_FOLDER)\\ldraw
     } else: unix: !macx {
         # Linux local check
         exists(/usr/local/ldraw/parts/3001.dat): LDRAW_PATH = /usr/local/ldraw
@@ -290,10 +298,6 @@ BUILD_CHECK {
         # MacOS local check
         exists(/Library/ldraw/parts/3001.dat): LDRAW_PATH = /Library/ldraw
         exists($$(HOME)/Library/ldraw/parts/3001.dat): LDRAW_PATH = $$(HOME)/Library/ldraw
-    } else: {
-        # Travis Ci check
-        exists($$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw/parts/3001.dat): \
-        LDRAW_PATH = $$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw
     }
     !isEmpty(LDRAW_PATH) {
         message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")

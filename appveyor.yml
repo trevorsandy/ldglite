@@ -107,7 +107,7 @@ install:
  - cmd: git remote add origin https://github.com/%APPVEYOR_REPO_NAME%.git
  - cmd: git fetch -qfup --depth=200 origin +%APPVEYOR_REPO_BRANCH% +refs/tags/*:refs/tags/*
  - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
- - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -s -O ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz && echo ${ldgl_librepo}.tar.gz downloaded; fi"
+ - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -s -o ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz && echo ${ldgl_librepo}.tar.gz downloaded; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1 && echo ${ldgl_librepo} tarball extracted; fi"
  - cmd: if %ldgl_target_arch%==x86_64 bash -lc "cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -U --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}"
 
