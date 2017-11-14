@@ -76,7 +76,7 @@ install:
     fi
   - if [ ! -f "$HOME/build/$TRAVIS_REPO_SLUG/ldraw/parts/3001.dat" ]; then
       wget http://www.ldraw.org/library/updates/complete.zip -O ./complete.zip;
-      unzip ./complete.zip -d "$HOME/build/$TRAVIS_REPO_SLUG/" && if test "$HOME/build/$TRAVIS_REPO_SLUG/ldraw"; then echo "LDraw lib unzipped"; fi;
+      unzip -qq ./complete.zip -d "$HOME/build/$TRAVIS_REPO_SLUG/" && if test "$HOME/build/$TRAVIS_REPO_SLUG/ldraw"; then echo "LDraw lib unzipped"; fi;
     fi
 
 script:
