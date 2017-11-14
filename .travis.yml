@@ -17,9 +17,13 @@ addons:
     - freeglut3-dev
     - libpng-dev
 
+cache:
+ directories:
+  - $HOME/build/$TRAVIS_REPO_SLUG/ldraw
+
 matrix:
- fast_finish: true
- include:
+  fast_finish: true
+  include:
   - os: linux
     compiler: gcc
     env:
@@ -69,6 +73,10 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
         brew install qt5;
         brew link --force qt5;
+    fi
+  - if [ ! -f "$HOME/build/$TRAVIS_REPO_SLUG/ldraw/parts/3001.dat" ]; then
+      wget http://www.ldraw.org/library/updates/complete.zip -O ./complete.zip;
+      unzip ./complete.zip -d "$HOME/build/$TRAVIS_REPO_SLUG/" && if test "$HOME/build/$TRAVIS_REPO_SLUG/ldraw"; then echo "LDraw lib unzipped"; fi;
     fi
 
 script:

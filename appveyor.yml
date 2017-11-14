@@ -7,8 +7,7 @@ clone_script: echo skip
 # we're caching 3rd party apps (image renderers), and qt5 for MinGW x86_64
 cache:
  - 'C:\projects\$(ldgl_librepo)'
- - 'C:\projects\ldraw'
- - 'C:\projects\complete.zip'
+ - '$(APPVEYOR_BUILD_FOLDER)\ldraw'
 
 branches:
   only:
@@ -32,9 +31,9 @@ environment:
   ldgl_job1package: LDGLite-Job1-AV-$(APPVEYOR_BUILD_NUMBER).zip
   ldgl_qtlibs: mingw-w64-x86_64-qt5-5.9.1-1-any.pkg.tar.xz
   ldgl_iculibs: mingw-w64-x86_64-icu-58.2-2-any.pkg.tar.xz
-  ldgl_librepo: lpub3d_windows_3rdparty
-  ldgl_distdir: $(APPVEYOR_BUILD_FOLDER)\$(ldgl_librepo)
+  ldgl_librepo: lpub3d_mingw-x86_64_libs
   ldgl_librepodir: /c/projects/$(ldgl_librepo)
+  ldgl_distdir: $(APPVEYOR_BUILD_FOLDER)\lpub3d_windows_3rdparty
   matrix:
   - ldgl_target_arch: x86
   - ldgl_target_arch: x86_64
@@ -70,7 +69,7 @@ init:
       }
  - ps: |
       $env:ldgl_qtpath = "C:\Qt\5.9.1\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin"
-      $env:ldgl_makeargs = "CONFIG+=3RD_PARTY_INSTALL=$env:ldgl_librepo CONFIG+=release CONFIG+=BUILD_CHECK"
+      $env:ldgl_makeargs = "CONFIG+=3RD_PARTY_INSTALL=$env:ldgl_distdir CONFIG+=release CONFIG+=BUILD_CHECK"
       If ($env:ldgl_target_arch -eq "x86_64") {
         $env:ldgl_qtpath = "C:\msys64\MINGW64\bin;C:\msys64\usr\bin"
       }
@@ -112,10 +111,11 @@ install:
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1 && echo ${ldgl_librepo} tarball extracted; fi"
  - cmd: if %ldgl_target_arch%==x86_64 bash -lc "cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -U --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}"
 
-# this script is a work-around to combine both the x86 and x86_64 build targets into a single artifact. we then run
-# the NSIS packaging script against the archive creating a single installer for both architectures.
+# Download the LDraw parts library for testing if not available from cache
+# the script in this block is a work-around to combine both the x86 and x86_64 build targets into a single artifact.
 # this script is only run on the 2nd of the two jobs (job2).
 before_build:
+ - cmd: $(APPVEYOR_BUILD_FOLDER)\tests\getLDrawLib.bat
  - ps: |
       If ($env:ldgl_restore_job1_artefact -eq $true)
       {
@@ -182,7 +182,6 @@ build_script:
  - cmd: mingw32-make install
 
 # Push job1 output to archive for job2 consumption
-# Build NSIS-based install binaries
 # Vars used to construct artifacts
 # Push job2 artefacts to archive repository and setup for deployment
 after_build:
@@ -191,9 +190,9 @@ after_build:
  - ps: If ($env:ldgl_archive_job1_artefact -eq $true) {7z a $env:ldgl_job1package $env:ldgl_packagepath | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; Push-AppveyorArtifact $env:ldgl_job1package}
  - ps: |
       If (($env:ldgl_archive_job2_artefact -eq $true) -and ([int]$env:LDV_ARTEFACT_ITEM_COUNT -gt 5)){
-        cd $env:APPVEYOR_BUILD_FOLDER; write-host "Creating single tarball artefact from ./$env:ldgl_librepo..."
-        7z a $env:ldgl_librepo $env:ldgl_librepo | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:ldgl_librepo created."
-        $root = Resolve-Path $env:APPVEYOR_BUILD_FOLDER; [IO.Directory]::GetFiles($root.Path, '*.zip', 'TopDirectoryOnly') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName $env:ldgl_librepo}
+        cd $env:APPVEYOR_BUILD_FOLDER; write-host "Creating zip archive artefact from ./$env:ldgl_distdir..."
+        7z a $env:ldgl_distdir $env:ldgl_distdir | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:ldgl_distdir created."
+        $root = Resolve-Path $env:APPVEYOR_BUILD_FOLDER; [IO.Directory]::GetFiles($root.Path, '*.zip', 'TopDirectoryOnly') | % { Push-AppveyorArtifact $_ -Type zip -FileName $_.Substring($root.Path.Length + 1) -DeploymentName $env:ldgl_distdir}
       }
 
 # for the moment we only deploy to github. I'll setup a sourceforge deployment scheme
@@ -204,8 +203,8 @@ deploy:
    description: 'LDGLite - Windows archive package of LPub3D image renderer'
    auth_token:
      secure: rnf4qpF81ISjm8q13OgkAaoKZReXpjODhU9fbGFMhMydHrda1ezLubGXRU9OKGu4
-   release: $(ldgl_librepo)
-   artifact: $(ldgl_librepo).zip
+   release: $(ldgl_distdir)
+   artifact: $(ldgl_distdir).zip
    prerelease: true
    force_update: true
    on:
