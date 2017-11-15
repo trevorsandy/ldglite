@@ -19,7 +19,8 @@ addons:
 
 cache:
  directories:
-  - $HOME/build/$TRAVIS_REPO_SLUG/ldraw
+  - ${HOME}/ldraw
+  - ${HOME}/Library/ldraw
 
 matrix:
   fast_finish: true
@@ -83,7 +84,7 @@ install:
       curl -s -O http://www.ldraw.org/library/updates/complete.zip;
       echo "Extracting LDraw library into ${LDRAWDIR}...";
       unzip -d ${LDRAWDIR_ROOT} -q complete.zip;
-      if test -d ${LDRAWDIR_ROOT}; then echo "LDRAWDIR defined."; fi;
+      if test -d ${LDRAWDIR_ROOT}; then echo "LDraw library extracted, LDRAWDIR defined."; fi;
     fi;
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       echo "set LDRAWDIR in environment.plist...";

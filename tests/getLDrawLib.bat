@@ -33,6 +33,9 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
       IF EXIST "%LDRAW_DIR%\parts" (
         ECHO.
         ECHO -LDraw directory %LDRAW_DIR% extracted.
+        ECHO.
+        ECHO -Cleanup %OfficialCONTENT%...
+        DEL /Q "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%"
       )
     ) ELSE (
       ECHO [WARNING] Could not find zip executable.

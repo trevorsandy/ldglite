@@ -27,13 +27,12 @@ matrix:
 environment:
   ldgl_build: appveyor_ci
   ldgl_job2arch: x86_64
-  ldgl_packagepath: builds\windows\$(configuration)
-  ldgl_job1package: LDGLite-Job1-AV-$(APPVEYOR_BUILD_NUMBER).zip
+  ldgl_distdir: $(APPVEYOR_BUILD_FOLDER)\lpub3d_windows_3rdparty
+  ldgl_job1package: LDGLite-Job1-AV-$(APPVEYOR_BUILD_NUMBER)
   ldgl_qtlibs: mingw-w64-x86_64-qt5-5.9.1-1-any.pkg.tar.xz
   ldgl_iculibs: mingw-w64-x86_64-icu-58.2-2-any.pkg.tar.xz
   ldgl_librepo: lpub3d_mingw-x86_64_libs
   ldgl_librepodir: /c/projects/$(ldgl_librepo)
-  ldgl_distdir: $(APPVEYOR_BUILD_FOLDER)\lpub3d_windows_3rdparty
   matrix:
   - ldgl_target_arch: x86
   - ldgl_target_arch: x86_64
@@ -116,11 +115,11 @@ install:
 # the script in this block is a work-around to combine both the x86 and x86_64 build targets into a single artifact.
 # this script is only run on the 2nd of the two jobs (job2).
 before_build:
- - cmd: $(APPVEYOR_BUILD_FOLDER)\tests\getLDrawLib.bat
+ - ps: cmd.exe /c "%APPVEYOR_BUILD_FOLDER%\tests\getLDrawLib.bat"
  - ps: |
       If ($env:ldgl_restore_job1_artefact -eq $true)
       {
-        Write-Output "Restoring $env:ldgl_packagepath build folder from artifact..."
+        Write-Output "Restoring $env:ldgl_distdir build folder from artifact..."
 
         $apiUrl = 'https://ci.appveyor.com/api'
         $token = 'h2o1p08rkt8jgen5f0ke'
@@ -168,7 +167,7 @@ before_build:
           if (-not (Test-Path $CheckArtifactDir)) {
             Write-Output "Error expanding $localArtifactArchive, $CheckArtifactDir not found"
           } else {
-            Write-Output "Build folder $env:ldgl_packagepath artifact restored"
+            Write-Output "Build folder $env:ldgl_distdir artifact restored"
           }
         }
       }
@@ -188,11 +187,11 @@ build_script:
 after_build:
  - ps: $env:LDV_ARTEFACT_ITEM_COUNT = (Get-ChildItem -Path $env:ldgl_distdir -Recurse).count
  - ps: write-host "`n  Artifact count....[$env:LDV_ARTEFACT_ITEM_COUNT]"
- - ps: If ($env:ldgl_archive_job1_artefact -eq $true) {7z a $env:ldgl_job1package $env:ldgl_packagepath | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; Push-AppveyorArtifact $env:ldgl_job1package}
+ - ps: If ($env:ldgl_archive_job1_artefact -eq $true) {7z a -tzip $env:ldgl_job1package $env:ldgl_distdir | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; Push-AppveyorArtifact $env:ldgl_job1package}
  - ps: |
       If (($env:ldgl_archive_job2_artefact -eq $true) -and ([int]$env:LDV_ARTEFACT_ITEM_COUNT -gt 5)){
         cd $env:APPVEYOR_BUILD_FOLDER; write-host "Creating zip archive artefact from ./$env:ldgl_distdir..."
-        7z a $env:ldgl_distdir $env:ldgl_distdir | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:ldgl_distdir created."
+        7z a -tzip $env:ldgl_distdir $env:ldgl_distdir | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:ldgl_distdir created."
         $root = Resolve-Path $env:APPVEYOR_BUILD_FOLDER; [IO.Directory]::GetFiles($root.Path, '*.zip', 'TopDirectoryOnly') | % { Push-AppveyorArtifact $_ -Type zip -FileName $_.Substring($root.Path.Length + 1) -DeploymentName $env:ldgl_distdir}
       }
 
