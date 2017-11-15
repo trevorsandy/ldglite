@@ -278,40 +278,16 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
 BUILD_CHECK {
     # LDraw library path - needed for tests
-    _APPVEYOR = $$(APPVEYOR)
-    _TRAVIS   = $$(TRAVIS)
-    contains(_APPVEYOR, True) {
-        # Appveyor CI check
-        exists($$(APPVEYOR_BUILD_FOLDER)\\ldraw\\parts\\3001.dat): \
-        LDRAW_PATH = $$(APPVEYOR_BUILD_FOLDER)\\ldraw
-    } else: contains(_TRAVIS, true){
-        # Travis Ci check
-        exists($$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw/parts/3001.dat): \
-        LDRAW_PATH = $$(HOME)/build/$$(TRAVIS_REPO_SLUG)/ldraw
-    } else:win32 {
-        # Windows local check
-        exists($$(USERPROFILE)\\ldraw\\parts\\3001.dat): LDRAW_PATH = $$(USERPROFILE)\\ldraw
-    } else: unix: !macx {
-        # Linux local check
-        exists(/usr/local/ldraw/parts/3001.dat): LDRAW_PATH = /usr/local/ldraw
-    } else: macx {
-        # MacOS local check
-        exists(/Library/ldraw/parts/3001.dat): LDRAW_PATH = /Library/ldraw
-        exists($$(HOME)/Library/ldraw/parts/3001.dat): LDRAW_PATH = $$(HOME)/Library/ldraw
-    }
-    !isEmpty(LDRAW_PATH) {
+    LDRAW_PATH = $$(LDRAWDIR)
+    !isEmpty(LDRAW_PATH){
         message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
-        win32: SET_ENV_LDRAWDIR=SET LDRAWDIR=$${LDRAW_PATH}
-        else:  SET_ENV_LDRAWDIR=export LDRAWDIR=$${LDRAW_PATH}
-        QMAKE_POST_LINK += $$escape_expand(\n\t)                                    \
-                        $$shell_quote$${SET_ENV_LDRAWDIR}                           \
-                        $$escape_expand(\n\t)                                       \
+        QMAKE_POST_LINK += $$escape_expand(\n\t)                                    \                                    \
                         ./$$DESTDIR/$${TARGET} -l3 -i2 -ca0.01 -cg23,-45,3031328 -J \
                         -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l                      \
                         ="$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr"              \
                         -mF"$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr"
     } else {
-        message("WARNING: LDRAW LIBRARY NOT FOUND - LDGLite CUI cannot be tested")
+        message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")
     }
 }
 

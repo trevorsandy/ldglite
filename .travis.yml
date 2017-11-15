@@ -59,11 +59,13 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo apt-get update -qq;
       export LDGL_DIST_DIR=lpub3d_linux_3rdparty;
+      export LDRAWDIR=~/ldraw;
     else
       brew update;
       brew install ccache;
       export PATH="/usr/local/opt/ccache/libexec:$PATH";
       export LDGL_DIST_DIR=lpub3d_macos_3rdparty;
+      export LDRAWDIR=~/Library/ldraw;
     fi
 
 install:
@@ -71,12 +73,24 @@ install:
   - if [[ "$QT_BASE" = "59" && "$TRAVIS_OS_NAME" = "linux" ]]; then sudo apt-get install -qq qt59base; source /opt/qt59/bin/qt59-env.sh; fi
   # Install qt5 on MacOS, clone lpub3d_macos_3rd party repository and download LDraw library archive files
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
-        brew install qt5;
-        brew link --force qt5;
+      brew install qt5;
+      brew link --force qt5;
     fi
-  - if [ ! -f "$HOME/build/$TRAVIS_REPO_SLUG/ldraw/parts/3001.dat" ]; then
-      wget http://www.ldraw.org/library/updates/complete.zip -O ./complete.zip;
-      unzip -qq ./complete.zip -d "$HOME/build/$TRAVIS_REPO_SLUG/" && if test "$HOME/build/$TRAVIS_REPO_SLUG/ldraw"; then echo "LDraw lib unzipped"; fi;
+  # Install ldraw library
+  - if [ ! -d ${LDRAWDIR}/parts ]; then
+      if [ "$TRAVIS_OS_NAME" = "osx" ]; then LDRAWDIR_ROOT=~/Library; else LDRAWDIR_ROOT=~; fi;
+      echo "LDraw library not found at ${LDRAWDIR}. Downloading library...";
+      curl -s -O http://www.ldraw.org/library/updates/complete.zip;
+      echo "Extracting LDraw library into ${LDRAWDIR}...";
+      unzip -d ${LDRAWDIR_ROOT} -q complete.zip;
+      if test -d ${LDRAWDIR_ROOT}; then echo "LDRAWDIR defined."; fi;
+    fi;
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      echo "set LDRAWDIR in environment.plist...";
+      ./set-ldrawdir.command;
+      grep -A1 -e 'LDRAWDIR' ~/.MacOSX/environment.plist;
+      echo "LDRAWDIR......${LDRAWDIR}";
+      echo "set LDRAWDIR Completed.";
     fi
 
 script:
