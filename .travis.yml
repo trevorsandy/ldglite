@@ -60,13 +60,13 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo apt-get update -qq;
       export LDGL_DIST_DIR=lpub3d_linux_3rdparty;
-      export LDRAWDIR=~/ldraw;
+      export LDRAWDIR=${HOME}/ldraw;
     else
       brew update;
       brew install ccache;
       export PATH="/usr/local/opt/ccache/libexec:$PATH";
       export LDGL_DIST_DIR=lpub3d_macos_3rdparty;
-      export LDRAWDIR=~/Library/ldraw;
+      export LDRAWDIR=${HOME}/Library/ldraw;
     fi
 
 install:
@@ -79,12 +79,12 @@ install:
     fi
   # Install ldraw library
   - if [ ! -d ${LDRAWDIR}/parts ]; then
-      if [ "$TRAVIS_OS_NAME" = "osx" ]; then LDRAWDIR_ROOT=~/Library; else LDRAWDIR_ROOT=~; fi;
+      if [ "$TRAVIS_OS_NAME" = "osx" ]; then LDRAWDIR_ROOT=${HOME}/Library; else LDRAWDIR_ROOT=${HOME}; fi;
       echo "LDraw library not found at ${LDRAWDIR}. Downloading library...";
       curl -s -O http://www.ldraw.org/library/updates/complete.zip;
       echo "Extracting LDraw library into ${LDRAWDIR}...";
       unzip -d ${LDRAWDIR_ROOT} -q complete.zip;
-      if test -d ${LDRAWDIR_ROOT}; then echo "LDraw library extracted, LDRAWDIR defined."; fi;
+      if test -d ${LDRAWDIR}; then echo "LDraw library extracted, LDRAWDIR defined."; fi;
     fi;
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       echo "set LDRAWDIR in environment.plist...";

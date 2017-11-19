@@ -1,6 +1,11 @@
 @ECHO OFF &SETLOCAL
 
 Title Download and extract LDraw library - used for testing
+rem --
+rem  Trevor SANDY <trevor.sandy@gmail.com>
+rem  Last Update: November 16 2017
+rem  Copyright (c) 2015 - 2017 by Trevor Sandy
+rem --
 
 IF "%APPVEYOR%" EQU "True" (
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
@@ -15,7 +20,6 @@ SET OfficialCONTENT=complete.zip
 ECHO.
 ECHO -Check for LDraw library...
 IF NOT EXIST "%LDRAW_DIR%\parts" (
-  REM SET CHECK=0
   IF NOT EXIST "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" (
     ECHO.
     ECHO -LDraw directory %LDRAW_DIR% does not exist - Downloading...
@@ -30,25 +34,29 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
       ECHO -Extracting %OfficialCONTENT%...
       ECHO.
       "%zipWin64%\7z.exe" x -o"%LDRAW_DOWNLOAD_DIR%\" "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" | findstr /i /r /c:"^Extracting\>" /c:"^Everything\>"
-      IF EXIST "%LDRAW_DIR%\parts" (
-        ECHO.
-        ECHO -LDraw directory %LDRAW_DIR% extracted.
-        ECHO.
-        ECHO -Cleanup %OfficialCONTENT%...
-        DEL /Q "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%"
-      )
     ) ELSE (
-      ECHO [WARNING] Could not find zip executable.
+      ECHO [ERROR] Could not find 7zip executable.
       GOTO :END
     )
   ) ELSE (
     ECHO.
-    ECHO -[WARNING] Could not find %LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%.
+    ECHO -[ERROR] Could not find %LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%.
+    GOTO :END
+  )
+  IF EXIST "%LDRAW_DIR%\parts" (
+    ECHO.
+    ECHO -LDraw directory %LDRAW_DIR% successfully extracted.
+    ECHO.
+    ECHO -Cleanup %OfficialCONTENT%...
+    DEL /Q "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%"
+  ) ELSE (
+    ECHO.
+    ECHO -[ERROR] LDraw library folder %LDRAW_DIR% is not valid.
     GOTO :END
   )
 ) ELSE (
   ECHO.
-  ECHO -LDraw directory %LDRAW_DIR% exist.
+  ECHO -LDraw directory exist at [%LDRAW_DIR%].
 )
 GOTO :END
 
@@ -123,7 +131,6 @@ ECHO - VBS file "%vbs%" is done compiling
 ECHO.
 ECHO - LDraw archive library download path: %OutputPATH%
 
-SET LibraryOPTION=Official
 SET WebCONTENT="%OutputPATH%\%OfficialCONTENT%"
 SET WebNAME=http://www.ldraw.org/library/updates/complete.zip
 
@@ -148,5 +155,5 @@ EXIT /b
 :END
 ECHO.
 ECHO Finished.
-ENDLOCAL
+ENDLOCAL & SET LDRAWDIR=%LDRAWDIR%&ECHO -Set LDRAWDIR to %LDRAW_DIR%.
 EXIT /b
