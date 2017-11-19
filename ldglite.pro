@@ -181,22 +181,14 @@ CONFIG += $$section(3RD_ARG, =, 0, 0)
     isEmpty(DATADIR):DATADIR         = $$PREFIX/share
     isEmpty(DOCDIR):DOCDIR           = $$DATADIR/doc
     isEmpty(MANDIR):MANDIR           = $$DATADIR/man
-    isEmpty(RESOURCEDIR):RESOURCEDIR = $$DATADIR/$${TARGET}/resources
 
     target.path                 = $${BINDIR}
     documentation.path          = $${DOCDIR}/$${TARGET}
     documentation.files         = doc/LICENCE doc/README.TXT
     manual.path                 = $${MANDIR}
     manual.files                = doc/ldglite.1
-    resources.path              = $${RESOURCEDIR}
-    resources.files             = set-ldrawdir.command
 
-    INSTALLS += target documentation manual resources
-
-    LDRAWDIR_TARGET = set-ldrawdir.command
-    LDRAWDIR_CHMOD_COMMAND = chmod 755 $${LDRAWDIR_TARGET}
-    QMAKE_POST_LINK += $$escape_expand(\n\t)   \
-                       $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
+    INSTALLS += target documentation manual
 }
 
 macx {
@@ -276,13 +268,15 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # set config to enable build check
 # CONFIG+=BUILD_CHECK
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
-BUILD_CHECK {
+BUILD_CHECK: {
     # LDraw library path - needed for tests
     LDRAW_PATH = $$(LDRAWDIR)
+    win32: EXECUTE_TARGET=$${TARGET}
+    else:  EXECUTE_TARGET=./$${TARGET}
     !isEmpty(LDRAW_PATH){
         message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
         QMAKE_POST_LINK += $$escape_expand(\n\t)                                    \
-                        cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01  \
+                        cd $${OUT_PWD}/$${DESTDIR} && $${EXECUTE_TARGET} -l3 -i2 -ca0.01  \
                         -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l \
                         ="$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr"              \
                         -mF"$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr"
