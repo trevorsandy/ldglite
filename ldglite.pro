@@ -275,11 +275,11 @@ BUILD_CHECK: {
     else:  EXECUTE_TARGET=./$${TARGET}
     !isEmpty(LDRAW_PATH){
         message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
-        QMAKE_POST_LINK += $$escape_expand(\n\t)                                    \
-                        cd $${OUT_PWD}/$${DESTDIR} && $${EXECUTE_TARGET} -l3 -i2 -ca0.01  \
-                        -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l \
-                        ="$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr"              \
-                        -mF"$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr"
+        QMAKE_POST_LINK += $$escape_expand(\n\t)                                         \												
+                        cd $${OUT_PWD}/$${DESTDIR} && $${EXECUTE_TARGET} -l3 -i2 -ca0.01 \
+                        -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l      \
+                        =$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr                     \
+                        -mF$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr
     } else {
         message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")
     }

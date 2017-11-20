@@ -69,10 +69,10 @@ init:
         Write-Output "Build cache cleared."
       }
  - ps: |
-      $env:ldgl_qtpath = "C:\Qt\5.9.1\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin"
+      $env:ldgl_qtpath = "C:\Qt\5.9.2\mingw53_32\bin;C:\Qt\Tools\mingw530_32\bin"
       $env:ldgl_makeargs = "CONFIG+=3RD_PARTY_INSTALL=$env:ldgl_distdir CONFIG+=release CONFIG+=BUILD_CHECK"
       If ($env:ldgl_target_arch -eq "x86_64") {
-        $env:ldgl_qtpath = "C:\msys64\MINGW64\bin;C:\msys64\usr\bin"
+        $env:ldgl_qtpath = "C:\msys64\MINGW64\bin"
       }
  - ps: |
       If ($env:APPVEYOR_REPO_COMMIT_MESSAGE.ToLower().Contains("[build pkg]")) {
@@ -92,7 +92,7 @@ init:
           $env:ldgl_deploy_pkg = $true
         }
       }
- - cmd: SET PATH=%ldgl_qtpath%;%PATH% &echo PATH prepended with %ldgl_qtpath%
+ - cmd: SET PATH=%ldgl_qtpath%;%PATH%& echo PATH prepended with %ldgl_qtpath%
  #- ps: Get-ChildItem Env:APPVEYOR* | Sort-Object name
  - ps: Get-ChildItem Env:ldgl_* | Sort-Object name
 
