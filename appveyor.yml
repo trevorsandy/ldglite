@@ -48,7 +48,7 @@ init:
         $env:LDGL_BUILD_PKG = "yes"
         $env:LDGL_DEPLOY_PKG = $true
       }
- - cmd: SET PATH=%QT64_BASE%;%PATH%& echo PATH prepended with %QT64_BASE%
+ - cmd: SET PATH=%ldgl_msys2env%;%PATH%& echo PATH prepended with %ldgl_msys2env%
  - ps: Get-ChildItem Env:ldgl_* | Sort-Object name
 
 # This is where we install Qt5 for x86_64 builds along with ICU v58. The source for these items are cached but if not then they are
