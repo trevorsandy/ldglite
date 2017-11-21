@@ -64,7 +64,7 @@ install:
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -sL -o ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then echo repository ${ldgl_librepodir} not found; else echo library repository available at ${ldgl_librepodir}; fi"
- - cmd: (%ldgl_msys_bash% -lc "cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -Suuy --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}")
+ - cmd: %ldgl_msys_bash% -lc "cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -Suuy --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}"
 
 build_script:
  - ps: |
@@ -75,7 +75,7 @@ build_script:
         $env:LDGL_ARTEFACT_ITEM_COUNT = (Get-ChildItem -Path $env:LDGL_DIST_DIR_PATH -Recurse).count
         write-host "`n  Artifact count....[$env:LDGL_ARTEFACT_ITEM_COUNT]"
       } Else {
-        cmd.exe /c "build.cmd -all -chk -minlog"
+        cmd.exe /c "build.cmd -all -chk"
       }
 
 test: off
