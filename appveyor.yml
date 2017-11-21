@@ -32,7 +32,7 @@ environment:
   ldgl_iculibs: mingw-w64-x86_64-icu-58.2-2-any.pkg.tar.xz
   ldgl_librepo: lpub3d_mingw-x86_64_libs
   ldgl_librepodir: /c/projects/$(ldgl_librepo)
-  ldgl_msys2env: /c/msys64/MINGW64/bin:/c/msys64/usr/bin
+  ldgl_msys2env: /c/msys64/MINGW64/bin
 
 init:
  - ps: write-host "Building LDGLite x86 and x86_64 architectures..."
@@ -48,6 +48,8 @@ init:
         $env:LDGL_BUILD_PKG = "yes"
         $env:LDGL_DEPLOY_PKG = $true
       }
+ - cmd: SET PATH=%QT64_BASE%;%PATH%& echo PATH prepended with %QT64_BASE%
+ - ps: Get-ChildItem Env:ldgl_* | Sort-Object name
 
 # This is where we install Qt5 for x86_64 builds along with ICU v58. The source for these items are cached but if not then they are
 # downloded. After setting up these items, we proceed to fetch the commit that triggered the AppVeyor build.
@@ -63,7 +65,7 @@ install:
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -sL -o ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then echo repository ${ldgl_librepodir} not found; else echo library repository available at ${ldgl_librepodir}; fi"
- - cmd: bash -lc "export PATH=${ldgl_msys2env}:$PATH; cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -U --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}"
+ - cmd: bash -lc "cd ${ldgl_librepodir}/qt-5.9.1-1-release; pacman -U --needed --noconfirm ${ldgl_qtlibs} ${ldgl_iculibs}"
 
 build_script:
  - ps: |
