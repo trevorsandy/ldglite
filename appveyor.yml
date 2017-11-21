@@ -23,11 +23,11 @@ matrix:
   fast_finish: true
 
 environment:
-  LDGL_DIST_DIR: lpub3d_windows_3rdparty
-  LDGL_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LDGL_DIST_DIR)
-  QT32_BASE: C:\Qt\5.9.2\mingw53_32\bin
-  QT32_UTILS: C:\Qt\Tools\mingw530_32\bin
-  QT64_BASE: C:\msys64\MINGW64\bin
+  LP3D_DIST_DIR: lpub3d_windows_3rdparty
+  LP3D_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LP3D_DIST_DIR)
+  LP3D_QT32_BASE: C:\Qt\5.9.2\mingw53_32\bin
+  LP3D_QT32_UTILS: C:\Qt\Tools\mingw530_32\bin
+  LP3D_QT64_MSYS2: C:\msys64\MINGW64\bin
   ldgl_qtlibs: mingw-w64-x86_64-qt5-5.9.1-1-any.pkg.tar.xz
   ldgl_iculibs: mingw-w64-x86_64-icu-58.2-2-any.pkg.tar.xz
   ldgl_librepo: lpub3d_mingw-x86_64_libs
@@ -67,11 +67,11 @@ install:
 
 build_script:
  - ps: |
-      write-host "  Distribution directory..[$env:LDGL_DIST_DIR_PATH]"
+      write-host "  Distribution directory..[$env:LP3D_DIST_DIR_PATH]"
       write-host "  Working Directory.......[$PWD]"
       If ($env:LDGL_BUILD_PKG -eq "yes") {
         cmd.exe /c "build.cmd -all -ins -chk"
-        $env:LDGL_ARTEFACT_ITEM_COUNT = (Get-ChildItem -Path $env:LDGL_DIST_DIR_PATH -Recurse).count
+        $env:LDGL_ARTEFACT_ITEM_COUNT = (Get-ChildItem -Path $env:LP3D_DIST_DIR_PATH -Recurse).count
         write-host "`n  Artifact count....[$env:LDGL_ARTEFACT_ITEM_COUNT]"
       } Else {
         cmd.exe /c "build.cmd -all -chk"
@@ -82,9 +82,9 @@ test: off
 after_build:
  - ps: |
       If (($env:LDGL_BUILD_PKG -eq "yes") -and ([int]$env:LDGL_ARTEFACT_ITEM_COUNT -gt 5)){
-        cd $env:APPVEYOR_BUILD_FOLDER; write-host "Creating zip archive artefact from ./$env:LDGL_DIST_DIR..."
-        7z a -tzip $env:LDGL_DIST_DIR $env:LDGL_DIST_DIR | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:LDGL_DIST_DIR.zip created."
-        $root = Resolve-Path $env:APPVEYOR_BUILD_FOLDER; [IO.Directory]::GetFiles($root.Path, '*.zip', 'TopDirectoryOnly') | % { Push-AppveyorArtifact $_ -Type zip -FileName $_.Substring($root.Path.Length + 1) -DeploymentName $env:LDGL_DIST_DIR}
+        cd $env:APPVEYOR_BUILD_FOLDER; write-host "Creating zip archive artefact from ./$env:LP3D_DIST_DIR..."
+        7z a -tzip $env:LP3D_DIST_DIR $env:LP3D_DIST_DIR | Select-String -Pattern '(^Creating)|(^Everything)' -CaseSensitive; write-host "Zip archive $env:LP3D_DIST_DIR.zip created."
+        $root = Resolve-Path $env:APPVEYOR_BUILD_FOLDER; [IO.Directory]::GetFiles($root.Path, '*.zip', 'TopDirectoryOnly') | % { Push-AppveyorArtifact $_ -Type zip -FileName $_.Substring($root.Path.Length + 1) -DeploymentName $env:LP3D_DIST_DIR}
       }
 
 deploy:
@@ -93,8 +93,8 @@ deploy:
    description: 'LDGLite - Windows archive package of LPub3D image renderer'
    auth_token:
      secure: rnf4qpF81ISjm8q13OgkAaoKZReXpjODhU9fbGFMhMydHrda1ezLubGXRU9OKGu4
-   release: $(LDGL_DIST_DIR)
-   artifact: $(LDGL_DIST_DIR).zip
+   release: $(LP3D_DIST_DIR)
+   artifact: $(LP3D_DIST_DIR).zip
    prerelease: true
    force_update: true
    on:

@@ -19,22 +19,22 @@ SET PWD=%CD%
 
 rem Variables - change these as required by your build environments
 IF "%APPVEYOR%" EQU "True" (
-  IF [%LDGL_DIST_DIR_PATH%] == [] (
+  IF [%LP3D_DIST_DIR_PATH%] == [] (
     ECHO.
     ECHO  -ERROR: Distribution directory path not defined.
     ECHO  -%~nx0 terminated!
     GOTO :END
   )
-  SET DIST_DIR=%LDGL_DIST_DIR_PATH%
+  SET DIST_DIR=%LP3D_DIST_DIR_PATH%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
 ) ELSE (
   SET DIST_DIR=..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET QT32_BASE=C:\Qt\IDE\5.9.1\mingw53_32\bin
-  SET QT32_UTILS=C:\Qt\IDE\Tools\mingw530_32\bin
-  SET QT64_BASE=C:\Msys2\Msys64\mingw64\bin
+  SET LP3D_QT32_BASE=C:\Qt\IDE\5.9.1\mingw53_32\bin
+  SET LP3D_QT32_UTILS=C:\Qt\IDE\Tools\mingw530_32\bin
+  SET LP3D_QT64_BASE=C:\Msys2\Msys64\mingw64\bin
 )
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
@@ -126,9 +126,9 @@ IF "%APPVEYOR%" EQU "True" (
   ECHO   REPOSITORY_NAME........[%APPVEYOR_REPO_NAME%]
   ECHO   REPO_PROVIDER..........[%APPVEYOR_REPO_PROVIDER%]
   ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
-  ECHO   QT32_BASE..............[%QT32_BASE%]
-  ECHO   QT32_UTILS.............[%QT32_UTILS%]
-  ECHO   QT64_BASE..............[%QT64_BASE%]
+  ECHO   LP3D_QT32_BASE.........[%LP3D_QT32_BASE%]
+  ECHO   LP3D_QT32_UTILS........[%LP3D_QT32_UTILS%]
+  ECHO   LP3D_QT64_BASE.........[%LP3D_QT64_BASE%]
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
@@ -199,9 +199,11 @@ ECHO   PLATFORM (BUILD_ARCH)..[%PLATFORM%]
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 IF "%BUILD_ENV_CONFIGURED%" NEQ "True" (
   IF %PLATFORM% EQU x86 (
-    SET PATH=%QT32_BASE%;%QT32_UTILS%;%SYS_DIR%& ECHO   PATH_PREPEND...........[%QT32_BASE%;%QT32_UTILS%]
+    SET PATH=%LP3D_QT32_BASE%;%LP3D_QT32_UTILS%;%SYS_DIR%
+    ECHO   PATH_PREPEND............[%LP3D_QT32_BASE%;%LP3D_QT32_UTILS%]
   ) ELSE (
-    SET PATH=%QT64_BASE%;%SYS_DIR%& ECHO   PATH_PREPEND...........[%QT64_BASE%]
+    SET PATH=%LP3D_QT64_BASE%;%SYS_DIR%
+    ECHO   PATH_PREPEND............[%LP3D_QT64_BASE%]
   )
 ) ELSE (
   ECHO   BUILD_ENVIRONMENT.......[%ALREADY_CONFIGURED%]
@@ -216,7 +218,7 @@ IF %1==x86 SET PL=32
 IF %1==x86_64 SET PL=64
 SET "LPUB3D_DATA=%LOCALAPPDATA%\LPub3D Software\LPub3D"
 SET "LDRAW_UNOFFICIAL=%LDRAW_DIR%\Unofficial"
-SET "LDSEARCHDIRS=%LPUB3D_DATA%\fade^|%LDRAW_UNOFFICIAL%\customParts^|%LDRAW_UNOFFICIAL%\fade^|%LDRAW_UNOFFICIAL%\testParts"
+REM SET "LDSEARCHDIRS=%LPUB3D_DATA%\fade^|%LDRAW_UNOFFICIAL%\customParts^|%LDRAW_UNOFFICIAL%\fade^|%LDRAW_UNOFFICIAL%\testParts"
 SET ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l
 SET LDCONFIG_FILE=tests\LDConfigCustom01.ldr
 SET IN_FILE=tests\Foo2.ldr
@@ -234,7 +236,7 @@ IF %CHECK%==1 (
   ECHO   IN_FILE................[%IN_FILE%]
   ECHO   LDRAWDIR ^(ENV VAR^).....[%LDRAWDIR%]
   ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
-  ECHO   LDRAW_SEARCH_DIRS......[%LDSEARCHDIRS%]
+  REM ECHO   LDRAW_SEARCH_DIRS......[%LDSEARCHDIRS%]
   ECHO   COMMAND................[%COMMAND%]
   %COMMAND%> Check.out
   IF EXIST "Check.out" (
@@ -279,6 +281,9 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
         ECHO.
         ECHO -Cleanup %OfficialCONTENT%...
         DEL /Q "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%"
+        ECHO.
+        ECHO -Set LDRAWDIR to %LDRAW_DIR%.
+        SET LDRAWDIR=%LDRAW_DIR%
       )
     ) ELSE (
       ECHO [WARNING] Could not find zip executable.
