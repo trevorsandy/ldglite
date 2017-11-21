@@ -31,7 +31,9 @@ INCLUDEPATH += ldrawini
 
 CONFIG += static
 CONFIG += skip_target_version_ext
-TARGET = ldglite
+if(win32-g++*|macx-g++*):TARGET = LDGLite
+else: TARGET = ldglite
+
 CONFIG(debug, debug|release) {
     DESTDIR = $$join(ARCH,,,bit_debug)
     BUILD = DEBUG
@@ -111,7 +113,6 @@ ENABLE_TEST_GUI {
 
 win32 {
     CONFIG += windows
-    CONFIG += debug_and_release
 
     QMAKE_LFLAGS += -static
     QMAKE_LFLAGS += -static-libgcc
@@ -241,19 +242,19 @@ macx {
         QMAKE_BUNDLE_DATA += \
             ldglite_osxwrapper set_ldraw_directory
 
-        INFO_PLIST_FILE = $$shell_quote$$DESTDIR/ldglite.app/Contents/Info.plist
+        INFO_PLIST_FILE = $$shell_quote$$DESTDIR/$${TARGET}.app/Contents/Info.plist
         PLIST_COMMAND = /usr/libexec/PlistBuddy -c
-        TYPEINFO_COMMAND = /bin/echo "APPLLdGL" > $$DESTDIR/ldglite.app/Contents/PkgInfo
-        WRAPPER_TARGET = $$DESTDIR/ldglite.app/Contents/MacOS/ldglite_w.command
+        TYPEINFO_COMMAND = /bin/echo "APPLLdGL" > $$DESTDIR/$${TARGET}.app/Contents/PkgInfo
+        WRAPPER_TARGET = $$DESTDIR/$${TARGET}.app/Contents/MacOS/ldglite_w.command
         WRAPPER_CHMOD_COMMAND = chmod 755 $$WRAPPER_TARGET
-        LDRAWDIR_TARGET = $$DESTDIR/ldglite.app/Contents/Resources/set-ldrawdir.command
+        LDRAWDIR_TARGET = $$DESTDIR/$${TARGET}.app/Contents/Resources/set-ldrawdir.command
         LDRAWDIR_CHMOD_COMMAND = chmod 755 $$LDRAWDIR_TARGET
         QMAKE_POST_LINK += $$escape_expand(\n\t)   \
                            $$PLIST_COMMAND \"Set :CFBundleShortVersionString $${VERSION}\" $${INFO_PLIST_FILE}  \
                            $$escape_expand(\n\t)   \
                            $$PLIST_COMMAND \"Set :CFBundleVersion $${VERSION}\" $${INFO_PLIST_FILE} \
                            $$escape_expand(\n\t)   \
-                           $$PLIST_COMMAND \"Set :CFBundleGetInfoString ldglite $${VERSION} https://github.com/trevorsandy/ldglite\" $${INFO_PLIST_FILE} \
+                           $$PLIST_COMMAND \"Set :CFBundleGetInfoString $${TARGET} $${VERSION} https://github.com/trevorsandy/ldglite\" $${INFO_PLIST_FILE} \
                            $$escape_expand(\n\t)   \
                            $$shell_quote$${TYPEINFO_COMMAND} \
                            $$escape_expand(\n\t)   \
@@ -268,15 +269,13 @@ OBJECTS_DIR = $$DESTDIR/.obj
 # set config to enable build check
 # CONFIG+=BUILD_CHECK
 # ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
-BUILD_CHECK: {
+BUILD_CHECK: unix {
     # LDraw library path - needed for tests
     LDRAW_PATH = $$(LDRAWDIR)
-    win32: EXECUTE_TARGET=$${TARGET}
-    else:  EXECUTE_TARGET=./$${TARGET}
     !isEmpty(LDRAW_PATH){
         message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
-        QMAKE_POST_LINK += $$escape_expand(\n\t)                                         \												
-                        cd $${OUT_PWD}/$${DESTDIR} && $${EXECUTE_TARGET} -l3 -i2 -ca0.01 \
+        QMAKE_POST_LINK += $$escape_expand(\n\t)                                         \
+                        cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01       \
                         -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l      \
                         =$$_PRO_FILE_PWD_/tests/LDConfigCustom01.ldr                     \
                         -mF$$_PRO_FILE_PWD_/tests/$$DESTDIR-TestOK_1.3.3_Foo2.png $$_PRO_FILE_PWD_/tests/Foo2.ldr
