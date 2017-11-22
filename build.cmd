@@ -168,7 +168,7 @@ GOTO :END
 
 
 :BUILD_ALL
-rem Launch msbuild across all platform builds
+rem Launch qmake/make across all platform builds
 ECHO.
 ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
@@ -181,7 +181,7 @@ FOR %%P IN ( x86, x86_64 ) DO (
   rem Display QMake version
   ECHO.
   qmake -v & ECHO.
-  rem Configure makefiles
+  rem Configure makefiles and launch make
   qmake %LDGLITE_CONFIG_ARGS% & mingw32-make %LDGLITE_MAKE_ARGS%
 
   rem Perform build check if specified
@@ -234,14 +234,14 @@ IF %CHECK%==1 (
   ECHO   LDCONFIG_FILE..........[%LDCONFIG_FILE%]
   ECHO   OUT_FILE...............[%OUT_FILE%]
   ECHO   IN_FILE................[%IN_FILE%]
-  ECHO   LDRAWDIR ^(ENV VAR^).....[%LDRAWDIR%]
+  ECHO   LDRAWDIR.^(ENV VAR^)...[%LDRAWDIR%]
   ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
   REM ECHO   LDRAW_SEARCH_DIRS......[%LDSEARCHDIRS%]
   ECHO   COMMAND................[%COMMAND%]
   %COMMAND%> Check.out
   IF EXIST "Check.out" (
-    FOR %%R IN (Check.out) DO IF NOT %%~zR lss 1 ECHO. & TYPE "Check.out"
-	DEL /Q "Check.out"
+    FOR %%R IN (Check.out) DO IF NOT %%~zR LSS 1 ECHO. & TYPE "Check.out"
+	  DEL /Q "Check.out"
   )
 ) ELSE (
   ECHO -Check is not possible
@@ -286,7 +286,7 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
         SET LDRAWDIR=%LDRAW_DIR%
       )
     ) ELSE (
-      ECHO [WARNING] Could not find zip executable.
+      ECHO [WARNING] Could not find 7zip executable.
       SET CHECK=0
     )
   ) ELSE (
@@ -374,7 +374,6 @@ ECHO - VBS file "%vbs%" is done compiling
 ECHO.
 ECHO - LDraw archive library download path: %OutputPATH%
 
-SET LibraryOPTION=Official
 SET WebCONTENT="%OutputPATH%\%OfficialCONTENT%"
 SET WebNAME=http://www.ldraw.org/library/updates/complete.zip
 

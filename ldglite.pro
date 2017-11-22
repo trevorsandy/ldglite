@@ -157,8 +157,7 @@ CONFIG += $$section(3RD_ARG, =, 0, 0)
 
 3RD_PARTY_INSTALL {
     macx: CONFIG                            -= app_bundle   # don't creatre app bundle
-    3RD_PREFIX                               = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
-    isEmpty(3RD_PREFIX):3RD_PREFIX           = $$_PRO_FILE_PWD_/3rdPartyInstall
+    isEmpty(3RD_PREFIX):3RD_PREFIX           = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
     isEmpty(3RD_PACKAGE_VER):3RD_PACKAGE_VER = $$TARGET-$$VER_MAJ"."$$VER_MIN
     isEmpty(3RD_BINDIR):3RD_BINDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/bin/$$QT_ARCH
     isEmpty(3RD_DOCDIR):3RD_DOCDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/docs
