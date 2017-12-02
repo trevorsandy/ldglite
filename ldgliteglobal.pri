@@ -1,8 +1,9 @@
-# qmake Configuration settings
+# qmake Configuration options
 # CONFIG+=ENABLE_PNG
 # CONFIG+=ENABLE_TILE_RENDERING
 # CONFIG+=ENABLE_OFFSCREEN_RENDERING
 # CONFIG+=ENABLE_TEST_GUI
+# CONFIG+=MAKE_APP_BUNDLE
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
@@ -210,13 +211,16 @@ QMAKE_CFLAGS_WARN_ON =  \
                      -Wno-format-extra-args \
                      -Wno-unknown-pragmas \
                      -Wno-comment \
-                     -Wno-unused-value \
-                     -Wno-discarded-qualifiers \
-                     -Wno-unused-but-set-variable \
-                     -Wno-unused-but-set-parameter
+                     -Wno-unused-value
 macx {
 QMAKE_CFLAGS_WARN_ON +=  \
                      -Wno-macro-redefined \
-                     -Wno-deprecated-declarations
+                     -Wno-deprecated-declarations \
+                     -Wno-absolute-value
+} else {
+QMAKE_CFLAGS_WARN_ON +=  \
+                     -Wno-discarded-qualifiers \
+                     -Wno-unused-but-set-variable \
+                     -Wno-unused-but-set-parameter
 }
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}

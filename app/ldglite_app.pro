@@ -91,14 +91,14 @@ ENABLE_TEST_GUI {
 LIBS += $${LIBS_} $${_LIBS} -lz
 
 macx {
-  app_bundle {
+  MAKE_APP_BUNDLE {
     ICON = ldglite.icns
-    QMAKE_INFO_PLIST = Info.plist
+    QMAKE_INFO_PLIST = $$_PRO_FILE_PWD_/Info.plist
 
     ldglite_osxwrapper.files  += ldglite_w.command
     ldglite_osxwrapper.path    = Contents/MacOS
 
-    ldglite_docs.files        += doc/LICENCE doc/Readme.macLdGLite doc/README.TXT
+    ldglite_docs.files        += $$_PRO_FILE_PWD_/../doc/LICENCE $$_PRO_FILE_PWD_/../doc/Readme.macLdGLite $$_PRO_FILE_PWD_/../doc/README.TXT
     ldglite_docs.path          = Contents/doc
 
     set_ldraw_directory.files += set-ldrawdir.command
@@ -125,11 +125,12 @@ macx {
                        $$shell_quote$${WRAPPER_CHMOD_COMMAND} \
                        $$escape_expand(\n\t)   \
                        $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
+  } else {
+    macx: CONFIG    -= app_bundle   # don't creatre app bundle
   }
 }
 
 3RD_PARTY_INSTALL {
-  macx: CONFIG                            -= app_bundle   # don't creatre app bundle
   isEmpty(3RD_PACKAGE_VER):3RD_PACKAGE_VER = $$TARGET-$$VER_MAJ"."$$VER_MIN
   isEmpty(3RD_BINDIR):3RD_BINDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/bin/$$QT_ARCH
   isEmpty(3RD_DOCDIR):3RD_DOCDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/docs

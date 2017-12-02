@@ -193,6 +193,18 @@ FOR %%P IN ( x86, x86_64 ) DO (
 GOTO :END
 
 :CONFIGURE_BUILD_ENV
+CD /D %PWD%
+ECHO.
+ECHO -Cleanup previous LDGLite qmake config files...
+FOR /R %%I IN (
+  ".qmake.stash"
+  "Makefile*"
+  "ldrawini\Makefile*"
+  "mui\Makefile*"
+  "app\Makefile*"
+) DO DEL /S /Q "%%~I" >nul 2>&1
+ECHO.
+ECHO -Configure LDGLite build environment...
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION%
 SET LDGLITE_MAKE_ARGS=-f Makefile.%CONFIGURATION%
 ECHO.
@@ -224,7 +236,7 @@ SET ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w
 SET LDCONFIG_FILE=tests\LDConfigCustom01.ldr
 SET IN_FILE=tests\Foo2.ldr
 SET OUT_FILE=tests\%PL%bit_%CONFIGURATION%-TestOK_1.3.3_Foo2.png
-SET PACKAGE_PATH=%PL%bit_%CONFIGURATION%\%PACKAGE%.exe
+SET PACKAGE_PATH=app\%PL%bit_%CONFIGURATION%\%PACKAGE%.exe
 SET COMMAND_LINE_ARGS=%ARGS% =%LDCONFIG_FILE% -mF%OUT_FILE% %IN_FILE%
 SET COMMAND=%PACKAGE_PATH% %COMMAND_LINE_ARGS%
 IF %CHECK%==1 (
@@ -235,7 +247,7 @@ IF %CHECK%==1 (
   ECHO   LDCONFIG_FILE..........[%LDCONFIG_FILE%]
   ECHO   OUT_FILE...............[%OUT_FILE%]
   ECHO   IN_FILE................[%IN_FILE%]
-  ECHO   LDRAWDIR.^(ENV VAR^)...[%LDRAWDIR%]
+  ECHO   LDRAWDIR.^(ENV VAR^).....[%LDRAWDIR%]
   ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
   REM ECHO   LDRAW_SEARCH_DIRS......[%LDSEARCHDIRS%]
   ECHO   COMMAND................[%COMMAND%]
