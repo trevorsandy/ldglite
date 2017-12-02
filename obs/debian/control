@@ -1,0 +1,12 @@
+Source: ldglite
+Section: graphics
+Maintainer: Peter Bartfai <pbartfai@stardust.hu>
+Priority: optional
+Build-Depends: debhelper (>= 4.1.6), gcc, g++, make, libpng-dev, freeglut3-dev, runawk
+Homepage: http://ldglite.sourceforge.net/
+Standards-Version: 3.9.4
+
+Package: ldglite
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Ldglite is a program that lets you view and edit Lego brick models stored in LDRAW format

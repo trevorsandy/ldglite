@@ -1,9 +1,9 @@
 /*
- * Platform specific code for ldglite                          
- *                                                             
- * Concerned with:                                             
- *    pathname handling     
- *    non-standard library functions                                   
+ * Platform specific code for ldglite
+ *
+ * Concerned with:
+ *    pathname handling
+ *    non-standard library functions
 */
 
 #ifndef PLATFORM_H
@@ -17,7 +17,7 @@
 
 // Flags indicating what functions are lacking on this platform
 
-#if defined(MACOS_X) 
+#if defined(MACOS_X)
 // Look for MACOS_X *before* UNIX since its a special case of UNIX
 // and defines both.
 
@@ -32,7 +32,7 @@
 #define LACKS_BASENAME 1
 #endif
 
-#elif defined(UNIX) 
+#elif defined(UNIX)
 
 // unistd.h declares chdir() on Mac, Unix?
 #include <unistd.h>

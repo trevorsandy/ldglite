@@ -43,7 +43,4 @@ SOURCES += \
 OTHER_FILES += \
     $$PWD/Info.plist \
     $$PWD/ldglite_w.command \
-    $$PWD/doc/ldglite.1 \
-    $$PWD/doc/README.TXT \
     $$PWD/set-ldrawdir.command \
-    $$PWD/.travis.yml

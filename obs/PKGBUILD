@@ -1,0 +1,41 @@
+# Maintainer: Peter Bartfai <pbartfai[at]stardust[dot]hu>
+pkgname=ldglite
+pkgver=1.3.1
+pkgrel=1
+pkgdesc=""
+url="http://ldglite.sourceforge.net"
+arch=('x86_64' 'i686')
+license=('GPL')
+depends=('freeglut' 'glu' 'libpng')
+makedepends=('nawk')
+conflicts=()
+replaces=()
+backup=()
+source=("ldglite.tar.gz"
+		"ldglite.patch")
+md5sums=(SKIP
+		  SKIP)
+
+build() {
+  cd ${srcdir}/ldglite
+  make -f makefile.linux CXX=g++ CC=gcc
+}
+
+package() {
+  cd "${srcdir}/ldglite"
+  mkdir -p ${pkgdir}/usr/bin
+  install -m 755 ldglite ${pkgdir}/usr/bin
+  install -d ${pkgdir}/usr/share/ldglite
+  install -d ${pkgdir}/usr/share/man/man1
+  install -m 644 readme.txt ${pkgdir}/usr/share/ldglite/readme.txt
+  install -m 644 todo.txt ${pkgdir}/usr/share/ldglite/todo.txt
+  install -m 644 doc/LDGLITE.TXT ${pkgdir}/usr/share/ldglite/ldglite.txt
+  install -m 644 doc/LICENCE ${pkgdir}/usr/share/ldglite/licence
+  install -m 644 ldglite.1 ${pkgdir}/usr/share/man/man1/ldglite.1
+  gzip -f ${pkgdir}/usr/share/man/man1/ldglite.1
+}
+
+prepare() {
+ cd ${srcdir}/ldglite
+ patch -p1  -i ../ldglite.patch
+}

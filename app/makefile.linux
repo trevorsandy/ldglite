@@ -15,7 +15,7 @@ CXX=$(TOOLPREFIX)$(MYCXX)
 
 # PNG output option
 ifeq ($(ENABLE_PNG),Yes)
-    PNG_FLAGS=-DUSE_PNG 
+    PNG_FLAGS=-DUSE_PNG
     PNG_LIBS= -lpng -lz
 endif
 

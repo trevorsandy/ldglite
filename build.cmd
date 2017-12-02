@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: November 21, 2017
+rem  Last Update: December 02, 2017
 rem  Copyright (c) 2017 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -25,17 +25,18 @@ IF "%APPVEYOR%" EQU "True" (
     ECHO  -%~nx0 terminated!
     GOTO :END
   )
-  SET DIST_DIR=%LP3D_DIST_DIR_PATH%
+  SET DIST_DIR=..\..\%LP3D_DIST_DIR%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
 ) ELSE (
-  SET DIST_DIR=..\lpub3d_windows_3rdparty
+  SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
   SET LP3D_QT32_BASE=C:\Qt\IDE\5.9.1\mingw53_32\bin
   SET LP3D_QT32_UTILS=C:\Qt\IDE\Tools\mingw530_32\bin
   SET LP3D_QT64_MSYS2=C:\Msys2\Msys64\mingw64\bin
 )
+
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip

@@ -116,7 +116,7 @@ int ldraw_projection_type = 0;  // 1 = perspective, 0 = orthographic.
 #define WIDE_ANGLE_VIEW 1
 #if WIDE_ANGLE_VIEW
 // znear 1.0 gives zfighting with 16bit Mesa Zbuf, 10.0 still does on datsville
-double projection_znear = 10.0; 
+double projection_znear = 10.0;
 double projection_zfar = 4000.0;
 double projection_fov = 67.38; //L3P default is 67.38 degrees = 2*atan(2/3)
 double projection_fromx = 0.0;
@@ -189,11 +189,11 @@ char Natural[] = "0.5,0,0.866025,0.433013,0.866025,-0.25,-0.75,0.5,0.433013";
 char *m_viewMatrix = LdrawOblique;
 
 // If we separate the ldraw oblique projection from the underlying
-// Oblique rotation matrix we get this projection matrix.  Perhaps 
+// Oblique rotation matrix we get this projection matrix.  Perhaps
 // we can then offer 3 projection types: orthogonal, perspective, oblique.
 char ObliqueProjection[] = "1.4142,0,0,0,1.2196,-0.1124,0,-0.7171,1.2247";
 
-//Notes on deriving the Oblique rotation matrix: 
+//Notes on deriving the Oblique rotation matrix:
 //Rotate 45 degrees and then tilt 30 degrees?
 /*
 .707104 = sqrt(2) / 2
@@ -203,7 +203,7 @@ char ObliqueProjection[] = "1.4142,0,0,0,1.2196,-0.1124,0,-0.7171,1.2247";
 */
 
 extern int glCurColorIndex;
-extern float z_line_offset; 
+extern float z_line_offset;
 
 int PolygonOffsetEnabled = 1;
 GLfloat PolygonOffsetFactor = 1.0;
@@ -245,7 +245,7 @@ int sc[4];
 // GL_WIN_swap_hint
 // WGL_SWAP_METHOD_ARB, WGL_SWAP_METHOD_EXT, WGL_SWAP_UNDEFINED_ARB, WGL_SWAP_UNDEFINED_EXT
 // WGL_SWAP_COPY_ARB, WGL_SWAP_COPY_EXT, WGL_SWAP_EXCHANGE_ARB, WGL_SWAP_EXCHANGE_EXT
-// 
+//
 
 /*
 GL_APPLE_flush_render   (Specification pending)
@@ -259,7 +259,7 @@ current context to the screen without needing a context argument and
 works in both single and double buffered modes symmetrically.
 
 System: Mac OS X v10.3 and later
-Renderers: All 
+Renderers: All
 
 
 GL_APPLE_fence   (Specification)
@@ -268,7 +268,7 @@ Provides synchronization primitives that can be inserted into the
 OpenGL command stream and later queried for completion.
 
 System: Mac OS X v10.2 "Jaguar" and later
-Renderers: All 
+Renderers: All
 */
 
 // Set default editing mode.
@@ -310,9 +310,9 @@ int turnAxisVisible = 0;
 // staticbuffer is where our non-moving background goes
 // screenbuffer is where the final composite goes
 int staticbuffer = GL_BACK;
-int screenbuffer = GL_FRONT; 
+int screenbuffer = GL_FRONT;
 // renderbuffer is where we render to.  Need to know for -ms step saving.
-int renderbuffer = GL_FRONT; 
+int renderbuffer = GL_FRONT;
 // Buffer pointers and IDs for speedier opengl extension functions.
 
 GLint rBits, gBits, bBits, aBits;
@@ -522,7 +522,7 @@ void pasteCommand(int x, int y)
   int color;
   int pastecount = 0;
   float savemove = moveXamount;
-	  
+
   if (pastelist)
   {
     str = pastelist;
@@ -532,9 +532,9 @@ void pasteCommand(int x, int y)
   {
     str = strdup((char*)GetClipboardData(CF_TEXT));
     printf("got <%s> from clipboard\n", str);
-    CloseClipboard(); 
+    CloseClipboard();
   }
-  else 
+  else
     return;
 
   // Remove modifier keys before processing the clipboard.
@@ -554,7 +554,7 @@ void pasteCommand(int x, int y)
     color = -1; // Use current color
 
     printf("got token <%s> from clipboard\n", token);
-    
+
     // token is one line of text.
     if ((ecommand[0] == 'p') || ((i > 0) && (ecommand[0] == 'c')) ||
 	(ecommand[0] == 'L') || (ecommand[0] == 'S'))
@@ -601,7 +601,7 @@ void pasteCommand(int x, int y)
       else
 	token += strspn(token, whitespace); // Eliminate leading whitespace
       //printf("got leading <%s> from clipboard\n", token);
-    
+
       if (!inventory)
       {
 	// If not inventory and we still have whitespace, then its a comment.
@@ -613,7 +613,7 @@ void pasteCommand(int x, int y)
 	    edit_mode_keyboard('i', x, y);
 	    ecommand[0] == 'p';
 	  }
-	  if (ecommand[0] == 'p') 
+	  if (ecommand[0] == 'p')
 	  {
 	    ecommand[0] = 'C';  // Switch to a comment
   	    strcpy(dst, "  ");
@@ -693,13 +693,13 @@ void pasteCommand(int x, int y)
 	pasteMove(pastecount++);
 	edit_mode_keyboard('p', x, y);
       }
-      else 
+      else
 	pasteMove(pastecount++);
       strcat(dst, token);
 
       // Only do more than one if it's a part.
       // NOTE:  Should also do multiple lines for comments.
-      if (ecommand[0] != 'p') 
+      if (ecommand[0] != 'p')
 	break;
 
       if (color >= 0)
@@ -707,7 +707,7 @@ void pasteCommand(int x, int y)
 	edit_mode_keyboard('\n', x, y);
 	edit_mode_keyboard('c', x, y);
 	strcat(dst, colorstr);
-      }	
+      }
 
       if (inventory)
 	for (n = 1; n < count; n++)
@@ -723,16 +723,16 @@ void pasteCommand(int x, int y)
 	    edit_mode_keyboard('\n', x, y);
 	    edit_mode_keyboard('c', x, y);
 	    strcat(dst, colorstr);
-	  }	
+	  }
 #endif
 	}
     }
   }
-  
+
   free(str);
-  
+
   printf("ecommand = <%s>\n", ecommand);
-  
+
   //restore move amount
   if (savemove == 100.0)
     {
@@ -752,12 +752,12 @@ void pasteCommand(int x, int y)
       moveZamount = 10.0;
       moveYamount = 8.0;
     }
-    
+
 }
 #endif
 
 //---------------MESA TESTING BLOCK----------------------
-//#define SIMULATE_MESA 1     
+//#define SIMULATE_MESA 1
 //#define WINTIMER 1
 //#define SAVE_COLOR_ALL 1
 //#define SAVE_DEPTH_ALL 1
@@ -845,15 +845,15 @@ void RestoreColorBuffer(void)
     //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
     glPixelZoom(1, 1);
-    glDisable(GL_STENCIL_TEST);    
+    glDisable(GL_STENCIL_TEST);
     glDisable(GL_FOG);
 
     glDisable(GL_POLYGON_OFFSET_FILL);
     glDisable(GL_COLOR_MATERIAL);
 
   /*
-   * Disable stuff that's likely to slow down 
-   * glDrawPixels.(Omit as much of this as possible, 
+   * Disable stuff that's likely to slow down
+   * glDrawPixels.(Omit as much of this as possible,
    * when you know in advance that the OpenGL state is
    * already set correctly.)
    */
@@ -883,18 +883,18 @@ void RestoreColorBuffer(void)
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 
   // Turn off any smoothing or blending modes.
-    glDisable( GL_POINT_SMOOTH ); 
+    glDisable( GL_POINT_SMOOTH );
     glDisable(GL_ALPHA_TEST);
-    glDisable( GL_LINE_SMOOTH ); 
+    glDisable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glDisable( GL_BLEND );
-    glDisable( GL_POLYGON_SMOOTH ); 
+    glDisable( GL_POLYGON_SMOOTH );
     glHint( GL_POLYGON_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
     glDisable(GL_LIGHTING);     // Speed up copying
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); //enable color buffer updates
-    glDisable( GL_DEPTH_TEST ); 
+    glDisable( GL_DEPTH_TEST );
     glDepthFunc(GL_ALWAYS);
 
     glMatrixMode( GL_PROJECTION );
@@ -913,7 +913,7 @@ void RestoreColorBuffer(void)
       printf("bbox = %d, %d, %d, %d\n", sc[0], sc[1], sc[2], sc[3]);
     glDrawPixels(sc[2],sc[3],GL_RGBA,GL_UNSIGNED_BYTE,cbufdata);
 #else
-#ifdef RESTORE_COLOR_ALL 
+#ifdef RESTORE_COLOR_ALL
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
         glPixelStorei(GL_UNPACK_ROW_LENGTH,0); //Width
         glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
@@ -943,14 +943,14 @@ void RestoreColorBuffer(void)
     }
 
     glPopMatrix();
-    glEnable( GL_DEPTH_TEST ); 
+    glEnable( GL_DEPTH_TEST );
     glDepthFunc(GL_LESS);
     glDrawBuffer(renderbuffer); // set pixel destination to the render buffer.
 
     // Reset the projection matrix.
-    savedirty = dirtyWindow; 
+    savedirty = dirtyWindow;
     reshape(Width, Height);
-    dirtyWindow = savedirty; 
+    dirtyWindow = savedirty;
 
     rendersetup();
   }
@@ -977,8 +977,8 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
 	|| (buffer_swap_mode == SWAP_TYPE_APPLE) // OSX seems to COPY (according to blender)
 	)
     {
-      printf("CopyColorBuffer(%s to %s) = glutswapBuffers(mode=%d)\n", 
-	     ((srcbuffer==GL_FRONT)? "Front" : "Back"), 
+      printf("CopyColorBuffer(%s to %s) = glutswapBuffers(mode=%d)\n",
+	     ((srcbuffer==GL_FRONT)? "Front" : "Back"),
 	     ((destbuffer==GL_FRONT)? "Front" : "Back"),
 	     buffer_swap_mode);
 
@@ -991,15 +991,15 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
     }
   }
 
-  printf("CopyColorBuffer(%s to %s)\n", 
-	 ((srcbuffer==GL_FRONT)? "Front" : "Back"), 
+  printf("CopyColorBuffer(%s to %s)\n",
+	 ((srcbuffer==GL_FRONT)? "Front" : "Back"),
 	 ((destbuffer==GL_FRONT)? "Front" : "Back"));
 
   glPushAttrib(GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_DEPTH_BUFFER_BIT|
 	       GL_FOG_BIT|GL_LIGHTING_BIT|GL_VIEWPORT_BIT);
 
   glPixelZoom(1, 1);
-  glDisable(GL_STENCIL_TEST);    
+  glDisable(GL_STENCIL_TEST);
   glDisable(GL_FOG);
 
   glDisable(GL_POLYGON_OFFSET_FILL);
@@ -1009,8 +1009,8 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
   glDrawBuffer(destbuffer); // set pixel destination
 
   /*
-   * Disable stuff that's likely to slow down 
-   * glDrawPixels.(Omit as much of this as possible, 
+   * Disable stuff that's likely to slow down
+   * glDrawPixels.(Omit as much of this as possible,
    * when you know in advance that the OpenGL state is
    * already set correctly.)
    */
@@ -1052,7 +1052,7 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
   glDepthMask(GL_TRUE); // enable updates to depth buffer
   glPopMatrix();
   glEnable(GL_LIGHTING);
-  glEnable( GL_DEPTH_TEST ); 
+  glEnable( GL_DEPTH_TEST );
   glDepthFunc(GL_LESS);
   glDrawBuffer(renderbuffer); // set pixel destination to the render buffer.
 
@@ -1063,7 +1063,7 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
   }
 
   glPopAttrib();
-  
+
 #ifdef WINTIMER
   finishtime = timeGetTime();
   if (srcbuffer == GL_BACK)
@@ -1072,12 +1072,12 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
     printf("CopyOut Color Elapsed = %d\n", finishtime-starttime);
 #endif
 
-  savedirty = dirtyWindow; 
+  savedirty = dirtyWindow;
   reshape(Width, Height);
-  dirtyWindow = savedirty; 
+  dirtyWindow = savedirty;
   rendersetup();
 }
-      
+
 /***************************************************************/
 void printModelMat(char *name)
 {
@@ -1137,7 +1137,7 @@ void printPOVMatrix(FILE *f)
 
   if (1) //(ldraw_projection_type)
   {
-    // For the perspective projection we can zoom in/out by scaling the 
+    // For the perspective projection we can zoom in/out by scaling the
     // Camera and look_at points by 1/opts.S.
     scale = ldraw_commandline_opts.S;
   }
@@ -1185,7 +1185,7 @@ void printPOVMatrix(FILE *f)
   from[2] = projection_fromz;
   from[1] += (Height/6.0);
   from[1] = -from[1]; // Switch to ldraw coords
-  from[2] = -from[2]; // Switch to ldraw coords 
+  from[2] = -from[2]; // Switch to ldraw coords
   //printf("\t//location <%g,%g,%g>\n",from[0],from[1],from[2]);
 
   toward[0] = projection_towardx;
@@ -1223,7 +1223,7 @@ void printPOVMatrix(FILE *f)
   if (ldraw_projection_type)
   {
     // POV uses x for Field Of View, GluPerspective() uses y.
-    // However, I now convert projection_fov to vertical right before 
+    // However, I now convert projection_fov to vertical right before
     // calling GluPerspective(), so it should be good as is.
     angle = projection_fov; //angle = projection_fov * Width / Height;
     projectionstr = perspectivestr;
@@ -1264,7 +1264,7 @@ void printPOVMatrix(FILE *f)
     if (filename[0] == '.') // I hate the ./filename thing.
       strcpy(filename, datfilename);
 
-   fprintf(f,"l3p -cc%g,%g,%g -cla%g,%g,%g -ca%g %s -b%d\n\n", 
+   fprintf(f,"l3p -cc%g,%g,%g -cla%g,%g,%g -ca%g %s -b%d\n\n",
 	   cc[0],cc[1],cc[2], cla[0],cla[1],cla[2], angle,
 	   filename, ldraw_commandline_opts.B);
   }
@@ -1322,7 +1322,7 @@ void printLdrawMatrix(FILE *f)
   if ((ldraw_commandline_opts.O.x != 0.0) ||
       (ldraw_commandline_opts.O.y != 0.0))
   {
-    sprintf(s,"-o%g,%g ", ldraw_commandline_opts.O.x, 
+    sprintf(s,"-o%g,%g ", ldraw_commandline_opts.O.x,
 	    ldraw_commandline_opts.O.y);
     s = matrix_string + strlen(matrix_string);
   }
@@ -1382,14 +1382,14 @@ END_JOYSTICK_DRIVER_LIST
 #endif
 
 /***************************************************************/
-void draw_string(void *font, const char* string) 
+void draw_string(void *font, const char* string)
 {
   while(*string)
     glutStrokeCharacter(font, *string++);
 }
 
 /***************************************************************/
-void draw_string_bitmap(void *font, const char* string) 
+void draw_string_bitmap(void *font, const char* string)
 {
   while (*string)
     glutBitmapCharacter(font, *string++);
@@ -1428,15 +1428,15 @@ DoRasterString( float x, float y, char *s )
     return;
   }
 #endif
-  
+
   glRasterPos2f( x, y );
   for( ; ( c = *s ) != '\0'; s++ )
   {
-#ifndef AGL    
+#ifndef AGL
     glutBitmapCharacter( GLUT_BITMAP_HELVETICA_12, c );
 #endif
   }
-#ifdef AGL    
+#ifdef AGL
   //allegro_gl_printf(font, x, y, 1, 0, s);
 #endif
 }
@@ -1473,7 +1473,7 @@ DoMenuString( float x, float y, char *s )
 	continue;
       }
       ss[0] = c; // glutBitmapCharacter()
-      glFontTextOut (ss, x/fontwidth, y/fontwidth+2, 1); 
+      glFontTextOut (ss, x/fontwidth, y/fontwidth+2, 1);
       x += (Font.Char[c-Font.IntStart].dx * fontwidth); // glutBitmapWidth()
       if (accelcolor)
       {
@@ -1492,11 +1492,11 @@ DoMenuString( float x, float y, char *s )
     return;
   }
 #endif
-  
+
   glRasterPos2f( x, y );
   for( ; ( c = *s ) != '\0'; s++ )
   {
-#ifndef AGL    
+#ifndef AGL
     if (c == '&')
     {
       glColor4f( 0.0, 0.0, 0.5, 1.0 );	/* Current char is dark blue */
@@ -1514,7 +1514,7 @@ DoMenuString( float x, float y, char *s )
     }
 #endif
   }
-#ifdef AGL    
+#ifdef AGL
   //allegro_gl_printf(font, x, y, 1, 0, s);
 #endif
 }
@@ -1711,12 +1711,12 @@ int edit_mode_gui()
   glDisable(GL_LIGHTING);
 
   // Turn off any smoothing or blending modes.
-  glDisable( GL_POINT_SMOOTH ); 
+  glDisable( GL_POINT_SMOOTH );
   glDisable(GL_ALPHA_TEST);
-  glDisable( GL_LINE_SMOOTH ); 
+  glDisable( GL_LINE_SMOOTH );
   glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
   glDisable( GL_BLEND );
-  glDisable( GL_POLYGON_SMOOTH ); 
+  glDisable( GL_POLYGON_SMOOTH );
   glHint( GL_POLYGON_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   // No need to dither the menu, even if at 8bpp.
@@ -1747,7 +1747,7 @@ int edit_mode_gui()
     else
       DoRasterString( charwidth, Height - lineheight*2.0, eline[1] );
   }
-  else 
+  else
   {
     DoRasterString( charwidth, Height - lineheight, eline[0] );
     DoRasterString( charwidth, Height - lineheight*2.0, eline[1] );
@@ -1761,12 +1761,12 @@ int edit_mode_gui()
   glPopMatrix();
   glMatrixMode( GL_MODELVIEW );
 
-  glEnable( GL_DEPTH_TEST ); 
+  glEnable( GL_DEPTH_TEST );
 
   // Reset the projection matrix.
-  savedirty = dirtyWindow; 
+  savedirty = dirtyWindow;
   reshape(Width, Height);
-  dirtyWindow = savedirty; 
+  dirtyWindow = savedirty;
 
   // NOTE: reshape() does NOT seem to prevent a jump when I spin with mouse.
   // I Should probably call glPushAttrib() and glPopAttrib() instead of
@@ -1793,7 +1793,7 @@ extern void write_bmp8(char *filename);
 
 #ifdef USE_PNG
 #include "png.h"
-extern FILE *start_png(char *filename, int width, int height,   
+extern FILE *start_png(char *filename, int width, int height,
 		       png_structp *png_pp, png_infop *info_pp);
 extern void write_png(char *filename);
 #endif
@@ -1809,8 +1809,8 @@ int platform_write_step_comment(char *comment_string)
 #endif
 
 #ifndef ALWAYS_REDRAW
-  glEnable( GL_COLOR_LOGIC_OP ); 
-  //glEnable( GL_LOGIC_OP_MODE ); 
+  glEnable( GL_COLOR_LOGIC_OP );
+  //glEnable( GL_LOGIC_OP_MODE );
   glLogicOp(GL_XOR);
 #endif
 
@@ -1833,17 +1833,17 @@ int platform_write_step_comment(char *comment_string)
 #endif
   glDisable( GL_DEPTH_TEST ); /* don't test for depth -- just put in front  */
   DoRasterString( 1.0, 1.0, comment_string );
-  glEnable( GL_DEPTH_TEST ); 
+  glEnable( GL_DEPTH_TEST );
   glPopMatrix();
 
 #ifndef ALWAYS_REDRAW
   glLogicOp(GL_COPY);
-  glEnable( GL_DEPTH_TEST ); 
-  glDisable( GL_COLOR_LOGIC_OP ); 
+  glEnable( GL_DEPTH_TEST );
+  glDisable( GL_COLOR_LOGIC_OP );
 #endif
 
   // Reset the projection matrix.
-  savedirty = dirtyWindow; 
+  savedirty = dirtyWindow;
 #if 1
   reshape(Width, Height);
 #else
@@ -1852,7 +1852,7 @@ int platform_write_step_comment(char *comment_string)
   glPopMatrix();
   glMatrixMode( GL_MODELVIEW );
 #endif
-  dirtyWindow = savedirty; 
+  dirtyWindow = savedirty;
   return 0;
 }
 
@@ -1886,13 +1886,13 @@ void platform_step_filename(int step, char *filename)
     }
     return;
   }
-    
+
 #if 0
   concat_path(pathname, use_uppercase ? "BITMAP" : "bitmap", filepath);
 #else
   strcpy(filepath, bitmappath);
 #endif
-  if (ldraw_commandline_opts.rotate == 1) 
+  if (ldraw_commandline_opts.rotate == 1)
   {
     sprintf(filenum,"rot_%0dd",(int)twirl_angle);
     concat_path(filepath, filenum, filename);
@@ -1921,7 +1921,7 @@ char * extend_filename(	char *filename)
 
   if ((p = strrchr(filename, '.')) != NULL)
     *p = 0;
-  else 
+  else
     p = filename + strlen(filename);
 
 #ifdef USE_PNG
@@ -2022,10 +2022,10 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
     //platform_step_comment(buf)
     if (ldraw_commandline_opts.debug_level == 1)
       printf("Finished\n");
-  } 
+  }
   else 	if (step >= 0) {
     //platform_step_commentbuf)
-  } 
+  }
   else {
     // step == -1 means a redraw partway through a step
   }
@@ -2035,18 +2035,18 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
   // at the end of the render() fn to save/pause after the last step.
   // This makes some of the tests below look different than ldliteView.cpp.
 
-  if ((ldraw_commandline_opts.M != 'C')||(step==INT_MAX)||(step== -1)) { 
+  if ((ldraw_commandline_opts.M != 'C')||(step==INT_MAX)||(step== -1)) {
   }
   if ((step >= 0 ) && ((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F'))) {
 
-    //    printf("Platform_Step(%d, %d, %d, %d, %d) %c\n", 
+    //    printf("Platform_Step(%d, %d, %d, %d, %d) %c\n",
     //	   step, level, pause, curstep, stepcount,
     //	   ldraw_commandline_opts.M);
 
     // if something has been drawn, save bitmap
     if ((step == INT_MAX) && (pause == 0)) {
       // do nothing
-    } 
+    }
     else if (preprintstep) {
       // Early stage of Multistage draw.  Do not save bitmap yet.
     }
@@ -2087,7 +2087,7 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
       if (zp == NULL) // Avoid NULL ptr crash on 'B' when debug printing.
 	zp = &z;
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("EXTENTS: (%d, %d) -> (%d, %d)\n", 
+	printf("EXTENTS: (%d, %d) -> (%d, %d)\n",
 	       zp->extent_x1, zp->extent_y1, zp->extent_x2, zp->extent_y2);
 
 #ifdef USE_PNG
@@ -2155,7 +2155,7 @@ int GetPrivateProfileInt(char *appName, char *appVar, int varDefault, char *file
 }
 
 /***************************************************************/
-int GetPrivateProfileString(char *appName, char *appVar, char *varDefault, 
+int GetPrivateProfileString(char *appName, char *appVar, char *varDefault,
 			    char *retString, int strSize, char *fileName)
 {
   UNUSED(appName);
@@ -2204,7 +2204,7 @@ void platform_setpath()
     if (stricmp(env_str, "UPPERCASE") == 0)
       use_uppercase = 1;
   }
-  
+
   env_str = platform_getenv("LDRAWDIR");
   if (env_str != NULL)
   {
@@ -2285,10 +2285,10 @@ LDrawIniBoolT platform_fixcase(char *path_str)
   int i;
 
   if (use_uppercase)
-    for(i=0; i<strlen(path_str); i++) 
+    for(i=0; i<strlen(path_str); i++)
       path_str[i] = toupper(path_str[i]);
   else
-    for(i=0; i<strlen(path_str); i++) 
+    for(i=0; i<strlen(path_str); i++)
       path_str[i] = tolower(path_str[i]);
 
   return 1;
@@ -2300,7 +2300,7 @@ int _strlwr(char *str)
 {
   int i;
 
-  for(i=0; i<strlen(str); i++) 
+  for(i=0; i<strlen(str); i++)
     str[i] = tolower(str[i]);
 }
 #endif
@@ -2321,148 +2321,148 @@ GLint mouse_button = -1;
 // 8 random 20% stipple patterns generated with rand()
 GLubyte stips[8][4*32] = {
   {
-  0x04, 0x86, 0x00, 0x10, 0x20, 0x00, 0x00, 0x30, 
-  0xC2, 0x06, 0x10, 0x00, 0x10, 0x41, 0x02, 0x29, 
-  0x46, 0x80, 0x00, 0xC9, 0x20, 0x11, 0x00, 0x02, 
-  0x08, 0x0A, 0x80, 0x01, 0x09, 0x00, 0x22, 0x10, 
-  0x02, 0x00, 0x1A, 0x48, 0x01, 0x80, 0x61, 0x00, 
-  0x10, 0x09, 0x30, 0x04, 0x80, 0x01, 0x0C, 0x10, 
-  0x01, 0x04, 0x51, 0x10, 0xA0, 0x40, 0x39, 0xB9, 
-  0x04, 0x00, 0xAA, 0x01, 0x22, 0x04, 0x96, 0xC0, 
-  0x88, 0x48, 0x04, 0x8C, 0x49, 0x01, 0x00, 0x42, 
-  0x04, 0x00, 0x09, 0x54, 0x0A, 0x40, 0x64, 0x00, 
-  0x4A, 0xA4, 0x19, 0x49, 0x08, 0x40, 0x08, 0x88, 
-  0x04, 0x48, 0x80, 0x03, 0x30, 0x90, 0x13, 0x08, 
-  0x1A, 0x00, 0x04, 0x19, 0x0A, 0x40, 0x0C, 0x09, 
-  0x40, 0x0A, 0xC0, 0x8A, 0x01, 0x00, 0x60, 0x06, 
-  0x00, 0x01, 0x88, 0x40, 0x20, 0xC4, 0x83, 0x99, 
-  0x02, 0x10, 0x14, 0x94, 0x10, 0x10, 0x20, 0x10, 
+  0x04, 0x86, 0x00, 0x10, 0x20, 0x00, 0x00, 0x30,
+  0xC2, 0x06, 0x10, 0x00, 0x10, 0x41, 0x02, 0x29,
+  0x46, 0x80, 0x00, 0xC9, 0x20, 0x11, 0x00, 0x02,
+  0x08, 0x0A, 0x80, 0x01, 0x09, 0x00, 0x22, 0x10,
+  0x02, 0x00, 0x1A, 0x48, 0x01, 0x80, 0x61, 0x00,
+  0x10, 0x09, 0x30, 0x04, 0x80, 0x01, 0x0C, 0x10,
+  0x01, 0x04, 0x51, 0x10, 0xA0, 0x40, 0x39, 0xB9,
+  0x04, 0x00, 0xAA, 0x01, 0x22, 0x04, 0x96, 0xC0,
+  0x88, 0x48, 0x04, 0x8C, 0x49, 0x01, 0x00, 0x42,
+  0x04, 0x00, 0x09, 0x54, 0x0A, 0x40, 0x64, 0x00,
+  0x4A, 0xA4, 0x19, 0x49, 0x08, 0x40, 0x08, 0x88,
+  0x04, 0x48, 0x80, 0x03, 0x30, 0x90, 0x13, 0x08,
+  0x1A, 0x00, 0x04, 0x19, 0x0A, 0x40, 0x0C, 0x09,
+  0x40, 0x0A, 0xC0, 0x8A, 0x01, 0x00, 0x60, 0x06,
+  0x00, 0x01, 0x88, 0x40, 0x20, 0xC4, 0x83, 0x99,
+  0x02, 0x10, 0x14, 0x94, 0x10, 0x10, 0x20, 0x10,
   },
   {
-  0x02, 0x40, 0x08, 0x01, 0x08, 0x00, 0x40, 0x50, 
-  0x70, 0x00, 0xE5, 0x0C, 0x80, 0xCD, 0x80, 0x1A, 
-  0x80, 0x41, 0x04, 0x10, 0x70, 0x03, 0x03, 0x88, 
-  0x08, 0x03, 0x16, 0x00, 0x01, 0x12, 0x00, 0x80, 
-  0x18, 0x00, 0x00, 0x14, 0x24, 0x08, 0x84, 0x08, 
-  0x11, 0x42, 0x04, 0x44, 0x00, 0xC7, 0xD0, 0x00, 
-  0x20, 0x48, 0x40, 0x89, 0x04, 0xAA, 0x09, 0x88, 
-  0x00, 0x82, 0x00, 0x01, 0x18, 0x21, 0x41, 0x01, 
-  0x11, 0x04, 0x04, 0x00, 0x40, 0x02, 0x69, 0x90, 
-  0x4B, 0x80, 0x08, 0x00, 0x12, 0x10, 0x10, 0x01, 
-  0x41, 0x22, 0x24, 0x14, 0x50, 0x0C, 0x80, 0x00, 
-  0x01, 0x65, 0x16, 0x08, 0x08, 0x10, 0x02, 0x40, 
-  0x0C, 0x30, 0x40, 0xC0, 0x6E, 0xE0, 0x0A, 0x23, 
-  0xAC, 0xA0, 0x08, 0x80, 0x53, 0x02, 0x20, 0xC0, 
-  0x40, 0x55, 0x42, 0x48, 0x05, 0x04, 0x20, 0x00, 
-  0x1D, 0x06, 0x48, 0x88, 0xC8, 0x22, 0x21, 0x41, 
+  0x02, 0x40, 0x08, 0x01, 0x08, 0x00, 0x40, 0x50,
+  0x70, 0x00, 0xE5, 0x0C, 0x80, 0xCD, 0x80, 0x1A,
+  0x80, 0x41, 0x04, 0x10, 0x70, 0x03, 0x03, 0x88,
+  0x08, 0x03, 0x16, 0x00, 0x01, 0x12, 0x00, 0x80,
+  0x18, 0x00, 0x00, 0x14, 0x24, 0x08, 0x84, 0x08,
+  0x11, 0x42, 0x04, 0x44, 0x00, 0xC7, 0xD0, 0x00,
+  0x20, 0x48, 0x40, 0x89, 0x04, 0xAA, 0x09, 0x88,
+  0x00, 0x82, 0x00, 0x01, 0x18, 0x21, 0x41, 0x01,
+  0x11, 0x04, 0x04, 0x00, 0x40, 0x02, 0x69, 0x90,
+  0x4B, 0x80, 0x08, 0x00, 0x12, 0x10, 0x10, 0x01,
+  0x41, 0x22, 0x24, 0x14, 0x50, 0x0C, 0x80, 0x00,
+  0x01, 0x65, 0x16, 0x08, 0x08, 0x10, 0x02, 0x40,
+  0x0C, 0x30, 0x40, 0xC0, 0x6E, 0xE0, 0x0A, 0x23,
+  0xAC, 0xA0, 0x08, 0x80, 0x53, 0x02, 0x20, 0xC0,
+  0x40, 0x55, 0x42, 0x48, 0x05, 0x04, 0x20, 0x00,
+  0x1D, 0x06, 0x48, 0x88, 0xC8, 0x22, 0x21, 0x41,
   },
   {
-  0x00, 0x02, 0x0C, 0x43, 0x08, 0x02, 0x09, 0x02, 
-  0x00, 0x00, 0x54, 0x29, 0x8A, 0x02, 0x80, 0x10, 
-  0x09, 0x83, 0x24, 0x0A, 0x01, 0xC4, 0x00, 0x30, 
-  0x05, 0x40, 0x88, 0x00, 0x80, 0x22, 0x8C, 0x60, 
-  0x00, 0x04, 0x21, 0x32, 0x88, 0x20, 0x28, 0x48, 
-  0x91, 0x00, 0x33, 0x14, 0x20, 0x89, 0x01, 0x20, 
-  0x00, 0x04, 0x20, 0x00, 0x48, 0x10, 0x90, 0x60, 
-  0x81, 0x0B, 0x24, 0x78, 0x86, 0x50, 0x2E, 0x08, 
-  0x10, 0x29, 0x02, 0x01, 0x40, 0x42, 0x00, 0x00, 
-  0xC4, 0x08, 0x80, 0x02, 0x53, 0x10, 0x05, 0x00, 
-  0x90, 0x00, 0x04, 0x00, 0x20, 0x05, 0x04, 0x04, 
-  0x90, 0x01, 0x02, 0x20, 0x0C, 0x02, 0x40, 0x28, 
-  0x20, 0x10, 0x10, 0x20, 0x01, 0x01, 0x0B, 0x08, 
-  0x40, 0x00, 0x40, 0x84, 0x00, 0xA0, 0x08, 0x21, 
-  0xF2, 0x03, 0x04, 0x88, 0x20, 0x00, 0x98, 0x00, 
-  0x18, 0x10, 0x08, 0x84, 0x04, 0x09, 0x08, 0x04, 
+  0x00, 0x02, 0x0C, 0x43, 0x08, 0x02, 0x09, 0x02,
+  0x00, 0x00, 0x54, 0x29, 0x8A, 0x02, 0x80, 0x10,
+  0x09, 0x83, 0x24, 0x0A, 0x01, 0xC4, 0x00, 0x30,
+  0x05, 0x40, 0x88, 0x00, 0x80, 0x22, 0x8C, 0x60,
+  0x00, 0x04, 0x21, 0x32, 0x88, 0x20, 0x28, 0x48,
+  0x91, 0x00, 0x33, 0x14, 0x20, 0x89, 0x01, 0x20,
+  0x00, 0x04, 0x20, 0x00, 0x48, 0x10, 0x90, 0x60,
+  0x81, 0x0B, 0x24, 0x78, 0x86, 0x50, 0x2E, 0x08,
+  0x10, 0x29, 0x02, 0x01, 0x40, 0x42, 0x00, 0x00,
+  0xC4, 0x08, 0x80, 0x02, 0x53, 0x10, 0x05, 0x00,
+  0x90, 0x00, 0x04, 0x00, 0x20, 0x05, 0x04, 0x04,
+  0x90, 0x01, 0x02, 0x20, 0x0C, 0x02, 0x40, 0x28,
+  0x20, 0x10, 0x10, 0x20, 0x01, 0x01, 0x0B, 0x08,
+  0x40, 0x00, 0x40, 0x84, 0x00, 0xA0, 0x08, 0x21,
+  0xF2, 0x03, 0x04, 0x88, 0x20, 0x00, 0x98, 0x00,
+  0x18, 0x10, 0x08, 0x84, 0x04, 0x09, 0x08, 0x04,
   },
   {
-  0x90, 0xD0, 0x58, 0x80, 0xC8, 0xAA, 0x10, 0x80, 
-  0x01, 0x05, 0x0C, 0x00, 0x08, 0x08, 0x92, 0x29, 
-  0x1B, 0x21, 0x0C, 0x04, 0x08, 0x00, 0x82, 0x28, 
-  0x50, 0x85, 0x02, 0x80, 0x19, 0x88, 0x08, 0xD2, 
-  0x00, 0x88, 0x00, 0x40, 0x00, 0x00, 0x00, 0x24, 
-  0x20, 0x40, 0x00, 0x00, 0x80, 0x50, 0x80, 0x00, 
-  0x05, 0x00, 0x44, 0x48, 0xA4, 0x40, 0x80, 0x23, 
-  0xC0, 0x20, 0x10, 0x00, 0xC0, 0x80, 0x00, 0x6B, 
-  0x92, 0x12, 0x0D, 0x04, 0x20, 0x04, 0x80, 0x5C, 
-  0x00, 0x02, 0x42, 0x08, 0xA2, 0x28, 0x04, 0x42, 
-  0x10, 0x80, 0x05, 0x80, 0x0F, 0x54, 0x10, 0xC3, 
-  0x00, 0x0A, 0x01, 0x12, 0x80, 0x30, 0x10, 0x20, 
-  0x00, 0x80, 0x04, 0x08, 0x00, 0x00, 0x41, 0x0A, 
-  0x00, 0xA0, 0x00, 0x21, 0x22, 0x88, 0x10, 0xB0, 
-  0x05, 0xB9, 0x89, 0x10, 0x34, 0x30, 0x4B, 0x00, 
-  0x05, 0x00, 0x10, 0x74, 0xC1, 0x01, 0x07, 0x00, 
+  0x90, 0xD0, 0x58, 0x80, 0xC8, 0xAA, 0x10, 0x80,
+  0x01, 0x05, 0x0C, 0x00, 0x08, 0x08, 0x92, 0x29,
+  0x1B, 0x21, 0x0C, 0x04, 0x08, 0x00, 0x82, 0x28,
+  0x50, 0x85, 0x02, 0x80, 0x19, 0x88, 0x08, 0xD2,
+  0x00, 0x88, 0x00, 0x40, 0x00, 0x00, 0x00, 0x24,
+  0x20, 0x40, 0x00, 0x00, 0x80, 0x50, 0x80, 0x00,
+  0x05, 0x00, 0x44, 0x48, 0xA4, 0x40, 0x80, 0x23,
+  0xC0, 0x20, 0x10, 0x00, 0xC0, 0x80, 0x00, 0x6B,
+  0x92, 0x12, 0x0D, 0x04, 0x20, 0x04, 0x80, 0x5C,
+  0x00, 0x02, 0x42, 0x08, 0xA2, 0x28, 0x04, 0x42,
+  0x10, 0x80, 0x05, 0x80, 0x0F, 0x54, 0x10, 0xC3,
+  0x00, 0x0A, 0x01, 0x12, 0x80, 0x30, 0x10, 0x20,
+  0x00, 0x80, 0x04, 0x08, 0x00, 0x00, 0x41, 0x0A,
+  0x00, 0xA0, 0x00, 0x21, 0x22, 0x88, 0x10, 0xB0,
+  0x05, 0xB9, 0x89, 0x10, 0x34, 0x30, 0x4B, 0x00,
+  0x05, 0x00, 0x10, 0x74, 0xC1, 0x01, 0x07, 0x00,
   },
   {
-  0x60, 0x14, 0x00, 0x04, 0x04, 0x48, 0x20, 0x21, 
-  0xE4, 0x08, 0x42, 0x00, 0x01, 0x06, 0x03, 0x40, 
-  0x5B, 0x20, 0x00, 0x04, 0x91, 0x25, 0x54, 0x43, 
-  0x02, 0x01, 0x04, 0x93, 0x91, 0x81, 0x02, 0x36, 
-  0x30, 0x20, 0x44, 0x08, 0x00, 0x19, 0x00, 0x00, 
-  0x53, 0x80, 0x01, 0x42, 0x08, 0x01, 0x82, 0x08, 
-  0xC1, 0x05, 0x01, 0x01, 0x1C, 0x44, 0x20, 0x83, 
-  0x00, 0x01, 0x00, 0x08, 0x20, 0x10, 0x00, 0x28, 
-  0x01, 0xC0, 0xA2, 0x00, 0x20, 0x00, 0x00, 0x80, 
-  0x00, 0xC1, 0x40, 0x22, 0x00, 0x84, 0x09, 0x00, 
-  0x06, 0x89, 0x33, 0x90, 0x08, 0x20, 0x00, 0x84, 
-  0x60, 0x01, 0x0A, 0x34, 0x87, 0x08, 0x0A, 0x01, 
-  0x1A, 0x02, 0x03, 0x14, 0x10, 0x64, 0x00, 0x4A, 
-  0xC2, 0x44, 0x00, 0x04, 0x80, 0x82, 0x90, 0x30, 
-  0x18, 0x02, 0x8A, 0xA1, 0x84, 0x00, 0x20, 0x08, 
-  0x48, 0xD0, 0x81, 0x55, 0x01, 0xBA, 0x02, 0x40, 
+  0x60, 0x14, 0x00, 0x04, 0x04, 0x48, 0x20, 0x21,
+  0xE4, 0x08, 0x42, 0x00, 0x01, 0x06, 0x03, 0x40,
+  0x5B, 0x20, 0x00, 0x04, 0x91, 0x25, 0x54, 0x43,
+  0x02, 0x01, 0x04, 0x93, 0x91, 0x81, 0x02, 0x36,
+  0x30, 0x20, 0x44, 0x08, 0x00, 0x19, 0x00, 0x00,
+  0x53, 0x80, 0x01, 0x42, 0x08, 0x01, 0x82, 0x08,
+  0xC1, 0x05, 0x01, 0x01, 0x1C, 0x44, 0x20, 0x83,
+  0x00, 0x01, 0x00, 0x08, 0x20, 0x10, 0x00, 0x28,
+  0x01, 0xC0, 0xA2, 0x00, 0x20, 0x00, 0x00, 0x80,
+  0x00, 0xC1, 0x40, 0x22, 0x00, 0x84, 0x09, 0x00,
+  0x06, 0x89, 0x33, 0x90, 0x08, 0x20, 0x00, 0x84,
+  0x60, 0x01, 0x0A, 0x34, 0x87, 0x08, 0x0A, 0x01,
+  0x1A, 0x02, 0x03, 0x14, 0x10, 0x64, 0x00, 0x4A,
+  0xC2, 0x44, 0x00, 0x04, 0x80, 0x82, 0x90, 0x30,
+  0x18, 0x02, 0x8A, 0xA1, 0x84, 0x00, 0x20, 0x08,
+  0x48, 0xD0, 0x81, 0x55, 0x01, 0xBA, 0x02, 0x40,
   },
   {
-  0x40, 0x1E, 0x00, 0x06, 0x13, 0x03, 0x45, 0x22, 
-  0x50, 0x10, 0x22, 0x00, 0x12, 0x06, 0x0E, 0x01, 
-  0x02, 0x08, 0xC0, 0x14, 0x34, 0x54, 0x0C, 0x0E, 
-  0x80, 0x08, 0x00, 0x45, 0xA2, 0x20, 0x10, 0x98, 
-  0x20, 0x7A, 0x41, 0x92, 0x48, 0x88, 0x03, 0xC1, 
-  0x51, 0xB0, 0x22, 0x0A, 0x04, 0x08, 0x16, 0x02, 
-  0x12, 0x00, 0x08, 0x10, 0x00, 0x80, 0x04, 0x25, 
-  0x80, 0x05, 0x02, 0x00, 0x04, 0x20, 0xC1, 0x4B, 
-  0x0C, 0x22, 0x00, 0x28, 0x14, 0x20, 0x44, 0x42, 
-  0x20, 0x00, 0x00, 0xC4, 0x00, 0x00, 0x00, 0x00, 
-  0x00, 0x22, 0x80, 0x50, 0xA4, 0x10, 0x84, 0x02, 
-  0x81, 0x24, 0xC9, 0xC2, 0x50, 0x48, 0x20, 0x88, 
-  0x12, 0x14, 0x82, 0x00, 0x51, 0x24, 0x05, 0x80, 
-  0x02, 0xA0, 0x0C, 0x08, 0x82, 0x04, 0x20, 0x80, 
-  0x10, 0x0C, 0x20, 0x12, 0x01, 0x02, 0x14, 0x00, 
-  0x26, 0x12, 0x50, 0x80, 0xC4, 0x02, 0x11, 0x49, 
+  0x40, 0x1E, 0x00, 0x06, 0x13, 0x03, 0x45, 0x22,
+  0x50, 0x10, 0x22, 0x00, 0x12, 0x06, 0x0E, 0x01,
+  0x02, 0x08, 0xC0, 0x14, 0x34, 0x54, 0x0C, 0x0E,
+  0x80, 0x08, 0x00, 0x45, 0xA2, 0x20, 0x10, 0x98,
+  0x20, 0x7A, 0x41, 0x92, 0x48, 0x88, 0x03, 0xC1,
+  0x51, 0xB0, 0x22, 0x0A, 0x04, 0x08, 0x16, 0x02,
+  0x12, 0x00, 0x08, 0x10, 0x00, 0x80, 0x04, 0x25,
+  0x80, 0x05, 0x02, 0x00, 0x04, 0x20, 0xC1, 0x4B,
+  0x0C, 0x22, 0x00, 0x28, 0x14, 0x20, 0x44, 0x42,
+  0x20, 0x00, 0x00, 0xC4, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x22, 0x80, 0x50, 0xA4, 0x10, 0x84, 0x02,
+  0x81, 0x24, 0xC9, 0xC2, 0x50, 0x48, 0x20, 0x88,
+  0x12, 0x14, 0x82, 0x00, 0x51, 0x24, 0x05, 0x80,
+  0x02, 0xA0, 0x0C, 0x08, 0x82, 0x04, 0x20, 0x80,
+  0x10, 0x0C, 0x20, 0x12, 0x01, 0x02, 0x14, 0x00,
+  0x26, 0x12, 0x50, 0x80, 0xC4, 0x02, 0x11, 0x49,
   },
   {
-  0x00, 0xE0, 0x04, 0x18, 0x00, 0x00, 0x00, 0x82, 
-  0x21, 0x04, 0x08, 0x20, 0x03, 0x02, 0x12, 0x02, 
-  0x08, 0x04, 0x48, 0x00, 0x21, 0x64, 0x06, 0x08, 
-  0x02, 0x30, 0x4C, 0x00, 0x01, 0x00, 0x01, 0x09, 
-  0x40, 0x11, 0x04, 0x28, 0x04, 0x28, 0x70, 0x14, 
-  0x28, 0x00, 0x28, 0xC1, 0x60, 0x00, 0x00, 0x51, 
-  0x52, 0x00, 0xAC, 0x88, 0x24, 0x80, 0x08, 0x42, 
-  0x00, 0x12, 0x40, 0x00, 0x05, 0x20, 0x04, 0x01, 
-  0x00, 0xAC, 0x40, 0x01, 0x01, 0x63, 0x80, 0x2D, 
-  0x18, 0x80, 0x60, 0x09, 0x0C, 0x01, 0xD2, 0x02, 
-  0x18, 0x62, 0x00, 0x41, 0x91, 0x20, 0x4C, 0x20, 
-  0xC2, 0x30, 0x00, 0x1C, 0x10, 0x00, 0xE8, 0x08, 
-  0x88, 0x00, 0x40, 0x55, 0x00, 0xD8, 0x81, 0x86, 
-  0x80, 0x28, 0x21, 0x00, 0x23, 0x08, 0x00, 0x0E, 
-  0xC0, 0x02, 0x48, 0x30, 0x06, 0x08, 0x14, 0x44, 
-  0x60, 0x88, 0x70, 0x0C, 0x88, 0x89, 0x84, 0x82, 
+  0x00, 0xE0, 0x04, 0x18, 0x00, 0x00, 0x00, 0x82,
+  0x21, 0x04, 0x08, 0x20, 0x03, 0x02, 0x12, 0x02,
+  0x08, 0x04, 0x48, 0x00, 0x21, 0x64, 0x06, 0x08,
+  0x02, 0x30, 0x4C, 0x00, 0x01, 0x00, 0x01, 0x09,
+  0x40, 0x11, 0x04, 0x28, 0x04, 0x28, 0x70, 0x14,
+  0x28, 0x00, 0x28, 0xC1, 0x60, 0x00, 0x00, 0x51,
+  0x52, 0x00, 0xAC, 0x88, 0x24, 0x80, 0x08, 0x42,
+  0x00, 0x12, 0x40, 0x00, 0x05, 0x20, 0x04, 0x01,
+  0x00, 0xAC, 0x40, 0x01, 0x01, 0x63, 0x80, 0x2D,
+  0x18, 0x80, 0x60, 0x09, 0x0C, 0x01, 0xD2, 0x02,
+  0x18, 0x62, 0x00, 0x41, 0x91, 0x20, 0x4C, 0x20,
+  0xC2, 0x30, 0x00, 0x1C, 0x10, 0x00, 0xE8, 0x08,
+  0x88, 0x00, 0x40, 0x55, 0x00, 0xD8, 0x81, 0x86,
+  0x80, 0x28, 0x21, 0x00, 0x23, 0x08, 0x00, 0x0E,
+  0xC0, 0x02, 0x48, 0x30, 0x06, 0x08, 0x14, 0x44,
+  0x60, 0x88, 0x70, 0x0C, 0x88, 0x89, 0x84, 0x82,
   },
   {
-  0xA0, 0x56, 0x10, 0x84, 0x2A, 0x44, 0x4A, 0x84, 
-  0x8E, 0x04, 0x82, 0xA0, 0x00, 0x2D, 0x90, 0x03, 
-  0x02, 0x02, 0x08, 0x33, 0x8A, 0x10, 0x94, 0x16, 
-  0x23, 0x04, 0x00, 0x10, 0x00, 0x11, 0x08, 0x08, 
-  0x90, 0x01, 0x01, 0x8D, 0x05, 0x40, 0x02, 0x00, 
-  0x21, 0xA0, 0x70, 0x02, 0x40, 0x00, 0x00, 0x80, 
-  0x88, 0x2E, 0x0B, 0x44, 0x08, 0x00, 0x13, 0x44, 
-  0x28, 0x22, 0x54, 0x04, 0x06, 0x08, 0x48, 0x01, 
-  0x00, 0x09, 0x40, 0x30, 0xC0, 0x81, 0x80, 0x00, 
-  0x20, 0x00, 0x00, 0x09, 0x82, 0x18, 0x00, 0x10, 
-  0x10, 0x02, 0x14, 0x01, 0x00, 0x11, 0xC2, 0x01, 
-  0x04, 0x00, 0x08, 0x88, 0x80, 0x88, 0x81, 0x8D, 
-  0x80, 0x40, 0x12, 0x51, 0x08, 0x00, 0x80, 0x80, 
-  0x00, 0x00, 0x80, 0x04, 0x40, 0x80, 0x5A, 0x58, 
-  0x0C, 0x04, 0xB9, 0x00, 0xB0, 0x41, 0xA2, 0x24, 
-  0x00, 0x00, 0x00, 0x29, 0x00, 0x00, 0x48, 0x80, 
+  0xA0, 0x56, 0x10, 0x84, 0x2A, 0x44, 0x4A, 0x84,
+  0x8E, 0x04, 0x82, 0xA0, 0x00, 0x2D, 0x90, 0x03,
+  0x02, 0x02, 0x08, 0x33, 0x8A, 0x10, 0x94, 0x16,
+  0x23, 0x04, 0x00, 0x10, 0x00, 0x11, 0x08, 0x08,
+  0x90, 0x01, 0x01, 0x8D, 0x05, 0x40, 0x02, 0x00,
+  0x21, 0xA0, 0x70, 0x02, 0x40, 0x00, 0x00, 0x80,
+  0x88, 0x2E, 0x0B, 0x44, 0x08, 0x00, 0x13, 0x44,
+  0x28, 0x22, 0x54, 0x04, 0x06, 0x08, 0x48, 0x01,
+  0x00, 0x09, 0x40, 0x30, 0xC0, 0x81, 0x80, 0x00,
+  0x20, 0x00, 0x00, 0x09, 0x82, 0x18, 0x00, 0x10,
+  0x10, 0x02, 0x14, 0x01, 0x00, 0x11, 0xC2, 0x01,
+  0x04, 0x00, 0x08, 0x88, 0x80, 0x88, 0x81, 0x8D,
+  0x80, 0x40, 0x12, 0x51, 0x08, 0x00, 0x80, 0x80,
+  0x00, 0x00, 0x80, 0x04, 0x40, 0x80, 0x5A, 0x58,
+  0x0C, 0x04, 0xB9, 0x00, 0xB0, 0x41, 0xA2, 0x24,
+  0x00, 0x00, 0x00, 0x29, 0x00, 0x00, 0x48, 0x80,
   },
 };
 
@@ -2481,39 +2481,39 @@ void linequalitysetup()
 {
   int zSolid = ldraw_commandline_opts.F & TYPE_F_NO_LINES;
 
-  //NOTE: This only works well if I draw all the polys first, 
+  //NOTE: This only works well if I draw all the polys first,
   // then antialias the lines on top of them in a 2nd pass.
   if (qualityLines && !zSolid)
   {
 
-    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! 
-    if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) && 
+    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
+    if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) &&
 	((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_FALSE); //disable alpha updates
     // This will clip anything blended with the background when saved
     // as a transparent PNG.  Sharp outside edges, but no halo effect.
     // The other cheap alternative is to use -b0 for a dark halo,
     // which is less disturbing on all backgrounds that a white halo.
-    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! 
+    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
 
-    glEnable( GL_LINE_SMOOTH ); 
+    glEnable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_NICEST ); // GL_FASTEST GL_DONT_CARE
     glEnable( GL_BLEND );
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // NOTE: I need to saturate the DST alpha somehow.  
+    // NOTE: I need to saturate the DST alpha somehow.
     // This should do it, but turns all edges black
     // because when Ad is already 1, min(As,1-Ad) is 0 and not As.  Nuts!
     //glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE_MINUS_SRC_ALPHA);
     // Also smooth edges of printed polygons.
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    //glEnable( GL_POLYGON_SMOOTH ); 
+    //glEnable( GL_POLYGON_SMOOTH );
     //glHint( GL_POLYGON_SMOOTH_HINT, GL_NICEST ); // GL_FASTEST GL_DONT_CARE
 #if 1
     if (lineWidth > 1.0)
     {
       // This does NOT seem to work as well as I thought it would.
       // Instead, just draw the points (unantialiased) BEFORE the lines.
-      glEnable( GL_POINT_SMOOTH ); 
+      glEnable( GL_POINT_SMOOTH );
       glHint( GL_POINT_SMOOTH_HINT, GL_NICEST ); // GL_FASTEST GL_DONT_CARE
       glEnable(GL_ALPHA_TEST);
       glAlphaFunc(GL_GREATER,.5);
@@ -2525,11 +2525,11 @@ void linequalitysetup()
   }
   else
   {
-    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! 
-    if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) && 
+    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
+    if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) &&
 	((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); //enable alpha updates
-    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! 
+    //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
 
 #ifdef LEQUAL_TESTING
     // Watch out!  There is one place where I use GL_EQUAL.
@@ -2538,15 +2538,15 @@ void linequalitysetup()
 #if 1
     if (lineWidth > 1.0)
     {
-      glDisable( GL_POINT_SMOOTH ); 
+      glDisable( GL_POINT_SMOOTH );
       glDisable(GL_ALPHA_TEST);
     }
-#endif    
-    glDisable( GL_LINE_SMOOTH ); 
+#endif
+    glDisable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glDisable( GL_BLEND );
     // Return from smoothing edges of printed polygons.
-    //glDisable( GL_POLYGON_SMOOTH ); 
+    //glDisable( GL_POLYGON_SMOOTH );
     //glHint( GL_POLYGON_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   }
@@ -2643,12 +2643,12 @@ void init(void)
       glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 #endif
 
-#if 1 
-      /* 
+#if 1
+      /*
       OpenGL's color material feature provides a less expensive way to change
       material parameters. With color material enabled, material colors track
       the current color. This means that instead of using the relatively
-      expensive glMaterialfv routine, you can use the glColor3f routine. 
+      expensive glMaterialfv routine, you can use the glColor3f routine.
       */
       glEnable(GL_COLOR_MATERIAL);
       glColorMaterial(GL_FRONT_AND_BACK, GL_SPECULAR);
@@ -2661,7 +2661,7 @@ void init(void)
       glDisable(GL_COLOR_MATERIAL);
 #endif
     }
-      
+
     if (ldraw_commandline_opts.F & TYPE_F_SHADED_MODE) // (zShading)
       glEnable(GL_LIGHTING);
     else
@@ -2804,12 +2804,12 @@ void reproject()
     right = left + (GLdouble)Width;
     bottom = (GLdouble)-Height / 2.0;
     top = bottom + (GLdouble)Height;
-    
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // frustrum = clipping space(left, right, bottom, top, near, far)
     //glFrustum(-3.0, 3.0, -3.0, 3.0, 64, 256);
- 
+
     //fov = projection_fov;
     //Convert from horizontal FOV to vertical for gluPerspective()
     fov =  2.0*atan(tan(PI_180*projection_fov/2.0)/((double)Width/(double)Height))/PI_180;
@@ -2872,7 +2872,7 @@ void reshape(int width, int height)
 	// which contains all this code except perhaps the Width, Height =.
 	// Also replace all calls to reshape() with myreshape().
 	// This way I can tell real reshape events from my calls.
-	
+
       // Scissor is probably easier than viewport
       glEnable(GL_SCISSOR_TEST);
       glScissor(0, 0, Width, Height-40);
@@ -2909,7 +2909,7 @@ void reshape(int width, int height)
 #endif
     }
 
-#if 0    
+#if 0
     glGetDoublev(GL_MODELVIEW_MATRIX, model);
     glGetDoublev(GL_PROJECTION_MATRIX, proj);
     glGetIntegerv(GL_VIEWPORT, view);
@@ -2925,10 +2925,10 @@ void reshape(int width, int height)
 		 &pan_x, &pan_y, &pan_z);
 #endif
 
-    
+
     //glTranslatef(0.0, 0.0, -200.0 + zoom);
 
-    dirtyWindow = 1; 
+    dirtyWindow = 1;
 }
 
 #define USE_F00_CAMERA 1
@@ -2966,7 +2966,7 @@ void rendersetup(void)
 
 #ifdef USE_QUATERNION
   // NOTE:  This does NOT work since I'm doing the spin transform BEFORE
-  // the gluLookAt() transform, so the model moves around the camera 
+  // the gluLookAt() transform, so the model moves around the camera
   // rather than the camera orbiting the model.
   if (qspin[3] == 0.0)
   {
@@ -2993,7 +2993,7 @@ void rendersetup(void)
 	 model[12], model[13] , model[14], model[15]);
 
 //#define CONVERT_F00_CAMERA  1
-#ifdef CONVERT_F00_CAMERA  
+#ifdef CONVERT_F00_CAMERA
   mat.a = model[0];
   mat.b = model[1];
   mat.c = model[2];
@@ -3033,11 +3033,11 @@ void rendersetup(void)
 
   // Clear the quaternion camera.
   //resetCamera();
-#endif // CONVERT_F00_CAMERA  
+#endif // CONVERT_F00_CAMERA
 }
 #endif // TESTING_F00_CAMERA_CONVERSION
 
-#endif // USE_F00_CAMERA  
+#endif // USE_F00_CAMERA
 
 #define ORBIT_THE_CAMERA_ABOUT_THE_MODEL 1
 
@@ -3045,7 +3045,7 @@ void rendersetup(void)
   // Do camera translation/rotation BEFORE GluLookAt()
   glRotatef(fXRot, 1.0f, 0.0f, 0.0f);
   glRotatef(360 - fYRot, 0.0f, 1.0f, 0.0f);
-  glTranslatef(fCamX, fCamY, fCamZ);        
+  glTranslatef(fCamX, fCamY, fCamZ);
   // Draw everything else below after gluLookAt()
 #endif
 
@@ -3064,7 +3064,7 @@ void rendersetup(void)
   tx = projection_towardx;
   ty = projection_towardy + (Height/6.0);
   tz = projection_towardz;
-  // Hmmm, my up vector is straight up.  This may NOT be perpendicular 
+  // Hmmm, my up vector is straight up.  This may NOT be perpendicular
   // to my view vector if it looks down at an angle toward (0,100,0).
   ux = projection_upx;
   uy = projection_upy;
@@ -3079,7 +3079,7 @@ void rendersetup(void)
   // Do camera translation/rotation AFTER the GluLookAt camera transform.
   glRotatef(fXRot, 1.0f, 0.0f, 0.0f);
   glRotatef(-fYRot, 0.0f, 1.0f, 0.0f);
-  glTranslatef(fCamX, fCamY, fCamZ);        
+  glTranslatef(fCamX, fCamY, fCamZ);
   // Draw everything else below
 #endif
 
@@ -3094,7 +3094,7 @@ void rendersetup(void)
     glRotatef((float)-twirl_angle, 0.0, 1.0, 0.0);
 #endif
 #ifdef USE_QUATERNION
-  printf("spin(%0.2f, %0.2f, %0.2f, %0.2f)\n", 
+  printf("spin(%0.2f, %0.2f, %0.2f, %0.2f)\n",
 	 qspin[3], qspin[0], qspin[1], qspin[2]);
   glRotatef(qspin[3], qspin[0], qspin[1], qspin[2]);
 #endif
@@ -3156,7 +3156,7 @@ int ldlite_parse_with_rc(char *filename)
       filename[strlen(filename)-1] = 0;
       strcat(filename, ldconfigfilename);
       fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
-    }   
+    }
   }
   if (fp == NULL)
     fp = fopen("ldliterc.dat","rb"); // If that fails, try the ldliterc file.
@@ -3166,7 +3166,7 @@ int ldlite_parse_with_rc(char *filename)
   }
 #if 0
   // NOTE:  I should check the whole search path for this (see lugnet thread)
-  // This does NOT work.  Must paste LINES from ldliterc.dat directly into 
+  // This does NOT work.  Must paste LINES from ldliterc.dat directly into
   // top level buf.  Otherwise color changes etc are NOT global.
   else
   {
@@ -3204,7 +3204,7 @@ int ldlite_parse_colour_meta(char *s)
 
       if (ldraw_commandline_opts.debug_level == 1)
 	printf("%s\n", s);
-      
+
       n = sscanf(s, "!COLOUR %s CODE %d VALUE #%x EDGE %d ALPHA %d",
 		 name, &i, &b, &inverse_index, &alpha);
       if (n == 3) // Retry EDGE as a hex number
@@ -3276,7 +3276,7 @@ void getextents(void)
     z.extent_y1 = sc[1];
   }
 }
-#endif  
+#endif
 
 /***************************************************************/
 // NOTE: this assumes cropping == 1 (which may not be true)
@@ -3288,7 +3288,7 @@ void autoscale(void)
   int width = Width;
   int height = Height;
   float xs, ys;
-  
+
   width = z.extent_x2 - z.extent_x1;
   height = z.extent_y2 - z.extent_y1;
 
@@ -3298,20 +3298,20 @@ void autoscale(void)
   if ((width <= 0) || (height <= 0)) return; //break;
   xs = (float) (Width) / (float) width;
   ys = (float) (Height) / (float) height;
-  
+
   printf("X,Y = %0.3f, %0.3f\n", xs, ys);
   // scale up by the smaller amount so it fits both ways.
   if (xs > ys)
     xs = ys;
   ldraw_commandline_opts.S *= xs;
-  
+
   // If its off center then center it.  Does not work too well.
   fCamX -= (float)(z.extent_x2 - Width + z.extent_x1) / 2.0;
   fCamY -= (float)(z.extent_y2 - Height + z.extent_y1) / 2.0;
 
   printf("S,cX,cY = %0.3f, %0.3f, %0.3f\n", xs, fCamX, fCamY);
 }
-  
+
 /***************************************************************/
 /* render gets called both by "display" (in OpenGL render mode)
    and by "outputEPS" (in OpenGL feedback mode). */
@@ -3438,7 +3438,7 @@ render(void)
     ldraw_commandline_opts.F &= ~(TYPE_F_STUDONLY_MODE);
   }
 #endif
-  else 
+  else
   {
     linequalitysetup();
     DrawModel();
@@ -3473,7 +3473,7 @@ render(void)
   mpd_subfile_name = NULL; // potential memory leak
   znamelist_push();
   ldlite_parse_with_rc(datfilename);
-  if (mpd_subfile_name != NULL) 
+  if (mpd_subfile_name != NULL)
   {
     // set file name to first subfile
     if (ldraw_commandline_opts.debug_level == 1)
@@ -3488,7 +3488,7 @@ render(void)
     }
 
     znamelist_push();
-    // Do NOT call ldlite_parse directly on mpd_subfile_name.  
+    // Do NOT call ldlite_parse directly on mpd_subfile_name.
     // It does not check the file cache for the filename passed to it.
     //**********************************************************************
     // NOTE:  Unfortunately this method calls yy_delete_buffer() which
@@ -3528,7 +3528,7 @@ render(void)
     znamelist_push();
     ldlite_parse_with_rc(datfilename);
     znamelist_pop();
-    if (mpd_subfile_name != NULL) 
+    if (mpd_subfile_name != NULL)
     {
       // set file name to first subfile
       if (ldraw_commandline_opts.debug_level == 1)
@@ -3633,7 +3633,7 @@ void TiledDisplay(void)
    right = left + (GLdouble)width;
    bottom = (GLdouble)-height / 2.0;
    top = bottom + (GLdouble)height;
-    
+
    TILE_WIDTH = Width;
    TILE_HEIGHT = Height;
 
@@ -3644,7 +3644,7 @@ void TiledDisplay(void)
    // We must use borders on the tiles if using wide lines.
    if (lineWidth > 1.0)
      TILE_BORDER = (int) floor(lineWidth + 0.5);
-   else 
+   else
      TILE_BORDER = 0;
 
    printf("Generating %d by %d image file...\n", TILE_IMAGE_WIDTH, TILE_IMAGE_HEIGHT);
@@ -3701,9 +3701,9 @@ void TiledDisplay(void)
    // I don't think stepping and/or twirling in myGlutIdle() is good for tiles.
 #define TILE_STEPPING 1
 #ifdef TILE_STEPPING
-   ldraw_commandline_opts.M = 'P'; 
+   ldraw_commandline_opts.M = 'P';
 #else
-   ldraw_commandline_opts.M = 'C'; 
+   ldraw_commandline_opts.M = 'C';
 #endif
 
    // NOTE: For now disable cropping.
@@ -3726,7 +3726,7 @@ void TiledDisplay(void)
    }
    else if (ldraw_image_type == IMAGE_TYPE_PNG_RGBA)
    {
-     // use_png_alpha = 1; 
+     // use_png_alpha = 1;
      use_png_alpha = 0; // Tiled renderer does not support alpha channel.
      f = start_png(filename, width, height, &png_ptr, &info_ptr);
    }
@@ -3769,7 +3769,7 @@ void TiledDisplay(void)
 		   bytesPerCurrentTileRow);               /* Byte count*/
 	 }
       }
-      
+
       if (curColumn == trGet(tr, TR_COLUMNS)-1) {
 	/* write this buffered row of tiles to the file */
 	int curTileHeight = trGet(tr, TR_CURRENT_TILE_HEIGHT);
@@ -3777,7 +3777,7 @@ void TiledDisplay(void)
 	int i;
 	GLubyte *rowPtr;
 
-	// NOTE: This works, but appears to be off by a single pixel on 
+	// NOTE: This works, but appears to be off by a single pixel on
 	// the horizontal seams.  (even when TILE_BORDER is 0)
 	// It looks like we're getting 1 extra row of pixels.
 	for (i=TILE_BORDER*2;i<curTileHeight;i++) {
@@ -3811,7 +3811,7 @@ void TiledDisplay(void)
 	    fwrite(rowPtr, 1,width*3, f);
 	  }
 	  else
-	  
+
 	  /************* Save a row to the ppm output file *************/
 	  // NOTE: We will have to disable ALPHA (just use RGB) for png files.
 	  fwrite(rowPtr, 1, TILE_IMAGE_WIDTH*3, f);
@@ -3830,7 +3830,7 @@ void TiledDisplay(void)
      text_ptr[0].text = "LdGLite";
      text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
      png_set_text(png_ptr, info_ptr, text_ptr, 1);
-  
+
      png_write_end(png_ptr, info_ptr);
      png_destroy_write_struct(&png_ptr, &info_ptr);
 
@@ -3877,7 +3877,7 @@ void TiledDisplay(void)
 #define GL_KTX_STENCIL_REGION 0x0003
 
 #ifndef WINAPI
-#define WINAPI 
+#define WINAPI
 #endif
 
 typedef GLuint (WINAPI * PFNGLNEWBUFFERREGIONPROC)(GLenum);
@@ -3903,7 +3903,7 @@ void test_ktx_buffer_region(char *str)
   glBufferRegionEnabled = NULL;
 
   if (strstr(str,"GL_KTX_buffer_region") )
-  {	
+  {
     printf("The GL_KTX_buffer_region extension is available\n");
 #ifdef WINDOWS
     // Figure out how to do load extensions in MESA
@@ -3967,7 +3967,7 @@ void test_wgl_arb_buffer_region(char *str)
 {
 #if 1
   const char *wglstr;
-  
+
   wglGetExtensionsStringARB = wglGetProcAddress("wglGetExtensionsStringARB");
   if (wglGetExtensionsStringARB)
   {
@@ -3975,17 +3975,17 @@ void test_wgl_arb_buffer_region(char *str)
     wglstr = wglGetExtensionsStringARB(hDC);
     str = wglstr;
     printf("WGL_EXTENSIONS = %s\n", wglstr);
-    
+
   }
 #endif
 
   if (strstr(str,"WGL_ARB_pbuffer") )
-  {	
+  {
     // Maybe I should use this one instead of buffer_region.
     printf("The WGL_ARB_pbuffer extension is available\n");
   }
   if (strstr(str,"WGL_ARB_buffer_region") )
-  {	
+  {
     printf("The WGL_ARB_buffer_region extension is available\n");
 
     hDC = wglGetCurrentDC();
@@ -3998,7 +3998,7 @@ void test_wgl_arb_buffer_region(char *str)
       wglGetProcAddress("wglSaveBufferRegionARB");
     wglRestoreBufferRegionARB = (PFNWGLRESTOREBUFFERREGIONARBPROC)
       wglGetProcAddress("wglRestoreBufferRegionARB");
-    
+
     //buffer_handle = wglCreateBufferRegionARB( hDC, 0, WGL_BACK_COLOR_BUFFER_BIT_ARB | WGL_DEPTH_BUFFER_BIT_ARB );
   }
 }
@@ -4119,7 +4119,7 @@ void RestoreDepthBuffer(void)
     //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
     glPixelZoom(1, 1);
-    glDisable(GL_STENCIL_TEST);    
+    glDisable(GL_STENCIL_TEST);
     glDisable(GL_FOG);
 
         glDisable(GL_ALPHA_TEST);
@@ -4146,19 +4146,19 @@ void RestoreDepthBuffer(void)
     glPixelTransferi(GL_DEPTH_BIAS,0);
 
   // Turn off any smoothing or blending modes.
-    glDisable( GL_POINT_SMOOTH ); 
+    glDisable( GL_POINT_SMOOTH );
     glDisable(GL_ALPHA_TEST);
-    glDisable( GL_LINE_SMOOTH ); 
+    glDisable( GL_LINE_SMOOTH );
     glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glDisable( GL_BLEND );
-    glDisable( GL_POLYGON_SMOOTH ); 
+    glDisable( GL_POLYGON_SMOOTH );
     glHint( GL_POLYGON_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
     glDisable(GL_LIGHTING);     // Speed up copying
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE); //disable color updates
     glDepthMask(GL_TRUE); // enable updates to depth buffer
-    glEnable( GL_DEPTH_TEST ); 
+    glEnable( GL_DEPTH_TEST );
     glDepthFunc(GL_ALWAYS);
 
     glMatrixMode( GL_PROJECTION );
@@ -4183,11 +4183,11 @@ void RestoreDepthBuffer(void)
 
     // This is PAINFULLY slow! (almost a second on TNT)
     // Consider this:
-    //   Allocate a vertex buffer, same size as you have pixels on screen. 
-    //   Fill in a vertex position for each pixel center 
+    //   Allocate a vertex buffer, same size as you have pixels on screen.
+    //   Fill in a vertex position for each pixel center
     //   (to prevent antialiasing issues).
     //   Draw that with glDrawArrays(GL_POINTS,0,Width*Height);
-    // 
+    //
     // UNSIGNED_INT is about 20% faster on Windows/TNT
     //glDrawPixels(Width,Height,GL_DEPTH_COMPONENT,GL_FLOAT,zbufdata);
     glDrawPixels(Width,Height,GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,zbufdata);
@@ -4211,9 +4211,9 @@ void RestoreDepthBuffer(void)
     glDepthFunc(GL_LESS);
 
     // Reset the projection matrix.
-    savedirty = dirtyWindow; 
+    savedirty = dirtyWindow;
     reshape(Width, Height);
-    dirtyWindow = savedirty; 
+    dirtyWindow = savedirty;
 
     rendersetup();
   }
@@ -4233,12 +4233,12 @@ int XORcurPiece()
 #ifdef MESA_XOR_TEST
   if (buffer_swap_mode == SWAP_TYPE_NODAMAGE) // Mesa
   {
-    // Gotta fix Mesa to render to back buffer.  
+    // Gotta fix Mesa to render to back buffer.
     // Its 2x faster for normal drawing.  10x faster for XOR and BLEND.
     // NOTE: Copybuffer at 1280x1024 on WinGeneric takes .5 to .8 secs (slow)
     // NOTE: CopyBuffer seems to lose the block under the cursor in the
     //       Windows Generic driver (at least when alpha blended cursor is on).
-    glDrawBuffer(staticbuffer); 
+    glDrawBuffer(staticbuffer);
   }
 #endif
 
@@ -4255,7 +4255,7 @@ int XORcurPiece()
   ldraw_commandline_opts.F &= ~(TYPE_F_SHADED_MODE); // zShading = 0;
 
   // Disable antialiasing and linewidths.
-  glDisable( GL_LINE_SMOOTH ); 
+  glDisable( GL_LINE_SMOOTH );
   glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
   glDisable( GL_BLEND );
   glLineWidth( 1.0 );
@@ -4283,7 +4283,7 @@ int XORcurPiece()
     glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT); // S-Buf write fns(sf, zf, zp)
   }
 #ifdef TNT2_TEST
-  // NOTE: since TNT has the ktx_buffer_region support I could fake the 
+  // NOTE: since TNT has the ktx_buffer_region support I could fake the
   // XOR wireframe using the backup buffer to redraw instead of XORrasing.
   // Always use SOLID_EDIT_MODE but switch to wireframe before DrawCurPart().
   else
@@ -4321,7 +4321,7 @@ int XORcurPiece()
 #endif
   else
     glDisable( GL_DEPTH_TEST ); // don't test for depth -- just put in front
-  glEnable( GL_COLOR_LOGIC_OP ); 
+  glEnable( GL_COLOR_LOGIC_OP );
   glLogicOp(GL_XOR);
   ldraw_commandline_opts.F |= TYPE_F_XOR_MODE;
   glColor3f(1.0, 1.0, 1.0); // white
@@ -4333,7 +4333,7 @@ int XORcurPiece()
 #ifdef MESA_XOR_TEST
   if (buffer_swap_mode == SWAP_TYPE_NODAMAGE) // Mesa
   {
-    //CopyColorBuffer(renderbuffer, screenbuffer); 
+    //CopyColorBuffer(renderbuffer, screenbuffer);
     if (!panning)
     {
       {printf("glutSwapBuffers()\n"); glutSwapBuffers();} // Copy the BACK buffer with XOR part to FRONT.
@@ -4372,7 +4372,7 @@ int XORcurPiece()
 #endif
   glDepthMask(GL_TRUE); // Restore depth writes
   glEnable( GL_DEPTH_TEST ); // Restore depth test
-  glDisable( GL_COLOR_LOGIC_OP ); 
+  glDisable( GL_COLOR_LOGIC_OP );
 
   // Restore dithering to whatever rendersetup() sets it at.
   if ((rBits + gBits + bBits) > 16) // ((rBits + gBits + bBits) >= 15)
@@ -4392,7 +4392,7 @@ int XORcurPiece()
 }
 
 /***************************************************************/
-// Here is a snippet from the web. 
+// Here is a snippet from the web.
 #if 0
 glGet(GL_CURRENT_RASTER_POSITION); //0.5000 165.0000 0.5000 1.0000
 glGet(GL_DEPTH_BIAS); //0.0000
@@ -4462,8 +4462,8 @@ void CopyStaticBuffer(int forcedsave)
     {
       Select1Part(curpiece);
       // Draw stuff into the staticbuffer
-      glDrawBuffer(staticbuffer); 
-      
+      glDrawBuffer(staticbuffer);
+
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       render();
 
@@ -4479,8 +4479,8 @@ void CopyStaticBuffer(int forcedsave)
     else
     {
       // Draw stuff into the staticbuffer
-      glDrawBuffer(staticbuffer); 
-      
+      glDrawBuffer(staticbuffer);
+
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       render();
 
@@ -4489,18 +4489,18 @@ void CopyStaticBuffer(int forcedsave)
     }
 #endif
     movingpiece = curpiece;
-    
+
     // get fresh copy of static data
     if (buffer_swap_mode == SWAP_TYPE_KTX)
     {
-      glDrawBuffer(staticbuffer); 
+      glDrawBuffer(staticbuffer);
       if (!goodZ)
       {
 	glDrawBufferRegion(zbuffer_region,0,0,Width,Height,0,0);
 	glDrawBufferRegion(cbuffer_region,0,0,Width,Height,0,0);
       }
-      {printf("glutSwapBuffers()\n"); glutSwapBuffers();} 
-      glDrawBuffer(screenbuffer); 
+      {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
+      glDrawBuffer(screenbuffer);
       rendersetup();
       return;
     }
@@ -4530,16 +4530,16 @@ void CopyStaticBuffer(int forcedsave)
     {
       // Render the buffer without the new moving piece.
       Select1Part(curpiece);
-      glDrawBuffer(staticbuffer); 
+      glDrawBuffer(staticbuffer);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       render();
       {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
-      glDrawBuffer(screenbuffer); 
+      glDrawBuffer(screenbuffer);
       UnSelect1Part(curpiece);
     }
   }
 }
-      
+
 /***************************************************************/
 void DrawTNTPiece(void)
 {
@@ -4565,7 +4565,7 @@ void DrawTNTPiece(void)
 
   glDepthFunc(GL_LESS);
   glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE); //disable color updates
-  glEnable( GL_COLOR_LOGIC_OP ); 
+  glEnable( GL_COLOR_LOGIC_OP );
   DrawCurPart(15);
 
   glDepthFunc(GL_EQUAL);     // New value always wins.
@@ -4575,14 +4575,14 @@ void DrawTNTPiece(void)
   glLogicOp(GL_COPY);
   ldraw_commandline_opts.F &= ~(TYPE_F_XOR_MODE);
   glDepthFunc(GL_LESS);     // New value always wins.
-  glDisable( GL_COLOR_LOGIC_OP ); 
+  glDisable( GL_COLOR_LOGIC_OP );
 
   // Restore the depth buffer
   if (buffer_swap_mode == SWAP_TYPE_KTX)
   {
-    glDrawBuffer(staticbuffer); 
+    glDrawBuffer(staticbuffer);
     glDrawBufferRegion(zbuffer_region,0,0,Width,Height,0,0);
-    glDrawBuffer(screenbuffer); 
+    glDrawBuffer(screenbuffer);
     rendersetup();
   }
 
@@ -4660,16 +4660,16 @@ void display(void)
 
   printf("Display()\n");
 
-  if (editing) 
+  if (editing)
   {
     renderbuffer = screenbuffer;
-    glDrawBuffer(screenbuffer); 
+    glDrawBuffer(screenbuffer);
 #ifdef MESA_XOR_TEST
     if (buffer_swap_mode == SWAP_TYPE_NODAMAGE) // Mesa
     {
       // Draw into back buffer in editing mode for XOR speed on moving part.
       renderbuffer = staticbuffer;
-      glDrawBuffer(staticbuffer); 
+      glDrawBuffer(staticbuffer);
     }
 #endif
     if (res = exposeEvent()) // Expose event?
@@ -4682,7 +4682,7 @@ void display(void)
     {
       if (panning)
       {
-	glDrawBuffer(staticbuffer); 
+	glDrawBuffer(staticbuffer);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	render();
 #ifdef MESA_XOR_TEST
@@ -4690,7 +4690,7 @@ void display(void)
 	if (buffer_swap_mode != SWAP_TYPE_NODAMAGE) // Mesa
 #endif
 	{printf("glutSwapBuffers()\n"); glutSwapBuffers();}
-	glDrawBuffer(renderbuffer); 
+	glDrawBuffer(renderbuffer);
       }
       if (SOLID_EDIT_MODE)
       {
@@ -4698,18 +4698,18 @@ void display(void)
 	{
 	  if (movingpiece == curpiece)
 	  {
-	    glDrawBuffer(staticbuffer); 
+	    glDrawBuffer(staticbuffer);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	    render();
 	    SaveDepthBuffer();
 	    CopyStaticBuffer(1);
 	  }
-	  else 
+	  else
 	  {
-	    glDrawBuffer(renderbuffer); 
+	    glDrawBuffer(renderbuffer);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	    render();
-	  }	  
+	  }
 	}
 	rendersetup();
 	if (movingpiece == curpiece)
@@ -4741,7 +4741,7 @@ void display(void)
       if (buffer_swap_mode == SWAP_TYPE_NODAMAGE) // Mesa
       {
 	renderbuffer = screenbuffer;
-	glDrawBuffer(screenbuffer); 
+	glDrawBuffer(screenbuffer);
 	// Solid moving part must be drawn in GL_FRONT if not panning.
 	if (!SOLID_EDIT_MODE || (movingpiece != curpiece) || panning)
 	  {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
@@ -4830,7 +4830,7 @@ void display(void)
   render();
   if ((ldraw_commandline_opts.M == 'S') && qualityLines)
   {
-    //NOTE: should do this in DrawScene() to fix qualityLines 
+    //NOTE: should do this in DrawScene() to fix qualityLines
     // in tiled render and offscreen render.
     while (stepcount != curstep)
     {
@@ -4840,7 +4840,7 @@ void display(void)
       merge_extents();
     }
   }
-  
+
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 
@@ -4853,10 +4853,10 @@ void display(void)
       sprintf(buf,"Step %d of %d.  ",curstep+1, stepcount+1);
       if (stepcount == curstep)
          strcat(buf, "Finished.");
-      else 
+      else
          strcat(buf, "Click on drawing to continue.");
       platform_step_comment(buf);
-      
+
 #ifndef ALWAYS_REDRAW
       // Restore the cropping extents from the previous step if needed.
       if (curstep > 0)
@@ -4883,7 +4883,7 @@ void display(void)
   else if (zDetailLevel > TYPE_P)
     // Get every last update (including text) into the front buffer.
     CopyColorBuffer(renderbuffer, screenbuffer);
-  else 
+  else
   {
     // Copy every last update (including text) into the back buffer.
     renderbuffer = GL_BACK; // Pretend we rendered it there (for expose events)
@@ -4899,18 +4899,18 @@ void display(void)
   {
     if (ldraw_commandline_opts.M == 'F')
       platform_step(INT_MAX, 0, -1, NULL);
-      
+
     // Do NOT quit just yet if we need to twirl.
-    if (ldraw_commandline_opts.rotate != 1) 
+    if (ldraw_commandline_opts.rotate != 1)
       exit(0); //quit the program
   }
 
 #if 0
-  // This does NOT work.  
+  // This does NOT work.
   // glutLayerGet returns the SAME value as when display() starts.
   // It does NOT get updated until after display is finished.
   // Delaying CopyColorBuffer() until glutidle did NOT work either.
-  // So, how can I tell if the display was successful? 
+  // So, how can I tell if the display was successful?
   // Draw to back buffer and then copy to front?
   if (res = exposeEvent())
   {
@@ -4920,7 +4920,7 @@ void display(void)
   else
   {
     printf("UNdamaged redisplay\n");
-    //CopyColorBuffer(screenbuffer, staticbuffer);    
+    //CopyColorBuffer(screenbuffer, staticbuffer);
   }
 #endif
 
@@ -5032,11 +5032,11 @@ void HiLightNewPiece(int piecenum)
     }
     else
     {
-      glDrawBuffer(staticbuffer); 
+      glDrawBuffer(staticbuffer);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       render();
       {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
-      glDrawBuffer(screenbuffer); 
+      glDrawBuffer(screenbuffer);
     }
   }
   XORcurPiece();
@@ -5055,7 +5055,7 @@ void HiLightCurPiece(int piecenum)
 /***************************************************************/
 void InsertNewPiece(void)
 {
-#if 0  
+#if 0
   if (movingpiece >= 0)
   {
     if (SOLID_EDIT_MODE)
@@ -5063,20 +5063,20 @@ void InsertNewPiece(void)
       EraseCurPiece(); // Unselect current piece
       // Add the current moving piece into the staticbuffer
       // Dont bother, CopyStaticBuffer gets a new copy of z-buffer.
-      //glDrawBuffer(staticbuffer); 
-      //DrawCurPart(-1); 
-      //glDrawBuffer(screenbuffer); 
+      //glDrawBuffer(staticbuffer);
+      //DrawCurPart(-1);
+      //glDrawBuffer(screenbuffer);
     }
     else
     {
-      glDrawBuffer(staticbuffer); 
+      glDrawBuffer(staticbuffer);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       render();
       {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
-      glDrawBuffer(screenbuffer); 
+      glDrawBuffer(screenbuffer);
     }
   }
-  else 
+  else
     EraseCurPiece();
   if (DrawToCurPiece)
   {
@@ -5090,7 +5090,7 @@ void InsertNewPiece(void)
   if (SOLID_EDIT_MODE)
   {
     movingpiece = -1; // Make sure movingpiece != curpiece so we save z-buffer.
-    CopyStaticBuffer(1); 
+    CopyStaticBuffer(1);
   }
   movingpiece = curpiece;
   DrawMovingPiece();
@@ -5108,7 +5108,7 @@ void InsertNewPiece(void)
 /***************************************************************/
 void DelCurPiece(void)
 {
-  CopyStaticBuffer(0); 
+  CopyStaticBuffer(0);
   if (SOLID_EDIT_MODE)
   {
     // CopyStaticBuffer(0) selects current piece in SOLID_EDIT_MODE
@@ -5151,8 +5151,8 @@ void loadnewdatfile(char *datpath, char *datfile)
   platform_setdir();
 
   SetTitle(1); // Change title of the window to show the new dat filename.
-  
-  if (editing) 
+
+  if (editing)
   {
     UnSelect1Part(curpiece); // UnSelect part before Loading
     curpiece = 0;
@@ -5206,8 +5206,8 @@ char *loadpartlist(void)
   char *buffer;
   unsigned char *s;
   int i;
-  char seps[] = "\r\n"; 
-  
+  char seps[] = "\r\n";
+
   partlookup = 0;
 
   if (partlistbuf)
@@ -5217,7 +5217,7 @@ char *loadpartlist(void)
       partlookup = prevlookup;
     return(partlistbuf);
   }
-  
+
   concat_path(pathname, use_uppercase ? "PARTS.LST" : "parts.lst", filename);
   fp = fopen(filename, "rb");
   if (!fp)
@@ -5234,12 +5234,12 @@ char *loadpartlist(void)
   // allocate enough memory to read the entire file.
   filesize++; // add an extra NULL char to the end just in case.
   buffer = (char*) malloc (filesize);
-  if (!buffer) 
+  if (!buffer)
     return(NULL);
 
   fread (buffer,1,filesize,fp);
   fclose (fp);
-  
+
   buffer[filesize-1] = 0;
 
   partlistmax = 2000;
@@ -5284,23 +5284,23 @@ char *stristr(char *src, char *dst)
   // Copy and lowercase
   if (strlen(src) > 255)
     src = strdup(src);
-  else 
+  else
   {
     strcpy(ss, src);
     src = ss;
   }
   _strlwr(src);
-  
+
   // Copy and lowercase
   if (strlen(dst) > 255)
     dst = strdup(dst);
-  else 
+  else
   {
     strcpy(dd, dst);
     dst = dd;
   }
   _strlwr(dst);
-  
+
   n = strstr(src, dst);
 
   if (strlen(src) > 255)
@@ -5361,13 +5361,13 @@ int saveprevlookup()
 #  include <dirent.h>
 #  include <sys/stat.h>
 #  include <unistd.h>
-  
+
 /***************************************************************/
 char *loadpluglist(void)
 {
   char plugpath[512];
   char filename[512];
-	  
+
   DIR			*dirp;
   struct dirent		*dir;
   struct stat		statbuf;
@@ -5377,14 +5377,14 @@ char *loadpluglist(void)
   long filesize;
   char *buffer;
   unsigned char *s;
-  char seps[] = "\r\n"; 
+  char seps[] = "\r\n";
 
 #ifdef WINDOWS
-  char plugext[] = ".dll"; 
+  char plugext[] = ".dll";
 #else
-  char plugext[] = ".so"; 
+  char plugext[] = ".so";
 #endif
-  
+
   pluglookup = 0;
 
   if (pluglistbuf)
@@ -5396,13 +5396,13 @@ char *loadpluglist(void)
   // allocate enough memory to read the entire file.
   filesize = 2000;
   buffer = (char*) malloc (filesize);
-  if (!buffer) 
+  if (!buffer)
     return(NULL);
 
   concat_path(progpath, "plugins", plugpath);
   strcpy(buffer, "");
-  
-  if ((dirp = opendir(plugpath)) == NULL) 
+
+  if ((dirp = opendir(plugpath)) == NULL)
     return(NULL);
 
   while ((dir = readdir(dirp)) != NULL) {
@@ -5411,21 +5411,21 @@ char *loadpluglist(void)
     stat(dir->d_name,&statbuf);
     if ((statbuf.st_mode & S_IFMT) == S_IFDIR) // Skip directories
       continue;
-    
+
     strcpy(filename, dir->d_name);
     filename[strlen("plugin")] = 0;
 
     if (stricmp(filename, "plugin"))
       continue;
-    
+
     strcpy(filename, (dir->d_name + strlen("plugin")));
     if ((i = strlen(filename)) < (strlen(plugext)+1))
       continue;
-    
+
     i -= strlen(plugext);
     if (stricmp(filename+i, plugext))
       continue;
-		
+
     filename[i] = 0;
     if ((strlen(buffer) + strlen(filename) + 2) > filesize)
     {
@@ -5537,10 +5537,10 @@ int runplugin(int n)
       strcat(CompleteText, "\n");
       SelLength = strlen(SelText);
     }
-      
+
   }
 
-  partname = plugin(plugins[i], CompleteText, SelText, &SelStart, &SelLength, 
+  partname = plugin(plugins[i], CompleteText, SelText, &SelStart, &SelLength,
 		    &CursoRow, &CursorColum);
 
   if (partname)
@@ -5606,7 +5606,7 @@ void move1matrix(float m[4][4], float dx, float dy, float dz)
   M4M4Mul(m,m_m,LinePtr->v); // Adjust center point of part by view matrix.
   printf("Project(%.3f, %.3f, %.3f)\n", x, y, z);
 #endif
-  
+
   if (m_viewMatrix == Back)
   {
     m[0][3] -= (dx * moveXamount);
@@ -5656,7 +5656,7 @@ void enterEditMode()
 {
     if ((glutModifiers & GLUT_ACTIVE_CTRL) != 0)
       SOLID_EDIT_MODE = 1;
-    else 
+    else
       SOLID_EDIT_MODE = NVIDIA_XOR_HACK; // 0
     if ((glutModifiers & GLUT_ACTIVE_ALT) != 0)
     {
@@ -5667,16 +5667,16 @@ void enterEditMode()
     editing ^= 1;
     // if (ldraw_commandline_opts.debug_level == 1)
     printf("Editing mode =  %d{%d}\n", editing, SOLID_EDIT_MODE);
-    
+
     // Just in case.  Make sure we draw to GL_FRONT buffer.
     renderbuffer = screenbuffer;
-    glDrawBuffer(screenbuffer); 
+    glDrawBuffer(screenbuffer);
 
     // Switch to continuous mode.
     editingprevmode = ldraw_commandline_opts.M;
     ldraw_commandline_opts.M = 'C';
-    //ldraw_commandline_opts.poll = 0; // Disable polling 
-    
+    //ldraw_commandline_opts.poll = 0; // Disable polling
+
     if (editingprevmode != 'C')
       if (stepcount != curstep)
 	glutPostRedisplay();  // gotta redisplay to draw the whole thing.
@@ -5707,7 +5707,7 @@ void leaveEditMode()
 {
   if (SOLID_EDIT_MODE)
   {
-    glDepthMask(GL_TRUE); // Just to be make sure 
+    glDepthMask(GL_TRUE); // Just to be make sure
     if (movingpiece == curpiece)
     {
       UnSelect1Part(curpiece);
@@ -5718,9 +5718,9 @@ void leaveEditMode()
   editing ^= 1;
   // if (ldraw_commandline_opts.debug_level == 1)
   printf("Editing mode =  %d\n", editing);
-  
+
   XORcurPiece(); // Erase the previous piece
-  
+
   // Restore previous continuous mode.
   ldraw_commandline_opts.F &= ~(TYPE_F_STUDLINE_MODE);
   ldraw_commandline_opts.M = editingprevmode;
@@ -5845,7 +5845,7 @@ int edit_mode_fnkeys(int key, int x, int y)
     }
     return 1;
   }
-  
+
   switch(key) {
   case GLUT_KEY_INSERT:
     leaveEditMode();
@@ -5949,7 +5949,7 @@ char *ScanPoints(float m[4][4], int numpoints, char *str)
     int  i, j;
     char seps[] = "()[]{}<> ,\t"; // Allow parens and commas for readability.
     char *token;
-      
+
     for (i = 0, j = 0,token = strtok( str, seps );
 	 token != NULL;
 	 token = strtok( NULL, seps ), i++ )
@@ -5972,7 +5972,7 @@ char *ScanPOINTS(double m[4][4], int numpoints, char *str)
     int  i, j;
     char seps[] = "()[]{}<> ,\t"; // Allow parens and commas for readability.
     char *token;
-      
+
     for (i = 0, j = 0,token = strtok( str, seps );
 	 token != NULL;
 	 token = strtok( NULL, seps ), i++ )
@@ -6002,7 +6002,7 @@ char *getfilename(char *s, char *filename)
 
   if (filename)
     strcpy(filename, s);
-  else 
+  else
     filename = strdup(s);
 
   // Eliminate trailing whitespace.  AKA TrimRight() in L3Input.cpp.
@@ -6016,7 +6016,7 @@ char *getfilename(char *s, char *filename)
   // Remove trailing quotes.
   if ((s = strrchr(filename, '\"')) != NULL)
     *s = 0;
-  
+
   return(filename);
 }
 
@@ -6028,7 +6028,7 @@ int edit_mode_keyboard(int key, int x, int y)
 
   int newview = 0;
   char c;
-  
+
   float m[4][4] = {
     {1.0,0.0,0.0,0.0},
     {0.0,1.0,0.0,0.0},
@@ -6528,7 +6528,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	//sscanf(&(ecommand[1]),"%s", partname);
 	if (partlookup)
 	{
-	  // Use the part from the lookup list. 
+	  // Use the part from the lookup list.
 	  strcpy(&(ecommand[1]), partlistptr[partlookup - 1]);
 	  if (token = strpbrk(&(ecommand[1])," \t"))
 	    *token = 0;
@@ -6595,7 +6595,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	m[0][1] = v[2][0]; m[1][1] = v[2][1]; m[2][1] = v[2][2];
 	m[0][2] = v[3][0]; m[1][2] = v[3][1]; m[2][2] = v[3][2];
 	m[0][3] = v[0][0]; m[1][3] = v[0][1]; m[2][3] = v[0][2];
-	printf("Orientation = %f, %f, %f %f, %f, %f %f, %f, %f %f, %f, %f\n", 
+	printf("Orientation = %f, %f, %f %f, %f, %f %f, %f, %f %f, %f, %f\n",
 	       v[0][0], v[0][1], v[0][2],
 	       v[1][0], v[1][1], v[1][2],
 	       v[2][0], v[2][1], v[2][2],
@@ -6809,7 +6809,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	    HiLightNewPiece(i);
 	    break;
 	  }
-	else 
+	else
 	  i = curpiece;
 	HiLightCurPiece(i);
 	return 1;
@@ -6818,7 +6818,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	clear_edit_mode_gui();
 	if (pluglookup)
 	{
-	  // Use the plug from the lookup list. 
+	  // Use the plug from the lookup list.
 	  runplugin(pluglookup);
 	  pluglookup = 0;
 	}
@@ -6867,7 +6867,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	if (partlookup)
 	{
 	  // Got ? when already looking up part.  Display the selected part?
-	  // Use the part from the lookup list. 
+	  // Use the part from the lookup list.
 	  strcpy(&(eresponse[1]), partlistptr[partlookup - 1]);
 	  if (token = strpbrk(&(eresponse[1])," \t"))
 	    *token = 0;
@@ -6946,7 +6946,7 @@ int edit_mode_keyboard(int key, int x, int y)
   case '\n':
   case '\r':
     // If in piece moving mode, switch back to picking mode.
-    HiLightCurPiece(curpiece); 
+    HiLightCurPiece(curpiece);
     return 1;
   case 'x':
   case 'y':
@@ -7007,7 +7007,7 @@ int edit_mode_keyboard(int key, int x, int y)
     DelCurPiece();
     return 1;
 #ifdef WINDOWS
-  case 22: // Paste on Windows (CTRL-V) 
+  case 22: // Paste on Windows (CTRL-V)
     edit_mode_keyboard('i', x, y);
     edit_mode_keyboard('p', x, y);
     pasteCommand(x, y);
@@ -7030,7 +7030,7 @@ void fnkeys(int key, int x, int y)
   float angle;
 
   glutModifiers = glutGetModifiers(); // Glut doesn't like this in motion() fn.
-  
+
   if (ldraw_commandline_opts.debug_level == 1)
     printf("key(%c) = (%d, %d)\n", key, key, glutModifiers);
 
@@ -7043,7 +7043,7 @@ void fnkeys(int key, int x, int y)
   }
   else if (glutModifiers & GLUT_ACTIVE_SHIFT)
     angle = 0.0; //angle = 1.0;
-  else 
+  else
     angle = 0.0;
 
 #ifdef USE_L3_PARSER
@@ -7052,12 +7052,12 @@ void fnkeys(int key, int x, int y)
 #endif
 
     /*
-      This will rotate you around x and y and translate you along x, y, and z. 
+      This will rotate you around x and y and translate you along x, y, and z.
       It shouldn't take much to add rotation around the z axis.
     */
-    
+
     // Add modifier check so I can:
-    //   spin about the 3 axis with 
+    //   spin about the 3 axis with
     //   slide along 3 axis with shifted keys
     //   orbit about the center of the viewpoint with ctrl modified keys?
     //
@@ -7065,7 +7065,7 @@ void fnkeys(int key, int x, int y)
     //   GLUT_ACTIVE_SHIFT
     //   GLUT_ACTIVE_CTRL
     //   GLUT_ACTIVE_ALT
-    
+
     // The PG_UP, PG_DN keys seem to zoom in and out (only in perspective mode)
     // You can NOT zoom in or out in orthographic mode, only scale.
   switch(key) {
@@ -7125,13 +7125,13 @@ void fnkeys(int key, int x, int y)
     break;
   case GLUT_KEY_RIGHT:
     fYRot -= MOVE_SPEED / 2;
-    if(fYRot < -360.0)			
+    if(fYRot < -360.0)
       fYRot += 360.0;
     break;
   case GLUT_KEY_LEFT:
     fYRot += MOVE_SPEED / 2;
     if(fYRot > 360.0)
-      fYRot -= 360.0;	
+      fYRot -= 360.0;
     break;
   case GLUT_KEY_UP:
     fXRot -= MOVE_SPEED / 2;
@@ -7190,7 +7190,7 @@ void fnkeys(int key, int x, int y)
       if (main_window == -1)
         main_window = glutCreateWindow(title);
       else
-        glutSetWindow(main_window); 
+        glutSetWindow(main_window);
     }
     registerGlutCallbacks();
     init();
@@ -7230,7 +7230,7 @@ void fnkeys(int key, int x, int y)
     m_viewMatrix = Oblique;
     parse_view(m_viewMatrix);
   }
-  else //if (editing) 
+  else //if (editing)
   { // lets call any random orientation oblique, just dont parse it.
     m_viewMatrix = Oblique;
   }
@@ -7241,13 +7241,13 @@ void fnkeys(int key, int x, int y)
   /*
     Then, all you have to do is this
     at the beginning of your display function to implement your camera.
-    
+
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();	
+    glLoadIdentity();
     // Do camera translation/rotation
     glRotatef(fXRot, 1.0f, 0.0f, 0.0f);
     glRotatef(360 - fYRot, 0.0f, 1.0f, 0.0f);
-    glTranslatef(fCamX, fCamY, fCamZ);        
+    glTranslatef(fCamX, fCamY, fCamZ);
     // Draw everything else below
   */
 }
@@ -7259,7 +7259,7 @@ void menuKeyEvent(int key, int x, int y)
 {
   int newview = 0;
   char c;
-  
+
   float m[4][4] = {
     {1.0,0.0,0.0,0.0},
     {0.0,1.0,0.0,0.0},
@@ -7300,7 +7300,7 @@ void menuKeyEvent(int key, int x, int y)
       key = 16;
     else if (key == 'e')
       key = 14;
-    else 
+    else
       key = 15;
   }
   switch(key) {
@@ -7458,7 +7458,7 @@ void menuKeyEvent(int key, int x, int y)
 	if (glutModifiers & GLUT_ACTIVE_ALT)
 	  ldraw_image_type = IMAGE_TYPE_PNG_RGBA;
       }
-      else 
+      else
       {
 	ldraw_image_type = IMAGE_TYPE_BMP8;
 	if (glutModifiers & GLUT_ACTIVE_ALT)
@@ -7480,7 +7480,7 @@ void menuKeyEvent(int key, int x, int y)
 	pan_visible = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
       else if (pan_visible == (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE) )
 	pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
-      else 
+      else
 	pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
       return;
     case 's':
@@ -7489,12 +7489,12 @@ void menuKeyEvent(int key, int x, int y)
       // Right now that means checking  if (ldraw_commandline_opts.V_x >= -1)
       //glutSetMenu(opts); // Reset the current menu to the main menu.
       if (ldraw_commandline_opts.M == 'C')
-      {	
+      {
 	ldraw_commandline_opts.M = 'P';
 	//glutChangeToMenuEntry(3, "Continuous         ", 'c');
       }
       else
-      {	
+      {
 	ldraw_commandline_opts.M = 'C'; //Switch to continuous output.
 	//glutChangeToMenuEntry(3, "Pause              ", 'c');
       }
@@ -7509,7 +7509,7 @@ void menuKeyEvent(int key, int x, int y)
       return;
 #ifdef USE_L3_PARSER
     case 'r': // Reader (parser)
-      if (editing) 
+      if (editing)
 	return; // Do not switch parsers while editing.  Bad idea!
       if (parsername == LDLITE_PARSER)
       {
@@ -7578,10 +7578,10 @@ void rotate_the_model(double y_angle, double x_angle)
   vector3d v_dummy;
   matrix3d *m_temp;
   vector3d *v_temp;
-  
+
   y_angle *= (3.1415927/180.0);
   x_angle *= (3.1415927/180.0);
-  
+
   v_dummy.x = 0;
   v_dummy.y = 0;
   v_dummy.z = 0;
@@ -7631,12 +7631,12 @@ void rotate_about(float x, float y, float z, float degrees)
   // convert axis - degrees into rotation matrix
   matrix3d *m, *mat;
   matrix3d newm;
-  matrix3d *oldm; 
+  matrix3d *oldm;
   vector3d t = {0.0, 0.0, 0.0};
   double a,b,c,s, veclen_inv, sin2a;
 
   // Don't bother with bad axis or 0 rotations.
-  if (degrees == 0.0) 
+  if (degrees == 0.0)
     return;
   if ((x == 0.0) && (y == 0.0) && (z == 0.0))
     return;
@@ -7718,9 +7718,9 @@ void old_rotate_about(float x, float y, float z, float angle)
   vector3d *v_temp;
   float c, s;
   float v[3];
-  
+
   // Don't bother with bad axis or 0 rotations.
-  if (angle == 0.0) 
+  if (angle == 0.0)
     return;
   if ((x == 0.0) && (y == 0.0) && (z == 0.0))
     return;
@@ -7790,20 +7790,20 @@ void UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
 	       model, proj, view,
 	       &pan_x, &pan_y, &pan_z);
   pan_y = -pan_y;
-  
+
   *px = pan_x;
   *py = pan_y;
   *pz = pan_z;
 
 #if 0
     printf("view(%d, %d, %d, %d)\n", view[0], view[1] , view[2], view[3]);
-    printf("model(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n", 
+    printf("model(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n",
 	   model[0], model[1] , model[2], model[3],
 	   model[4], model[5] , model[6], model[7],
 	   model[8], model[9] , model[10], model[11],
 	   model[12], model[13] , model[14], model[15]);
     printf("proj(%g,%g,%g,%g, %g,%g,%g,%g, "
-	   "%g,%g,%g,%g, %g,%g,%g,%g)\n", 
+	   "%g,%g,%g,%g, %g,%g,%g,%g)\n",
 	   proj[0], proj[1] , proj[2], proj[3],
 	   proj[4], proj[5] , proj[6], proj[7],
 	   proj[8], proj[9] , proj[10], proj[11],
@@ -7822,7 +7822,7 @@ void mouse(int button, int state, int x, int y)
 
   mouse_state = state;
   mouse_button = button;
-  
+
 #ifdef TEST_MUI_GUI
   if (button == GLUT_RIGHT_BUTTON) {
     mui_test();
@@ -7896,11 +7896,11 @@ void mouse(int button, int state, int x, int y)
       m_viewMatrix = Oblique;
       parse_view(m_viewMatrix);
     }
-    else //if (editing) 
+    else //if (editing)
     { // lets call any random orientation oblique, just dont parse it.
       m_viewMatrix = Oblique;
     }
- 
+
     UnProjectMouse(x, y, &pan_x, &pan_y, &pan_z);
 
     if (ldraw_commandline_opts.debug_level == 1)
@@ -7975,7 +7975,7 @@ motion(int x, int y)
   //int glutModifiers;  // Glut doesn't like this here!
 
   // Introduce a delay to avoid too many printfs during debugging.
-  //sleep(100); 
+  //sleep(100);
 
   if (mouse_state == GLUT_DOWN && mouse_button == GLUT_LEFT_BUTTON) {
     // Load an identity matrix before dealing with the mouse.
@@ -7990,26 +7990,26 @@ motion(int x, int y)
       printf("pan(%d, %d), -> (%0.2f, %0.2f, %0.2f)\n", x, y, pan_x, pan_y, pan_z);
     // NOTE:  This would be a nice place to rotate or pan the model.
     //        (If only the redisplay were more realtime)
-    
+
     if (panning == 0)
     {
       // Add some hysteresis before we start panning.
-      // NOTE:  This should really be done in screen coords, 
+      // NOTE:  This should really be done in screen coords,
       // not world coords that have gone thru gluUnProject.
-      // In fact the whole spinning thing is messed up when done 
-      // in perspective mode (too fast) because I think I use the 
+      // In fact the whole spinning thing is messed up when done
+      // in perspective mode (too fast) because I think I use the
       // rear plane of the viewing volume for the z coord.
       // Should I use -1.0 for the z coord to get the front plane?
       if((fabs(pan_x -pan_start_x) < 4) && (fabs(pan_y -pan_start_y) < 4))
       {
 	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("hysteresis = %0.2f, %0.2f\n", 
+	  printf("hysteresis = %0.2f, %0.2f\n",
 		 fabs(pan_x -pan_start_x), fabs(pan_y -pan_start_y));
 	return;
       }
       // Save draw modes, then switch to wireframe and turn off studs.
       pan_start_F = ldraw_commandline_opts.F;
-      ldraw_commandline_opts.F = pan_visible; 
+      ldraw_commandline_opts.F = pan_visible;
 
       // Pretend we skipped hysteresis check and warped pointer right away.
 #ifndef NOT_WARPING
@@ -8028,18 +8028,18 @@ motion(int x, int y)
     //glutModifiers = glutGetModifiers(); // Glut doesn't like this here!
 #ifdef USE_F00_CAMERA
     if (glutModifiers & GLUT_ACTIVE_CTRL)
-      ldraw_commandline_opts.F = pan_visible; 
-    else 
+      ldraw_commandline_opts.F = pan_visible;
+    else
 #endif
     if (glutModifiers & GLUT_ACTIVE_ALT)
     {
       if (glutModifiers & GLUT_ACTIVE_SHIFT)
-	ldraw_commandline_opts.F = (TYPE_F_SHADED_MODE); 
-      else 
+	ldraw_commandline_opts.F = (TYPE_F_SHADED_MODE);
+      else
 	ldraw_commandline_opts.F = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
     }
-    else 
-      ldraw_commandline_opts.F = pan_visible; 
+    else
+      ldraw_commandline_opts.F = pan_visible;
 
 #ifdef NEW_SPIN_MODE_TEST
     // Add this to the rest of the spin modes in opts.F
@@ -8052,15 +8052,15 @@ motion(int x, int y)
       //printf("MOTION(%0.2f, %0.2f, %0.2f)\n", pan_x, -pan_y, pan_z);
 
       // Disable antialiasing and linewidths.
-      glDisable( GL_LINE_SMOOTH ); 
+      glDisable( GL_LINE_SMOOTH );
       glHint( GL_LINE_SMOOTH_HINT, GL_FASTEST ); // GL_NICEST GL_DONT_CARE
       glDisable( GL_BLEND );
       glLineWidth( 1.0 );
       // Should rerun linequalitysetup() after rubberband is over.
 
       glDisable( GL_DEPTH_TEST ); /* don't test for depth -- just put in front  */
-      glEnable( GL_COLOR_LOGIC_OP ); 
-      //glEnable( GL_LOGIC_OP_MODE ); 
+      glEnable( GL_COLOR_LOGIC_OP );
+      //glEnable( GL_LOGIC_OP_MODE );
       glLogicOp(GL_XOR);
       glColor3f(1.0, 1.0, 1.0); // white
       glBegin(GL_LINES);
@@ -8072,9 +8072,9 @@ motion(int x, int y)
       glVertex3f(pan_x, pan_y, pan_z);
       glEnd();
       glLogicOp(GL_COPY);
-      glEnable( GL_DEPTH_TEST ); 
-      glDisable( GL_COLOR_LOGIC_OP ); 
-      //glDisable( GL_LOGIC_OP_MODE ); 
+      glEnable( GL_DEPTH_TEST );
+      glDisable( GL_COLOR_LOGIC_OP );
+      //glDisable( GL_LOGIC_OP_MODE );
       printf("glFlush(motion)\n"); glFlush();
 
       pan_end_x = pan_x;
@@ -8132,7 +8132,7 @@ motion(int x, int y)
 	  }
 	  else if (glutModifiers & GLUT_ACTIVE_ALT)
 	  {
-#if 0	    
+#if 0
 	    if (pan_x != 0)
 	      truckCamera( pan_x, 1, 0, 0 ); // left, right
 #else
@@ -8153,16 +8153,16 @@ motion(int x, int y)
 		ldraw_commandline_opts.S *= (1.0 - (0.001 * pan_y));
 	      }
 	    }
-		
+
 	  }
 	  else
 	  {
 	    if (pan_x != 0)
-	      truckCamera( pan_x, 1, 0, 0 ); // left, right 
+	      truckCamera( pan_x, 1, 0, 0 ); // left, right
 	    if (pan_y != 0)
 	      truckCamera( -pan_y, 0, 1, 0 ); // up, down
 	  }
-	    
+
 	}
       }
       else
@@ -8174,7 +8174,7 @@ motion(int x, int y)
 
 #ifndef NOT_WARPING
       // Set next pan_start coords to center of screen if far enough away.
-      // This should prevent the problem where we stop spinning when the 
+      // This should prevent the problem where we stop spinning when the
       // mouse gets to the edge of the screen.
       if ((p_x > 10) || (p_x < -10) || (p_y > 10) || (p_y < -10))
       {
@@ -8273,7 +8273,7 @@ void myGlutIdle( void )
   if ( glutGetWindow() != main_window )
     glutSetWindow(main_window);
 
-  if (ldraw_commandline_opts.rotate == 1) 
+  if (ldraw_commandline_opts.rotate == 1)
   {
     printf("IDLE: stepcount = %d, curstep = %d\n",stepcount,curstep);
     if (ldraw_commandline_opts.M == 'P')
@@ -8299,7 +8299,7 @@ void myGlutIdle( void )
 	  return;
       }
     //stepcount = 0;
-    // This looks funny (not orthogonal) 
+    // This looks funny (not orthogonal)
     // Perhaps cumulative round off errors in the modeling matrix?
 #ifdef USE_GL_TWIRL
     // This is done with the GL model matrix.
@@ -8311,13 +8311,13 @@ void myGlutIdle( void )
   }
 
   // NOTE: Should I move polling up before twirl mode?
-  if (ldraw_commandline_opts.poll == 1) 
+  if (ldraw_commandline_opts.poll == 1)
   {
     // Gotta handle polling.
     // Check to see if timestamp on filename has changed.
     concat_path(datfilepath, datfilename, filename);
     ret = stat(filename, &datstat);
-    if (!init) 
+    if (!init)
     {
       init = 1;
       printf("Polling %s = %d\n", filename, datstat.st_mtime);
@@ -8338,7 +8338,7 @@ void myGlutIdle( void )
 #ifdef USE_L3_PARSER
       if (parsername == L3_PARSER)
 	list_made = 0; // Gotta reparse the file.
-      else 
+      else
 #endif
       {
 	cached_file_stack_index=0;  // restart file cache.  Huge mem leak???
@@ -8424,7 +8424,7 @@ void PrintParams(int *argc, char **argv)
   int i;
 
   strcpy(filename, "ldglite");
-  
+
   for (i = 1; i < *argc; i++)
   {
     p = argv[i];
@@ -8438,17 +8438,17 @@ void PrintParams(int *argc, char **argv)
 
   if ((p = strrchr(filename, '.')) != NULL)
     *p = 0;
-  else 
+  else
     p = filename + strlen(filename);
 
   strcat(filename, "_lpub");
-  
+
   sprintf(randname, "%s_%d", filename, (rand()%100));
   strcpy(filename, randname);
   strcat(randname, ".ldr");
 
   strcat(filename, ".bat");
-			      
+
   fp = fopen(filename, "w+");
   if (!fp)
   {
@@ -8483,7 +8483,7 @@ void ParseParams(int *argc, char **argv)
   int camera_zfar_set = 0;
 
   if (!strlen(datfilename)) // Init datfilename if none parsed yet...
-  { 
+  {
   // Initialize datfilepath to none so we can take commands from stdin.
   strcpy(datfilename, " ");
 #if defined(UNIX)
@@ -8499,12 +8499,12 @@ void ParseParams(int *argc, char **argv)
 #endif
 
   strcpy(dirfilepath, datfilepath);
-  }  
+  }
 
   for (i = 1; i < *argc; i++)
   {
     pszParam = argv[i];
-    if (pszParam[0] == '+') 
+    if (pszParam[0] == '+')
     {
       int n, wx, wy;
       n = sscanf(pszParam,"%c%d,%d",&type, &wx, &wy);
@@ -8527,7 +8527,7 @@ void ParseParams(int *argc, char **argv)
          printf("LDConfig = (%s)\n", ldconfig);
       }
     }
-    else if (pszParam[0] != '-') 
+    else if (pszParam[0] != '-')
     {
       // It must be a filename.  Save it for parsing.
       strcpy(datfilename, basename(argv[i]));
@@ -8588,7 +8588,7 @@ void ParseParams(int *argc, char **argv)
 	  projection_fromz = v[0][2];
 	}
         else if ((toupper(pszParam[1]) == 'O') || // Object Origin to look at.
-		 ((toupper(pszParam[1]) == 'L') && 
+		 ((toupper(pszParam[1]) == 'L') &&
 		  (toupper(pszParam[2]) == 'A')))
 	{
 	  float v[4][4];
@@ -8603,8 +8603,8 @@ void ParseParams(int *argc, char **argv)
 	  projection_towardz = v[0][2];
 	}
         else if ((toupper(pszParam[1]) == 'U') || // Camera up vector.
-		 ((toupper(pszParam[1]) == 'S') && 
-		  (toupper(pszParam[2]) == 'K') && 
+		 ((toupper(pszParam[1]) == 'S') &&
+		  (toupper(pszParam[2]) == 'K') &&
 		  (toupper(pszParam[3]) == 'Y')))
 	{
 	  float v[4][4];
@@ -8651,7 +8651,7 @@ void ParseParams(int *argc, char **argv)
 	      dimAmount = 1.0;
 	    printf("Dimlevel = %d, %g\n", dimLevel, dimAmount);
 	  }
-	  else 
+	  else
 	    ldraw_commandline_opts.maxlevel = lev;
 	}
 	break;
@@ -8685,7 +8685,7 @@ void ParseParams(int *argc, char **argv)
 	  c = toupper(c);
 	  switch (c) {
 	  case 'H': // mnemonic = sHading? =Hi quality?
-	    ldraw_commandline_opts.F |= TYPE_F_SHADED_MODE; // zShading = 1; 
+	    ldraw_commandline_opts.F |= TYPE_F_SHADED_MODE; // zShading = 1;
 	    break;
 	  case 'S':
 	    if (toupper(pszParam[2]) == 'L')
@@ -8699,7 +8699,7 @@ void ParseParams(int *argc, char **argv)
 	    break;
 	  case 'N': // mnemonic = normal (no shading)
 	    ldraw_commandline_opts.F &= ~(TYPE_F_NO_POLYGONS); // zWire = 0;
-	    ldraw_commandline_opts.F &= ~(TYPE_F_SHADED_MODE); // zShading = 0 
+	    ldraw_commandline_opts.F &= ~(TYPE_F_SHADED_MODE); // zShading = 0
 	    break;
 	  case 'R':
 	  case 'E':
@@ -8854,7 +8854,7 @@ void ParseParams(int *argc, char **argv)
 	  lightcolor1[1] = v[0][1];
 	  lightcolor1[2] = v[0][2];
 	}
-	else 
+	else
 	  ldraw_commandline_opts.log_output = 1;
 	break;
       case 'M':
@@ -8887,7 +8887,7 @@ void ParseParams(int *argc, char **argv)
 	  zDetailLevel = TYPE_MODEL;
 	else if (zDetailLevel >= TYPE_PART)
 	  zDetailLevel = TYPE_PART;
-	else 
+	else
 	  zDetailLevel = TYPE_P;
 	break;
       case 'P':
@@ -8930,7 +8930,7 @@ void ParseParams(int *argc, char **argv)
       case 'u':
 	// We only do this for non-interactive modes like -MS. (check later)
 	tiledRendering = 1;
-	sscanf(pszParam,"%c%d,%d", 
+	sscanf(pszParam,"%c%d,%d",
 	       &type, &TILE_IMAGE_WIDTH, &TILE_IMAGE_HEIGHT);
 	break;
 #endif
@@ -9038,7 +9038,7 @@ void ParseParams(int *argc, char **argv)
 #endif
 	}
 	break;
-      case '2': // Downsample when writing image file, and/or prescale up.  
+      case '2': // Downsample when writing image file, and/or prescale up.
 	{
 	  char *p;
 	  for (p = pszParam; p; p = strchr(p, ','))
@@ -9061,7 +9061,7 @@ void ParseParams(int *argc, char **argv)
       }
     }
   }
-  
+
   // Init ldconfigfilename and ldconfig with LDraw LDConfig default if not set yet
   if (!strlen(ldconfig))
   {
@@ -9084,13 +9084,13 @@ void ParseParams(int *argc, char **argv)
   }
 
 #ifdef FORCE_2G2X
-  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG. 
+  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
   // This is a nice spot to add test settings for LPub3d.
-  // Force -2g2x, set background to black, and lighting to head on.   
+  // Force -2g2x, set background to black, and lighting to head on.
   if (OffScreenRendering) // Scale up render window.
   {
     downsample = 1;
-    if (upscale == 0) 
+    if (upscale == 0)
       upscale = 2;
     ldraw_commandline_opts.B = 0x2000000;
     lightposition0[0] = 0.0;
@@ -9098,7 +9098,7 @@ void ParseParams(int *argc, char **argv)
     lightposition0[2] = 1000.0;
     lightposition0[3] = 0.0;
   }
-  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG. 
+  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
 #endif
 
   // If upscaling (in preparation for eventual downsample) then scale up scene.
@@ -9118,7 +9118,7 @@ void ParseParams(int *argc, char **argv)
   }
 
   if (camera_globe_set)
-  {				 
+  {
     float v[4][4];
     double distance;
     double lo, la;
@@ -9173,7 +9173,7 @@ void ParseParams(int *argc, char **argv)
 
     // What happens to the up vector for negative latitudes?
     // The new l3p says -cr roll vector defaults to 0.
-    
+
     v[0][0] = projection_fromx;
     v[0][1] = projection_fromy;
     v[0][2] = projection_fromz;
@@ -9190,7 +9190,7 @@ void ParseParams(int *argc, char **argv)
     // I'd still be *calling* it oblique, but it could be anything.
     // Maybe we want to move the model by it and then apply the camera settings.
     // Gotta think about that.  For now, just switch to front.
-    //if (m_viewMatrix == LdrawOblique) 
+    //if (m_viewMatrix == LdrawOblique)
     {
       m_viewMatrix = Front;
       parse_view(m_viewMatrix);
@@ -9228,7 +9228,7 @@ int InitInstance()
   {
     int  i;
     char *argv[32];
-    char seps[] = " \t"; 
+    char seps[] = " \t";
     char *token;
     char *str;
 
@@ -9246,7 +9246,7 @@ int InitInstance()
 	i = 1;
       }
     }
-    
+
     if (i >1)
       ParseParams(&i, argv);
   }
@@ -9344,7 +9344,7 @@ int getDisplayProperties()
 
 #ifdef SIMULATE_APPLE_BUGS
   if (strcmp(verstr, "1.1 APPLE-1.1"))
-  {	     
+  {
     verstr = strdup("1.1 APPLE-1.1");
     vendstr = strdup("Apple");
     rendstr = strdup("Generic");
@@ -9420,12 +9420,12 @@ int getDisplayProperties()
   // Change the default znear for skimpy depth buffers like the Mesa Default.
   if (projection_znear > 100.0)
     { /* znear was probably already adjusted by -cg camera globe.  Leave it alone. */ }
-  else if (DepthBits < 24) 
-    projection_znear = 100.0; 
+  else if (DepthBits < 24)
+    projection_znear = 100.0;
   else if (strstr(vendstr, "ATI") || strstr(verstr, "ATI"))
   {
     // The Mac ATI Rage 128 has bleeding edgelines even at 24bit depth.
-    projection_znear = 100.0; 
+    projection_znear = 100.0;
   }
 
   glGetIntegerv(GL_STENCIL_BITS, &StencilBits);
@@ -9449,9 +9449,9 @@ int getDisplayProperties()
     translates OpenGL calls into Xlib calls.
 
     You can force indirect rendering mode by setting the
-    LIBGL_ALWAYS_INDIRECT environment variable.  
+    LIBGL_ALWAYS_INDIRECT environment variable.
 
-    Hmmm, so maybe I should NOT make assumptions about SWAP for indirect.  
+    Hmmm, so maybe I should NOT make assumptions about SWAP for indirect.
   */
 
   // This will leave "Mesa Offscreen" with SWAP_TYPE_UNDEFINED (OK)
@@ -9517,7 +9517,7 @@ int getDisplayProperties()
 
     // The Mac ATI Rage has bleeding edgelines even at 24bit depth.
     // But it may use the Apple software driver when has <= 8MB VRAM.
-    projection_znear = 100.0; 
+    projection_znear = 100.0;
   }
 
   if (!strnicmp(rendstr, "RADEON 7000", 10))
@@ -9528,7 +9528,7 @@ int getDisplayProperties()
       zDetailLevel = TYPE_PART;   // Copy to front after each part. (slow)
   }
 
-#ifdef SIMULATE_MESA      
+#ifdef SIMULATE_MESA
   buffer_swap_mode = SWAP_TYPE_NODAMAGE;
   if (NVIDIA_XOR_HACK)
   {
@@ -9549,7 +9549,7 @@ int getDisplayProperties()
 
 #ifdef USE_DOUBLE_BUFFER
   // NOTE: Mesa segfaults if I do this BEFORE CreateWindow/EnterGameMode
-  //glDrawBuffer(GL_FRONT_AND_BACK); // Hmm, why did I want FRONT_AND_BACK? 
+  //glDrawBuffer(GL_FRONT_AND_BACK); // Hmm, why did I want FRONT_AND_BACK?
 #ifdef TILE_RENDER_OPTION
   if (tiledRendering == 0)
 #endif
@@ -9583,62 +9583,62 @@ int getDisplayProperties()
 #    include <shellapi.h> // Just in case
 /***************************************************************/
 HWND GetHwndFocus()
-{ 
+{
   DWORD foregroundThreadID; // foreground window thread
-  DWORD ourThreadID; // our active thread 
-  HWND hwndFocus; 
+  DWORD ourThreadID; // our active thread
+  HWND hwndFocus;
 
-  // Check to see if we are the foreground thread 
-  foregroundThreadID = GetWindowThreadProcessId(GetForegroundWindow(), NULL); 
-  ourThreadID = GetCurrentThreadId(); 
+  // Check to see if we are the foreground thread
+  foregroundThreadID = GetWindowThreadProcessId(GetForegroundWindow(), NULL);
+  ourThreadID = GetCurrentThreadId();
 
-  // If not, attach our thread's 'input' to the foreground thread's 
-  if (foregroundThreadID != ourThreadID) 
-    AttachThreadInput(foregroundThreadID, ourThreadID, TRUE); 
+  // If not, attach our thread's 'input' to the foreground thread's
+  if (foregroundThreadID != ourThreadID)
+    AttachThreadInput(foregroundThreadID, ourThreadID, TRUE);
 
-  // Who has focus? 
-  hwndFocus = GetFocus(); 
+  // Who has focus?
+  hwndFocus = GetFocus();
 
-  // If we attached our thread, detach it now 
-  if (foregroundThreadID != ourThreadID) 
-    AttachThreadInput(foregroundThreadID, ourThreadID, FALSE); 
+  // If we attached our thread, detach it now
+  if (foregroundThreadID != ourThreadID)
+    AttachThreadInput(foregroundThreadID, ourThreadID, FALSE);
 
   return hwndFocus;
 }
-  
-/***************************************************************/
-void SendKeyToCurrentApp( int key ) 
-{ 
-  HWND hwndFocus; 
 
-  // Who has focus? 
-  hwndFocus = GetHwndFocus(); 
-  
-  // Send desired keystroke to whoever has focus 
-  if (key) 
-  { 
-    PostMessage(hwndFocus, WM_KEYDOWN, VK_PRIOR, 0x8001); 
-    PostMessage(hwndFocus, WM_KEYUP, VK_PRIOR, 0xc001); 
-  } 
-  else 
-  { 
-    PostMessage(hwndFocus, WM_KEYDOWN, VK_NEXT, 0x8001); 
-    PostMessage(hwndFocus, WM_KEYUP, VK_NEXT, 0xc001); 
-  } 
-} 
+/***************************************************************/
+void SendKeyToCurrentApp( int key )
+{
+  HWND hwndFocus;
+
+  // Who has focus?
+  hwndFocus = GetHwndFocus();
+
+  // Send desired keystroke to whoever has focus
+  if (key)
+  {
+    PostMessage(hwndFocus, WM_KEYDOWN, VK_PRIOR, 0x8001);
+    PostMessage(hwndFocus, WM_KEYUP, VK_PRIOR, 0xc001);
+  }
+  else
+  {
+    PostMessage(hwndFocus, WM_KEYDOWN, VK_NEXT, 0x8001);
+    PostMessage(hwndFocus, WM_KEYUP, VK_NEXT, 0xc001);
+  }
+}
 
 WNDPROC  wpOrigMsgProc;
 
 /***************************************************************/
 // Intercept LDList and Windows Explorer style Drag and Drop events.
 /***************************************************************/
-LRESULT APIENTRY 
+LRESULT APIENTRY
 MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   COPYDATASTRUCT *cds;
   int iRet;
 
-  // Intercept LDList style WM_COPYDATA messages 
+  // Intercept LDList style WM_COPYDATA messages
   // and convert string to WM_KEYDOWN, WM_KEYUPs.
   if (uMsg == WM_COPYDATA)
   {
@@ -9660,7 +9660,7 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       return 1; // Accept the drag.
     }
     // 2nd msg from LDList contains screen(X,Y) drop point and the part text string.
-    else if ((cds) && (cds->dwData == 1) && 
+    else if ((cds) && (cds->dwData == 1) &&
 	(cds->cbData == sizeof(*CopyRecord)) && (cds->lpData))
     {
       CopyRecord = cds->lpData;
@@ -9669,14 +9669,14 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
       // No need to forward or accept this message.  LDList ignores any return code.
       // I could possibly convert X,Y to window coords and insert there, but not now.
-      //RecHnd = WindowFromPoint(p);   
+      //RecHnd = WindowFromPoint(p);
       //ScreenToClient(p);
     }
     else // Who knows what this is.  Pass it along to glut.
     {
       iRet = CallWindowProc(wpOrigMsgProc, hwnd, uMsg, wParam, lParam);
       // printf("CallWindowProc() = %d\n", iRet);
-      return iRet; 
+      return iRet;
     }
   }
   // Intercept Windows Explorer style Drag and Drop messages.
@@ -9750,7 +9750,7 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   iRet = PostMessage(hwnd, WM_KEYUP, VK_ESCAPE, 0xc001);
 #endif
 
-  // Call the original glut window proc.  
+  // Call the original glut window proc.
   // It should just ignore the msg types we intercept here anyhow.
   return CallWindowProc(wpOrigMsgProc, hwnd, uMsg, wParam, lParam);
 }
@@ -9762,10 +9762,10 @@ void capturePasteEvents(void)
 {
 #ifdef WINDOWS
 
-  HWND hwnd; 
+  HWND hwnd;
 
-  // Who has focus? 
-  // hwnd = GetHwndFocus(); 
+  // Who has focus?
+  // hwnd = GetHwndFocus();
 
   hwnd = FindWindow("GLUT", title);
   printf("FindWindow(%d)\n", hwnd);
@@ -9794,7 +9794,7 @@ void capturePasteEvents(void)
 }
 
 /***************************************************************/
-int 
+int
 main(int argc, char **argv)
 {
   char filename[256];
@@ -9823,7 +9823,7 @@ main(int argc, char **argv)
   printf("\n");
 
   platform_startup(&argc, &argv);
-	
+
   // glutInit moved first, so that GL can have as many args as it can recognize
   // and because glutInit is what actually fills argv on the Mac.
 #if defined(MAC)
@@ -9867,7 +9867,7 @@ main(int argc, char **argv)
 
   if (OffScreenRendering == 0)
   {
-    //The GLUT framework will chdir to the Resources folder of your 
+    //The GLUT framework will chdir to the Resources folder of your
     // application bundle on glutInit!  Ouch!
     char cwdpath[512];
     getcwd(cwdpath, 512);
@@ -9917,14 +9917,14 @@ main(int argc, char **argv)
   if ((Width <= 0) || (Height <= 0))
   {
     // OSMesa does not seem to like glutGet(GLUT_SCREEN_WIDTH)
-    if (OffScreenRendering == 0) 
+    if (OffScreenRendering == 0)
     {
       if ((Width < 0) && (Height < 0))
       {
 	//glutFullScreen();  // This shows no window decorations.
 	Width = ldraw_commandline_opts.V_x = glutGet(GLUT_SCREEN_WIDTH);
 	Height = ldraw_commandline_opts.V_y = glutGet(GLUT_SCREEN_HEIGHT);
-      }   
+      }
       else
       {
 	// get the screen size and subtract a fudge factor for window borders
@@ -9938,7 +9938,7 @@ main(int argc, char **argv)
 	  // Fix this to return top and left as well.
 	  // Then set XwinPos, YwinPos to avoid a side mounted dock.
 	  // By the way, glut docs say X,YWinpos should default to -1,-1.
-	  // Which lets the window mgr decide where to place it.  
+	  // Which lets the window mgr decide where to place it.
 	  // Maybe I should try that first?
           //XwinPos = -1; YwinPos = -1;  // Yuck, makes OSX place it weird.
 	  GetAvailablePos(&w, &h);
@@ -9958,7 +9958,7 @@ main(int argc, char **argv)
 #if OSMESA_MAJOR_VERSION * 100 + OSMESA_MINOR_VERSION >= 400
     else // if (OSMESA) // We could check rendstr, but we fetch that later...
     {
-      // NOTE: It would be NICE if Mesa Glut called these in 
+      // NOTE: It would be NICE if Mesa Glut called these in
       // glutGet(GLUT_SCREEN_*) functions instead of blowing the stack.
       OSMesaGetIntegerv(OSMESA_MAX_WIDTH, &Width);
       OSMesaGetIntegerv(OSMESA_MAX_HEIGHT, &Height);
@@ -9972,7 +9972,7 @@ main(int argc, char **argv)
       Height = ldraw_commandline_opts.V_y = 1024;
     }
   }
-  else if (OffScreenRendering == 0) 
+  else if (OffScreenRendering == 0)
   {
     // Using cmdline size, move away from the top left corner if possible.
 #if 0
@@ -10002,8 +10002,8 @@ main(int argc, char **argv)
   // SetTitle(0);
 
 #ifdef USE_L3_PARSER
-  // If the parser type is not specified on the commandline 
-  // then set it here based on the program name.  
+  // If the parser type is not specified on the commandline
+  // then set it here based on the program name.
   if (parsername == UNKNOWN_PARSER)
   {
     parsername = LDLITE_PARSER; // default to ldlite parser.
@@ -10029,7 +10029,7 @@ main(int argc, char **argv)
 
 
   if (OffScreenRendering == 1)
-  {    
+  {
     OffScreenRender();
     exit(0);
   }
@@ -10105,13 +10105,13 @@ main(int argc, char **argv)
       ldraw_commandline_opts.V_x = Width;
       printf("glutFullScreen(%d, %d)\n", ldraw_commandline_opts.V_x, Width);
       glutFullScreen();  // This shows no window decorations.
-    }   
+    }
   }
 
   getDisplayProperties();
 
   // Should be registerGlutCallbacks() but mainmenu not created yet.
-  setGlutCallbacks(); 
+  setGlutCallbacks();
   initializeMenus();
 
 #ifdef USE_GLFONT
@@ -10127,7 +10127,7 @@ main(int argc, char **argv)
 
     glFontCreate (&Font, fontname, FontTex); //Creates a glFont
     // void glFontDestroy (Font); //Deletes a glFont
-    
+
     fontheight = Font.Char[0].ty2 * Font.TexHeight;
     fontwidth = fontheight/Font.Char[0].dy;
 
@@ -10140,7 +10140,7 @@ main(int argc, char **argv)
     n += sizeof(GLFONTCHAR) * (Font.IntEnd - Font.IntStart + 1);
     fseek (fp , n, SEEK_SET);
     n = Font.TexWidth * Font.TexHeight * 2;
-  	
+
     TexBytes = (char *)malloc(n);
     fread(TexBytes, sizeof(char), n, fp);
     fclose(fp);
@@ -10152,9 +10152,9 @@ main(int argc, char **argv)
       fprintf(fp, "\nGLFONTCHAR arielChars = {\n");
       for (n = 0; n < 1+Font.IntEnd-Font.IntStart; n++)
       {
-	fprintf(fp,"  {%g, %g, %g, %g, %g, %g},\n", 
+	fprintf(fp,"  {%g, %g, %g, %g, %g, %g},\n",
 		Font.Char[n].dx, Font.Char[n].dy,
-		Font.Char[n].tx1, Font.Char[n].ty1, 
+		Font.Char[n].tx1, Font.Char[n].ty1,
 		Font.Char[n].tx2, Font.Char[n].ty2);
       }
       fprintf(fp, "  }\n");
@@ -10165,7 +10165,7 @@ main(int argc, char **argv)
 	if (n % 8 == 0)
 	  fprintf(fp, "\n ");
       }
-	      
+
       fprintf(fp, "  }\n");
       fclose (fp);
     }
@@ -10175,7 +10175,7 @@ main(int argc, char **argv)
     // dy is always the same number (the ratio of height to the avg char)
     // dx varies depending on the width of the char.  It averages 1.
     printf("(%g, %g) (%g, %g, %g, %g)\n", Font.Char[n].dx, Font.Char[n].dy,
-	   Font.Char[n].tx1, Font.Char[n].ty1, 
+	   Font.Char[n].tx1, Font.Char[n].ty1,
 	   Font.Char[n].tx2, Font.Char[n].ty2);
 
   }
@@ -10194,12 +10194,12 @@ main(int argc, char **argv)
 
     // if (ldraw_commandline_opts.debug_level == 1)
     printf("Editing mode =  %d{%d}\n", editing, SOLID_EDIT_MODE);
-    
+
     // Switch to continuous mode.
     editingprevmode = ldraw_commandline_opts.M;
     ldraw_commandline_opts.M = 'C';
-    //ldraw_commandline_opts.poll = 0; // Disable polling 
-    
+    //ldraw_commandline_opts.poll = 0; // Disable polling
+
     curstep = 0; // Reset to first step
     dirtyWindow = 1;
 
@@ -10214,7 +10214,7 @@ main(int argc, char **argv)
 #ifdef AGL
   // Gotta stop writing to the console in DOS mode
   // NOTE: I could do this for everyone with a commandline opt. (quiet mode)
-  // Make the message filename part of the option. 
+  // Make the message filename part of the option.
   // If the filename is empty, then be completely silent.
   // Consider ldraw_commandline_opts.log_output (cmdline -l) (goes to ldlite.log)
   ldraw_commandline_opts.log_output = 1;
@@ -10239,11 +10239,11 @@ main(int argc, char **argv)
   }
 
   capturePasteEvents();
-   
+
   glutMainLoop();
 
   exitcode = 0; // no error
-  
+
   return exitcode;
 }
 

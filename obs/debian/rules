@@ -1,0 +1,98 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+# This is the debhelper compatibility version to use.
+# export DH_COMPAT=7
+
+CFLAGS = -g
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+CFLAGS += -O0
+else
+CFLAGS += -O2
+endif
+#DEST=$(shell if [ -f /usr/src/packages/BUILD/ldglite.cpp ] ; then echo /usr/src/packages/BUILD/debian/ldglite ; else echo debian/ldglite ; fi )
+DEST=/usr/src/packages/BUILD/debian/ldglite
+
+build-arch: build
+build-indep: build
+build: build-stamp
+build-stamp:
+	dh_testdir
+
+	# Add here commands to compile the package.
+	make -f makefile.linux ENABLE_OFFSCREEN_RENDERING=Yes
+	# --- end custom part for compiling
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+
+	# Add here commands to clean up after the build process.
+	# --- end custom part for cleaning up
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	# Add here commands to install the package
+	# The DESTDIR Has To Be Exactly  /usr/src/packages/BUILD/debian/<nameOfPackage>
+	echo DEST=$(DEST)
+	install -d $(DEST)/usr/bin
+	install -d $(DEST)/usr/share/ldglite
+	install -d $(DEST)/usr/share/man/man1
+	install -m 755 ldglite $(DEST)/usr/bin/ldglite
+	install -m 644 readme.txt $(DEST)/usr/share/ldglite/readme.txt
+	install -m 644 todo.txt $(DEST)/usr/share/ldglite/todo.txt
+	install -m 644 doc/LDGLITE.TXT $(DEST)/usr/share/ldglite/ldglite.txt
+	install -m 644 doc/LICENCE $(DEST)/usr/share/ldglite/licence
+	install -m 644 ldglite.1 $(DEST)/usr/share/man/man1/ldglite.1
+	gzip -f $(DEST)/usr/share/man/man1/ldglite.1
+	# --- end custom part for installing
+
+# Build architecture-independent files here.
+binary-indep: build install
+	# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+#	dh_installdebconf
+	dh_installdocs
+	dh_installexamples
+	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
+	dh_installcron
+	dh_installman
+	dh_installinfo
+	dh_gconf
+#	dh_undocumented
+	dh_installchangelogs
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install
