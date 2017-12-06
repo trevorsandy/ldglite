@@ -4,6 +4,7 @@
 # CONFIG+=ENABLE_OFFSCREEN_RENDERING
 # CONFIG+=ENABLE_TEST_GUI
 # CONFIG+=MAKE_APP_BUNDLE
+# CONFIG+=USE_OSMESA_STATIC
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
@@ -137,7 +138,7 @@ unix:!macx {
     DEFINES += OSMESA_OPTION
 
     # OSMesa with Gallium support - static library built from source
-    contains(HOST, Fedora) {
+    USE_OSMESA_STATIC {
       OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
       isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
       else: INCLUDEPATH   += $${OSMESA_INC}
@@ -146,19 +147,12 @@ unix:!macx {
       else: _LIBS         += $${OSMESA_LIBS} -lglut -lX11 -lXext
 
       exists (/usr/bin/llvm-config) {
-          message("~~~ LLVM - llvm-config found ~~~")
-          LLVM_LIB_PATH    = $${SYS_LIBDIR_}
-          isEmpty(LLVM_LIB_PATH): message("~~~ LLVM - ERROR llvm library path not found ~~~")
-          else: LLVM_LIBS  = -L$${LLVM_LIB_PATH}
-          LLVM_LIB_NAME    = $$system(/usr/bin/llvm-config --libs engine mcjit)
-          isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
-          else: LLVM_LIBS += $${LLVM_LIB_NAME}
-          LLVM_SYS_LIBS    = $$system(/usr/bin/llvm-config --system-libs)
-          isEmpty(LLVM_SYS_LIBS): message("~~~ LLVM - NOTICE llvm system libs not defined ~~~")
-          else: LLVM_LIBS += $${LLVM_SYS_LIBS}
-          LLVM_LDFLAGS     = $$system(/usr/bin/llvm-config --ldflags)
-          isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - WARNIGN llvm ldflags not found ~~~")
-          else: LLVM_LIBS += $${LLVM_LDFLAGS}
+        LLVM_LDFLAGS     = $$system(/usr/bin/llvm-config --ldflags)
+        isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - ERROR llvm ldflags not found ~~~")
+        else: LLVM_LIBS += $${LLVM_LDFLAGS}
+        LLVM_LIB_NAME    = $$system(/usr/bin/llvm-config --libs engine mcjit)
+        isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
+        else: LLVM_LIBS += $${LLVM_LIB_NAME}
 
           _LIBS     += $${LLVM_LIBS}
       } else {
