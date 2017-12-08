@@ -271,7 +271,7 @@ EXIT /b
 
 :CHECK_LDRAW_DIR
 ECHO.
-ECHO -Check for LDraw library...
+ECHO -%PACKAGE% - Check for LDraw library...
 IF NOT EXIST "%LDRAW_DIR%\parts" (
   REM SET CHECK=0
   IF NOT EXIST "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" (
