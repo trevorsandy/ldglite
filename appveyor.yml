@@ -25,9 +25,9 @@ matrix:
 environment:
   LP3D_DIST_DIR: lpub3d_windows_3rdparty
   LP3D_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LP3D_DIST_DIR)
-  LP3D_QT32_BASE: C:\Qt\5.9.2\mingw53_32\bin
-  LP3D_QT32_UTILS: C:\Qt\Tools\mingw530_32\bin
+  LP3D_QT32_MSYS2: C:\msys64\MINGW32\bin
   LP3D_QT64_MSYS2: C:\msys64\MINGW64\bin
+  lp3d_qt32libs: mingw-w64-i686-qt5-5.9.2-2-any.pkg.tar.xz
   lp3d_qt64libs: mingw-w64-x86_64-qt5-5.9.2-2-any.pkg.tar.xz
   ldgl_librepo: lpub3d_mingw-Qt5_libs
   ldgl_librepodir: /c/projects/$(APPVEYOR_PROJECT_NAME)/$(lp3d_librepo)
@@ -62,7 +62,7 @@ install:
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -sL -o ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir} && test -f ${ldgl_librepo}.tar.gz; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1; fi"
  - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then echo repository ${ldgl_librepodir} not found; else echo library repository available at ${ldgl_librepodir}; fi"
- - cmd: C:\msys64\usr\bin\bash -lc "cd ${lp3d_librepodir}/qt-5.9.2-2-release; pacman -U --needed --noconfirm ${lp3d_qt64libs} > $(APPVEYOR_BUILD_FOLDER)/CreateQtBuildEnv.log 2>&1"
+ - cmd: C:\msys64\usr\bin\bash -lc "cd ${lp3d_librepodir}/qt-5.9.2-2-release; pacman -U --needed --noconfirm ${lp3d_qt32libs} ${lp3d_qt64libs} > CreateQtBuildEnv.log 2>&1"
 
 build_script:
  - ps: |

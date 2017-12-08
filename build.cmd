@@ -32,8 +32,9 @@ IF "%APPVEYOR%" EQU "True" (
   SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_BASE=C:\Qt\IDE\5.9.1\mingw53_32\bin
-  SET LP3D_QT32_UTILS=C:\Qt\IDE\Tools\mingw530_32\bin
+  rem SET LP3D_QT32_BASE=C:\Qt\IDE\5.9.1\mingw53_32\bin
+  rem SET LP3D_QT32_UTILS=C:\Qt\IDE\Tools\mingw530_32\bin
+  SET LP3D_QT32_MSYS2=C:\Msys2\Msys64\mingw32\bin
   SET LP3D_QT64_MSYS2=C:\Msys2\Msys64\mingw64\bin
 )
 
@@ -127,12 +128,11 @@ IF "%APPVEYOR%" EQU "True" (
   ECHO   REPOSITORY_NAME........[%APPVEYOR_REPO_NAME%]
   ECHO   REPO_PROVIDER..........[%APPVEYOR_REPO_PROVIDER%]
   ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
-  ECHO   LP3D_QT32_BASE.........[%LP3D_QT32_BASE%]
-  ECHO   LP3D_QT32_UTILS........[%LP3D_QT32_UTILS%]
-  ECHO   LP3D_QT64_MSYS2........[%LP3D_QT64_MSYS2%]
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
+ECHO   LP3D_QT32_MSYS2........[%LP3D_QT32_MSYS2%]
+ECHO   LP3D_QT64_MSYS2........[%LP3D_QT64_MSYS2%]
 ECHO   WORKING_DIRECTORY......[%PWD%]
 ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
 ECHO.  LDRAW_DOWNLOAD_DIR.....[%LDRAW_DOWNLOAD_DIR%]
@@ -178,13 +178,14 @@ FOR %%P IN ( x86, x86_64 ) DO (
   CALL :CONFIGURE_BUILD_ENV
 
   ECHO.
-  ECHO -Building %%P platform, %CONFIGURATION% configuration...
+  ECHO  -Building %%P platform, %CONFIGURATION% configuration...
   rem Display QMake version
   ECHO.
   qmake -v & ECHO.
   rem Configure makefiles and launch make
-  qmake %LDGLITE_CONFIG_ARGS% & mingw32-make %LDGLITE_MAKE_ARGS%
-
+  SETLOCAL ENABLEDELAYEDEXPANSION
+  qmake !LDGLITE_CONFIG_ARGS!  & mingw32-make !LDGLITE_MAKE_ARGS!
+  ENDLOCAL
   rem Perform build check if specified
   IF %CHECK%==1 CALL :CHECK_BUILD %%P
   rem Package 3rd party install content
@@ -205,21 +206,24 @@ FOR /R %%I IN (
 ) DO DEL /S /Q "%%~I" >nul 2>&1
 ECHO.
 ECHO -Configure LDGLite build environment...
-SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION%
-SET LDGLITE_MAKE_ARGS=-f Makefile.%CONFIGURATION%
 ECHO.
-ECHO   PLATFORM (BUILD_ARCH)..[%PLATFORM%]
+ECHO   PLATFORM (BUILD_ARCH)...[%PLATFORM%]
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
-IF "%BUILD_ENV_CONFIGURED%" NEQ "True" (
+SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION%
+SET LDGLITE_MAKE_ARGS=-f Makefile
+IF "%PATH_PREPENDED%" NEQ "True" (
   IF %PLATFORM% EQU x86 (
-    SET PATH=%LP3D_QT32_BASE%;%LP3D_QT32_UTILS%;%SYS_DIR%
-    ECHO   PATH_PREPEND............[%LP3D_QT32_BASE%;%LP3D_QT32_UTILS%]
+    SET PATH=%LP3D_QT32_MSYS2%;%SYS_DIR%
+    rem SET PATH=%LP3D_QT32_BASE%;%LP3D_QT32_UTILS%;%SYS_DIR%
   ) ELSE (
     SET PATH=%LP3D_QT64_MSYS2%;%SYS_DIR%
-    ECHO   PATH_PREPEND............[%LP3D_QT64_MSYS2%]
   )
 ) ELSE (
   ECHO   BUILD_ENVIRONMENT.......[%ALREADY_CONFIGURED%]
+)
+SETLOCAL ENABLEDELAYEDEXPANSION
+ECHO(  PATH_PREPEND............[!PATH!]
+  ENDLOCAL
 )
 EXIT /b
 
@@ -254,7 +258,7 @@ IF %CHECK%==1 (
   %COMMAND%> Check.out
   IF EXIST "Check.out" (
     FOR %%R IN (Check.out) DO IF NOT %%~zR LSS 1 ECHO. & TYPE "Check.out"
-	  DEL /Q "Check.out"
+    DEL /Q "Check.out"
   )
 ) ELSE (
   ECHO -Check is not possible
@@ -309,7 +313,7 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
   )
 ) ELSE (
   ECHO.
-  ECHO -LDraw directory exist at [%CD%\%LDRAW_DIR%].
+  ECHO -LDraw directory exist at [%LDRAW_DIR%].
   ECHO.
   ECHO -Set LDRAWDIR to %LDRAW_DIR%.
   SET LDRAWDIR=%LDRAW_DIR%
