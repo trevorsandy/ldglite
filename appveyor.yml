@@ -9,7 +9,7 @@ clone_script: echo skip
 # we're caching qt5 for MinGW x86_64 and the LDraw library
 cache:
  - '$(APPVEYOR_BUILD_FOLDER)\LDraw'
- - '$(APPVEYOR_BUILD_FOLDER)\${ldgl_librepodir}'
+ - '$(APPVEYOR_BUILD_FOLDER)\${ldgl_librepo}'
 
 shallow_clone: true
 
@@ -25,8 +25,8 @@ matrix:
 environment:
   LP3D_DIST_DIR: lpub3d_windows_3rdparty
   LP3D_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LP3D_DIST_DIR)
-  LP3D_QT32_MSYS2: C:\msys64\MINGW32\bin
-  LP3D_QT64_MSYS2: C:\msys64\MINGW64\bin
+  LP3D_QT32_MSYS2: c:\msys64\MINGW32\bin
+  LP3D_QT64_MSYS2: c:\msys64\MINGW64\bin
   LP3D_QT32LIBS: mingw-w64-i686-qt5-5.9.2-2-any.pkg.tar.xz
   LP3D_QT64LIBS: mingw-w64-x86_64-qt5-5.9.2-2-any.pkg.tar.xz
   ldgl_librepo: lpub3d_mingw-Qt5_libs
