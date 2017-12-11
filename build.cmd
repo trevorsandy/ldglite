@@ -197,7 +197,9 @@ GOTO :END
 :CONFIGURE_BUILD_ENV
 CD /D %PWD%
 ECHO.
-ECHO -Cleanup previous LDGLite qmake config files...
+ECHO -Configure LDGLite build environment...
+ECHO.
+ECHO -Cleanup previous LDGLite qmake config files - if any...
 FOR /R %%I IN (
   ".qmake.stash"
   "Makefile*"
@@ -206,10 +208,9 @@ FOR /R %%I IN (
   "app\Makefile*"
 ) DO DEL /S /Q "%%~I" >nul 2>&1
 ECHO.
-ECHO -Configure LDGLite build environment...
-ECHO.
 ECHO   PLATFORM (BUILD_ARCH)...[%PLATFORM%]
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION%
+ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 SET LDGLITE_MAKE_ARGS=-f Makefile
 IF "%PATH_PREPENDED%" NEQ "True" (
   IF %PLATFORM% EQU x86 (
@@ -217,11 +218,13 @@ IF "%PATH_PREPENDED%" NEQ "True" (
   ) ELSE (
     SET PATH=%LP3D_QT64_MSYS2%;%SYS_DIR%
   )
+  SETLOCAL ENABLEDELAYEDEXPANSION
+  ECHO(  PATH_PREPEND............[!PATH!]
+    ENDLOCAL
+  )
 ) ELSE (
   ECHO   PATH_ALREADY_PREPENDED..[%PATH%]
 )
-ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
-ECHO   PATH_PREPEND............[%PATH%]
 EXIT /b
 
 :CHECK_BUILD
