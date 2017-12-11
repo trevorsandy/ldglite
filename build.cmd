@@ -51,6 +51,9 @@ SET PLATFORM=unknown
 SET LDCONFIG_FILE=unknown
 SET CHECK=unknown
 
+ECHO.
+ECHO -Start %PACKAGE% %~nx0 with commandline args: [%*].
+
 rem Verify 1st input flag options
 IF NOT [%1]==[] (
   IF NOT "%1"=="x86" (
@@ -215,13 +218,10 @@ IF "%PATH_PREPENDED%" NEQ "True" (
     SET PATH=%LP3D_QT64_MSYS2%;%SYS_DIR%
   )
 ) ELSE (
-  ECHO   BUILD_ENVIRONMENT.......[%ALREADY_CONFIGURED%]
+  ECHO   PATH_ALREADY_PREPENDED..[%PATH%]
 )
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
-SETLOCAL ENABLEDELAYEDEXPANSION
-ECHO(  PATH_PREPEND............[!PATH!]
-  ENDLOCAL
-)
+ECHO   PATH_PREPEND............[%PATH%]
 EXIT /b
 
 :CHECK_BUILD
@@ -264,10 +264,10 @@ EXIT /b
 
 :3RD_PARTY_INSTALL
 ECHO.
-ECHO -Installing 3rd party distribution files...
+ECHO -Installing 3rd party distribution files to [%DIST_DIR%]...
 ECHO.
 rem Configure makefiles and perform build
-qmake %LDGLITE_CONFIG_ARGS% & mingw32-make %LDGLITE_MAKE_ARGS% install
+mingw32-make %LDGLITE_MAKE_ARGS% install
 EXIT /b
 
 :CHECK_LDRAW_DIR
@@ -478,6 +478,6 @@ EXIT /b
 
 :END
 ECHO.
-ECHO -%~nx0 finished.
+ECHO -%PACKAGE% v%VERSION% %~nx0 finished.
 ENDLOCAL
 EXIT /b
