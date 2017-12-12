@@ -2,7 +2,7 @@ Source: ldglite
 Section: graphics
 Maintainer: Peter Bartfai <pbartfai@stardust.hu>
 Priority: optional
-Build-Depends: debhelper (>= 4.1.6), gcc, g++, make, libpng-dev, freeglut3-dev
+Build-Depends: debhelper (>= 4.1.16), gcc, make, freeglut3-dev, g++, libpng-dev, libosmesa6-dev
 Homepage: http://ldglite.sourceforge.net/
 Standards-Version: 3.9.4
 
