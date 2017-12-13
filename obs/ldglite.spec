@@ -84,7 +84,6 @@ Packager: Peter Bartfai <pbartfai@stardust.hu>
 BuildRoot: %{_builddir}/%{name}
 
 BuildRequires: make, gcc, gcc-c++, freeglut-devel, libpng-devel
-Requires: nawk
 
 %if 0%{?rhel_version} || 0%{?centos_version}
 BuildRequires: libXext-devel
