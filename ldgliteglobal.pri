@@ -146,17 +146,21 @@ unix:!macx {
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
       else: _LIBS         += $${OSMESA_LIBS} -lglut -lX11 -lXext
 
-      exists (/usr/bin/llvm-config) {
-        LLVM_LDFLAGS     = $$system(/usr/bin/llvm-config --ldflags)
-        isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - ERROR llvm ldflags not found ~~~")
-        else: LLVM_LIBS += $${LLVM_LDFLAGS}
-        LLVM_LIB_NAME    = $$system(/usr/bin/llvm-config --libs engine mcjit)
-        isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
-        else: LLVM_LIBS += $${LLVM_LIB_NAME}
-
-          _LIBS     += $${LLVM_LIBS}
+      NO_GALLIUM {
+        message("~~~ LLVM not needed - Gallium driver not used ~~~")
       } else {
-        message("~~~ LLVM - ERROR llvm-config not found ~~~")
+        exists (/usr/bin/llvm-config) {
+          LLVM_LDFLAGS     = $$system(/usr/bin/llvm-config --ldflags)
+          isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - ERROR llvm ldflags not found ~~~")
+          else: LLVM_LIBS += $${LLVM_LDFLAGS}
+          LLVM_LIB_NAME    = $$system(/usr/bin/llvm-config --libs engine mcjit)
+          isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
+          else: LLVM_LIBS += $${LLVM_LIB_NAME}
+
+            _LIBS     += $${LLVM_LIBS}
+        } else {
+          message("~~~ LLVM - ERROR llvm-config not found ~~~")
+        }
       }
 
       OSMESA_LDFLAGS    = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
