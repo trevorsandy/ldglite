@@ -23,15 +23,21 @@ CONFIG  += skip_target_version_ext
 
 DEFINES += QT_THREAD_SUPPORT
 
-contains(QT_ARCH, x86_64) {
-  ARCH = 64
-} else {
-  ARCH = 32
-}
+# platform switch
+contains(QT_ARCH, x86_64): ARCH = 64
+else:                      ARCH = 32
+# for libraries
+equals(ARCH, 64): LIB_ARCH = 64
+else:             LIB_ARCH =
+
 DEFINES += ARCH=\\\"$$join(ARCH,,,bit)\\\"
 
 unix: DEFINES += UNIX
 macx: DEFINES += MACOS_X
+
+QMAKE_CXXFLAGS  += $(Q_CXXFLAGS)
+QMAKE_CFLAGS    += $(Q_CFLAGS)
+QMAKE_LFLAGS    += $(Q_LDFLAGS)
 
 CONFIG(debug, debug|release) {
   DESTDIR = $$join(ARCH,,,bit_debug)
@@ -42,7 +48,7 @@ CONFIG(debug, debug|release) {
 }
 
 win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
-unix:!macx:HOST = $$system(. /etc/os-release && if test \"$PRETTY_NAME\" != \"\"; then echo \"$PRETTY_NAME\"; else echo `uname`; fi)
+unix:!macx:HOST = $$system(. /etc/os-release 2>/dev/null; [ -n \"$PRETTY_NAME\" ] && echo \"$PRETTY_NAME\" || echo `uname`)
 macx:HOST = $$system(echo `sw_vers -productName` `sw_vers -productVersion`)
 
 # some funky processing to get the prefix passed in on the command line
@@ -57,7 +63,8 @@ OSMESA_ARG = $$find(CONFIG, USE_OSMESA_LOCAL.*)
 !isEmpty(OSMESA_ARG) {
     CONFIG -= $$OSMESA_ARG
     CONFIG += $$section(OSMESA_ARG, =, 0, 0)
-    isEmpty(OSMESA_LOCAL_PREFIX): OSMESA_LOCAL_PREFIX = $$section(OSMESA_ARG, =, 1, 1)
+    isEmpty(OSMESA_LOCAL_PREFIX_): OSMESA_LOCAL_PREFIX_ = $$section(OSMESA_ARG, =, 1, 1)
+    !exists($${OSMESA_LOCAL_PREFIX_}): message("~~~ ERROR - OSMesa path not found ~~~")
 }
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
@@ -147,53 +154,50 @@ unix:!macx {
     DEFINES += OSMESA_OPTION
 
     # OSMesa with Gallium support - static library built from source
-    USE_OSMESA_STATIC {
-      OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
-      isEmpty(OSMESA_INC): !isEmpty(OSMESA_LOCAL_PREFIX): exists($${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}) {
-        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH} ~~~")
-        INCLUDEPATH     = $${OSMESA_LOCAL_PREFIX}/include
-        OSMESA_LOCAL    = 1
-      } else {
-        INCLUDEPATH    += $${OSMESA_INC}
-      }
-      OSMESA_LIBS       = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
-      isEmpty(OSMESA_LIBS): equals (OSMESA_LOCAL, 1) {
-        OSMESA_LIBS     = $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}/lib$${LIB_OSMESA}.$${EXT_D} \
-                               $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}/lib$${LIB_GLU}.$${EXT_D}
-        _LIBS          += $${OSMESA_LIBS}
-      } else {
-        _LIBS          += $${OSMESA_LIBS}
-      }
-      _LIBS            += -lglut -lX11 -lXext
+    if (USE_OSMESA_STATIC|USE_OSMESA_LOCAL) {
 
-      isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
-      isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
+      USE_OSMESA_STATIC {
+        OSMESA_INC         = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
+        INCLUDEPATH       += $${OSMESA_INC}
+        isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
+        OSMESA_LIBS        = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
+        isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
+      } else: USE_OSMESA_LOCAL {
+        LIB_OSMESA         = OSMesa
+        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH} ~~~")
+        INCLUDEPATH        = $${OSMESA_LOCAL_PREFIX_}/include
+        OSMESA_LIBDIR      = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
+        OSMESA_LIBS        = $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}/lib$${LIB_OSMESA}.$${EXT_D} \
+                             $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}/lib$${LIB_GLU}.$${EXT_D}
+      }
+      _LIBS               += $${OSMESA_LIBDIR} $${OSMESA_LIBS} -lglut -lX11 -lXext
 
       NO_GALLIUM {
         message("~~~ LLVM not needed - Gallium driver not used ~~~")
       } else {
-        LLVM_PREFIX=$${SYSTEM_PREFIX_}
-          equals (OSMESA_LOCAL, 1) {
-          message("~~~ LLVM - Using local libraries at $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH} ~~~")
-          LLVM_PREFIX=$${OSMESA_LOCAL_PREFIX}
+        LLVM_PREFIX_=$${SYSTEM_PREFIX_}
+          USE_OSMESA_LOCAL {
+          message("~~~ LLVM - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH} ~~~")
+          LLVM_PREFIX_=$${OSMESA_LOCAL_PREFIX_}
         }
-        exists($${LLVM_PREFIX}/bin/llvm-config) {
-          LLVM_LDFLAGS     = $$system($${LLVM_PREFIX}/bin/llvm-config --ldflags)
+        exists($${LLVM_PREFIX_}/bin/llvm-config) {
+          LLVM_LDFLAGS     = $$system($${LLVM_PREFIX_}/bin/llvm-config --ldflags)
+          LLVM_LIBS       += $${LLVM_LDFLAGS}
           isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - ERROR llvm ldflags not found ~~~")
-          else: LLVM_LIBS += $${LLVM_LDFLAGS}
-          LLVM_LIB_NAME    = $$system($${LLVM_PREFIX}/bin/llvm-config --libs engine mcjit)
+          LLVM_LIB_NAME    = $$system($${LLVM_PREFIX_}/bin/llvm-config --libs engine mcjit)
+          LLVM_LIBS       += $${LLVM_LIB_NAME}
           isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
-          else: LLVM_LIBS += $${LLVM_LIB_NAME}
-
-            _LIBS     += $${LLVM_LIBS}
+          _LIBS           += $${LLVM_LIBS}
         } else {
           message("~~~ LLVM - ERROR llvm-config not found ~~~")
         }
       }
 
-      OSMESA_LDFLAGS    = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
-      isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
-      else: _LIBS += $${OSMESA_LDFLAGS}
+      USE_OSMESA_STATIC {
+        OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
+        _LIBS           += $${OSMESA_LDFLAGS}
+        isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
+      }
 
     } else {
       # OSMesa - system dynamic library
