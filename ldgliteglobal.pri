@@ -5,6 +5,7 @@
 # CONFIG+=ENABLE_TEST_GUI
 # CONFIG+=MAKE_APP_BUNDLE
 # CONFIG+=USE_OSMESA_STATIC
+# CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa nd LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
@@ -50,6 +51,14 @@ macx:HOST = $$system(echo `sw_vers -productName` `sw_vers -productVersion`)
 CONFIG += $$section(3RD_ARG, =, 0, 0)
 isEmpty(3RD_PREFIX):3RD_PREFIX = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
 !exists($${3RD_PREFIX}): message("~~~ ERROR 3rd party repository path not found ~~~")
+
+# same more funky stuff to get the local library prefix - all this just to build on OBS' RHEL
+OSMESA_ARG = $$find(CONFIG, USE_OSMESA_LOCAL.*)
+!isEmpty(OSMESA_ARG) {
+    CONFIG -= $$OSMESA_ARG
+    CONFIG += $$section(OSMESA_ARG, =, 0, 0)
+    isEmpty(OSMESA_LOCAL_PREFIX): OSMESA_LOCAL_PREFIX = $$section(OSMESA_ARG, =, 1, 1)
+}
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
 !contains(CONFIG, ENABLE_TILE_RENDERING): CONFIG += ENABLE_TILE_RENDERING
@@ -140,20 +149,39 @@ unix:!macx {
     # OSMesa with Gallium support - static library built from source
     USE_OSMESA_STATIC {
       OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
+      isEmpty(OSMESA_INC): !isEmpty(OSMESA_LOCAL_PREFIX): exists($${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}) {
+        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH} ~~~")
+        INCLUDEPATH     = $${OSMESA_LOCAL_PREFIX}/include
+        OSMESA_LOCAL    = 1
+      } else {
+        INCLUDEPATH    += $${OSMESA_INC}
+      }
+      OSMESA_LIBS       = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
+      isEmpty(OSMESA_LIBS): equals (OSMESA_LOCAL, 1) {
+        OSMESA_LIBS     = $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}/lib$${LIB_OSMESA}.$${EXT_D} \
+                               $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH}/lib$${LIB_GLU}.$${EXT_D}
+        _LIBS          += $${OSMESA_LIBS}
+      } else {
+        _LIBS          += $${OSMESA_LIBS}
+      }
+      _LIBS            += -lglut -lX11 -lXext
+
       isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
-      else: INCLUDEPATH   += $${OSMESA_INC}
-      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
-      else: _LIBS         += $${OSMESA_LIBS} -lglut -lX11 -lXext
 
       NO_GALLIUM {
         message("~~~ LLVM not needed - Gallium driver not used ~~~")
       } else {
-        exists (/usr/bin/llvm-config) {
-          LLVM_LDFLAGS     = $$system(/usr/bin/llvm-config --ldflags)
+        LLVM_PREFIX=$${SYSTEM_PREFIX_}
+          equals (OSMESA_LOCAL, 1) {
+          message("~~~ LLVM - Using local libraries at $${OSMESA_LOCAL_PREFIX}/lib$${LIB_ARCH} ~~~")
+          LLVM_PREFIX=$${OSMESA_LOCAL_PREFIX}
+        }
+        exists($${LLVM_PREFIX}/bin/llvm-config) {
+          LLVM_LDFLAGS     = $$system($${LLVM_PREFIX}/bin/llvm-config --ldflags)
           isEmpty(LLVM_LDFLAGS): message("~~~ LLVM - ERROR llvm ldflags not found ~~~")
           else: LLVM_LIBS += $${LLVM_LDFLAGS}
-          LLVM_LIB_NAME    = $$system(/usr/bin/llvm-config --libs engine mcjit)
+          LLVM_LIB_NAME    = $$system($${LLVM_PREFIX}/bin/llvm-config --libs engine mcjit)
           isEmpty(LLVM_LIBS): message("~~~ LLVM - ERROR llvm library not found ~~~")
           else: LLVM_LIBS += $${LLVM_LIB_NAME}
 
@@ -171,6 +199,7 @@ unix:!macx {
       # OSMesa - system dynamic library
       _LIBS += -lOSMesa -lGLU -lglut -lX11 -lXext -lm
     }
+
   } else {
     # Mesa - OpenGL
     _LIBS += -lGL -lGLU -lglut -lX11 -lXext -lm
