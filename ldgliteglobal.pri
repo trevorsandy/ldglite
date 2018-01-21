@@ -64,7 +64,7 @@ OSMESA_ARG = $$find(CONFIG, USE_OSMESA_LOCAL.*)
     CONFIG -= $$OSMESA_ARG
     CONFIG += $$section(OSMESA_ARG, =, 0, 0)
     isEmpty(OSMESA_LOCAL_PREFIX_): OSMESA_LOCAL_PREFIX_ = $$section(OSMESA_ARG, =, 1, 1)
-    !exists($${OSMESA_LOCAL_PREFIX_}): message("~~~ ERROR - OSMesa path not found ~~~")
+    !exists($${OSMESA_LOCAL_PREFIX_}): message("~~~ ERROR - Local OSMesa path not found ~~~")
 }
 
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
@@ -136,15 +136,16 @@ win32 {
 
 unix:!macx {
   # detect system libraries paths
-  SYSTEM_PREFIX_     = /usr
-  SYS_LIBINC_        = $${SYSTEM_PREFIX_}/include
-  exists($${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu) {             # Debian
-     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu
-  } else: exists($${SYSTEM_PREFIX_}/lib$$ARCH/) {                  # RedHat (64bit)
-     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib$$ARCH
-  } else {                                                         # Arch, RedHat (32bit)
-     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
+  SYSTEM_PREFIX_      = /usr
+  SYS_LIBINC_         = $${SYSTEM_PREFIX_}/include
+  exists($${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu) {               # Debian
+      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu
+  } else: exists($${SYSTEM_PREFIX_}/lib$${LIB_ARCH}) {               # RedHat, Arch - lIB_ARCH is empyt for 32bit
+      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib$${LIB_ARCH}
+  } else {                                                           # Arch - acutally should never get here
+      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
   }
+
   INCLUDEPATH +=  $${SYS_LIBINC_}
 
   DEFINES += USE_ALPHA_BUFFER
@@ -164,6 +165,8 @@ unix:!macx {
         isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
       } else: USE_OSMESA_LOCAL {
         LIB_OSMESA         = OSMesa
+        LIB_GLU            = GLU
+        EXT_D              = so
         message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH} ~~~")
         INCLUDEPATH        = $${OSMESA_LOCAL_PREFIX_}/include
         OSMESA_LIBDIR      = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
