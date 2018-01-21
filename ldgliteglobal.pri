@@ -155,34 +155,18 @@ unix:!macx {
     DEFINES += OSMESA_OPTION
 
     # OSMesa with Gallium support - static library built from source
-    if (USE_OSMESA_STATIC|USE_OSMESA_LOCAL) {
-
-      USE_OSMESA_STATIC {
-        OSMESA_INC         = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
-        INCLUDEPATH       += $${OSMESA_INC}
-        isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
-        OSMESA_LIBS        = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
-        isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
-      } else: USE_OSMESA_LOCAL {
-        LIB_OSMESA         = OSMesa
-        LIB_GLU            = GLU
-        EXT_D              = so
-        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH} ~~~")
-        INCLUDEPATH        = $${OSMESA_LOCAL_PREFIX_}/include
-        OSMESA_LIBDIR      = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
-        OSMESA_LIBS        = $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}/lib$${LIB_OSMESA}.$${EXT_D} \
-                             $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}/lib$${LIB_GLU}.$${EXT_D}
-      }
-      _LIBS               += $${OSMESA_LIBDIR} $${OSMESA_LIBS} -lglut -lX11 -lXext
+    USE_OSMESA_STATIC {
+      OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
+      INCLUDEPATH         += $${OSMESA_INC}
+      isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
+      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
+      isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
+      _LIBS               += $${OSMESA_LIBS} -lglut -lX11 -lXext
 
       NO_GALLIUM {
         message("~~~ LLVM not needed - Gallium driver not used ~~~")
       } else {
-        LLVM_PREFIX_=$${SYSTEM_PREFIX_}
-          USE_OSMESA_LOCAL {
-          message("~~~ LLVM - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH} ~~~")
-          LLVM_PREFIX_=$${OSMESA_LOCAL_PREFIX_}
-        }
+        isEmpty(LLVM_PREFIX_): LLVM_PREFIX_ = $${SYSTEM_PREFIX_}
         exists($${LLVM_PREFIX_}/bin/llvm-config) {
           LLVM_LDFLAGS     = $$system($${LLVM_PREFIX_}/bin/llvm-config --ldflags)
           LLVM_LIBS       += $${LLVM_LDFLAGS}
@@ -196,21 +180,26 @@ unix:!macx {
         }
       }
 
-      USE_OSMESA_STATIC {
-        OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
-        _LIBS           += $${OSMESA_LDFLAGS}
-        isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
-      }
+      OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
+      isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
+      _LIBS           += $${OSMESA_LDFLAGS}
 
     } else {
+
+      USE_OSMESA_LOCAL {
+        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
+        INCLUDEPATH     = $${OSMESA_LOCAL_PREFIX_}/include
+        OSMESA_LIBDIR   = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
+      }
       # OSMesa - system dynamic library
-      _LIBS += -lOSMesa -lGLU -lglut -lX11 -lXext -lm
+      _LIBS += $${OSMESA_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext -lm
     }
 
   } else {
     # Mesa - OpenGL
     _LIBS += -lGL -lGLU -lglut -lX11 -lXext -lm
   }
+
 }
 
 PRECOMPILED_DIR = $$DESTDIR/.pch
