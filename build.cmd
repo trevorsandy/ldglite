@@ -191,6 +191,8 @@ FOR %%P IN ( x86, x86_64 ) DO (
   IF %CHECK%==1 CALL :CHECK_BUILD %%P
   rem Package 3rd party install content
   IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
+  rem Reset PATH_PREPENDED
+  SET PATH_PREPENDED=False
 )
 GOTO :END
 
