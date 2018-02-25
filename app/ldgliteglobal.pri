@@ -11,7 +11,7 @@ CONFIG  += skip_target_version_ext
 
 DEFINES += QT_THREAD_SUPPORT
 
-contains(QT_ARCH, x86_64) {
+if (contains(QT_ARCH, x86_64)|contains(QT_ARCH, arm64)) {
   ARCH = 64
 } else {
   ARCH = 32
