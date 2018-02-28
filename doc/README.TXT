@@ -6,6 +6,7 @@ Contents of readme.txt:
   LdGLite for Windows README
   LdGLite for linux README
   LdGLite for DOS README
+  LdGLite for MacOS README
   Extra Stuff
     Command line options
     Hot Keys
@@ -19,27 +20,31 @@ Contents of readme.txt:
 
 			     Introduction
 
-LdLite is an LDRAW file viewer for Windows.  You can use it to view
-DAT and MPD files containing models made with everyone's favorite 
-construction bricks.
+Ldglite is a program that lets you create, edit, and view Lego brick
+models stored in LDRAW format. It was created by connecting the LDLite
+DAT file parser to an OpenGL rendering engine and the GLUT toolkit,
+making it portable to many operating systems.  It currently runs in
+Windows, Linux, and MacOS, DOS, and BSD unix, and operates in several
+compatibility modes.
 
-LdGLite is a platform independent version of LdLite.  It achieves this
-by using the OpenGL graphics interface and the GLUT toolkit.  It 
-currently runs in Windows, Linux, and MacOS.  It does not yet provide
-all of the functionality of LdLite.  However it does have a few small
-goodies not yet available in LdLite.
+The default is the viewer mode which is compatible with LDLite and
+ldraw, but also contains many added features such as the ability to
+function as a cheesy scene modeler for l3p and POV.
 
-L3Glite is ldglite except it uses the L3 parser.  Actually the executables
-are identical, the program decides which parser to use based on the name
-of the program.  On linux you can softlink l3glite to ldglite.  You can
-also force the program to use a specific parser with a -ld or -l3 command
-line option.
+Ldglite contains an LEdit emulation mode which gives you the ability
+to create and edit models.  If you rename the program something with
+"ledit" in it such as ldgledit or l3gledit it will start up
+automatically in LEDIT emulation mode.  This can also be accomplished
+with the -le or -lE command line option.  In editing mode ldglite
+can be configured to use plugins from the LDDP project to generate
+hoses, pose minifigs, create train track layouts, etc.
 
-As of version 0.9.1 if you call the program something with "ledit" in
-it such as ldgledit or l3gledit it will start up automatically in
-LEDIT emulation mode.  This can also be accomplished with the -le or -lE
-command line option.  Currently LEDIT emulation mode always uses the
-l3 parser.
+Several internet sites use ldglite as a scripted offscreen renderer,
+generating many pictures of LDRAW parts for inventory lists and
+such. 
+
+Possibly the most important feature of ldglite is that all of the
+source code is available.
 
 
                         LdGLite for Windows README
@@ -92,10 +97,13 @@ To use ldglite from MS Internet Explorer do this:
 
 Or on the command line of windows 2000 type something like this:
     
-    ldlite.document=C:\some\directory\l3glite.exe -v3 -& "%1"
-    assoc .dat=ldlite.document
-    assoc .mpd=ldlite.document
-    assoc .ldr=ldlite.document
+    FTYPE ldlite.document=C:\some\directory\l3glite.exe -v3 "%1"
+    ASSOC .dat=ldlite.document
+    ASSOC .mpd=ldlite.document
+    ASSOC .ldr=ldlite.document
+    SET PATHEXT=.ldr;.mpd;.dat;%PATHEXT%
+
+The last bit allows you to skip the .ldr extension and just "run" .ldr files
     
 
 For Netscape:
@@ -191,11 +199,21 @@ PC.
 
 You need to run the csdpmi5b DOS extender for this to work unless you
 are using Windows 95 or 98 DOS mode.  You also seem to need at least
-64 MB.  (Not sure about that though)  Finally you need to redirect stdout
-to a file to avoid some garbage at the top of the screen.
+8MB of RAM (16MB recommended) and a 16bpp Video card.  You may also
+need the Scitech Display Doctor (univbe.exe) if video bios does not
+support any of the video modes available with the -v command line
+option.  Finally you may need to redirect stdout to a file to avoid
+some garbage at the top of the screen.
 
-    ldglite myfile.dat >messages.txt
+    ldglite -l3 -v3 myfile.dat >messages.txt
 
+
+
+                        LdGLite for MacOS README
+
+Installation instructions are online at http://ldglite.sourceforge.net.
+Scroll down to the installation section and follow the link to the 
+instructions for your flavor of MacOS.
 
 
 
@@ -203,7 +221,7 @@ to a file to avoid some garbage at the top of the screen.
 
 
 Command line options (see also the original ldlite docs for more):
-
++X,Y sets the initial window position offset to (X,Y).
 -fh turns on shading mode.
 -fs turns off stud drawing. (l3glite only)
 -fsl draws studs as lines. (l3glite only)
@@ -216,6 +234,17 @@ Command line options (see also the original ldlite docs for more):
    R,G,B = fog color (default = fade to white, try 0,0,0 for night scene)
    All fog params except T are optional.
    Try these:  -ff3,0.0004    -ff3,0.0003,0,0.8,0.8,1.0
+-fmN sets default mouse spin drawing mode bitmask (eg -fm0x80).  Bits are:
+   TYPE_F_NORMAL 		0x0000
+   TYPE_F_LOW_RES 		0x0001
+   TYPE_F_NO_POLYGONS	 	0x0002
+   TYPE_F_NO_LINES		0x0004
+   TYPE_F_BBOX_MODE		0x0008
+   TYPE_F_INVISIBLE		(TYPE_F_NO_POLYGONS | TYPE_F_NO_LINES)
+   TYPE_F_STUDLESS_MODE 	0x0010
+   TYPE_F_STUDONLY_MODE 	0x0020
+   TYPE_F_STUDLINE_MODE 	0x0040
+   TYPE_F_SHADED_MODE	 	0x0080
 -v0 displays in a 320x200 window.
 -v-1 displays in fullscreen with no decorations.
 -v-2 displays in fullscreen gamemode (no menus in gamemode).
@@ -223,12 +252,17 @@ Command line options (see also the original ldlite docs for more):
 -v8 displays in 1600x1200
 -vX,Y displays in an X wide by Y high window.
 -x displays the x,y,z axis.
+-n2 renders each part in the backbuffer before transfering it to the screen.
+-n4 renders the whole model in the backbuffer and then copies it to the screen.
 -ms Saves an image for each STEP and quits.
--mS Does the same, but without opening a window.
+-mS Does the same, but without opening a window (on most systems).
+    You can also include an optional output filename with either of these.
+    eg. -mSpicture.png  (-mSpicture#.png replaces # with step numbers)
 -iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24 
     5 = PPM.  Use -N to turn off output image cropping.
 -eN.NN fixes polyline offset driver errors.  Try -e0.95 if lines look bad.
 -p turns on polling mode.
+-l logs messages to the ldglite.log file instead of stdout.
 -ld forces the program to use the ldlite parser.
 -l3 forces the program to use the l3 parser.
 -le starts the program in LEDIT emulation mode. 
@@ -239,9 +273,11 @@ Command line options (see also the original ldlite docs for more):
 -J picks the perspective projection.
 -zN sets the near clipping plane.  (default = 10.  100 if GL_DEPTH_BITS < 24)
 -ZN sets the far clipping plane.  (default = 4000)
--caN sets the camera FOV angle in degrees.  (like l3p, except default = 45)
+-caN sets the camera FOV angle in degrees.  (like l3p, default = 67.38)
 -ccX,Y,Z sets the camera location.  (like l3p, except default = 0,0,1000)
+-cg<la>,<lo>,<r> sets the camera location on globe.  (like l3p)
 -coX,Y,Z sets the model origin for the camera to look at.  (default = 0,0,0)
+-claX,Y,Z same as -coX,Y,Z
 -cuX,Y,Z sets the camera up vector.  (default = 0,0,1)
 -lcX,Y,Z sets the light location.  (like l3p, except default = -1000,1000,1000)
 -lcX,Y,Z,R,G,B sets the light location and color.
@@ -256,6 +292,10 @@ Command line options (see also the original ldlite docs for more):
    through ldglite and produce an image file.  For example ldrawmode for
    emacs could possibly be extended to use this to send a dat file in the
    buffer out to the printer.  (especially if I add postscript output)
+-2g downsamples output images by 2 with a Gaussian blur filter (png only).
+-2g,2x will also scale up the image (and edge lines) by 2 first.
+   The result is a nice pretty antialiased image.  Edges are smooth.
+   Transparent parts are blended instead of dithered.
 =LDConfig.ldr file. Optionally, you can include an LDConfig.ldr filename
    as an command line argument. e.g. =foo\\CustomLDConfig.ldr. If not used, 
    ldglite will attempt to load the LDConfig.ldr from the default locations 
@@ -263,17 +303,27 @@ Command line options (see also the original ldlite docs for more):
 
 Hot Keys (especially useful in fullscreen gamemode):
 NOTE:  A few keys were changed in 0.9.0 to accomodate LEDIT emulation mode.
+The arrow key combinations were redefined in 0.9.6.  CTRL key moves camera.
+Some mouse key combos were redefined in 1.1.3.  CTRL mouse moves camera.
 
 F10 enters fullscreen gamemode.  (May be faster on some video cards)
 F9 exits fullscreen gamemode.
+
 Right Mouse button displays the popup menu.
-Left Mouse Drag will rotate the model.
-Shift Mouse Drag rotates the model in solid bounding box mode.
-Ctrl Mouse Drag rotates the model in solid studless mode.
-Arrow keys turn the viewpoint camera 5 degrees left, right, up, down.
-Alt Arrow keys roll the camera left, right, up, down.
-Ctrl Arrow keys move the camera left, right, up, down.
+Left Mouse Drag will rotate the model (defaults to solid bounding box mode)
+Alt Left Mouse Drag rotates the model in solid studless mode.
+Alt Shift Left Mouse rotates the model with everything drawn. (good for parts)
+
+Arrows keys move the current part in LEDIT mode, the model in LDRAW mode.
+Shifted Arrow keys always move the model (in LEDIT or LDRAW mode).
+Alt and Arrow keys spin the model by 5 degrees.
+Shift, Alt, and Arrows spin the model by 45 degrees.
+
+Ctrl Arrow keys move the camera position left, right, up, down.
+Ctrl Shift Arrow keys turn the camera 5 degrees left, right, up, down.
+Ctrl Alt Arrow keys roll the camera left, right, up, down.
 PGUP and PGDN move the camera in and out (only visible in perspective mode)
+
 0-9 keys pick one of the preset viewpoints.
 + scales the model up to double size. (ALT +  zooms in 10%)
 - shrinks the model by half.  (ALT -  zooms out 10%)
@@ -288,8 +338,8 @@ h turns on shading.
 l turns on line only wireframe mode.
 f toggles stud drawing.
 V toggles visible spin mode.
-b prints a BMP file. (use CTRL-b for 24 bit BMP)
-B prints a PNG file. (use CTRL-B for Alpha transparency)
+b prints a BMP file. (use ALT-b for 24 bit BMP)
+B prints a PNG file. (use ALT-B for Alpha transparency)
 q toggles line quality (antialiasing)
 Esc quits.
 
@@ -317,7 +367,18 @@ The Piece menu now also contains:
   an (x,y,z) location option 
   an (x,y,z) scale option (use negative numbers to mirror)
   a matrix replacement option.
-  an part inliner option.
+  a part inliner option.
+
+The Turn menu now also contains:
+  an (x,y,z) origin option to select an arbitrary turn center.
+  an option to toggle display of the three axis through the turn center.
+  a rotate option (uses the part origin instead of the turn center)
+
+The Edit menu now also contains:
+  a hoser function.  Insert 2 hose end parts.  Type /EH50 at the 2nd part.
+  Hose ends are 750.dat, 752.dat, 755.dat, 76.dat, 79.dat, and stud3a.dat.
+
+A Rotate menu has been added:  Like the rotate option on the Turn menu.
 
 			LEDIT emulation quirks
 
@@ -339,7 +400,7 @@ and JPEG.
 LDGLite (see http://www.ldraw.org/reference/linux for installation
 instructions on Linux) can convert DAT and MPD files to PNG:
 
-  ldglite-run -i2 -ms model.mpd
+  ldglite -i2 -ms model.mpd
 
 Using netpbm/pbmplus (and tcsh) it is easy to convert the PNG files
 to GIF and JPEG:
@@ -352,12 +413,19 @@ to GIF and JPEG:
 And if you want to improve the looks of the model, you can render
 the model in double size, and then scale down the images:
 
-  ldglite-run -i2 -ms -s2 -w2 model.mpd
+  ldglite -i2 -ms -S2 -w2 model.mpd
 
   foreach file ( /usr/local/share/ldraw/bitmap/model*.png )
     pngtopnm < ${file} | pnmscale 0.5 | cjpeg > `basename ${file} .png`.jpeg
     pngtopnm < ${file} | pnmscale 0.5 | ppmtogif > `basename ${file} .png`.gif
   end
+
+New as of version 1.2.10:
+Ldglite will render double size and then decimate for you with -2g,2x
+No need for any external image decimation program.  (png output only)
+
+  ldglite -i2 -ms -2g,2x model.mpd
+
 
 		       -----------------------
 
