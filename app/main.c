@@ -8513,6 +8513,7 @@ void ParseParams(int *argc, char **argv)
       if ((n > 2) && (wy >= 0))
 	YwinPos = wy;
     }
+    // pass LDConfig as a command line argument. [=<LDConfig file> flag is deprecated - see reimplementation below]
     else if (pszParam[0] == '=')
     {
       // remove '='
@@ -8546,7 +8547,7 @@ void ParseParams(int *argc, char **argv)
       case '-':
 	if (!strcmp(datfilename,  " "))
 	  //strcpy(datfilename, ""); // read from stdin if no filename.
-	  strcpy(datfilename, "-"); // read from stdin if no filename.
+	  strcpy(datfilename, "-");  // read from stdin if no filename.
 	break;
       case 'A':
       case 'a':
@@ -8576,7 +8577,7 @@ void ParseParams(int *argc, char **argv)
 	  if ((g >= 0.0) && (g <= 360.0))
 	    projection_fov = g;
 	}
-        else if (toupper(pszParam[1]) == 'C') // Camera location.
+  else if (toupper(pszParam[1]) == 'C') // Camera location.
 	{
 	  //float v[4][4];
 	  double v[4][4];
@@ -8587,7 +8588,7 @@ void ParseParams(int *argc, char **argv)
 	  projection_fromy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
 	  projection_fromz = v[0][2];
 	}
-        else if ((toupper(pszParam[1]) == 'O') || // Object Origin to look at.
+  else if ((toupper(pszParam[1]) == 'O') || // Object Origin to look at.
 		 ((toupper(pszParam[1]) == 'L') &&
 		  (toupper(pszParam[2]) == 'A')))
 	{
@@ -8602,7 +8603,7 @@ void ParseParams(int *argc, char **argv)
 	  projection_towardy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
 	  projection_towardz = v[0][2];
 	}
-        else if ((toupper(pszParam[1]) == 'U') || // Camera up vector.
+  else if ((toupper(pszParam[1]) == 'U') || // Camera up vector.
 		 ((toupper(pszParam[1]) == 'S') &&
 		  (toupper(pszParam[2]) == 'K') &&
 		  (toupper(pszParam[3]) == 'Y')))
@@ -8798,6 +8799,23 @@ void ParseParams(int *argc, char **argv)
 	  use_quads = 1;
 	  printf("Parser = L3\n");
 	}
+  // pass LDConfig as a command line argument.
+  else if ((toupper(pszParam[1]) == 'D') &&
+           (toupper(pszParam[2]) == 'C') &&
+           (toupper(pszParam[3]) == 'F'))
+  {
+      // remove '-ldcF' path prefix
+      memmove(pszParam, pszParam+4, strlen(pszParam));
+      if (pszParam[0])
+      {
+         char ldconfigfilepath[256];
+         strcpy(ldconfigfilename, basename(pszParam));
+         strcpy(ldconfigfilepath, dirname(pszParam));
+         strcat(ldconfigfilepath, ldconfigfilename);
+         strcpy(ldconfig, localize_path(ldconfigfilepath));
+         printf("LDConfig = (%s)\n", ldconfig);
+      }
+  }
 	else if (toupper(pszParam[1]) == 'D')
 	{
 	  parsername = LDLITE_PARSER;

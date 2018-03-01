@@ -169,17 +169,17 @@ macx {
 
 # set config to enable build check
 # CONFIG+=BUILD_CHECK
-# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l =tests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
+# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.3_Foo2.png tests/Foo2.ldr
 BUILD_CHECK: unix {
   # LDraw library path - needed for tests
   LDRAW_PATH = $$(LDRAWDIR)
   !isEmpty(LDRAW_PATH){
     message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
-    QMAKE_POST_LINK += $$escape_expand(\n\t)                                        \
-                       cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01   \
-                       -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -w1 -l  \
-                       =$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr              \
-                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.3_Foo2.png \
+    QMAKE_POST_LINK += $$escape_expand(\n\t)                                               \
+                       cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01          \
+                       -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l  \
+                       -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                 \
+                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.3_Foo2.png        \
                        $$_PRO_FILE_PWD_/../tests/Foo2.ldr
   } else {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")
