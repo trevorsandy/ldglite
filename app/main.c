@@ -47,7 +47,7 @@ char ldgliteVersion[] = "Version "VERSION_INFO" ("ARCH")      ";
 char ldgliteVersion[] = "Version "VERSION_INFO"      ";
 #endif
 #else
-char ldgliteVersion[] = "Version 1.3.2      ";
+char ldgliteVersion[] = "Version 1.3.4      ";
 #endif
 
 // Use Glut popup menus if MUI is not available.
@@ -8520,12 +8520,11 @@ void ParseParams(int *argc, char **argv)
       memmove(pszParam, pszParam+1, strlen(pszParam));
       if (pszParam[0])
       {
-         char ldconfigfilepath[256];
-         strcpy(ldconfigfilename, basename(pszParam));
-         strcpy(ldconfigfilepath, dirname(pszParam));
-         strcat(ldconfigfilepath, ldconfigfilename);
-         strcpy(ldconfig, localize_path(ldconfigfilepath));
-         printf("LDConfig = (%s)\n", ldconfig);
+        char ldconfigfilepath[256];
+        strcpy(ldconfigfilename, basename(pszParam));
+        concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
+        strcpy(ldconfig, localize_path(ldconfigfilepath));
+        printf("LDConfig = (%s)\n", ldconfig);
       }
     }
     else if (pszParam[0] != '-')
@@ -8808,12 +8807,11 @@ void ParseParams(int *argc, char **argv)
       memmove(pszParam, pszParam+4, strlen(pszParam));
       if (pszParam[0])
       {
-         char ldconfigfilepath[256];
-         strcpy(ldconfigfilename, basename(pszParam));
-         strcpy(ldconfigfilepath, dirname(pszParam));
-         strcat(ldconfigfilepath, ldconfigfilename);
-         strcpy(ldconfig, localize_path(ldconfigfilepath));
-         printf("LDConfig = (%s)\n", ldconfig);
+        char ldconfigfilepath[256];
+        strcpy(ldconfigfilename, basename(pszParam));
+        concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
+        strcpy(ldconfig, localize_path(ldconfigfilepath));
+        printf("Commandline LDConfig = %s\n", ldconfig);
       }
   }
 	else if (toupper(pszParam[1]) == 'D')
@@ -9066,14 +9064,20 @@ void ParseParams(int *argc, char **argv)
 
 	    if (*p == ',')
 	      p++; // skip over the comma char.
-	    if (2 == sscanf(p,"%d%c",&j, &type)) {
-	      if (tolower(type) == 'g') // G for Gaussian blur filtered decimation.
-		downsample = 1; // Someday this could be j-1 for bigger filter.
+	    if (2 == sscanf(p,"%d%c",&j, &type))
+      {
+	      if (tolower(type) == 'g')  // G for Gaussian blur filtered decimation.
+        {
+		      downsample = 1; // Someday this could be j-1 for bigger filter.
+          printf("Downsample = Yes\n");
+        }
 	      else if (tolower(type) == 'x') // X for eg. 2x upscale.
-		upscale = j;
+        {
+		      upscale = j;
+          printf("Upscale factor = (%d)\n", upscale);
+        }
 	    }
 	  }
-	  printf("Downsample = (%d, %d)\n", downsample, upscale);
 	break;
 	}
       }
@@ -9085,7 +9089,7 @@ void ParseParams(int *argc, char **argv)
   {
     sprintf(ldconfigfilename, "LDConfig.ldr");
     concat_path(pathname, ldconfigfilename, ldconfig);
-    printf("Using default LDConfig (%s)\n", ldconfig);
+    printf("LDraw LDConfig = %s\n", ldconfig);
   }
 
   // Tiled rendering does not work offscreen.  Just use one big bitmap.
