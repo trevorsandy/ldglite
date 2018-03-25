@@ -192,8 +192,20 @@ unix:!macx {
         INCLUDEPATH    += $${OSMESA_LOCAL_PREFIX_}/include
         OSMESA_LIBDIR   = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
       }
-      # OSMesa - system dynamic library
-      _LIBS += $${OSMESA_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext -lm
+
+      # For some reason SLE 15 on SUSE OBS does not have freeglut.
+      SLE_VER = $$system(echo $$(PLATFORM_PRETTY_OBS))
+      contains(SLE_VER, Enterprise):contains(SLE_VER, 150000) {
+        INCLUDEPATH += \
+        $$PWD/linux/sle15/freeglut/include
+        SLE_LIBDIR = -L$$PWD/linux/sle15/freeglut/lib
+        SLE_LIBS = -lGL -lXxf86vm -lXrandr -lXi
+      }
+      # OSMesa (OffScreen) - system dynamic libraries
+      #_LIBS += $${OSMESA_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext -lm
+
+      # OSMesa (OffScreen) - system, dynamic libraries and static local freeglut
+      _LIBS += $${OSMESA_LIBDIR} $${SLE_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext $${SLE_LIBS} -lm
     }
 
   } else {

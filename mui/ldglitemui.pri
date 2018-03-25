@@ -20,4 +20,4 @@ SOURCES += \
     $$PWD/src/mui/textlist.c \
     $$PWD/src/mui/uicolor.c \
     $$PWD/src/mui/vslider.c \
-	$$PWD/../app/ldglgui.c
+    $$PWD/../app/ldglgui.c

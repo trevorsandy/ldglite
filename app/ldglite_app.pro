@@ -34,6 +34,7 @@ else:      TARGET = LDGLite
 
 # messages
 win32: message("~~~ USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
+!isEmpty(SLE_LIBDIR): message("~~~ SLE_15 - USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
 !isEmpty(OSMESA_LIBDIR): message("~~~ OSMESA - USING LOCAL LIBRARIES AT $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
 
 include($$PWD/ldgliteapp.pri)
