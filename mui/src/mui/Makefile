@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS= -I../../src -I../../../macx/glut/include
+CFLAGS= -I../../src
 
 AR = ar
 RANLIB = ranlib
