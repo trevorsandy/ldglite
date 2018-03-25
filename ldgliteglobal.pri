@@ -5,7 +5,7 @@
 # CONFIG+=ENABLE_TEST_GUI
 # CONFIG+=MAKE_APP_BUNDLE
 # CONFIG+=USE_OSMESA_STATIC
-# CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa nd LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
+# CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
@@ -19,19 +19,23 @@ CONFIG  += thread
 CONFIG  += warn_on
 CONFIG  += static
 CONFIG  += skip_target_version_ext
-#win32: CONFIG   += console
 
 DEFINES += QT_THREAD_SUPPORT
 
+win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
+unix:!macx:HOST = $$system(. /etc/os-release 2>/dev/null; [ -n \"$PRETTY_NAME\" ] && echo \"$PRETTY_NAME\" || echo `uname`)
+macx:HOST = $$system(echo `sw_vers -productName` `sw_vers -productVersion`)
+isEmpty(HOST):HOST = UNKNOWN HOST
+
 # platform switch
-if (contains(QT_ARCH, x86_64)|contains(QT_ARCH, arm64)) {
-  ARCH = 64
+BUILD_ARCH = $$(TARGET_CPU)
+if (contains(QT_ARCH, x86_64)|contains(QT_ARCH, arm64)|contains(BUILD_ARCH, aarch64)) {
+  ARCH     = 64
+  LIB_ARCH = 64
 } else {
-  ARCH = 32
+  ARCH     = 32
+  LIB_ARCH =
 }
-# for libraries
-equals(ARCH, 64): LIB_ARCH = 64
-else:             LIB_ARCH =
 
 DEFINES += ARCH=\\\"$$join(ARCH,,,bit)\\\"
 
@@ -49,10 +53,6 @@ CONFIG(debug, debug|release) {
   DESTDIR = $$join(ARCH,,,bit_release)
   BUILD = RELEASE
 }
-
-win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
-unix:!macx:HOST = $$system(. /etc/os-release 2>/dev/null; [ -n \"$PRETTY_NAME\" ] && echo \"$PRETTY_NAME\" || echo `uname`)
-macx:HOST = $$system(echo `sw_vers -productName` `sw_vers -productVersion`)
 
 # some funky processing to get the prefix passed in on the command line
 3RD_ARG = $$find(CONFIG, 3RD_PARTY_INSTALL.*)
@@ -132,7 +132,6 @@ win32 {
 
   equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
   else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
-  message("~~~ USING LOCAL COPY OF FREEGLUT ~~~")
 
   _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32
 }
@@ -190,8 +189,7 @@ unix:!macx {
     } else {
 
       USE_OSMESA_LOCAL {
-        message("~~~ OSMESA - Using local libraries at $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
-        INCLUDEPATH     = $${OSMESA_LOCAL_PREFIX_}/include
+        INCLUDEPATH    += $${OSMESA_LOCAL_PREFIX_}/include
         OSMESA_LIBDIR   = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
       }
       # OSMesa - system dynamic library
@@ -199,7 +197,7 @@ unix:!macx {
     }
 
   } else {
-    # Mesa - OpenGL
+    # Mesa (OnScreen) - OpenGL
     _LIBS += -lGL -lGLU -lglut -lX11 -lXext -lm
   }
 

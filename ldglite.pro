@@ -19,6 +19,7 @@
 win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
 unix:!macx:HOST = $$system(. /etc/os-release && if test \"$PRETTY_NAME\" != \"\"; then echo \"$PRETTY_NAME\"; else echo `uname`; fi)
 macx:HOST = $$system(echo `sw_vers -productName` `sw_vers -productVersion`)
+isEmpty(HOST):HOST = UNKNOWN HOST
 
 !contains(CONFIG, ENABLE_TEST_GUI): CONFIG += ENABLE_TEST_GUI
 
@@ -51,15 +52,16 @@ ENABLE_TEST_GUI {
   ldglite_app.depends     = ldglite_mui
 }
 
-CONFIG(debug, debug|release) {
-    message("~~~ LDGLITE DEBUG BUILD ON $$upper($$HOST) ~~~")
-} else {
-    message("~~~ LDGLITE RELEASE BUILD ON $$upper($$HOST) ~~~")
-}
-
 OTHER_FILES += \
     $$PWD/doc/ldglite.1 \
     $$PWD/doc/README.TXT \
     $$PWD/set-ldrawdir.command \
     $$PWD/.travis.yml \
     $$PWD/appveyor.yml
+
+BUILD_ARCH = $$(TARGET_CPU)
+!contains(QT_ARCH, unknown):  BUILD_ARCH = $$QT_ARCH
+else: isEmpty(BUILD_ARCH):    BUILD_ARCH = UNKNOWN ARCH
+CONFIG(debug, debug|release): BUILD = DEBUG BUILD
+else:                         BUILD = RELEASE BUILD
+message("~~~ LDGLITE $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
