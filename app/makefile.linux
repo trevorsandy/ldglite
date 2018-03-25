@@ -49,7 +49,7 @@ CFLAGS=-g -DUNIX -DUSE_OPENGL -DUSE_ALPHA_BUFFER -DUSE_L3_PARSER -DUSE_BMP8 $(PN
 CXXFLAGS=$(CFLAGS)
 LDFLAGS=
 
-SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC)
+SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c ldrawini/LDrawIni.c ldsearch.c tinyfiledialogs.c $(TR_SRC) $(GUI_SRC)
 OBJS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SRCS)))
 
 all: ldglite

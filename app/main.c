@@ -6021,6 +6021,50 @@ char *getfilename(char *s, char *filename)
 }
 
 /***************************************************************/
+int tfd_loadfile()
+{
+  /* Test some of the other dialogs.  Try colordialog... */
+  /*     char *foo = tinyfd_messageBox("Hello World", 
+  /*     "Which do you prefer?\n\t(yes or no)", "yesno", "question", 0); */
+  /*     printf("messagebox => <%s>\n",foo); */
+  /*     unsigned char const aDefaultRGB[3] = { 0 , 255 , 255 }; */
+  /*     unsigned char aoResultRGB[3] = { 0 , 0 , 0 }; */
+  /*     char *foo = tinyfd_colorChooser("Pick a color",NULL,aDefaultRGB,aoResultRGB); */
+  /*     printf("color => <%s>\n",foo); */
+#ifdef MACOS_X
+  // tinyfiledialogs removes the "*." prefix
+  const char *filter[2] = {"*.org.ldraw.ldr","*.org.ldraw.mpd"};
+  char *fname = tinyfd_openFileDialog("Select an LDraw file","",2,filter,"LDraw files",0);
+  if (fname && strlen(fname)) loadnewdatfile(dirname(fname), basename(fname));
+#else
+  const char *filter[3] = {"*.dat","*.ldr","*.mpd"};
+  char *fname = tinyfd_openFileDialog("Select an LDraw file","",3,filter,"LDraw files",0);
+  if (fname && strlen(fname)) loadnewdatfile(dirname(fname), basename(fname));
+#endif
+  return (fname && strlen(fname));
+}
+
+/***************************************************************/
+tfd_saveas()
+{
+  extern char datfilename[];
+  extern char dirfilepath[];
+  char filename[256];
+  concat_path(dirfilepath, datfilename, filename);
+#ifdef MACOS_X
+  // The tinyfd save fn ignores any filter settings on OSX.
+  // Passing a filename works, but a POSIX "default location" gets this error:
+  // 51:182: execution error: Finder got an error: Can't make "/Users/preferredcustomer/projects/ldglite" into type alias. (-1700)
+  char *fname = tinyfd_saveFileDialog("Save LDraw file",datfilename,0,NULL,"LDraw files");
+  if (fname && strlen(fname)) saveasdatfile(dirname(fname), basename(fname));
+#else
+  const char *filter[3] = {"*.dat","*.ldr","*.mpd"};
+  char *fname = tinyfd_saveFileDialog("Save LDraw file",filename,3,filter,"LDraw files");
+  if (fname && strlen(fname)) saveasdatfile(dirname(fname), basename(fname));
+#endif
+}
+
+/***************************************************************/
 int edit_mode_keyboard(int key, int x, int y)
 {
   UNUSED(x);
@@ -6216,21 +6260,57 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'l':
+      case 'o': // Also allow O for Open
+	//tinyfd_forceConsole = 1;
+	if (tinyfd_gui_test() < 0x100)
+	{
+	  clear_edit_mode_gui();
+	  sprintf(eprompt[0], "Load file: ");
+	  ecommand[0] = toupper(key);
+	  sprintf(&(ecommand[1]), datfilename);
+	  edit_mode_gui();
+	  return 1;
+	}
+	ecommand[0] = 0; // wipe the command char
 	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Load file: ");
-	ecommand[0] = toupper(key);
-	sprintf(&(ecommand[1]), datfilename);
-	edit_mode_gui();
+	//edit_mode_gui();
+	if (tfd_loadfile()){
+	  curstep = 0; // Reset to first step
+	  dirtyWindow = 1;
+	  UnSelect1Part(curpiece); // UnSelect part before Loading
+	  curpiece = 0;
+	  movingpiece = -1;
+	  list_made = 0; // Gotta reparse the file.
+	  SetTitle(1); // Change the title of the window.
+	  glutPostRedisplay();
+	}
+	else
+	  edit_mode_gui();
 	return 1;
       case 's':
+	if (tinyfd_gui_test() < 0x100)
+	{
+	  clear_edit_mode_gui();
+	  sprintf(eprompt[0], "Save as: ");
+	  ecommand[0] = toupper(key);
+	  sprintf(&(ecommand[1]), datfilename);
+	  edit_mode_gui();
+	  return 1;
+	}
+	ecommand[0] = 0; // wipe the command char
 	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Save as: ");
-	ecommand[0] = toupper(key);
-	sprintf(&(ecommand[1]), datfilename);
-	edit_mode_gui();
+	tfd_saveas(datfilename);
+	i = UnSelect1Part(curpiece); // Link part back in before printing
+	Print1Model(datfilename);
+	SetTitle(1); // Change the title of the window.
+	if (i != -1)
+	  Select1Part(curpiece); // Unlink part again if needed.
+	//edit_mode_gui();
 	return 1;
       case 'e':
+      case 'x': // Also allow X for exit.
 	exit(0);
+      // case 'm': // Someday add options for individual "0 FILE" sections of mpd files.
       }
       return 1;
     }

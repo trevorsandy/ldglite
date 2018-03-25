@@ -54,7 +54,7 @@ CFLAGS = -g -Imacx/include -DUNIX -DMACOS_X -DUSING_CARBON -DUSE_OPENGL -DUSE_L3
 
 CFLAGS += -DNOT_WARPING -DVISIBLE_SPIN_CURSOR -DSAVE_DEPTH_ALL -DSAVE_COLOR_ALL -DMACOS_X_TEST2 -DHAVE_STRDUP $(MACOSX_TARGET_ARCH) $(MACOSX_SDK)
 
-SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c getargv.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC)
+SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugstub.c getargv.c ldrawini/LDrawIni.c ldsearch.c tinyfiledialogs.c $(TR_SRC) $(GUI_SRC)
 OBJS = $(SRCS:.c=.o)
 
 all: ldglite

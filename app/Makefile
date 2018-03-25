@@ -68,7 +68,7 @@ CFLAGS=-ggdb -DUSE_OPENGL -DUSE_L3_PARSER -DUSE_BMP8 $(FREEGLUT_FLAGS) $(PNG_FLA
 AR = ar
 RANLIB = ranlib
 
-SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugins.c ldrawini/LDrawIni.c ldsearch.c $(TR_SRC) $(GUI_SRC) 
+SRCS = ldliteVR_main.c platform.c dirscan.c gleps.c camera.c f00QuatC.c quant.c stub.c lcolors.c y.tab.c lex.yy.c qbuf.c main.c ldglpr.c L3Edit.c L3Math.c L3Input.c L3View.c hoser.c ldglmenu.c plugins.c ldrawini/LDrawIni.c ldsearch.c tinyfiledialogs.c $(TR_SRC) $(GUI_SRC) 
 OBJS = $(SRCS:.c=.o) $(RES_SRC:.rc=.o)
 
 all	: ldglite
