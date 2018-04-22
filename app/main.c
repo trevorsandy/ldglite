@@ -47,7 +47,7 @@ char ldgliteVersion[] = "Version "VERSION_INFO" ("ARCH")      ";
 char ldgliteVersion[] = "Version "VERSION_INFO"      ";
 #endif
 #else
-char ldgliteVersion[] = "Version 1.3.4      ";
+char ldgliteVersion[] = "Version 1.3.4test01";
 #endif
 
 // Use Glut popup menus if MUI is not available.
@@ -382,6 +382,13 @@ int qualityLines = 0;
 float lineWidth = 0.0;
 int LineChecking = 0;
 int preprintstep = 0;
+int DepthOnly = 0; // Draw to z-buffer only, disable writes to color buffer.
+int TransFadeEffect = 0; // Draw Faded Parts for LPub3D -- Trans with no back edges.
+int FadeColors[256] = {0};
+int nFadeColors = 0;
+int SilhouetteColors[256] = {0};
+int nSilhouetteColors = 0;
+int SilhouetteEdge = 14; // Default to yellow?
 int dimLevel = 0; // Same as ldraw_commandline_opts.maxlevel=32767;  // a huge number
 float dimAmount = 0.0;
 
@@ -3409,13 +3416,26 @@ render(void)
   glCallList(1);
 #else
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || LineChecking)
+      || TransFadeEffect || LineChecking)
   {
     ldraw_commandline_opts.F |= TYPE_F_NO_LINES;
     linequalitysetup();
     if (ldraw_commandline_opts.M == 'S')
       preprintstep = 1; //Tell platform_step() NOT to save file now.
     DrawModel();
+
+    if (TransFadeEffect) { // EXPERIMENTAL_TRANS_REAR_LINE_REMOVAL
+      // ====================================================================
+      // NOTE: Currently requires -q to get into this fancy thread of render()
+      // ====================================================================
+      // Add an extra pass to hide rear edge lines behind trans surfaces.
+      printf("TransTest start\n");
+      DepthOnly = 1;
+      DrawModel();
+      DepthOnly = 0;
+      printf("TransTest done\n");
+    }
+    
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
     linequalitysetup();
     ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
@@ -3446,7 +3466,7 @@ render(void)
 #endif
   }
   else
-#endif
+#endif // Done USE_L3_PARSER (The alternative may be less up to date)
 
   {
 #ifdef ONE_BIG_DISPLAY_LIST
@@ -3463,7 +3483,7 @@ render(void)
   glCallList(1);
 #else
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || LineChecking)
+      || TransFadeEffect || LineChecking)
   {
     ldraw_commandline_opts.F |= TYPE_F_NO_LINES;
     if (ldraw_commandline_opts.M == 'S')
@@ -3503,7 +3523,7 @@ render(void)
     znamelist_pop();
   }
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || LineChecking)
+      || TransFadeEffect || LineChecking)
   {
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
     linequalitysetup();
@@ -8811,11 +8831,27 @@ void ParseParams(int *argc, char **argv)
 	      fogColor[1] = v[1][1];
 	      fogColor[2] = v[1][2];
 	    }
+	    break;
 	  case 'M': // Motion? Mouse Movement?
 	    if ((pszParam[2] == '0') && (toupper(pszParam[3]) == 'X'))
 	      sscanf(pszParam,"%c%c%x",&type,&c,&pan_visible);
 	    else
 	      sscanf(pszParam,"%c%c%d",&type,&c,&pan_visible);
+	    break;
+	  case 'A': // Experimental Trans FADE Effect for LPub3D
+	    if (1 == sscanf(pszParam+2,"%d,",&n)){ // Get list of colors for FADE.
+	      int j=0;
+	      char *p = pszParam+2;
+	      TransFadeEffect = n;
+	      for (p = strchr(p, ','); p; p = strchr(p, ',')){
+		p++; // skip over the comma char (or the A in -FA)
+		if (1 != sscanf(p,"%d",&n))
+		  break;
+		FadeColors[j++] = n;
+	      }
+	      nFadeColors = j;
+	    }
+	    //printf("FADE(%d,%d)=%d,%d,%d,%d,%d,%d\n",TransFadeEffect, nFadeColors,FadeColors[0], FadeColors[1],FadeColors[2],FadeColors[3],FadeColors[4],FadeColors[5]);
 	    break;
 	  }
 	}

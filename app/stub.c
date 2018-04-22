@@ -37,10 +37,19 @@ extern int use_quads;
 extern float lineWidth;
 
 extern int qualityLines;
-extern int LineChecking;
+extern int DepthOnly;
 extern int preprintstep;
 extern int dimLevel;
 extern float dimAmount;
+
+// Draw Faded Parts for LPub3D -- Trans with no back edges.
+extern int TransFadeEffect;
+extern int FadeColors[256];
+extern int nFadeColors;
+// Draw Part Silhouettes for LPub3D.
+extern int SilhouetteColors[256];
+extern int nSilhouetteColors;
+extern int SilhouetteEdge;
 
 // Ambient and diffusion properties for front and back faces.
 extern GLfloat full_mat[];
@@ -85,6 +94,42 @@ GLubyte halftone[] = {
     0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
     0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
     0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55};
+
+GLubyte halftone25[] = {
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00,
+    0x55, 0x55, 0x55, 0x55, 0x00, 0x00, 0x00, 0x00};
+
+GLubyte halftone75[] = {
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xAA, 0xAA, 0xAA, 0xAA, 0xFF, 0xFF, 0xFF, 0xFF};
 
 int glCurColorIndex = -1;
 int glCurLighting = 1;
@@ -193,7 +238,16 @@ void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
   if (((c > 31) && (c < 60)) || (zcs->a < 255)) // Translucent colors
   {
     glEnable(GL_POLYGON_STIPPLE);
-    glPolygonStipple(halftone);
+    if (TransFadeEffect < 1) // 
+      glPolygonStipple(halftone);
+    else { // Interpret FADE percentage as a stipple pattern.
+      if (TransFadeEffect > 74)
+	glPolygonStipple(halftone75);
+      else if (TransFadeEffect < 26)
+	glPolygonStipple(halftone25);
+      else
+      glPolygonStipple(halftone);
+    }
     //glCallList(current_stipple+STIP_OFFSET);
     current_stipple++;
     current_stipple %= 8;
@@ -521,9 +575,10 @@ void render_triangle(vector3d *vp1, vector3d *vp2, vector3d *vp3, int c)
 
 
 #ifdef USE_OPENGL
-	if(LineChecking) {
-	  //disable color updates
-	  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE); 
+	if(DepthOnly) {//disable color updates (depth buffer updates only)
+	  // Should only render this polygon if the color c is on the fade list.
+	  // Otherwise just restore color writes and return right now.
+	  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 	}
 	else
 #endif
@@ -652,7 +707,9 @@ void render_triangle(vector3d *vp1, vector3d *vp2, vector3d *vp3, int c)
 #endif // EXPERIMENTAL_STIPPLE
 
   setup_material(c,&zc,&zs);
-
+  if (DepthOnly) // Write to z-buffer for ALL pixels of "trans" surfaces.
+    glDisable(GL_POLYGON_STIPPLE);
+  
   // LDRAW has the y value reversed, so negate the y.
   {
     glBegin(GL_TRIANGLES);
@@ -675,10 +732,8 @@ void render_triangle(vector3d *vp1, vector3d *vp2, vector3d *vp3, int c)
     glLineWidth( lineWidth );
 
   //glFlush();
-  if(LineChecking) {
-    //disable color updates
+  if(DepthOnly) //re-enable color updates
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); 
-  }
 #endif
 }
 
@@ -706,9 +761,10 @@ void render_quad(vector3d *vp1, vector3d *vp2, vector3d *vp3, vector3d *vp4, int
 	int bowtie_test_2;
 
 #ifdef USE_OPENGL
-	if(LineChecking) {
-	  //disable color updates
-	  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE); 
+	if(DepthOnly) {//disable color updates (depth buffer updates only)
+	  // Should only render this polygon if the color c is on the fade list.
+	  // Otherwise just restore color writes and return right now.
+	  glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
 	}
 	else
 #endif
@@ -936,6 +992,8 @@ void render_quad(vector3d *vp1, vector3d *vp2, vector3d *vp3, vector3d *vp4, int
 #endif // EXPERIMENTAL_STIPPLE
 
   setup_material(c,&zc,&zs);
+  if (DepthOnly) // Write to z-buffer for ALL pixels of "trans" surfaces.
+    glDisable(GL_POLYGON_STIPPLE);
 
   // LDRAW has the y value reversed, so negate the y.
   if (use_quads)
@@ -997,10 +1055,8 @@ void render_quad(vector3d *vp1, vector3d *vp2, vector3d *vp3, vector3d *vp4, int
     glLineWidth( lineWidth );
 
   //glFlush();
-  if(LineChecking) {
-    //disable color updates
+  if(DepthOnly) // re-enable color updates
     glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); 
-  }
 #endif
 }
 

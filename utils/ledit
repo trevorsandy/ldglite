@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LDRAWDIR=~/ldraw ./ldglite -LE -v800,600 -fm0xC0 -i2 $@ >/dev/null 2>&1 &
