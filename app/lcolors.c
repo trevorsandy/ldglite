@@ -131,6 +131,94 @@ int znamelist_stack_index=0;
 #define ZCOLOR_TABLE_SIZE 512
 
 /***************************************************************/
+typedef struct zcolor_code_table_entry_struct {
+	char *name;
+	int code;
+	int inverse_index;
+	ZCOLOR primary;
+	ZCOLOR dither;
+} ZCOLOR_CODE_TABLE_ENTRY;
+
+ZCOLOR_CODE_TABLE_ENTRY zcolor_code_table[ZCOLOR_TABLE_SIZE];
+static int nColorCodes = 0; // How many ColorCodes in extra table.
+/***************************************************************/
+int lookup_color_code(int c, ZCOLOR *zcp, ZCOLOR *zcs)
+{
+  // This could lookup newly defined colors from a 2nd table of 512.
+  // Useful for defining new colors fromm 512 to 0x1ffffff
+
+  // The idea is to just use a linear search of nColorCodes in table
+  // and return the goods if we find a match for color c.
+
+  int i;
+
+  for (i=0; i < nColorCodes; i++){
+    if (c == zcolor_code_table[i].code){
+      zcp->r = zcolor_code_table[i].primary.r;
+      zcp->g = zcolor_code_table[i].primary.g;
+      zcp->b = zcolor_code_table[i].primary.b;
+      zcp->a = zcolor_code_table[i].primary.a;
+      zcs->r = zcolor_code_table[i].dither.r;
+      zcs->g = zcolor_code_table[i].dither.g;
+      zcs->b = zcolor_code_table[i].dither.b;
+      zcs->a = zcolor_code_table[i].dither.a;
+      return 1;
+    }
+  }
+
+  return 0; // Did not find color c in the table.
+}
+
+/***************************************************************/
+int lookup_edge_code(int c)
+{
+  int i;
+
+  for (i=0; i < nColorCodes; i++){
+    if (c == zcolor_code_table[i].code){
+      return zcolor_code_table[i].inverse_index;
+    }
+  }
+
+  return 0; // Did not find color c in the table so use default (0).
+}
+
+/***************************************************************/
+int zcolor_code_modify(int index, char *name, int inverse_index,
+				  int p_r, int p_g, int p_b, int p_a,
+				  int d_r, int d_g, int d_b, int d_a)
+{
+  int i;
+
+  // First check if we already used this color code.
+  for (i=0; i < nColorCodes; i++){
+    if (index == zcolor_code_table[i].code){
+      break;
+    }
+  }
+  // Change the color if found, or if we have room.
+  if (i < ZCOLOR_TABLE_SIZE) {
+    zcolor_code_table[i].code = index;
+    zcolor_code_table[i].inverse_index = inverse_index;
+    zcolor_code_table[i].primary.r = p_r;
+    zcolor_code_table[i].primary.g = p_g;
+    zcolor_code_table[i].primary.b = p_b;
+    zcolor_code_table[i].primary.a = p_a;
+    zcolor_code_table[i].dither.r = d_r;
+    zcolor_code_table[i].dither.g = d_g;
+    zcolor_code_table[i].dither.b = d_b;
+    zcolor_code_table[i].dither.a = d_a;
+
+    if (i < nColorCodes)
+      free(zcolor_code_table[i].name);
+    else
+      nColorCodes++;
+    
+    zcolor_code_table[i].name = strdup(name);
+  }
+}
+
+/***************************************************************/
 int alias_peeron_colors(void)
 {
   #define UNKNOWN_COLOR 16
@@ -744,6 +832,10 @@ int zcolor_modify(int index, char *name, int inverse_index,
 			zWrite(buf);
 		}
 	}
+#ifdef USE_OPENGL
+	else if (index < 0x2000000)
+	  zcolor_code_modify(index,name,inverse_index,p_r,p_g,p_b,p_a,d_r,d_g,d_b,d_a);
+#endif
 	return 0;
 }
 
@@ -762,10 +854,16 @@ int edge_color(int c)
 	} else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
 		// Numbers of 0x4000000 to 0x7ffffff are hard coded color values. 
 		return (0x4000000); // black
+#ifdef USE_OPENGL
+	} else
+		return lookup_edge_code(c);
+	    
+#else
 	} else {
 		// anything else
 		return 0;
 	}
+#endif
 }
 
 //
@@ -821,7 +919,12 @@ void translate_color(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 		} else {
 		  zcs->a = 0xff;
 		}
-	} 
+	}
+	else if (lookup_color_code(c, zcp, zcs)) {
+		// This could lookup newly defined colors from a 2nd table of 512.
+                return;
+	}
+	
 #else
 	else if ((c >= 256)&&(c<512)) {
 		// Dithered colors

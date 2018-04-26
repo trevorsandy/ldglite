@@ -230,6 +230,9 @@ double dotprod(float a[3], float b[3])
 }
 
 //**********************************************************************
+// NOTE:  Probably should just use zcs->a and stop using trans color numbers.
+// If using FADE meta cmd, then multiply zcs-> by FADE amount first.
+//**********************************************************************
 void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 {
 //  if (((c > 32) && (c < 64)) || (zcs->a == 0)) // Translucent colors
@@ -238,13 +241,13 @@ void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
   if (((c > 31) && (c < 60)) || (zcs->a < 255)) // Translucent colors
   {
     glEnable(GL_POLYGON_STIPPLE);
-    if (TransFadeEffect < 1) // 
+    if (TransFadeEffect < 1) // No FADE. Just do normal transparency.
       glPolygonStipple(halftone);
     else { // Interpret FADE percentage as a stipple pattern.
-      if (TransFadeEffect > 74)
+      if (TransFadeEffect <= 33)
 	glPolygonStipple(halftone75);
-      else if (TransFadeEffect < 26)
-	glPolygonStipple(halftone25);
+      else if (TransFadeEffect > 61) // Make FADE=75 use halftone25 when
+	glPolygonStipple(halftone25); // applied to transparent parts. 
       else
       glPolygonStipple(halftone);
     }
