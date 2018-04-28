@@ -384,6 +384,8 @@ int LineChecking = 0;
 int preprintstep = 0;
 int DepthOnly = 0; // Draw to z-buffer only, disable writes to color buffer.
 int TransFadeEffect = 0; // Draw Faded Parts for LPub3D -- Trans with no back edges.
+int TransFadeCmd = 0; // Global percent FADE for the effect from cmd line. 
+int TransFadePercent = 0; // Global runtime percent FADE for the effect. 
 int FadeColors[256] = {0};
 int nFadeColors = 0;
 int SilhouetteColors[256] = {0};
@@ -3245,6 +3247,37 @@ int ldlite_parse_colour_meta(char *s)
 }
 
 /***************************************************************/
+int ldlite_parse_fade_meta(char *s)
+{
+  int i, n, inverse_index, r, g, b, alpha;
+      
+  // Skip whitespace
+  for (; *s != 0; s++)
+  {
+    if ((*s != ' ') && (*s != '\t'))
+      break;
+  }
+
+  // Intercept the LPub3D !FADE meta command.
+  n = sscanf(s, "!FADE %d", &i);
+  if (n == 1) {
+    // Gotta enable effect at parse time to activade the render path.
+    TransFadeEffect |= 1; // Enable it (Mark it as a LOCAL inline fade)
+    TransFadePercent = i;
+    printf("TransFADE runtime = %d\n", i);
+    return 1;
+  }
+
+  return 0;
+}
+
+/***************************************************************/
+int ldlite_parse_silhouette_meta(char *s)
+{
+  return 0;
+}
+
+/***************************************************************/
 #define USE_L3_PARSER_AND_BBOX
 #ifdef USE_L3_PARSER_AND_BBOX
 
@@ -3418,24 +3451,33 @@ render(void)
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
       || TransFadeEffect || LineChecking)
   {
+    // First render surfaces
     ldraw_commandline_opts.F |= TYPE_F_NO_LINES;
     linequalitysetup();
     if (ldraw_commandline_opts.M == 'S')
       preprintstep = 1; //Tell platform_step() NOT to save file now.
+    if (TransFadeEffect){// Start at global cmdline FADE percent, or 0 if no cmdline FADE.
+      TransFadePercent = TransFadeCmd; 
+      printf("TransTest global %d\n", TransFadePercent);
+    }
     DrawModel();
 
-    if (TransFadeEffect) { // EXPERIMENTAL_TRANS_REAR_LINE_REMOVAL
-      // ====================================================================
-      // NOTE: Currently requires -q to get into this fancy thread of render()
-      // ====================================================================
-      // Add an extra pass to hide rear edge lines behind trans surfaces.
-      printf("TransTest start\n");
+    // ====================================================================
+    // Add an extra pass to hide rear edge lines behind trans surfaces.
+    // ====================================================================
+    if (TransFadeEffect) { 
+      // Start at global cmdline FADE percent, or 0 if no cmdline FADE.
+      TransFadePercent = TransFadeCmd; 
+      printf("TransTest start %d\n", TransFadePercent);
       DepthOnly = 1;
       DrawModel();
       DepthOnly = 0;
-      printf("TransTest done\n");
+      TransFadePercent = TransFadeCmd; // Reset for next DrawModel pass
+      printf("TransTest done %d\n", TransFadePercent);
     }
+    // ====================================================================
     
+    // Then render edge lines
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
     linequalitysetup();
     ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
@@ -8842,7 +8884,8 @@ void ParseParams(int *argc, char **argv)
 	    if (1 == sscanf(pszParam+2,"%d,",&n)){ // Get list of colors for FADE.
 	      int j=0;
 	      char *p = pszParam+2;
-	      TransFadeEffect = n;
+	      TransFadeEffect |= 2; // Enable it (Mark it as a GLOBAL cmd line fade)
+	      TransFadeCmd = n;
 	      for (p = strchr(p, ','); p; p = strchr(p, ',')){
 		p++; // skip over the comma char (or the A in -FA)
 		if (1 != sscanf(p,"%d",&n))

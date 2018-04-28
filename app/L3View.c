@@ -66,6 +66,8 @@ extern int BufA1Retrieve(int IsModel, struct L3LineS *LinePtr);
 int Draw1Part(int partnum, int Color);
 
 extern int ldlite_parse_colour_meta(char *s);
+extern int ldlite_parse_fade_meta(char *s);
+extern int ldlite_parse_silhouette_meta(char *s);
 
 extern int include_stack_ptr;
 extern int hardcolor;
@@ -449,6 +451,12 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 
 			// Intercept the LDConfig.ldr !COLOUR meta command.
 			if (ldlite_parse_colour_meta(s))
+			  break;
+			// Intercept the LPub3D !FADE meta command.
+			if (ldlite_parse_fade_meta(s))
+			  break;
+			// Intercept the !SILHOUETTE meta command.
+			if (ldlite_parse_silhouette_meta(s))
 			  break;
 #else
 			if (strncmp(LinePtr->Comment,"STEP",4) == 0)

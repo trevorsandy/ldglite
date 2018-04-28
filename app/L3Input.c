@@ -92,6 +92,9 @@ extern int use_uppercase;
 
 extern char ldconfig[256];
 extern char ldconfigfilename[256];
+
+extern int ldlite_parse_fade_meta(char *s);
+extern int ldlite_parse_silhouette_meta(char *s);
 #endif
 
 #ifdef LOGFP
@@ -1709,6 +1712,13 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
                   }
                   break;
                }
+	       // ReadMetaLine is really only for transforms
+	       // But we need to notice some other metas at parse time.
+	       // Need to enable fading render path for runtime FADE cmds to work.
+	       else if (ldlite_parse_fade_meta(s)) {
+	       }
+	       else if (ldlite_parse_silhouette_meta(s)) {
+	       }
                if (FileType == HEADER)
                   FileType = DAT0;
                if (strncmp(s, "~Moved to ", 10) == 0)

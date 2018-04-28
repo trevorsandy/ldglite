@@ -44,6 +44,7 @@ extern float dimAmount;
 
 // Draw Faded Parts for LPub3D -- Trans with no back edges.
 extern int TransFadeEffect;
+extern int TransFadePercent;
 extern int FadeColors[256];
 extern int nFadeColors;
 // Draw Part Silhouettes for LPub3D.
@@ -241,12 +242,12 @@ void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
   if (((c > 31) && (c < 60)) || (zcs->a < 255)) // Translucent colors
   {
     glEnable(GL_POLYGON_STIPPLE);
-    if (TransFadeEffect < 1) // No FADE. Just do normal transparency.
+    if (TransFadePercent < 1) // No FADE. Just do normal transparency.
       glPolygonStipple(halftone);
     else { // Interpret FADE percentage as a stipple pattern.
-      if (TransFadeEffect <= 33)
+      if (TransFadePercent <= 33)
 	glPolygonStipple(halftone75);
-      else if (TransFadeEffect > 61) // Make FADE=75 use halftone25 when
+      else if (TransFadePercent > 61) // Make FADE=75 use halftone25 when
 	glPolygonStipple(halftone25); // applied to transparent parts. 
       else
       glPolygonStipple(halftone);
