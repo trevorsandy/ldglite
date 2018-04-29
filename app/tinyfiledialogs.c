@@ -1753,6 +1753,17 @@ char const * tinyfd_colorChooser(
 	Hex2RGB(p,aoResultRGB);
 	return p ;
 }
+
+/**************************************************************/
+int tinyfd_gui_test ()
+{
+  if (tinyfd_forceConsole)
+    return 0;
+
+  return 0x08000000;
+}  
+/**************************************************************/
+
 #pragma warning(default:4996)
 
 #else /* unix */
@@ -2280,12 +2291,8 @@ int tinyfd_gui_test ()
   if (tinyfd_forceConsole)
     return 0;
   
-#ifdef _WIN32
-    return 0x080000000;
-#endif
-  
   if (osascriptPresent())
-    return 0x040000000;
+    return 0x04000000;
   
   if (zenity3Present())
     return 0x00008000;

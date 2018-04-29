@@ -30,6 +30,8 @@
 #include "ldliteVR.h"
 #include "LDrawIni.h"
 
+#include "tinyfiledialogs.h"
+
 #  ifndef WINDOWS
      // This stuff gets pulled in by glut.h for windows.
 #    include "wstubs.h"
@@ -6361,7 +6363,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	}
 	ecommand[0] = 0; // wipe the command char
 	clear_edit_mode_gui();
-	tfd_saveas(datfilename);
+	tfd_saveas();
 	i = UnSelect1Part(curpiece); // Link part back in before printing
 	Print1Model(datfilename);
 	SetTitle(1); // Change the title of the window.
@@ -9966,11 +9968,9 @@ void capturePasteEvents(void)
 //  wpOrigMsgProc =
 //    (WNDPROC) SetWindowLong(hwnd, GWL_WNDPROC, (long) MsgSubClassProc);
 //#endif
-
   // x86_64 compatable
   wpOrigMsgProc =
     (WNDPROC) SetWindowLongPtr(hwnd, GWLP_WNDPROC, (long) MsgSubClassProc);
-
 #endif
 }
 
