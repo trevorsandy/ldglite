@@ -133,7 +133,7 @@ win32 {
   equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
   else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
 
-  _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32
+  _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32 -lcomdlg32 -lole32
 }
 
 unix:!macx {
