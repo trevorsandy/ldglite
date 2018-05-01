@@ -14,6 +14,7 @@ HEADERS += \
    $$PWD/quant.h \
    $$PWD/StdAfx.h \
    $$PWD/stub.h \
+   $$PWD/tinyfiledialogs.h \
    $$PWD/y.tab.h \
 
 SOURCES += \
@@ -38,6 +39,7 @@ SOURCES += \
    $$PWD/qbuf.c \
    $$PWD/quant.c \
    $$PWD/stub.c \
+   $$PWD/tinyfiledialogs.c \
    $$PWD/y.tab.c
 
 OTHER_FILES += \
