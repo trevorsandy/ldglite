@@ -199,13 +199,13 @@ unix:!macx {
         INCLUDEPATH += \
         $$PWD/linux/sle15/freeglut/include
         SLE_LIBDIR = -L$$PWD/linux/sle15/freeglut/lib
-        SLE_LIBS = -lGL -lXxf86vm -lXrandr -lXi
+        SLE_LIBS = -lXxf86vm -lXrandr -lXi
       }
       # OSMesa (OffScreen) - system dynamic libraries
       #_LIBS += $${OSMESA_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext -lm
 
       # OSMesa (OffScreen) - system, dynamic libraries and static local freeglut
-      _LIBS += $${OSMESA_LIBDIR} $${SLE_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext $${SLE_LIBS} -lm
+      _LIBS += $${OSMESA_LIBDIR} $${SLE_LIBDIR} -lOSMesa -lGLU -lglut -lGL -lX11 -lXext $${SLE_LIBS} -lm
     }
 
   } else {
