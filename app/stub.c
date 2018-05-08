@@ -43,14 +43,15 @@ extern int dimLevel;
 extern float dimAmount;
 
 // Draw Faded Parts for LPub3D -- Trans with no back edges.
-extern int TransFadeEffect;
 extern int TransFadePercent;
 extern int FadeColors[256];
 extern int nFadeColors;
 // Draw Part Silhouettes for LPub3D.
+extern int SilhouetteOnly; // Draw only type 5 lines in special color and size.
+extern float SilhouetteWidth; 
+extern int SilhouetteEdge;
 extern int SilhouetteColors[256];
 extern int nSilhouetteColors;
-extern int SilhouetteEdge;
 
 // Ambient and diffusion properties for front and back faces.
 extern GLfloat full_mat[];
@@ -247,6 +248,8 @@ void setup_material(int c, ZCOLOR *zcp, ZCOLOR *zcs)
     else { // Interpret FADE percentage as a stipple pattern.
       if (TransFadePercent <= 33)
 	glPolygonStipple(halftone75);
+      //else if (TransFadePercent == 100) // Consider drawing edges only
+      //  glPolygonStipple(halftone0);    // for FADE=100
       else if (TransFadePercent > 61) // Make FADE=75 use halftone25 when
 	glPolygonStipple(halftone25); // applied to transparent parts. 
       else
@@ -420,6 +423,17 @@ void render_line(vector3d *vp1, vector3d *vp2, int c)
 	int j;
 	int wid;
 
+	if(SilhouetteOnly) {
+#if 0
+	  // Testing  (type 5 only looks awful with my junky linux opengl driver)
+	  if (SilhouetteEdge < 0)
+	    return;
+	  c = SilhouetteEdge;
+#else
+	  return;
+#endif
+	}
+
 	if(ldraw_commandline_opts.F & TYPE_F_NO_LINES) {
 		return;
 	};
@@ -578,6 +592,9 @@ void render_triangle(vector3d *vp1, vector3d *vp2, vector3d *vp3, int c)
 	ZCOLOR zc, zs;
 
 
+	if(SilhouetteOnly)
+	  return;
+	
 #ifdef USE_OPENGL
 	if(DepthOnly) {//disable color updates (depth buffer updates only)
 	  // Should only render this polygon if the color c is on the fade list.
@@ -764,6 +781,9 @@ void render_quad(vector3d *vp1, vector3d *vp2, vector3d *vp3, vector3d *vp4, int
 	int bowtie_test_1;
 	int bowtie_test_2;
 
+	if(SilhouetteOnly)
+	  return;
+	
 #ifdef USE_OPENGL
 	if(DepthOnly) {//disable color updates (depth buffer updates only)
 	  // Should only render this polygon if the color c is on the fade list.
@@ -1079,6 +1099,12 @@ void render_five(vector3d *vp1, vector3d *vp2, vector3d *vp3, vector3d *vp4, int
   GLdouble s3x, s3y, s3z;
   GLdouble s4x, s4y, s4z;
 #endif
+
+	if(SilhouetteOnly) {
+	  if (SilhouetteEdge < 0)
+	    return;
+	  c = SilhouetteEdge;
+	}
 
 	if(ldraw_commandline_opts.F & TYPE_F_NO_LINES) {
 		return;

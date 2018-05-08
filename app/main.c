@@ -390,9 +390,12 @@ int TransFadeCmd = 0; // Global percent FADE for the effect from cmd line.
 int TransFadePercent = 0; // Global runtime percent FADE for the effect. 
 int FadeColors[256] = {0};
 int nFadeColors = 0;
+int SilhouetteOnly = 0; // Draw only type 5 lines in special color and size.
+int SilhouetteEffect = 0; // Draw Silhouetted Parts for LPub3D
+float SilhouetteWidth = 0.0f; 
+int SilhouetteEdge = -1; // Not a valid color
 int SilhouetteColors[256] = {0};
 int nSilhouetteColors = 0;
-int SilhouetteEdge = 14; // Default to yellow?
 int dimLevel = 0; // Same as ldraw_commandline_opts.maxlevel=32767;  // a huge number
 float dimAmount = 0.0;
 
@@ -3276,6 +3279,31 @@ int ldlite_parse_fade_meta(char *s)
 /***************************************************************/
 int ldlite_parse_silhouette_meta(char *s)
 {
+  int i, n, inverse_index, r, g, b, alpha;
+  float f;
+      
+  // Skip whitespace
+  for (; *s != 0; s++)
+  {
+    if ((*s != ' ') && (*s != '\t'))
+      break;
+  }
+
+  // Intercept the LPub3D !FADE meta command.
+  n = sscanf(s, "!SILHOUETTE %f %d", &f, &i);
+  if (n == 1) {
+    SilhouetteEdge = -1;
+    printf("Silhouette runtime = OFF\n");
+    return 1;
+  }
+  else if (n == 2) {
+    SilhouetteEffect |= 1; // Enable it (Mark it as a LOCAL inline silhouette)
+    SilhouetteWidth = f; 
+    SilhouetteEdge = i;
+    printf("Silhouette runtime = %g, %d\n", f, i);
+    return 1;
+  }
+
   return 0;
 }
 
@@ -3451,7 +3479,7 @@ render(void)
   glCallList(1);
 #else
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || TransFadeEffect || LineChecking)
+      || TransFadeEffect || SilhouetteEffect || LineChecking)
   {
     // First render surfaces
     ldraw_commandline_opts.F |= TYPE_F_NO_LINES;
@@ -3481,6 +3509,32 @@ render(void)
     
     // Then render edge lines
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
+    
+    // ====================================================================
+    // Add an extra pass to render silhouette colored type 5 edge lines.
+    // ====================================================================
+    if (SilhouetteEffect) { 
+      float oldWidth = lineWidth;
+      // Start at silhouette = off.
+      SilhouetteEdge = -1;
+      printf("Silhouette start %g %d\n", SilhouetteWidth, SilhouetteEdge);
+      SilhouetteOnly = 1;
+      lineWidth = SilhouetteEdge;  // Use Silhouette width.
+      linequalitysetup();
+      ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
+      stepcount = 0; // NOTE: Not sure what effect this will have...
+      if (qualityLines)
+      z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
+      DrawModel();
+      if (qualityLines)
+	z_line_offset -= 0.2; // Nudge antialiased lines up in depth buffer.
+      SilhouetteOnly = 0;
+      SilhouetteEdge = -1;
+      printf("Silhouette done %g, %d\n", SilhouetteWidth, SilhouetteEdge);
+      lineWidth = oldWidth; // Restore lineWidth
+    }
+    // ====================================================================
+
     linequalitysetup();
     ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
     stepcount = 0; // NOTE: Not sure what effect this will have...
@@ -3527,7 +3581,7 @@ render(void)
   glCallList(1);
 #else
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || TransFadeEffect || LineChecking)
+      || TransFadeEffect || SilhouetteEffect || LineChecking)
   {
     ldraw_commandline_opts.F |= TYPE_F_NO_LINES;
     if (ldraw_commandline_opts.M == 'S')
@@ -3567,7 +3621,7 @@ render(void)
     znamelist_pop();
   }
   if ((qualityLines && ((ldraw_commandline_opts.F & TYPE_F_NO_POLYGONS) == 0))
-      || TransFadeEffect || LineChecking)
+      || TransFadeEffect || SilhouetteEffect || LineChecking)
   {
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
     linequalitysetup();
