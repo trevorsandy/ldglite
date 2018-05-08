@@ -3519,13 +3519,16 @@ render(void)
       SilhouetteEdge = -1;
       printf("Silhouette start %g %d\n", SilhouetteWidth, SilhouetteEdge);
       SilhouetteOnly = 1;
-      lineWidth = SilhouetteEdge;  // Use Silhouette width.
+      lineWidth = SilhouetteWidth;  // Use Silhouette width.
       linequalitysetup();
       ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
       stepcount = 0; // NOTE: Not sure what effect this will have...
       if (qualityLines)
-      z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
+	z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
+      // Set Silhouette lines back a bit (No. looks even worse)
+      //z_line_offset -= 0.3; // (SilhouetteWidth/2.0); 
       DrawModel();
+      //z_line_offset += 0.3; // (SilhouetteWidth/2.0); 
       if (qualityLines)
 	z_line_offset -= 0.2; // Nudge antialiased lines up in depth buffer.
       SilhouetteOnly = 0;

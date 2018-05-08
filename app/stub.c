@@ -424,7 +424,7 @@ void render_line(vector3d *vp1, vector3d *vp2, int c)
 	int wid;
 
 	if(SilhouetteOnly) {
-#if 0
+#if 1
 	  // Testing  (type 5 only looks awful with my junky linux opengl driver)
 	  if (SilhouetteEdge < 0)
 	    return;
