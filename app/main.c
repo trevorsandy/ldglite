@@ -3293,6 +3293,7 @@ int ldlite_parse_silhouette_meta(char *s)
   n = sscanf(s, "!SILHOUETTE %f %d", &f, &i);
   if (n == 1) {
     SilhouetteEdge = -1;
+    glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
     printf("Silhouette runtime = OFF\n");
     return 1;
   }
@@ -3300,6 +3301,7 @@ int ldlite_parse_silhouette_meta(char *s)
     SilhouetteEffect |= 1; // Enable it (Mark it as a LOCAL inline silhouette)
     SilhouetteWidth = f; 
     SilhouetteEdge = i;
+    glStencilMask(GL_TRUE);                  // Enable stencil buffer writes.
     printf("Silhouette runtime = %g, %d\n", f, i);
     return 1;
   }
@@ -3486,12 +3488,36 @@ render(void)
     linequalitysetup();
     if (ldraw_commandline_opts.M == 'S')
       preprintstep = 1; //Tell platform_step() NOT to save file now.
+    // ====================================================================
     if (TransFadeEffect){// Start at global cmdline FADE percent, or 0 if no cmdline FADE.
       TransFadePercent = TransFadeCmd; 
       printf("TransTest global %d\n", TransFadePercent);
     }
+#if 1
+    // ====================================================================
+    if (SilhouetteEffect) { //render into the stencil buffer
+      glClearStencil(0x0);                     // Set stencil clear color
+      glClear(GL_STENCIL_BUFFER_BIT);          // Perhaps just clear the bbox?
+      glEnable(GL_STENCIL_TEST);               // Enable the stencil Test.
+      // Set the stencil buffer to write a 1 whenever a pixel is written to the screen
+      glStencilFunc( GL_ALWAYS, 1, 0xFFFF );   // Stencil test(fn, refbits, bitmask)
+      glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE );
+
+      // Start with with stencil disabled. enable it in silhouette section
+      glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
+    }
+#endif
+    
     DrawModel();
 
+#if 1
+    if (SilhouetteEffect) { //render into the stencil buffer
+      // Start with with stencil disabled. enable it in silhouette section
+      glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
+      glDisable(GL_STENCIL_TEST);               // Do not block stencil with FADE.
+    }
+#endif
+    
     // ====================================================================
     // Add an extra pass to hide rear edge lines behind trans surfaces.
     // ====================================================================
@@ -3509,7 +3535,18 @@ render(void)
     
     // Then render edge lines
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
-    
+
+#if 1    
+    if (SilhouetteEffect) { 
+      glEnable(GL_STENCIL_TEST);               // Enable the stencil Test.
+      // Set the stencil buffer to only write to the screen 
+      // when the value of the stencil buffer is not 1
+      glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
+      glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE ); // S-Buf write fns(sf, zf, zp)
+      //glStencilMask(GL_TRUE);                  // Enable stencil buffer writes.
+      glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
+    }
+#endif    
     // ====================================================================
     // Add an extra pass to render silhouette colored type 5 edge lines.
     // ====================================================================
@@ -3537,7 +3574,12 @@ render(void)
       lineWidth = oldWidth; // Restore lineWidth
     }
     // ====================================================================
-
+#if 1
+    if (SilhouetteEffect) { 
+      glDisable(GL_STENCIL_TEST);
+      glStencilMask(GL_FALSE);
+    }
+#endif    
     linequalitysetup();
     ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
     stepcount = 0; // NOTE: Not sure what effect this will have...
