@@ -393,6 +393,7 @@ int nFadeColors = 0;
 int SilhouetteOnly = 0; // Draw only type 5 lines in special color and size.
 int SilhouetteEffect = 0; // Draw Silhouetted Parts for LPub3D
 float SilhouetteWidth = 0.0f; 
+float SilhouetteScale = 1.0f; 
 int SilhouetteEdge = -1; // Not a valid color
 int SilhouetteColors[256] = {0};
 int nSilhouetteColors = 0;
@@ -3299,7 +3300,11 @@ int ldlite_parse_silhouette_meta(char *s)
   }
   else if (n == 2) {
     SilhouetteEffect |= 1; // Enable it (Mark it as a LOCAL inline silhouette)
-    SilhouetteWidth = f; 
+    SilhouetteWidth = f;
+    // Double width for true halo because half is hidden behind the polygons.
+    SilhouetteWidth *= 2.0; 
+    // Also increase width if upscaling for image dump (eg. 2g2x ).
+    SilhouetteWidth *= SilhouetteScale;
     SilhouetteEdge = i;
     glStencilMask(GL_TRUE);                  // Enable stencil buffer writes.
     printf("Silhouette runtime = %g, %d\n", f, i);
@@ -3510,11 +3515,18 @@ render(void)
     
     DrawModel();
 
-#if 1
-    if (SilhouetteEffect) { //render into the stencil buffer
-      // Start with with stencil disabled. enable it in silhouette section
-      glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
-      glDisable(GL_STENCIL_TEST);               // Do not block stencil with FADE.
+#ifdef SILHOUETTE_SHOWS_THRU_FADE
+    if (SilhouetteEffect) { 
+      // If I don't want the fade effect to completely block the silhouette
+      // effect on parts that happen to appear behind them then I have to
+      // Draw the silhouette lines before the FADE code writes to the z-buffer.
+      // That means move all the silhouette thats currently after the FADE
+      // render to here, before the FADE render.  And some additional opts.F
+      // LINE vs POLYGON toggling will need to be done to draw the silhouette
+      // lines, then the FADE polygons, and go back to lines for normal edges.
+      //
+      // Things get really ugly if I want to make different silhouette styles
+      // available.  (all edges, full silhouette, faded silhouette, ...)
     }
 #endif
     
@@ -9385,6 +9397,7 @@ void ParseParams(int *argc, char **argv)
 
   // If upscaling (in preparation for eventual downsample) then scale up scene.
   if (upscale) {
+    SilhouetteScale *= (float)upscale;
     ldraw_commandline_opts.S *= upscale;
     lineWidth *= upscale;
     if (OffScreenRendering || camera_globe_set) // Scale up render window.
