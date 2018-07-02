@@ -5533,9 +5533,19 @@ int saveprevlookup()
 }
 
 /***************************************************************/
-#  include <dirent.h>
+#if defined(MAC)
+#include "macos_dirent.h"
+#elif defined(WINDOWS)
+#include "win32_dirent.h"
+#else
+#include <dirent.h>  // directory operations
+#endif
 #  include <sys/stat.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#else
 #  include <unistd.h>
+#endif
 
 /***************************************************************/
 char *loadpluglist(void)

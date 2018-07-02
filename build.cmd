@@ -1,3 +1,4 @@
+
 @ECHO OFF &SETLOCAL
 
 Title LDGLite Windows auto build script
@@ -8,8 +9,8 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: December 02, 2017
-rem  Copyright (c) 2017 by Trevor SANDY
+rem  Last Update: July 01, 2018
+rem  Copyright (c) 2017 - 2018 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,10 +33,11 @@ IF "%APPVEYOR%" EQU "True" (
   SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_MSYS2=C:\Msys2\Msys64\mingw32\bin
-  SET LP3D_QT64_MSYS2=C:\Msys2\Msys64\mingw64\bin
+  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.11.1\msvc2015\bin
+  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.1\msvc2015_64\bin
 )
 
+SET LP3D_VCVARSALL=C:\program files (x86)\Microsoft Visual Studio 14.0\VC
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
@@ -131,8 +133,8 @@ IF "%APPVEYOR%" EQU "True" (
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
-ECHO   LP3D_QT32_MSYS2........[%LP3D_QT32_MSYS2%]
-ECHO   LP3D_QT64_MSYS2........[%LP3D_QT64_MSYS2%]
+ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%]
+ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%]
 ECHO   WORKING_DIRECTORY......[%PWD%]
 ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
 ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
@@ -148,10 +150,9 @@ IF /I "%PLATFORM%"=="-all" (
   GOTO :BUILD_ALL
 )
 
-
 rem Configure buid arguments and set environment variables
 CALL :CONFIGURE_BUILD_ENV
-
+CD /D %PWD%
 ECHO.
 ECHO -Building %PLATFORM% platform, %CONFIGURATION% configuration...
 rem Display QMake version
@@ -160,14 +161,12 @@ qmake -v & ECHO.
 rem Configure makefiles
 qmake %LDGLITE_CONFIG_ARGS%
 rem perform build
-mingw32-make
-
+nmake.exe
 rem Perform build check if specified
 IF %CHECK%==1 CALL :CHECK_BUILD %PLATFORM%
 rem Package 3rd party install content
 IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
 GOTO :END
-
 
 :BUILD_ALL
 rem Launch qmake/make across all platform builds
@@ -177,7 +176,7 @@ FOR %%P IN ( x86, x86_64 ) DO (
   SET PLATFORM=%%P
   rem Configure buid arguments and set environment variables
   CALL :CONFIGURE_BUILD_ENV
-
+  CD /D %PWD%
   ECHO.
   ECHO  -Building %%P platform, %CONFIGURATION% configuration...
   rem Display QMake version
@@ -185,7 +184,7 @@ FOR %%P IN ( x86, x86_64 ) DO (
   qmake -v & ECHO.
   rem Configure makefiles and launch make
   SETLOCAL ENABLEDELAYEDEXPANSION
-  qmake !LDGLITE_CONFIG_ARGS!  & mingw32-make !LDGLITE_MAKE_ARGS!
+  qmake !LDGLITE_CONFIG_ARGS! & nmake.exe !LDGLITE_MAKE_ARGS!
   ENDLOCAL
   rem Perform build check if specified
   IF %CHECK%==1 CALL :CHECK_BUILD %%P
@@ -213,12 +212,18 @@ ECHO.
 ECHO   PLATFORM (BUILD_ARCH)...[%PLATFORM%]
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
-SET LDGLITE_MAKE_ARGS=-f Makefile
+rem /c flag suppresses the copyright
+SET LDGLITE_MAKE_ARGS=/c /f Makefile
 IF "%PATH_PREPENDED%" NEQ "True" (
+  SET PATH=%SYS_DIR%
   IF %PLATFORM% EQU x86 (
-    SET PATH=%LP3D_QT32_MSYS2%;%SYS_DIR%
+    ECHO.
+    CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
+    CALL "%LP3D_VCVARSALL%\vcvarsall.bat" %PLATFORM%
   ) ELSE (
-    SET PATH=%LP3D_QT64_MSYS2%;%SYS_DIR%
+    ECHO.
+    CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
+    CALL "%LP3D_VCVARSALL%\vcvarsall.bat" x64
   )
   SET PATH_PREPENDED=True
   SETLOCAL ENABLEDELAYEDEXPANSION
@@ -226,7 +231,10 @@ IF "%PATH_PREPENDED%" NEQ "True" (
     ENDLOCAL
   )
 ) ELSE (
-  ECHO   PATH_ALREADY_PREPENDED..[%PATH%]
+  SETLOCAL ENABLEDELAYEDEXPANSION
+  ECHO(  PATH_ALREADY_PREPENDED..[%PATH%]
+  ENDLOCAL
+  )
 )
 EXIT /b
 
@@ -273,7 +281,7 @@ ECHO.
 ECHO -Installing 3rd party distribution files to [%DIST_DIR%]...
 ECHO.
 rem Configure makefiles and perform build
-mingw32-make %LDGLITE_MAKE_ARGS% install
+nmake.exe %LDGLITE_MAKE_ARGS% install
 EXIT /b
 
 :CHECK_LDRAW_DIR

@@ -28,6 +28,9 @@ DEPENDPATH  += .
 INCLUDEPATH += .
 INCLUDEPATH += ../ldrawini
 ENABLE_TEST_GUI: INCLUDEPATH += ../mui
+win32-msvc* {
+INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
+}
 
 unix:!macx:TARGET = ldglite
 else:      TARGET = LDGLite
@@ -50,8 +53,13 @@ ENABLE_PNG {
     INCLUDEPATH += \
     $$PWD/../win/png/include \
 
-    equals (ARCH, 64): LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -lpng
-    else:              LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -lpng
+    equals (ARCH, 64) {
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -lpng
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib/x64 -lzlib
+    } else {
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -lpng
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib
+    }
     message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
 
   } else {
@@ -91,7 +99,10 @@ ENABLE_TEST_GUI {
   LIBS_ += -L$$DESTDIR/../../mui/$$DESTDIR -lmui
 }
 
-LIBS += $${LIBS_} $${_LIBS} -lz
+LIBS += $${LIBS_} $${_LIBS}
+!win32-msvc* {
+LIBS += -lz
+}
 
 macx {
   MAKE_APP_BUNDLE {

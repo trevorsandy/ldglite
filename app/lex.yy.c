@@ -22,7 +22,11 @@
 #ifdef __cplusplus
 
 #include <stdlib.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#else
 #include <unistd.h>
+#endif
 
 /* Use prototypes in function declarations. */
 #define YY_USE_PROTOS

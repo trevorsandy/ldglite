@@ -9,7 +9,8 @@ clone_script: echo skip
 # we're caching qt5 for MinGW x86_64 and the LDraw library
 cache:
  - '$(APPVEYOR_BUILD_FOLDER)\LDraw'
- - '$(APPVEYOR_BUILD_FOLDER)\${ldgl_librepo}'
+
+image: Visual Studio 2015
 
 shallow_clone: true
 
@@ -25,12 +26,8 @@ matrix:
 environment:
   LP3D_DIST_DIR: lpub3d_windows_3rdparty
   LP3D_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LP3D_DIST_DIR)
-  LP3D_QT32_MSYS2: c:\msys64\MINGW32\bin
-  LP3D_QT64_MSYS2: c:\msys64\MINGW64\bin
-  LP3D_QT32_LIBS: mingw-w64-i686-qt5-5.9.2-2-any.pkg.tar.xz
-  LP3D_QT64_LIBS: mingw-w64-x86_64-qt5-5.9.2-2-any.pkg.tar.xz
-  ldgl_librepo: lpub3d_mingw-Qt5_libs
-  ldgl_librepodir: /c/projects/$(APPVEYOR_PROJECT_NAME)/$(ldgl_librepo)
+  LP3D_QT32_MSVC: C:\Qt\5.11.0\msvc2015\bin
+  LP3D_QT64_MSVC: C:\Qt\5.11.0\msvc2015_64\bin
 
 init:
  - ps: write-host "Building LDGLite x86 and x86_64 architectures..."
@@ -48,8 +45,6 @@ init:
       }
  - ps: Get-ChildItem Env:* | Where-Object { $_.Name -match '^LP3D_*|^ldgl_*' } | Sort-Object Name
 
-# This is where we install Qt5 for x86_64 builds along with ICU v58. The source for these items are cached but if not then they are
-# downloded. After setting up these items, we proceed to fetch the commit that triggered the AppVeyor build.
 # We don't use git clone because the 'clone_directory' is not empty (restored cached components were added in previous steps) - so the
 # git clone command will fail. Instead we use fetch and checkout to pretty much replicate the same behaviour as the default git clone.
 # This includes setting the clone depth, and fetching the last commit and previous tags
@@ -59,10 +54,6 @@ install:
  - cmd: git remote add origin https://github.com/%APPVEYOR_REPO_NAME%.git
  - cmd: git fetch -qfup --depth=200 origin +%APPVEYOR_REPO_BRANCH% +refs/tags/*:refs/tags/*
  - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
- - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then curl -sL -o ${ldgl_librepo}.tar.gz https://github.com/trevorsandy/${ldgl_librepo}/archive/master.tar.gz; fi"
- - cmd: bash -lc "if ! test -d ${ldgl_librepodir} && test -f ${ldgl_librepo}.tar.gz; then mkdir -p ${ldgl_librepodir} && tar -xzf ${ldgl_librepo}.tar.gz -C ${ldgl_librepodir} --strip-components=1; fi"
- - cmd: bash -lc "if ! test -d ${ldgl_librepodir}; then echo repository ${ldgl_librepodir} not found; else echo library repository available at ${ldgl_librepodir}; fi"
- - cmd: C:\msys64\usr\bin\bash -lc "cd ${ldgl_librepodir}/qt-5.9.2-2-release; pacman -U --needed --noconfirm ${LP3D_QT32_LIBS} ${LP3D_QT64_LIBS} > CreateQtBuildEnv.log 2>&1"
 
 build_script:
  - ps: |

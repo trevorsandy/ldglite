@@ -116,16 +116,23 @@ macx {
 }
 
 win32 {
-  CONFIG += windows
+  CONFIG += console
 
+  !win32-msvc* {
   QMAKE_LFLAGS += -static
   QMAKE_LFLAGS += -static-libgcc
   QMAKE_LFLAGS += -static-libstdc++
+  } else {
+  QMAKE_LFLAGS += /LTCG
+  }
 
   ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
 
   DEFINES += USING_FREEGLUT
   DEFINES += FREEGLUT_STATIC
+  win32-msvc*: {
+  DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
+  }
 
   INCLUDEPATH += \
   $$PWD/win/freeglut/include
@@ -222,6 +229,7 @@ RCC_DIR         = $$DESTDIR/.qrc
 UI_DIR          = $$DESTDIR/.ui
 
 # suppress warnings
+!win32-msvc* {
 QMAKE_CFLAGS_WARN_ON =  \
                      -Wall -W \
                      -Wno-unused-parameter \
@@ -248,15 +256,18 @@ QMAKE_CFLAGS_WARN_ON =  \
                      -Wno-unknown-pragmas \
                      -Wno-comment \
                      -Wno-unused-value
+}
 macx {
 QMAKE_CFLAGS_WARN_ON +=  \
                      -Wno-macro-redefined \
                      -Wno-deprecated-declarations \
                      -Wno-absolute-value
 } else {
+!win32-msvc* {
 QMAKE_CFLAGS_WARN_ON +=  \
                      -Wno-discarded-qualifiers \
                      -Wno-unused-but-set-variable \
                      -Wno-unused-but-set-parameter
 }
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
+}

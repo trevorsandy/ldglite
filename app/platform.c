@@ -376,7 +376,9 @@ void platform_comment(char *message, int level)
 
 /***************************************************************/
 
-#include <sys/file.h>
+#ifndef _MSC_VER
+  #include <sys/file.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 

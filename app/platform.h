@@ -63,6 +63,8 @@
 
 #else  // Windows MS VC++
 
+#include <direct.h>
+
 #define LACKS_STRDUP 0
 #define LACKS_STRICMP 0
 #define LACKS_STRNICMP 0
