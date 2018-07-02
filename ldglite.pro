@@ -1,11 +1,15 @@
 # LDGLite directory and project file structre
 # --------------
 # /ldglite.pro
+# /ldgliteglobal.pri
 #   |
-#   |---ldglite_app.pro
-#   |---ldgliteglobal.pri
+#   |---/app
+#   |     |---inherits:ldgliteglobal.pri
+#   |     |---ldglite_app.pro
+#   |     |---ldgliteapp.pri
+#   |     |---tiles.pri
 #   |
-#   `---/ldrawini
+#   |---/ldrawini
 #   |     |---inherits:ldgliteglobal.pri
 #   |     |---ldglite_ldrawini.pro
 #   |     |---ldgliteldrawini.pri
