@@ -9,7 +9,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 01, 2018
+rem  Last Update: July 12, 2018
 rem  Copyright (c) 2017 - 2018 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -37,7 +37,7 @@ IF "%APPVEYOR%" EQU "True" (
   SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.1\msvc2015_64\bin
 )
 
-SET LP3D_VCVARSALL=C:\program files (x86)\Microsoft Visual Studio 14.0\VC
+SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
@@ -198,9 +198,9 @@ GOTO :END
 :CONFIGURE_BUILD_ENV
 CD /D %PWD%
 ECHO.
-ECHO -Configure LDGLite build environment...
+ECHO -Configure %PACKAGE% %PLATFORM% build environment...
 ECHO.
-ECHO -Cleanup previous LDGLite qmake config files - if any...
+ECHO -Cleanup previous %PACKAGE% qmake config files - if any...
 FOR /R %%I IN (
   ".qmake.stash"
   "Makefile*"
@@ -219,12 +219,13 @@ IF "%PATH_PREPENDED%" NEQ "True" (
   IF %PLATFORM% EQU x86 (
     ECHO.
     CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvarsall.bat" %PLATFORM%
+    CALL "%LP3D_VCVARSALL%\vcvarsamd64_x86.bat" -vcvars_ver=14.0
   ) ELSE (
     ECHO.
     CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvarsall.bat" x64
+    CALL "%LP3D_VCVARSALL%\vcvars64.bat" -vcvars_ver=14.0
   )
+  ECHO.
   SET PATH_PREPENDED=True
   SETLOCAL ENABLEDELAYEDEXPANSION
   ECHO(  PATH_PREPEND............[!PATH!]
