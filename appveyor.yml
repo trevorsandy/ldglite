@@ -26,8 +26,8 @@ matrix:
 environment:
   LP3D_DIST_DIR: lpub3d_windows_3rdparty
   LP3D_DIST_DIR_PATH: $(APPVEYOR_BUILD_FOLDER)\$(LP3D_DIST_DIR)
-  LP3D_QT32_MSVC: C:\Qt\5.11.0\msvc2015\bin
-  LP3D_QT64_MSVC: C:\Qt\5.11.0\msvc2015_64\bin
+  LP3D_QT32_MSVC: C:\Qt\5.11.1\msvc2015\bin
+  LP3D_QT64_MSVC: C:\Qt\5.11.1\msvc2015_64\bin
 
 init:
  - ps: write-host "Building LDGLite x86 and x86_64 architectures..."
