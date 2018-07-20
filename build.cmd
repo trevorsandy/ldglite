@@ -9,12 +9,14 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 12, 2018
+rem  Last Update: July 20, 2018
 rem  Copyright (c) 2017 - 2018 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+SET start=%time%
 
 SET PWD=%CD%
 
@@ -219,7 +221,7 @@ IF "%PATH_PREPENDED%" NEQ "True" (
   IF %PLATFORM% EQU x86 (
     ECHO.
     CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvarsamd64_x86.bat" -vcvars_ver=14.0
+    CALL "%LP3D_VCVARSALL%\vcvars32.bat" -vcvars_ver=14.0
   ) ELSE (
     ECHO.
     CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
@@ -494,5 +496,20 @@ EXIT /b
 :END
 ECHO.
 ECHO -%~nx0 [%PACKAGE% v%VERSION%] finished.
+SET end=%time%
+SET options="tokens=1-4 delims=:.,"
+FOR /f %options% %%a IN ("%start%") DO SET start_h=%%a&SET /a start_m=100%%b %% 100&SET /a start_s=100%%c %% 100&SET /a start_ms=100%%d %% 100
+FOR /f %options% %%a IN ("%end%") DO SET end_h=%%a&SET /a end_m=100%%b %% 100&SET /a end_s=100%%c %% 100&SET /a end_ms=100%%d %% 100
+
+SET /a hours=%end_h%-%start_h%
+SET /a mins=%end_m%-%start_m%
+SET /a secs=%end_s%-%start_s%
+SET /a ms=%end_ms%-%start_ms%
+IF %ms% lss 0 SET /a secs = %secs% - 1 & SET /a ms = 100%ms%
+IF %secs% lss 0 SET /a mins = %mins% - 1 & SET /a secs = 60%secs%
+IF %mins% lss 0 SET /a hours = %hours% - 1 & SET /a mins = 60%mins%
+IF %hours% lss 0 SET /a hours = 24%hours%
+IF 1%ms% lss 100 SET ms=0%ms%
+ECHO -Elapsed build time %hours%:%mins%:%secs%.%ms%
 ENDLOCAL
 EXIT /b
