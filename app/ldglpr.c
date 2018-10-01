@@ -1167,42 +1167,34 @@ extern void reshape(int width, int height);
 /***************************************************************/
 int SetOffScreenRendering()
 {
-#ifdef OSMESA_OPTION
+#if defined OSMESA_OPTION
   return 1;
-#endif
-#ifdef WIN_DIB_OPTION
+#elif defined WIN_DIB_OPTION
   return 1;
-#endif
-#ifdef AGL_OFFSCREEN_OPTION
+#elif defined AGL_OFFSCREEN_OPTION
   return 1;
-#endif
-#ifdef CGL_OFFSCREEN_OPTION
+#elif defined CGL_OFFSCREEN_OPTION
   return 1;
-#endif
-
+#else
   return 0;
+#endif
 }
 
 /***************************************************************/
 int OffScreenDisplay()
 {
    //char filename[256];
-
-#ifdef OSMESA_OPTION
+#if defined OSMESA_OPTION
    DrawScene();
-
    //platform_step_filename(curstep, filename);
    //write_targa(filename, OSbuffer, Width, Height);
-#endif
-#ifdef WIN_DIB_OPTION
+#elif defined WIN_DIB_OPTION
+   DrawScene();
+   //platform_step_filename(curstep, filename);
+#elif defined AGL_OFFSCREEN_OPTION
    DrawScene();
 
-   //platform_step_filename(curstep, filename);
-#endif
-#ifdef AGL_OFFSCREEN_OPTION
-   DrawScene();
-#endif
-#ifdef CGL_OFFSCREEN_OPTION
+#elif defined CGL_OFFSCREEN_OPTION
    DrawScene();
 #endif
    return 0;

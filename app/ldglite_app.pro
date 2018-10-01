@@ -18,7 +18,6 @@ win32 {
   QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
   RC_LANG = "English (United Kingdom)"
   RC_ICONS = "ldglite.ico"
-
 } else {
   VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT              # major.minor.patch
 }
@@ -50,8 +49,10 @@ ENABLE_TILE_RENDERING {
 ENABLE_PNG {
   DEFINES += USE_PNG
   win32 {
+    message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
+
     INCLUDEPATH += \
-    $$PWD/../win/png/include \
+    $$PWD/../win/png/include
 
     equals (ARCH, 64) {
         LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -lpng
@@ -60,7 +61,6 @@ ENABLE_PNG {
         LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -lpng
         LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib
     }
-    message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
 
   } else {
     macx {

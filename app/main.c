@@ -626,7 +626,7 @@ void pasteCommand(int x, int y)
 	  {
 	    edit_mode_keyboard('\n', x, y);
 	    edit_mode_keyboard('i', x, y);
-	    ecommand[0] == 'p';
+        ecommand[0] = 'p';
 	  }
 	  if (ecommand[0] == 'p')
 	  {
@@ -670,7 +670,7 @@ void pasteCommand(int x, int y)
 	  // No part on this line.  Convert comment into bogus partname.
 	  p += strspn(p, whitespace); // Eliminate leading whitespace
 	  n = sscanf(p, "%s", colorstr);  // Get the color
-	  if (token = strpbrk(p, whitespace))  // Find next whitespace
+      if ((token = strpbrk(p, whitespace)))  // Find next whitespace
 	    p = token + strspn(token, whitespace); // Eliminate leading whitespace
 
 	  // Eliminate trailing whitespace
@@ -2242,7 +2242,7 @@ void platform_setpath()
   }
 
   // Get search directories from environment
-  int *ErrorCode;
+  int *ErrorCode = NULL;
   GetLDrawSearchDirs(ErrorCode);
   //printf("GetLDrawSearchDirs(%d)\n",ErrorCode);
 

@@ -1,7 +1,6 @@
-
 @ECHO OFF &SETLOCAL
 
-Title LDGLite Windows auto build script
+Title LDGLite Windows build check script
 
 rem This script uses Qt to configure and build LDGLite for Windows.
 rem The primary purpose is to automatically build both the 32bit and 64bit
@@ -9,61 +8,56 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 20, 2018
-rem  Copyright (c) 2017 - 2018 by Trevor SANDY
+rem  Last Update: September 30, 2018
+rem  Copyright (c) 2018 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+rem RUN COMMANDS
+rem From Shadow Build Path (working directory build-ldglite-Desktop_Qt_5_11_1_MSVC2015_32bit-Debug\app\32bit_debug)
+rem ..\..\tests\testWin -debug
+rem From Source Path
+rem 
+
 SET start=%time%
 
+rem .../ldglite
 SET PWD=%CD%
 
-rem Variables - change these as required by your build environments
 IF "%APPVEYOR%" EQU "True" (
-  IF [%LP3D_DIST_DIR_PATH%] == [] (
-    ECHO.
-    ECHO  -ERROR: Distribution directory path not defined.
-    ECHO  -%~nx0 terminated!
-    GOTO :END
-  )
-  SET DIST_DIR=..\..\%LP3D_DIST_DIR%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
 ) ELSE (
-  SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.11.1\msvc2015\bin
-  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.1\msvc2015_64\bin
 )
-
-SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
-SET SYS_DIR=%SystemRoot%\System32
-SET zipWin64=C:\program files\7-zip
-SET OfficialCONTENT=complete.zip
 
 SET PACKAGE=LDGLite
 SET VERSION=1.3.4
-SET CONFIGURATION=release
 
-SET THIRD_INSTALL=unknown
-SET INSTALL_32BIT=unknown
-SET INSTALL_64BIT=unknown
-SET PLATFORM=unknown
+SET PLATFORM=x86
+SET CONFIGURATION=release
 SET LDCONFIG_FILE=unknown
-SET CHECK=unknown
+
+rem Always on
+SET CHECK=1
+
+SET zipWin64=C:\program files\7-zip
+SET OfficialCONTENT=complete.zip
 
 ECHO.
-ECHO -Start %PACKAGE% %~nx0 with commandline args: [%*].
+ECHO -Perform %PACKAGE% %~nx0 build check...
 
 rem Verify 1st input flag options
 IF NOT [%1]==[] (
   IF NOT "%1"=="x86" (
     IF NOT "%1"=="x86_64" (
-      IF NOT "%1"=="-all" (
-        IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
+      IF NOT "%1"=="-debug" (
+        IF NOT "%1"=="-all" (
+          IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
+        )
       )
     )
   )
@@ -82,6 +76,9 @@ IF /I "%1"=="x86_64" (
   SET PLATFORM=x86_64
   GOTO :SET_CONFIGURATION
 )
+IF /I "%1"=="-debug" (
+  GOTO :SET_CONFIGURATION
+)
 IF /I "%1"=="-all" (
   SET PLATFORM=-all
   GOTO :SET_CONFIGURATION
@@ -92,35 +89,22 @@ IF /I "%1"=="-help" (
 rem If we get here display invalid command message.
 GOTO :COMMAND_ERROR
 
+
 :SET_CONFIGURATION
 rem Verify 2nd input flag options
 IF NOT [%2]==[] (
-  IF NOT "%2"=="-ins" (
-    IF NOT "%2"=="-chk" GOTO :CONFIGURATION_ERROR
-  )
+  IF NOT "%2"=="-debug" GOTO :CONFIGURATION_ERROR
 )
 
-rem Verify 3rd input flag options
-IF NOT [%3]==[] (
-  IF NOT "%3"=="-chk" GOTO :CONFIGURATION_ERROR
+rem Set configuration
+IF /I "%1"=="-debug" (
+  SET CONFIGURATION=debug
+)
+  
+IF /I "%2"=="-debug" (
+  SET CONFIGURATION=debug
 )
 
-rem Set third party install as default behaviour
-IF [%2]==[] (
-  SET THIRD_INSTALL=1
-  GOTO :BUILD
-)
-
-IF /I "%2"=="-ins" (
-  SET THIRD_INSTALL=1
-  GOTO :BUILD
-)
-
-rem Set build check flag
-IF /I "%2"=="-chk" (
-  SET CHECK=1
-  GOTO :BUILD
-)
 
 :BUILD
 rem Display build settings
@@ -135,115 +119,33 @@ IF "%APPVEYOR%" EQU "True" (
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
-ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%]
-ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%]
 ECHO   WORKING_DIRECTORY......[%PWD%]
-ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
 ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
 ECHO.  LDRAW_DOWNLOAD_DIR.....[%LDRAW_DOWNLOAD_DIR%]
-
-rem Perform build check
-IF /I "%3"=="-chk" (
-  SET CHECK=1
-)
 
 rem Check if build all platforms
 IF /I "%PLATFORM%"=="-all" (
   GOTO :BUILD_ALL
 )
 
-rem Configure buid arguments and set environment variables
-CALL :CONFIGURE_BUILD_ENV
 CD /D %PWD%
 ECHO.
-ECHO -Building %PLATFORM% platform, %CONFIGURATION% configuration...
-rem Display QMake version
-ECHO.
-qmake -v & ECHO.
-rem Configure makefiles
-qmake %LDGLITE_CONFIG_ARGS%
-rem perform build
-nmake.exe
-rem Perform build check if specified
-IF %CHECK%==1 CALL :CHECK_BUILD %PLATFORM%
-rem Package 3rd party install content
-IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
+ECHO -Checking %PLATFORM% platform, %CONFIGURATION% configuration...
+CALL :CHECK_BUILD %PLATFORM%
 GOTO :END
 
 :BUILD_ALL
-rem Launch qmake/make across all platform builds
-ECHO.
-ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
   SET PLATFORM=%%P
-  rem Configure buid arguments and set environment variables
-  CALL :CONFIGURE_BUILD_ENV
   CD /D %PWD%
   ECHO.
-  ECHO  -Building %%P platform, %CONFIGURATION% configuration...
-  rem Display QMake version
-  ECHO.
-  qmake -v & ECHO.
-  rem Configure makefiles and launch make
-  SETLOCAL ENABLEDELAYEDEXPANSION
-  qmake !LDGLITE_CONFIG_ARGS! & nmake.exe !LDGLITE_MAKE_ARGS!
-  ENDLOCAL
+  ECHO  -Checking %%P platform, %CONFIGURATION% configuration...
   rem Perform build check if specified
-  IF %CHECK%==1 CALL :CHECK_BUILD %%P
-  rem Package 3rd party install content
-  IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
-  rem Reset PATH_PREPENDED
-  SET PATH_PREPENDED=False
+  CALL :CHECK_BUILD %%P
 )
 GOTO :END
 
-:CONFIGURE_BUILD_ENV
-CD /D %PWD%
-ECHO.
-ECHO -Configure %PACKAGE% %PLATFORM% build environment...
-ECHO.
-ECHO -Cleanup previous %PACKAGE% qmake config files - if any...
-FOR /R %%I IN (
-  ".qmake.stash"
-  "Makefile*"
-  "ldrawini\Makefile*"
-  "mui\Makefile*"
-  "app\Makefile*"
-) DO DEL /S /Q "%%~I" >nul 2>&1
-ECHO.
-ECHO   PLATFORM (BUILD_ARCH)...[%PLATFORM%]
-SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
-ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
-rem /c flag suppresses the copyright
-SET LDGLITE_MAKE_ARGS=/c /f Makefile
-IF "%PATH_PREPENDED%" NEQ "True" (
-  SET PATH=%SYS_DIR%
-  IF %PLATFORM% EQU x86 (
-    ECHO.
-    CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars32.bat" -vcvars_ver=14.0
-  ) ELSE (
-    ECHO.
-    CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars64.bat" -vcvars_ver=14.0
-  )
-  ECHO.
-  SET PATH_PREPENDED=True
-  SETLOCAL ENABLEDELAYEDEXPANSION
-  ECHO(  PATH_PREPEND............[!PATH!]
-    ENDLOCAL
-  )
-) ELSE (
-  SETLOCAL ENABLEDELAYEDEXPANSION
-  ECHO(  PATH_ALREADY_PREPENDED..[!PATH!]
-  ENDLOCAL
-  )
-)
-EXIT /b
-
 :CHECK_BUILD
-ECHO.
-ECHO -Perform build check...
 CALL :CHECK_LDRAW_DIR
 IF %1==x86 SET PL=32
 IF %1==x86_64 SET PL=64
@@ -277,14 +179,6 @@ IF %CHECK%==1 (
 ) ELSE (
   ECHO -Check is not possible
 )
-EXIT /b
-
-:3RD_PARTY_INSTALL
-ECHO.
-ECHO -Installing 3rd party distribution files to [%DIST_DIR%]...
-ECHO.
-rem Configure makefiles and perform build
-nmake.exe %LDGLITE_MAKE_ARGS% install
 EXIT /b
 
 :CHECK_LDRAW_DIR
@@ -436,66 +330,52 @@ GOTO :END
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -02. (FLAG ERROR) Configuration flag is invalid [%~nx0 %*].
-ECHO      See Usage.
-GOTO :END
-
-:COMMAND_ERROR
-ECHO.
-CALL :USAGE
-ECHO.
-ECHO -03. (COMMAND ERROR) Invalid command string [%~nx0 %*].
+ECHO -02. (FLAG ERROR) Configuration flag is invalid. Use -debug [%~nx0 %*].
 ECHO      See Usage.
 GOTO :END
 
 :USAGE
 ECHO ----------------------------------------------------------------
 ECHO.
-ECHO LDGLite Windows auto build script.
+ECHO LDGLite Windows build check script.
 ECHO.
 ECHO ----------------------------------------------------------------
 ECHO Usage:
-ECHO  build [ -help]
-ECHO  build [ x86 ^| x86_64 ^| -all ] [ -ins ^| -chk ] [ -chk ]
+ECHO  testWin [ -help]
+ECHO  testWin [ x86 ^| x86_64 ^| -all ] [ -debug ]
 ECHO.
 ECHO ----------------------------------------------------------------
-ECHO Build 64bit, Release and perform build check
-ECHO build x86_64 -chk
+ECHO Check 64bit release
+ECHO testWin x86_64
 ECHO.
-ECHO Build 64bit, Release and perform install and build check
-ECHO build x86_64 -ins -chk
+ECHO Check 32bit release
+ECHO testWin x86
 ECHO.
-ECHO Build 32bit, Release and perform build check
-ECHO build x86 -chk
+ECHO Check 64bit debug
+ECHO testWin x86_64 -debug
 ECHO.
-ECHO Build 64bit and32bit, Release and perform build check
-ECHO build -all -chk
-ECHO.
-ECHO Build 64bit and32bit, Release, perform install and build check
-ECHO build -all -ins -chk
+ECHO Check 32bit debug
+ECHO testWin x86 -debug
 ECHO.
 ECHO Flags:
 ECHO ----------------------------------------------------------------
 ECHO ^| Flag    ^| Pos ^| Type             ^| Description
 ECHO ----------------------------------------------------------------
 ECHO  -help......1......Useage flag         [Default=Off] Display useage.
-ECHO  x86........1......Platform flag       [Default=Off] Build 32bit architecture.
-ECHO  x86_64.....1......Platform flag       [Default=Off] Build 64bit architecture.
-ECHO  -all.......1......Configuraiton flag  [Default=On ] Build both  32bit and 64bit architectures
-ECHO  -ins.......2......Project flag        [Default=Off] Install distribution as LPub3D 3rd party installation
-ECHO  -chk.......2,3....Project flag        [Default=On ] Perform a quick image redering check using command line ini file
-ECHO.
-ECHO Be sure the set your LDraw directory in the variables section above if you expect to use the '-chk' option.
+ECHO  x86........1......Platform flag       [Default=On] Check 32bit architecture.
+ECHO  x86_64.....1......Platform flag       [Default=Off] Check 64bit architecture.
+ECHO  -all.......1......Configuraiton flag  [Default=Off] Check both  32bit and 64bit architectures
+ECHO  -debug.....2......Project flag        [Default=Off] Check debug build
 ECHO.
 ECHO Flags are case sensitive, use lowere case.
 ECHO.
-ECHO If no flag is supplied, 64bit platform, Release Configuration built by default.
+ECHO If no flag is supplied, 32bit platform, Release Configuration checked by default.
 ECHO ----------------------------------------------------------------
 EXIT /b
 
 :END
 ECHO.
-ECHO -%~nx0 [%PACKAGE% v%VERSION%] finished.
+ECHO -%~nx0 [%PACKAGE% v%VERSION%] build check finished.
 SET end=%time%
 SET options="tokens=1-4 delims=:.,"
 FOR /f %options% %%a IN ("%start%") DO SET start_h=%%a&SET /a start_m=100%%b %% 100&SET /a start_s=100%%c %% 100&SET /a start_ms=100%%d %% 100

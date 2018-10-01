@@ -17,6 +17,7 @@ win32 {
     QMAKE_TARGET_DESCRIPTION = "LDrawDir and SearchDirs API"
     QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2004-2008  Lars C. Hassing"
     QMAKE_TARGET_PRODUCT = "LDrawIni ($$join(ARCH,,,bit))"
+
 }
 
 include($$PWD/ldgliteldrawini.pri)
