@@ -1252,7 +1252,7 @@ void printPOVMatrix(FILE *f)
 
  fprintf(f,"\tangle %g\n", angle);
  fprintf(f,"\trotate   <0,1e-5,0> // Prevent gap between adjecent quads\n");
- fprintf(f,projectionstr);
+ fprintf(f,"%s", projectionstr);
  fprintf(f,"}\n\n");
 
 #if 0
@@ -6466,7 +6466,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	  clear_edit_mode_gui();
 	  sprintf(eprompt[0], "Load file: ");
 	  ecommand[0] = toupper(key);
-	  sprintf(&(ecommand[1]), datfilename);
+      sprintf(&(ecommand[1]), "%s", datfilename);
 	  edit_mode_gui();
 	  return 1;
 	}
