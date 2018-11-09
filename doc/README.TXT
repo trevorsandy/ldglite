@@ -256,8 +256,8 @@ Command line options (see also the original ldlite docs for more):
 -n4 renders the whole model in the backbuffer and then copies it to the screen.
 -ms Saves an image for each STEP and quits.
 -mS Does the same, but without opening a window (on most systems).
-    You can also include an optional output filename with either of these.
-    eg. -mSpicture.png  (-mSpicture#.png replaces # with step numbers)
+    You can also include an optional output filename.
+    eg. -mSpicture.png
 -iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24 
     5 = PPM.  Use -N to turn off output image cropping.
 -eN.NN fixes polyline offset driver errors.  Try -e0.95 if lines look bad.
