@@ -216,6 +216,7 @@ int zcolor_code_modify(int index, char *name, int inverse_index,
     
     zcolor_code_table[i].name = strdup(name);
   }
+  return 0;
 }
 
 /***************************************************************/

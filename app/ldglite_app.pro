@@ -199,3 +199,6 @@ BUILD_CHECK: unix {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")
   }
 }
+
+HEADERS += \
+    functionheaders.h

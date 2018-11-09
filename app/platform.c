@@ -25,6 +25,7 @@ int platform_startup(int *argcp, char ***argv)
 	#if defined(MAC)
 	return macStartup(argcp, argv);
 	#endif
+    return 0;
 }
 
 // ***************************************************************

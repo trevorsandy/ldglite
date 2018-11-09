@@ -31,6 +31,7 @@
 #include "LDrawIni.h"
 
 #include "tinyfiledialogs.h"
+#include "functionheaders.h"
 
 #  ifndef WINDOWS
      // This stuff gets pulled in by glut.h for windows.
@@ -603,13 +604,13 @@ void pasteCommand(int x, int y)
       if ((!inventory) && (p = strchr(token, '.')))
       {
 	// Eliminate trailing whitespace
-	if (s = strpbrk(p, whitespace))
+    if ((s = strpbrk(p, whitespace)))
 	  *s = 0;
 	//printf("got trailing <%s> from clipboard\n", token);
 
 	// Eliminate leading whitespace
 	*p = 0;
-	if (s = strrpbrk(token, whitespace))
+    if ((s = strrpbrk(token, whitespace)))
 	  token = s+1;
 	*p = '.';
       }
@@ -620,7 +621,7 @@ void pasteCommand(int x, int y)
       if (!inventory)
       {
 	// If not inventory and we still have whitespace, then its a comment.
-	if (s = strrpbrk(token, whitespace))
+    if ((s = strrpbrk(token, whitespace)))
 	{
 	  if ((i > 0) && (ecommand[0] == 'c'))
 	  {
@@ -2291,13 +2292,13 @@ void platform_sethome()
       printf("chdir(%s)\n", modelspath);
       chdir(modelspath);
     }
-    else if (env_str = platform_getenv("USERPROFILE"))
+    else if ((env_str = platform_getenv("USERPROFILE")))
     {
       concat_path(env_str, use_uppercase ? "MY DOCUMENTS" : "My Documents", newpath);
       printf("chdir(%s)\n", newpath);
       chdir(newpath);
     }
-    else if (env_str = platform_getenv("HOME"))
+    else if ((env_str = platform_getenv("HOME")))
     {
       printf("chdir(%s)\n", env_str);
       chdir(env_str);
@@ -2333,7 +2334,7 @@ int _strlwr(char *str)
 
 /***************************************************************/
 /*  Global vars for GLUT event handlers
-/***************************************************************/
+***************************************************************/
 GLfloat zoom = 0.0;
 
 GLboolean selection     = GL_FALSE;	/* rendering to selection buffer */
@@ -2750,7 +2751,7 @@ void init(void)
 
 /***************************************************************/
 /*  GLUT event handlers
-/***************************************************************/
+ ***************************************************************/
 int exposeEvent(void)
 {
 #ifdef MACOS_X_TEST1
@@ -3208,6 +3209,7 @@ int ldlite_parse_with_rc(char *filename)
   sprintf(&(buf[bytes]),"\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 \"%s\"\n", filename);
 #endif
   ldlite_parse(buf);
+  return 0;
 }
 
 /***************************************************************/
@@ -4858,7 +4860,7 @@ void display(void)
       glDrawBuffer(staticbuffer);
     }
 #endif
-    if (res = exposeEvent()) // Expose event?
+    if ((res = exposeEvent())) // Expose event?
     {
       printf("EXPOSED window during editing\n");
       dirtyWindow = 1;
@@ -4962,7 +4964,7 @@ void display(void)
 
   glDrawBuffer(renderbuffer);
 
-  if (res = exposeEvent())
+  if ((res = exposeEvent()))
     dirtyWindow = 1;
 
   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -5958,7 +5960,7 @@ int edit_mode_fnkeys(int key, int x, int y)
   }
 
   // If we have a command going then work on that.
-  if (i = strlen(ecommand))
+  if ((i = strlen(ecommand)))
   {
     if (partlookup)
     {
@@ -6241,7 +6243,7 @@ int tfd_loadfile()
 }
 
 /***************************************************************/
-tfd_saveas()
+int tfd_saveas()
 {
   extern char datfilename[];
   extern char dirfilepath[];
@@ -6255,9 +6257,10 @@ tfd_saveas()
   if (fname && strlen(fname)) saveasdatfile(dirname(fname), basename(fname));
 #else
   const char *filter[3] = {"*.dat","*.ldr","*.mpd"};
-  char *fname = tinyfd_saveFileDialog("Save LDraw file",filename,3,filter,"LDraw files");
+  const char *fname = tinyfd_saveFileDialog("Save LDraw file",filename,3,filter,"LDraw files");
   if (fname && strlen(fname)) saveasdatfile(dirname(fname), basename(fname));
 #endif
+  return 0;
 }
 
 /***************************************************************/
@@ -6806,7 +6809,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	{
 	  // Use the part from the lookup list.
 	  strcpy(&(ecommand[1]), partlistptr[partlookup - 1]);
-	  if (token = strpbrk(&(ecommand[1])," \t"))
+      if ((token = strpbrk(&(ecommand[1])," \t")))
 	    *token = 0;
 
 	  prevlookup = saveprevlookup();
@@ -7145,7 +7148,7 @@ int edit_mode_keyboard(int key, int x, int y)
 	  // Got ? when already looking up part.  Display the selected part?
 	  // Use the part from the lookup list.
 	  strcpy(&(eresponse[1]), partlistptr[partlookup - 1]);
-	  if (token = strpbrk(&(eresponse[1])," \t"))
+      if ((token = strpbrk(&(eresponse[1])," \t")))
 	    *token = 0;
 
 	  for (i = 1; eresponse[i] == ' '; i++); // Strip leading spaces
@@ -10030,13 +10033,13 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       {
 	s = strdup (szNextFile);
 	platform_fixcase(s);
-	if (p = strstr(s, partspath))
+    if ((p = strstr(s, partspath)))
 	  strcpy(szNextFile, p + strlen(partspath) + 1);
-	else if (p = strstr(s, modelspath))
+    else if ((p = strstr(s, modelspath)))
 	  strcpy(szNextFile, p + strlen(modelspath) + 1);
-	else if (p = strstr(s, primitivepath))
+    else if ((p = strstr(s, primitivepath)))
 	  strcpy(szNextFile, p + strlen(primitivepath) + 1);
-	else if (p = strstr(s, datfilepath))
+    else if ((p = strstr(s, datfilepath)))
 	  strcpy(szNextFile, p + strlen(datfilepath) + 1);
 	printf("WM_dropfile <%s>\n", szNextFile);
 	strcat(pastelist, szNextFile);
