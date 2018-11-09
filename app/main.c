@@ -1905,7 +1905,7 @@ void platform_step_filename(int step, char *filename)
       *dotptr = 0;
       if (step != INT_MAX)
       {
-	sprintf(filenum,"%0d",step+1);
+         sprintf(filenum,"%0d",step+1);
          strcat(filename,filenum);
       }
       strcat(filename, use_uppercase ? ".BMP" : ".bmp");
@@ -8599,7 +8599,7 @@ void myGlutIdle( void )
     if (!init)
     {
       init = 1;
-      printf("Polling %s = %d\n", filename, datstat.st_mtime);
+      printf("Polling %s = %lld\n", filename, datstat.st_mtime);
     }
     else if (ret == -1)
     {
@@ -8607,7 +8607,7 @@ void myGlutIdle( void )
     }
     else if (datstat.st_mtime != last_file_time)
     {
-      printf("Reloading %s = %d\n", filename, last_file_time);
+      printf("Reloading %s = %lld\n", filename, last_file_time);
       if (editing)
       {
 	// Unselect piece before reloading from poll.
