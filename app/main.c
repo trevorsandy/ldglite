@@ -2237,8 +2237,8 @@ void platform_setpath()
   {
     strcpy(pathname, env_str);
   }
-  else if (GetPrivateProfileString("LDraw","BaseDirectory","",
-			  pathname,256,"ldraw.ini") == 0)
+  else if (GetPrivateProfileString(L"LDraw",L"BaseDirectory",L"",
+              pathname,256,L"ldraw.ini") == 0)
   {
 #if defined MACOS_X
     sprintf(pathname, "/Library/ldraw");
@@ -2267,8 +2267,8 @@ void platform_setpath()
   {
     strcpy(userpath, env_str);
   }
-  else if (GetPrivateProfileString("LDraw","UserDirectory","",
-			  userpath,256,"ldraw.ini") == 0)
+  else if (GetPrivateProfileString(L"LDraw",L"UserDirectory",L"",
+              userpath,256,L"ldraw.ini") == 0)
   {
     strcpy(userpath, pathname);
   }
@@ -9533,10 +9533,10 @@ int InitInstance()
 
   // Probably should use basename(argv[0]) instead of "ldlite"
   // Big switch from ldlite.  Turn shading is on by default.
-  zShading = GetProfileInt("ldlite","shading",1);
+  zShading = GetProfileInt(L"ldlite",L"shading",1);
   //	zDetailLevel = TYPE_P; // should checkmark the menu item later!
-  zDetailLevel = GetProfileInt("ldlite","detail",TYPE_P);
-  zWire = GetProfileInt("ldlite","wireframe",0);
+  zDetailLevel = GetProfileInt(L"ldlite",L"detail",TYPE_P);
+  zWire = GetProfileInt(L"ldlite",L"wireframe",0);
 
   // Initialize the default ldglite commandline info structure.
   CldliteCommandLineInfo();
