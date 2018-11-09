@@ -3409,8 +3409,8 @@ void
 render(void)
 {
   int rc;
-  int client_rect_right;
-  int client_rect_bottom;
+  long client_rect_right;
+  long client_rect_bottom;
   int res;
   int drawmode = ldraw_commandline_opts.F;
 
