@@ -6236,7 +6236,7 @@ int tfd_loadfile()
   if (fname && strlen(fname)) loadnewdatfile(dirname(fname), basename(fname));
 #else
   const char *filter[3] = {"*.dat","*.ldr","*.mpd"};
-  char *fname = tinyfd_openFileDialog("Select an LDraw file","",3,filter,"LDraw files",0);
+  const char *fname = tinyfd_openFileDialog("Select an LDraw file","",3,filter,"LDraw files",0);
   if (fname && strlen(fname)) loadnewdatfile(dirname(fname), basename(fname));
 #endif
   return (fname && strlen(fname));
