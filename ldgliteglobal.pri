@@ -70,6 +70,14 @@ OSMESA_ARG = $$find(CONFIG, USE_OSMESA_LOCAL.*)
     !exists($${OSMESA_LOCAL_PREFIX_}): message("~~~ ERROR - Local OSMesa path not found ~~~")
 }
 
+USE_OSMESA_STATIC {
+  TARGET_VENDOR_VAR = $$(TARGET_VENDOR)
+  contains(HOST, Arch):PLATFORM = arch
+  else: contains(HOST, Fedora):PLATFORM = fedora
+  else:!isEmpty(TARGET_VENDOR_VAR):PLATFORM = $$lower($$TARGET_VENDOR_VAR)
+  else: message("~~~ ERROR - PLATFORM not defined ~~~")
+}
+
 !contains(CONFIG, ENABLE_PNG): CONFIG += ENABLE_PNG
 !contains(CONFIG, ENABLE_TILE_RENDERING): CONFIG += ENABLE_TILE_RENDERING
 !contains(CONFIG, ENABLE_OFFSCREEN_RENDERING): CONFIG += ENABLE_OFFSCREEN_RENDERING
@@ -195,10 +203,10 @@ unix:!macx {
 
     # OSMesa with Gallium support - static library built from source
     USE_OSMESA_STATIC {
-      OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/osmesa-config --cflags)
+      OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --cflags)
       INCLUDEPATH         += $${OSMESA_INC}
       isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
-      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/osmesa-config --libs)
+      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --libs)
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
       _LIBS               += $${OSMESA_LIBS} -lglut -lX11 -lXext
 
@@ -219,7 +227,7 @@ unix:!macx {
         }
       }
 
-      OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/osmesa-config --ldflags)
+      OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --ldflags)
       isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
       _LIBS           += $${OSMESA_LDFLAGS}
 

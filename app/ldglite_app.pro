@@ -35,9 +35,12 @@ unix:!macx:TARGET = ldglite
 else:      TARGET = LDGLite
 
 # messages
+message("~~~ LDGLITE $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
 win32: message("~~~ USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
 !isEmpty(SLE_LIBDIR): message("~~~ SLE_15 - USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
 !isEmpty(OSMESA_LIBDIR): message("~~~ OSMESA - USING LOCAL LIBRARIES AT $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
+else:USE_OSMESA_STATIC: message("~~~ NOTICE: USING OSMESA BUILT FROM SOURCE LIBRARY ~~~")
+else:!win32: message("~~~ NOTICE: USING OSMESA SYSTEM LIBRARY")
 
 include($$PWD/ldgliteapp.pri)
 
