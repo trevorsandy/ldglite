@@ -50,7 +50,7 @@ char ldgliteVersion[] = "Version "VERSION_INFO" ("ARCH")      ";
 char ldgliteVersion[] = "Version "VERSION_INFO"      ";
 #endif
 #else
-char ldgliteVersion[] = "Version 1.3.4test01";
+char ldgliteVersion[] = "Version 1.3.5test01";
 #endif
 
 // Use Glut popup menus if MUI is not available.
@@ -387,19 +387,20 @@ int LineChecking = 0;
 int preprintstep = 0;
 int DepthOnly = 0; // Draw to z-buffer only, disable writes to color buffer.
 int TransFadeEffect = 0; // Draw Faded Parts for LPub3D -- Trans with no back edges.
-int TransFadeCmd = 0; // Global percent FADE for the effect from cmd line. 
-int TransFadePercent = 0; // Global runtime percent FADE for the effect. 
+int TransFadeCmd = 0; // Global percent FADE for the effect from cmd line.
+int TransFadePercent = 0; // Global runtime percent FADE for the effect.
 int FadeColors[256] = {0};
 int nFadeColors = 0;
 int SilhouetteOnly = 0; // Draw only type 5 lines in special color and size.
 int SilhouetteEffect = 0; // Draw Silhouetted Parts for LPub3D
-float SilhouetteWidth = 0.0f; 
-float SilhouetteScale = 1.0f; 
+float SilhouetteWidth = 0.0f;
+float SilhouetteScale = 1.0f;
 int SilhouetteEdge = -1; // Not a valid color
 int SilhouetteColors[256] = {0};
 int nSilhouetteColors = 0;
 int dimLevel = 0; // Same as ldraw_commandline_opts.maxlevel=32767;  // a huge number
 float dimAmount = 0.0;
+int StudLogo  = 0; // Default is no stud logo
 
 int downsample = 0; // decimate output file by 2 with antialias filter.
 int upscale = 0;    // upscale everything needed for eventual downsample.
@@ -2910,7 +2911,7 @@ void reshape(int width, int height)
     if (editing)
     {
       if ((width != Width) && (height != Height))
-	NukeSavedDepthBuffer();
+	   NukeSavedDepthBuffer();
     }
 
     Width = width;
@@ -3269,7 +3270,7 @@ int ldlite_parse_colour_meta(char *s)
 int ldlite_parse_fade_meta(char *s)
 {
   int i, n, inverse_index, r, g, b, alpha;
-      
+
   // Skip whitespace
   for (; *s != 0; s++)
   {
@@ -3295,7 +3296,7 @@ int ldlite_parse_silhouette_meta(char *s)
 {
   int i, n, inverse_index, r, g, b, alpha;
   float f;
-      
+
   // Skip whitespace
   for (; *s != 0; s++)
   {
@@ -3315,7 +3316,7 @@ int ldlite_parse_silhouette_meta(char *s)
     SilhouetteEffect |= 1; // Enable it (Mark it as a LOCAL inline silhouette)
     SilhouetteWidth = f;
     // Double width for true halo because half is hidden behind the polygons.
-    SilhouetteWidth *= 2.0; 
+    SilhouetteWidth *= 2.0;
     // Also increase width if upscaling for image dump (eg. 2g2x ).
     SilhouetteWidth *= SilhouetteScale;
     SilhouetteEdge = i;
@@ -3466,6 +3467,7 @@ render(void)
   {
     // LoadModel frees Parts[0] and Lights etc.
     LoadModelPre();
+
     // L3Time_t ttt = L3GetTime();
     res = LoadModel(datfilename);
     // ttt = L3GetTime() - ttt;
@@ -3508,7 +3510,7 @@ render(void)
       preprintstep = 1; //Tell platform_step() NOT to save file now.
     // ====================================================================
     if (TransFadeEffect){// Start at global cmdline FADE percent, or 0 if no cmdline FADE.
-      TransFadePercent = TransFadeCmd; 
+      TransFadePercent = TransFadeCmd;
       printf("TransTest global %d\n", TransFadePercent);
     }
 #if 1
@@ -3525,11 +3527,11 @@ render(void)
       glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
     }
 #endif
-    
+
     DrawModel();
 
 #ifdef SILHOUETTE_SHOWS_THRU_FADE
-    if (SilhouetteEffect) { 
+    if (SilhouetteEffect) {
       // If I don't want the fade effect to completely block the silhouette
       // effect on parts that happen to appear behind them then I have to
       // Draw the silhouette lines before the FADE code writes to the z-buffer.
@@ -3542,13 +3544,13 @@ render(void)
       // available.  (all edges, full silhouette, faded silhouette, ...)
     }
 #endif
-    
+
     // ====================================================================
     // Add an extra pass to hide rear edge lines behind trans surfaces.
     // ====================================================================
-    if (TransFadeEffect) { 
+    if (TransFadeEffect) {
       // Start at global cmdline FADE percent, or 0 if no cmdline FADE.
-      TransFadePercent = TransFadeCmd; 
+      TransFadePercent = TransFadeCmd;
       printf("TransTest start %d\n", TransFadePercent);
       DepthOnly = 1;
       DrawModel();
@@ -3557,25 +3559,25 @@ render(void)
       printf("TransTest done %d\n", TransFadePercent);
     }
     // ====================================================================
-    
+
     // Then render edge lines
     ldraw_commandline_opts.F &= ~(TYPE_F_NO_LINES);
 
-#if 1    
-    if (SilhouetteEffect) { 
+#if 1
+    if (SilhouetteEffect) {
       glEnable(GL_STENCIL_TEST);               // Enable the stencil Test.
-      // Set the stencil buffer to only write to the screen 
+      // Set the stencil buffer to only write to the screen
       // when the value of the stencil buffer is not 1
       glStencilFunc( GL_NOTEQUAL, 1, 0xFFFF );
       glStencilOp( GL_KEEP, GL_KEEP, GL_REPLACE ); // S-Buf write fns(sf, zf, zp)
       //glStencilMask(GL_TRUE);                  // Enable stencil buffer writes.
       glStencilMask(GL_FALSE);                  // Disable stencil buffer writes.
     }
-#endif    
+#endif
     // ====================================================================
     // Add an extra pass to render silhouette colored type 5 edge lines.
     // ====================================================================
-    if (SilhouetteEffect) { 
+    if (SilhouetteEffect) {
       float oldWidth = lineWidth;
       // Start at silhouette = off.
       SilhouetteEdge = -1;
@@ -3588,9 +3590,9 @@ render(void)
       if (qualityLines)
 	z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
       // Set Silhouette lines back a bit (No. looks even worse)
-      //z_line_offset -= 0.3; // (SilhouetteWidth/2.0); 
+      //z_line_offset -= 0.3; // (SilhouetteWidth/2.0);
       DrawModel();
-      //z_line_offset += 0.3; // (SilhouetteWidth/2.0); 
+      //z_line_offset += 0.3; // (SilhouetteWidth/2.0);
       if (qualityLines)
 	z_line_offset -= 0.2; // Nudge antialiased lines up in depth buffer.
       SilhouetteOnly = 0;
@@ -3600,11 +3602,11 @@ render(void)
     }
     // ====================================================================
 #if 1
-    if (SilhouetteEffect) { 
+    if (SilhouetteEffect) {
       glDisable(GL_STENCIL_TEST);
       glStencilMask(GL_FALSE);
     }
-#endif    
+#endif
     linequalitysetup();
     ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
     stepcount = 0; // NOTE: Not sure what effect this will have...
@@ -6222,7 +6224,7 @@ char *getfilename(char *s, char *filename)
 int tfd_loadfile()
 {
   /* Test some of the other dialogs.  Try colordialog... */
-  /*     char *foo = tinyfd_messageBox("Hello World", 
+  /*     char *foo = tinyfd_messageBox("Hello World",
   /*     "Which do you prefer?\n\t(yes or no)", "yesno", "question", 0); */
   /*     printf("messagebox => <%s>\n",foo); */
   /*     unsigned char const aDefaultRGB[3] = { 0 , 255 , 255 }; */
@@ -7650,9 +7652,9 @@ void menuKeyEvent(int key, int x, int y)
       m_viewMatrix = LdrawOblique;
       if (ldraw_projection_type)
       { // LdrawObliqe only makes sense with orthographic projection.
-	ldraw_projection_type = 0;
-	parse_view(m_viewMatrix);
-	reshape(Width, Height);
+	       ldraw_projection_type = 0;
+	       parse_view(m_viewMatrix);
+	       reshape(Width, Height);
       }
       newview = 1;
       break;
@@ -7696,8 +7698,8 @@ void menuKeyEvent(int key, int x, int y)
       ldraw_projection_type = 0;
       if (m_viewMatrix == LdrawOblique)
       {
-	m_viewMatrix = Oblique;
-	parse_view(m_viewMatrix);
+	     m_viewMatrix = Oblique;
+	     parse_view(m_viewMatrix);
       }
       reshape(Width, Height);
       break;
@@ -8425,11 +8427,11 @@ motion(int x, int y)
 	    if (pan_y != 0)
 	    {
 	      if (ldraw_projection_type == 1)
-		truckCamera( pan_y, 0, 0, 1 ); // forward, backward
+		      truckCamera( pan_y, 0, 0, 1 ); // forward, backward
 	      else
 	      {
-		// Trucking camera is not visible in orthographic mode.  Scale instead.
-		ldraw_commandline_opts.S *= (1.0 - (0.001 * pan_y));
+		      // Trucking camera is not visible in orthographic mode.  Scale instead.
+		      ldraw_commandline_opts.S *= (1.0 - (0.001 * pan_y));
 	      }
 	    }
 
@@ -8752,778 +8754,791 @@ void PrintParams(int *argc, char **argv)
 // Mostly stolen from ParseParam() in ldliteCommandLineInfo.cpp
 void ParseParams(int *argc, char **argv)
 {
-  char *pszParam;
-  int i, n, x, y;
+    char *pszParam;
+    int i, n, x, y;
 
-  char type;
-  int mode;
-  int camera_globe_set = 0;
-  int camera_znear_set = 0;
-  int camera_zfar_set = 0;
+    char type;
+    int mode;
+    int camera_globe_set = 0;
+    int camera_znear_set = 0;
+    int camera_zfar_set = 0;
 
-  if (!strlen(datfilename)) // Init datfilename if none parsed yet...
-  {
-  // Initialize datfilepath to none so we can take commands from stdin.
-  strcpy(datfilename, " ");
+    if (!strlen(datfilename)) // Init datfilename if none parsed yet...
+    {
+        // Initialize datfilepath to none so we can take commands from stdin.
+        strcpy(datfilename, " ");
 #if defined(UNIX)
-  strcpy(datfilepath, "./");
+        strcpy(datfilepath, "./");
 #elif defined(MACOS_X)
-  strcpy(datfilepath, "./");
+        strcpy(datfilepath, "./");
 #elif defined(MAC)
-  strcpy(datfilepath, "");
+        strcpy(datfilepath, "");
 #elif defined(WINDOWS)
-  strcpy(datfilepath, "./");
+        strcpy(datfilepath, "./");
 #else
 #error unspecified platform in ParseParams() definition
 #endif
 
-  strcpy(dirfilepath, datfilepath);
-  }
+        strcpy(dirfilepath, datfilepath);
+    }
 
-  for (i = 1; i < *argc; i++)
-  {
-    pszParam = argv[i];
-    if (pszParam[0] == '+')
+    for (i = 1; i < *argc; i++)
     {
-      int n, wx, wy;
-      n = sscanf(pszParam,"%c%d,%d",&type, &wx, &wy);
-      if ((n > 1) && (wx >= 0))
-	XwinPos = wx;
-      if ((n > 2) && (wy >= 0))
-	YwinPos = wy;
-    }
-    // pass LDConfig as a command line argument. [=<LDConfig file> flag is deprecated - see reimplementation below]
-    else if (pszParam[0] == '=')
-    {
-      // remove '='
-      memmove(pszParam, pszParam+1, strlen(pszParam));
-      if (pszParam[0])
-      {
-        char ldconfigfilepath[256];
-        strcpy(ldconfigfilename, basename(pszParam));
-        concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
-        strcpy(ldconfig, localize_path(ldconfigfilepath));
-        printf("LDConfig = (%s)\n", ldconfig);
-      }
-    }
-    else if (pszParam[0] != '-')
-    {
-      // It must be a filename.  Save it for parsing.
-      strcpy(datfilename, basename(argv[i]));
-      strcpy(datfilepath, dirname(argv[i]));
-      strcpy(dirfilepath, datfilepath);
+        pszParam = argv[i];
+        if (pszParam[0] == '+')
+        {
+            int n, wx, wy;
+            n = sscanf(pszParam,"%c%d,%d",&type, &wx, &wy);
+            if ((n > 1) && (wx >= 0))
+                XwinPos = wx;
+            if ((n > 2) && (wy >= 0))
+                YwinPos = wy;
+        }
+        // pass LDConfig as a command line argument. [=<LDConfig file> flag is deprecated - see reimplementation below]
+        else if (pszParam[0] == '=')
+        {
+            // remove '='
+            memmove(pszParam, pszParam+1, strlen(pszParam));
+            if (pszParam[0])
+            {
+                char ldconfigfilepath[256];
+                strcpy(ldconfigfilename, basename(pszParam));
+                concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
+                strcpy(ldconfig, localize_path(ldconfigfilepath));
+                printf("LDConfig = (%s)\n", ldconfig);
+            }
+        }
+        else if (pszParam[0] != '-')
+        {
+            // It must be a filename.  Save it for parsing.
+            strcpy(datfilename, basename(argv[i]));
+            strcpy(datfilepath, dirname(argv[i]));
+            strcpy(dirfilepath, datfilepath);
 #if 0
-      chdir(datfilepath); // problem with chdir to dir with spaces in win32.
+            chdir(datfilepath); // problem with chdir to dir with spaces in win32.
 #endif
-      // we used to put a trailing / on datfilepath
-    }
-    else
-    {
-      pszParam++; // skip over the dash char.
+            // we used to put a trailing / on datfilepath
+        }
+        else
+        {
+            pszParam++; // skip over the initial dash char.
 
-      switch(pszParam[0]) {
-      case '-':
-	if (!strcmp(datfilename,  " "))
-	  //strcpy(datfilename, ""); // read from stdin if no filename.
-	  strcpy(datfilename, "-");  // read from stdin if no filename.
-	break;
-      case 'A':
-      case 'a':
-	sscanf(pszParam,"%c%f,%f,%f,%f,%f,%f,%f,%f,%f",
-	       &type,
-	       &(ldraw_commandline_opts.A.a),
-	       &(ldraw_commandline_opts.A.b),
-	       &(ldraw_commandline_opts.A.c),
-	       &(ldraw_commandline_opts.A.d),
-	       &(ldraw_commandline_opts.A.e),
-	       &(ldraw_commandline_opts.A.f),
-	       &(ldraw_commandline_opts.A.g),
-	       &(ldraw_commandline_opts.A.h),
-	       &(ldraw_commandline_opts.A.i));
-	break;
-      case 'B':
-      case 'b':
-	sscanf(pszParam,"%c%i",&type,&(ldraw_commandline_opts.B));
-	break;
-      case 'C':
-      case 'c':
-	if (toupper(pszParam[1]) == 'A') // Camera FOV angle.
-	{
-	  float g;
-	  sscanf(&pszParam[2],"%f",&g);
-	  printf("FOV = %g\n", g);
-	  if ((g >= 0.0) && (g <= 360.0))
-	    projection_fov = g;
-	}
-  else if (toupper(pszParam[1]) == 'C') // Camera location.
-	{
-	  //float v[4][4];
-	  double v[4][4];
-	  v[0][0] = v[0][1] = v[0][2] = 0.0;
-	  ScanPOINTS(v, 1, &(pszParam[2]));
-	  printf("CAM = (%lg, %lg, %lg)\n", v[0][0], v[0][1], v[0][2]);
-	  projection_fromx = v[0][0];
-	  projection_fromy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
-	  projection_fromz = v[0][2];
-	}
-  else if ((toupper(pszParam[1]) == 'O') || // Object Origin to look at.
-		 ((toupper(pszParam[1]) == 'L') &&
-		  (toupper(pszParam[2]) == 'A')))
-	{
-	  float v[4][4];
-	  v[0][0] = v[0][1] = v[0][2] = 0.0;
-	  if (toupper(pszParam[1]) == 'O')
-	    ScanPoints(v, 1, &(pszParam[2]));
-	  else
-	    ScanPoints(v, 1, &(pszParam[3]));
-	  printf("LOOK AT (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
-	  projection_towardx = v[0][0];
-	  projection_towardy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
-	  projection_towardz = v[0][2];
-	}
-  else if ((toupper(pszParam[1]) == 'U') || // Camera up vector.
-		 ((toupper(pszParam[1]) == 'S') &&
-		  (toupper(pszParam[2]) == 'K') &&
-		  (toupper(pszParam[3]) == 'Y')))
-	{
-	  float v[4][4];
-	  v[0][0] = v[0][1] = v[0][2] = 0.0;
-	  if (toupper(pszParam[1]) == 'U')
-	    ScanPoints(v, 1, &(pszParam[2]));
-	  else
-	    ScanPoints(v, 1, &(pszParam[4]));
-	  printf("UP = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
-	  projection_upx = v[0][0];
-	  projection_upy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
-	  projection_upz = v[0][2];
-	}
-        else if (toupper(pszParam[1]) == 'R') // Camera roll vector.
-	{
-	  // Todo...
-	}
-        else if (toupper(pszParam[1]) == 'G') // Camera location (on Globe)
-	{
-	  //float v[4][4];
-	  double v[4][4];
-	  v[0][0] = v[0][1] = v[0][2] = 0.0;
-	  ScanPOINTS(v, 1, &(pszParam[2]));
-	  printf("FROM = (%lg, %lg, %lg)\n", v[0][0], v[0][1], v[0][2]);
-	  camera_latitude = v[0][0];
-	  camera_longitude = v[0][1];
-	  camera_distance  = v[0][2];
-	  camera_globe_set = 1;
-	}
-	else
-	  n = sscanf(pszParam,"%c%i",&type,&(ldraw_commandline_opts.C));
-	break;
-      case 'D':
-      case 'd':
-	{
-	  int lev;
-	  n = sscanf(pszParam,"%c%d,%g",&type,&lev, &dimAmount);
-	  if (n == 3)
-	  {
-	    dimLevel = lev;
-	    if (dimAmount < 0.0)
-	      dimAmount = 0.0;
-	    if (dimAmount > 1.0)
-	      dimAmount = 1.0;
-	    printf("Dimlevel = %d, %g\n", dimLevel, dimAmount);
-	  }
-	  else
-	    ldraw_commandline_opts.maxlevel = lev;
-	}
-	break;
-      case 'E':
-      case 'e':
-	if ((toupper(pszParam[1]) == 'P') && (toupper(pszParam[2]) == 'S'))
-	    EPS_OUTPUT_FIGURED_OUT = 1;
-	else
-	{
-	  int j;
-	  float pfact, punit;
-	  j = sscanf(pszParam,"%c%f,%f,%f",&type,&z_line_offset,&pfact,&punit);
-	  if (z_line_offset > 1.0)
-	    z_line_offset = 1.0;
-	  printf("z_line_offset = %f\n", z_line_offset);
-	  if (pszParam[0] == 'E')      // For Capital E use z_line_offset
-	    PolygonOffsetEnabled = 0;  // instead of glpolygonoffset.
-	  if (j == 4)
-	  {
-	    PolygonOffsetFactor = pfact;
-	    PolygonOffsetunits = punit;
-	    printf("polygonoffset(%f, %f)\n", pfact, punit);
-	  }
-	}
-	break;
-      case 'F':
-      case 'f':
-	{
-	  char c;
-	  sscanf(pszParam,"%c%c",&type,&c);
-	  c = toupper(c);
-	  switch (c) {
-	  case 'H': // mnemonic = sHading? =Hi quality?
-	    ldraw_commandline_opts.F |= TYPE_F_SHADED_MODE; // zShading = 1;
-	    break;
-	  case 'S':
-	    if (toupper(pszParam[2]) == 'L')
-	      ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
-	    else
-	      ldraw_commandline_opts.F |= TYPE_F_STUDLESS_MODE;
-	    break;
-	  case 'W':
-	  case 'L':
-	    ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
-	    break;
-	  case 'N': // mnemonic = normal (no shading)
-	    ldraw_commandline_opts.F &= ~(TYPE_F_NO_POLYGONS); // zWire = 0;
-	    ldraw_commandline_opts.F &= ~(TYPE_F_SHADED_MODE); // zShading = 0
-	    break;
-	  case 'R':
-	  case 'E':
-	    ldraw_commandline_opts.F |= TYPE_F_NO_LINES; // no Edgelines
-	    break;
-	  case 'F': // Fog.
-	    {
-	      float v[4][4];
-	      v[0][0] = 1,0;   // LINEAR
-	      v[0][1] = fogEnd; // or fogDensity
-	      v[0][2] = fogStart;
-	      v[1][0] = fogColor[0];
-	      v[1][1] = fogColor[1];
-	      v[1][2] = fogColor[2];
-	      ScanPoints(v, 2, &(pszParam[2]));
-	      printf("fogging = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
-	      fogging = (int) v[0][0];
-	      if (fogging < 1) fogging = 1;
-	      if (fogging > 3) fogging = 3;
-	      if (fogging == 1)
-	      {
-		fogStart = v[0][1];
-		fogEnd = v[0][2];
-	      }
-	      else
-		fogDensity = v[0][1];
-	      printf("fogColor = (%g, %g, %g)\n", v[1][0], v[1][1], v[1][2]);
-	      fogColor[0] = v[1][0];
-	      fogColor[1] = v[1][1];
-	      fogColor[2] = v[1][2];
-	    }
-	    break;
-	  case 'M': // Motion? Mouse Movement?
-	    if ((pszParam[2] == '0') && (toupper(pszParam[3]) == 'X'))
-	      sscanf(pszParam,"%c%c%x",&type,&c,&pan_visible);
-	    else
-	      sscanf(pszParam,"%c%c%d",&type,&c,&pan_visible);
-	    break;
-	  case 'A': // Experimental Trans FADE Effect for LPub3D
-	    if (1 == sscanf(pszParam+2,"%d,",&n)){ // Get list of colors for FADE.
-	      int j=0;
-	      char *p = pszParam+2;
-	      TransFadeEffect |= 2; // Enable it (Mark it as a GLOBAL cmd line fade)
-	      TransFadeCmd = n;
-	      for (p = strchr(p, ','); p; p = strchr(p, ',')){
-		p++; // skip over the comma char (or the A in -FA)
-		if (1 != sscanf(p,"%d",&n))
-		  break;
-		FadeColors[j++] = n;
-	      }
-	      nFadeColors = j;
-	    }
-	    //printf("FADE(%d,%d)=%d,%d,%d,%d,%d,%d\n",TransFadeEffect, nFadeColors,FadeColors[0], FadeColors[1],FadeColors[2],FadeColors[3],FadeColors[4],FadeColors[5]);
-	    break;
-	  }
-	}
-	break;
-      case 'G':
-      case 'g':
+            switch(pszParam[0]) {
+            case '-':
+                if (!strcmp(datfilename,  " "))
+                    //strcpy(datfilename, ""); // read from stdin if no filename.
+                    strcpy(datfilename, "-");  // read from stdin if no filename.
+                break;
+            case 'A':
+            case 'a':
+                sscanf(pszParam,"%c%f,%f,%f,%f,%f,%f,%f,%f,%f",
+                       &type,
+                       &(ldraw_commandline_opts.A.a),
+                       &(ldraw_commandline_opts.A.b),
+                       &(ldraw_commandline_opts.A.c),
+                       &(ldraw_commandline_opts.A.d),
+                       &(ldraw_commandline_opts.A.e),
+                       &(ldraw_commandline_opts.A.f),
+                       &(ldraw_commandline_opts.A.g),
+                       &(ldraw_commandline_opts.A.h),
+                       &(ldraw_commandline_opts.A.i));
+                break;
+            case 'B':
+            case 'b':
+                sscanf(pszParam,"%c%i",&type,&(ldraw_commandline_opts.B));
+                break;
+            case 'C':
+            case 'c':
+                if (toupper(pszParam[1]) == 'A') // Camera FOV angle.
+                {
+                    float g;
+                    sscanf(&pszParam[2],"%f",&g);
+                    printf("FOV = %g\n", g);
+                    if ((g >= 0.0) && (g <= 360.0))
+                        projection_fov = g;
+                }
+                else if (toupper(pszParam[1]) == 'C') // Camera location.
+                {
+                    //float v[4][4];
+                    double v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = 0.0;
+                    ScanPOINTS(v, 1, &(pszParam[2]));
+                    printf("CAM = (%lg, %lg, %lg)\n", v[0][0], v[0][1], v[0][2]);
+                    projection_fromx = v[0][0];
+                    projection_fromy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
+                    projection_fromz = v[0][2];
+                }
+                else if ((toupper(pszParam[1]) == 'O') || // Object Origin to look at.
+                         ((toupper(pszParam[1]) == 'L') &&
+                          (toupper(pszParam[2]) == 'A')))
+                {
+                    float v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = 0.0;
+                    if (toupper(pszParam[1]) == 'O')
+                        ScanPoints(v, 1, &(pszParam[2]));
+                    else
+                        ScanPoints(v, 1, &(pszParam[3]));
+                    printf("LOOK AT (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+                    projection_towardx = v[0][0];
+                    projection_towardy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
+                    projection_towardz = v[0][2];
+                }
+                else if ((toupper(pszParam[1]) == 'U') || // Camera up vector.
+                         ((toupper(pszParam[1]) == 'S') &&
+                          (toupper(pszParam[2]) == 'K') &&
+                          (toupper(pszParam[3]) == 'Y')))
+                {
+                    float v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = 0.0;
+                    if (toupper(pszParam[1]) == 'U')
+                        ScanPoints(v, 1, &(pszParam[2]));
+                    else
+                        ScanPoints(v, 1, &(pszParam[4]));
+                    printf("UP = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+                    projection_upx = v[0][0];
+                    projection_upy = -v[0][1]; // L3P uses LDRAW y (-OpenGL y).
+                    projection_upz = v[0][2];
+                }
+                else if (toupper(pszParam[1]) == 'R') // Camera roll vector.
+                {
+                    // Todo...
+                }
+                else if (toupper(pszParam[1]) == 'G') // Camera location (on Globe)
+                {
+                    //float v[4][4];
+                    double v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = 0.0;
+                    ScanPOINTS(v, 1, &(pszParam[2]));
+                    printf("FROM = (%lg, %lg, %lg)\n", v[0][0], v[0][1], v[0][2]);
+                    camera_latitude = v[0][0];
+                    camera_longitude = v[0][1];
+                    camera_distance  = v[0][2];
+                    camera_globe_set = 1;
+                }
+                else
+                    n = sscanf(pszParam,"%c%i",&type,&(ldraw_commandline_opts.C));
+                break;
+            case 'D':
+            case 'd':
+            {
+                int lev;
+                n = sscanf(pszParam,"%c%d,%g",&type,&lev, &dimAmount);
+                if (n == 3)
+                {
+                    dimLevel = lev;
+                    if (dimAmount < 0.0)
+                        dimAmount = 0.0;
+                    if (dimAmount > 1.0)
+                        dimAmount = 1.0;
+                    printf("Dimlevel = %d, %g\n", dimLevel, dimAmount);
+                }
+                else
+                    ldraw_commandline_opts.maxlevel = lev;
+            }
+                break;
+            case 'E':
+            case 'e':
+                if ((toupper(pszParam[1]) == 'P') && (toupper(pszParam[2]) == 'S'))
+                    EPS_OUTPUT_FIGURED_OUT = 1;
+                else
+                {
+                    int j;
+                    float pfact, punit;
+                    j = sscanf(pszParam,"%c%f,%f,%f",&type,&z_line_offset,&pfact,&punit);
+                    if (z_line_offset > 1.0)
+                        z_line_offset = 1.0;
+                    printf("z_line_offset = %f\n", z_line_offset);
+                    if (pszParam[0] == 'E')      // For Capital E use z_line_offset
+                        PolygonOffsetEnabled = 0;  // instead of glpolygonoffset.
+                    if (j == 4)
+                    {
+                        PolygonOffsetFactor = pfact;
+                        PolygonOffsetunits = punit;
+                        printf("polygonoffset(%f, %f)\n", pfact, punit);
+                    }
+                }
+                break;
+            case 'F':
+            case 'f':
+            {
+                char c;
+                sscanf(pszParam,"%c%c",&type,&c);
+                c = toupper(c);
+                switch (c) {
+                case 'H': // mnemonic = sHading? =Hi quality?
+                    ldraw_commandline_opts.F |= TYPE_F_SHADED_MODE; // zShading = 1;
+                    break;
+                case 'S':
+                    if (toupper(pszParam[2]) == 'L') {
+                        switch (pszParam[3]) {
+                        case '0':
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                            sscanf(&(pszParam[3]),"%d",&StudLogo);
+                            break;
+                        default:
+                            ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
+                            break;
+                        }
+                    } else {
+                        ldraw_commandline_opts.F |= TYPE_F_STUDLESS_MODE;
+                    }
+                    break;
+                case 'W':
+                case 'L':
+                    ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
+                    break;
+                case 'N': // mnemonic = normal (no shading)
+                    ldraw_commandline_opts.F &= ~(TYPE_F_NO_POLYGONS); // zWire = 0;
+                    ldraw_commandline_opts.F &= ~(TYPE_F_SHADED_MODE); // zShading = 0
+                    break;
+                case 'R':
+                case 'E':
+                    ldraw_commandline_opts.F |= TYPE_F_NO_LINES; // no Edgelines
+                    break;
+                case 'F': // Fog.
+                {
+                    float v[4][4];
+                    v[0][0] = 1,0;   // LINEAR
+                    v[0][1] = fogEnd; // or fogDensity
+                    v[0][2] = fogStart;
+                    v[1][0] = fogColor[0];
+                    v[1][1] = fogColor[1];
+                    v[1][2] = fogColor[2];
+                    ScanPoints(v, 2, &(pszParam[2]));
+                    printf("fogging = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+                    fogging = (int) v[0][0];
+                    if (fogging < 1) fogging = 1;
+                    if (fogging > 3) fogging = 3;
+                    if (fogging == 1)
+                    {
+                        fogStart = v[0][1];
+                        fogEnd = v[0][2];
+                    }
+                    else
+                        fogDensity = v[0][1];
+                    printf("fogColor = (%g, %g, %g)\n", v[1][0], v[1][1], v[1][2]);
+                    fogColor[0] = v[1][0];
+                    fogColor[1] = v[1][1];
+                    fogColor[2] = v[1][2];
+                }
+                    break;
+                case 'M': // Motion? Mouse Movement?
+                    if ((pszParam[2] == '0') && (toupper(pszParam[3]) == 'X'))
+                        sscanf(pszParam,"%c%c%x",&type,&c,&pan_visible);
+                    else
+                        sscanf(pszParam,"%c%c%d",&type,&c,&pan_visible);
+                    break;
+                case 'A': // Experimental Trans FADE Effect for LPub3D
+                    if (1 == sscanf(pszParam+2,"%d,",&n)){ // Get list of colors for FADE.
+                        int j=0;
+                        char *p = pszParam+2;
+                        TransFadeEffect |= 2; // Enable it (Mark it as a GLOBAL cmd line fade)
+                        TransFadeCmd = n;
+                        for (p = strchr(p, ','); p; p = strchr(p, ',')){
+                            p++; // skip over the comma char (or the A in -FA)
+                            if (1 != sscanf(p,"%d",&n))
+                                break;
+                            FadeColors[j++] = n;
+                        }
+                        nFadeColors = j;
+                    }
+                    //printf("FADE(%d,%d)=%d,%d,%d,%d,%d,%d\n",TransFadeEffect, nFadeColors,FadeColors[0], FadeColors[1],FadeColors[2],FadeColors[3],FadeColors[4],FadeColors[5]);
+                    break;
+                }
+            }
+                break;
+            case 'G':
+            case 'g':
 #ifdef USE_GLFONT
-	if (toupper(pszParam[1]) == 'F') // Glfont file name
-	{
-	  if (pszParam[2])
-	  {
-	    fontname = strdup(&pszParam[2]);
-	    printf("Loading glfont %s\n", fontname);
-	  }
-	  else
-	    fontname = strdup("ariel.glf");
-	}
-	else
+                if (toupper(pszParam[1]) == 'F') // Glfont file name
+                {
+                    if (pszParam[2])
+                    {
+                        fontname = strdup(&pszParam[2]);
+                        printf("Loading glfont %s\n", fontname);
+                    }
+                    else
+                        fontname = strdup("ariel.glf");
+                }
+                else
 #endif
-	  ldraw_commandline_opts.debug_level = 1;
-	break;
-      case 'i':
-      case 'I':
-	sscanf(pszParam,"%c%d",&type,&ldraw_image_type);
-	// Turn off cropping (image size = window size) if negative.
-	if (ldraw_image_type < 0)
-	{
-	  ldraw_image_type *= -1;
-	  cropping = 0;
-	}
-	break;
-      case 'J':
-	ldraw_projection_type = 1; // Use Perspective projection.
-	/* LdrawOblique only makes sense in ortho projection. */
-	if (m_viewMatrix == LdrawOblique)
-	{
-	  m_viewMatrix = Oblique; // Turn off LdrawOblique model/proj matrix.
-	  parse_view(m_viewMatrix);
-	}
-	break;
-      case 'j':
-	ldraw_projection_type = 0; // Use Orthographic projection.
-	/* Also disable LdrawOblique.  Press 0 key to view LdrawOblique. */
-	if (m_viewMatrix == LdrawOblique)
-	{
-	  m_viewMatrix = Oblique; // Turn off LdrawOblique model/proj matrix.
-	  parse_view(m_viewMatrix);
-	}
-	break;
-      case 'K':
-      case 'k':
-	ldraw_commandline_opts.center_at_origin=1;
-	break;
-      case 'L':
-      case 'l':
-	// -l3 forces l3 parser, -ld forces ldlite parser, -l sets logging.
-	if (pszParam[1] == '3')
-	{
-	  parsername = L3_PARSER;
-	  use_quads = 1;
-	  printf("Parser = L3\n");
-	}
-  // pass LDConfig as a command line argument.
-  else if ((toupper(pszParam[1]) == 'D') &&
-           (toupper(pszParam[2]) == 'C') &&
-           (toupper(pszParam[3]) == 'F'))
-  {
-      // remove '-ldcF' path prefix
-      memmove(pszParam, pszParam+4, strlen(pszParam));
-      if (pszParam[0])
-      {
-        char ldconfigfilepath[256];
-        strcpy(ldconfigfilename, basename(pszParam));
-        concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
-        strcpy(ldconfig, localize_path(ldconfigfilepath));
-        printf("Commandline LDConfig = %s\n", ldconfig);
-      }
-  }
-	else if (toupper(pszParam[1]) == 'D')
-	{
-	  parsername = LDLITE_PARSER;
-	  use_quads = 0;
-	  printf("Parser = LDLite\n");
-	}
-	else if (pszParam[1] == 'e')
-	{
-	  SOLID_EDIT_MODE = 0;
-	  editing = 1;
-	  _strlwr(pszParam);
-	  if (strstr(pszParam, "ledit"))
-	  {
-	    ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
-	    DrawToCurPiece = 1;
-	  }
-	}
-	else if (pszParam[1] == 'E')
-	{
-	  SOLID_EDIT_MODE = 1;
-	  editing = 1;
-	  _strlwr(pszParam);
-	  if (strstr(pszParam, "ledit"))
-	  {
-	    ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
-	    DrawToCurPiece = 1;
-	  }
-	}
-	else if (pszParam[1] == 'c') //Spotlight coords
-	{
-	  float v[4][4];
-	  char *colorstring;
-	  v[0][0] = -1.0;
-	  v[0][1] = v[0][2] = 1.0;
-	  v[1][0] = v[1][1] = v[1][2] = 0.5;
-	  ScanPoints(v, 2, &(pszParam[2]));
-	  printf("LightPos = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
-	  lightposition0[0] = v[0][0];
-	  lightposition0[1] = v[0][1];
-	  lightposition0[2] = v[0][2];
-	  printf("LightColor = (%g, %g, %g)\n", v[1][0], v[1][1], v[1][2]);
-	  lightcolor0[0] = v[1][0];
-	  lightcolor0[1] = v[1][1];
-	  lightcolor0[2] = v[1][2];
-      UNUSED(colorstring);
-	}
-	else if (pszParam[1] == 'C') // Ambient light color
-	{
-	  float v[4][4];
-	  v[0][0] = v[0][1] = v[0][2] = 0.75;
-	  ScanPoints(v, 1, &(pszParam[2]));
-	  printf("AmbientColor = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
-	  lightcolor1[0] = v[0][0];
-	  lightcolor1[1] = v[0][1];
-	  lightcolor1[2] = v[0][2];
-	}
-	else
-	  ldraw_commandline_opts.log_output = 1;
-	break;
-      case 'M':
-      case 'm':
-	sscanf(pszParam,"%c%c",&type,&(ldraw_commandline_opts.M));
-	// Uppercase S = save steps AND render it offscreen if possible.
-	if (ldraw_commandline_opts.M == 'S')
-	  OffScreenRendering = SetOffScreenRendering();
-	// Uppercase F = save final step AND render it offscreen if possible.
-	if (ldraw_commandline_opts.M == 'F')
-	  OffScreenRendering = SetOffScreenRendering();
-	ldraw_commandline_opts.M = toupper(ldraw_commandline_opts.M);
-	if (pszParam[2])
-	  picfilename = strdup(&pszParam[2]);
-	break;
-      case 'O':
-      case 'o':
-	{
-	  float dx, dy;
-	  sscanf(pszParam,"%c%f,%f",&type, &dx, &dy);
-	  ldraw_commandline_opts.O.x = dx;
-	  ldraw_commandline_opts.O.y = dy;
-	  ldraw_commandline_opts.O.z = 0.0;
-	}
-	break;
-      case 'N':
-      case 'n':
-	sscanf(pszParam,"%c%d",&type, &zDetailLevel);
-	if (zDetailLevel >= TYPE_MODEL)
-	  zDetailLevel = TYPE_MODEL;
-	else if (zDetailLevel >= TYPE_PART)
-	  zDetailLevel = TYPE_PART;
-	else
-	  zDetailLevel = TYPE_P;
-	break;
-      case 'P':
-      case 'p':
-	ldraw_commandline_opts.poll= 1;
-	break;
-      case 'Q':
-      case 'q':
-	qualityLines = 1;
-	break;
-      case 'R':
-      case 'r':
-	sscanf(pszParam,"%c%s",&type, &output_file_name);
-	ldraw_commandline_opts.output=1;
-	ldraw_commandline_opts.output_depth=1;
-	printf("Save (%s)\n", output_file_name);
-	break;
-      case 's':
-	//downsample = 1;
-      case 'S':
+                    ldraw_commandline_opts.debug_level = 1;
+                break;
+            case 'i':
+            case 'I':
+                sscanf(pszParam,"%c%d",&type,&ldraw_image_type);
+                // Turn off cropping (image size = window size) if negative.
+                if (ldraw_image_type < 0)
+                {
+                    ldraw_image_type *= -1;
+                    cropping = 0;
+                }
+                break;
+            case 'J':
+                ldraw_projection_type = 1; // Use Perspective projection.
+                /* LdrawOblique only makes sense in ortho projection. */
+                if (m_viewMatrix == LdrawOblique)
+                {
+                    m_viewMatrix = Oblique; // Turn off LdrawOblique model/proj matrix.
+                    parse_view(m_viewMatrix);
+                }
+                break;
+            case 'j':
+                ldraw_projection_type = 0; // Use Orthographic projection.
+                /* Also disable LdrawOblique.  Press 0 key to view LdrawOblique. */
+                if (m_viewMatrix == LdrawOblique)
+                {
+                    m_viewMatrix = Oblique; // Turn off LdrawOblique model/proj matrix.
+                    parse_view(m_viewMatrix);
+                }
+                break;
+            case 'K':
+            case 'k':
+                ldraw_commandline_opts.center_at_origin=1;
+                break;
+            case 'L':
+            case 'l':
+                // -l3 forces l3 parser, -ld forces ldlite parser, -l sets logging.
+                if (pszParam[1] == '3')
+                {
+                    parsername = L3_PARSER;
+                    use_quads = 1;
+                    printf("Parser = L3\n");
+                }
+                // pass LDConfig as a command line argument.
+                else if ((toupper(pszParam[1]) == 'D') &&
+                         (toupper(pszParam[2]) == 'C') &&
+                         (toupper(pszParam[3]) == 'F'))
+                {
+                    // remove '-ldcF' path prefix
+                    memmove(pszParam, pszParam+4, strlen(pszParam));
+                    if (pszParam[0])
+                    {
+                        char ldconfigfilepath[256];
+                        strcpy(ldconfigfilename, basename(pszParam));
+                        concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
+                        strcpy(ldconfig, localize_path(ldconfigfilepath));
+                        printf("Commandline LDConfig = %s\n", ldconfig);
+                    }
+                }
+                else if (toupper(pszParam[1]) == 'D')
+                {
+                    parsername = LDLITE_PARSER;
+                    use_quads = 0;
+                    printf("Parser = LDLite\n");
+                }
+                else if (pszParam[1] == 'e')
+                {
+                    SOLID_EDIT_MODE = 0;
+                    editing = 1;
+                    _strlwr(pszParam);
+                    if (strstr(pszParam, "ledit"))
+                    {
+                        ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
+                        DrawToCurPiece = 1;
+                    }
+                }
+                else if (pszParam[1] == 'E')
+                {
+                    SOLID_EDIT_MODE = 1;
+                    editing = 1;
+                    _strlwr(pszParam);
+                    if (strstr(pszParam, "ledit"))
+                    {
+                        ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
+                        DrawToCurPiece = 1;
+                    }
+                }
+                else if (pszParam[1] == 'c') //Spotlight coords
+                {
+                    float v[4][4];
+                    char *colorstring;
+                    v[0][0] = -1.0;
+                    v[0][1] = v[0][2] = 1.0;
+                    v[1][0] = v[1][1] = v[1][2] = 0.5;
+                    ScanPoints(v, 2, &(pszParam[2]));
+                    printf("LightPos = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+                    lightposition0[0] = v[0][0];
+                    lightposition0[1] = v[0][1];
+                    lightposition0[2] = v[0][2];
+                    printf("LightColor = (%g, %g, %g)\n", v[1][0], v[1][1], v[1][2]);
+                    lightcolor0[0] = v[1][0];
+                    lightcolor0[1] = v[1][1];
+                    lightcolor0[2] = v[1][2];
+                    UNUSED(colorstring);
+                }
+                else if (pszParam[1] == 'C') // Ambient light color
+                {
+                    float v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = 0.75;
+                    ScanPoints(v, 1, &(pszParam[2]));
+                    printf("AmbientColor = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+                    lightcolor1[0] = v[0][0];
+                    lightcolor1[1] = v[0][1];
+                    lightcolor1[2] = v[0][2];
+                }
+                else
+                    ldraw_commandline_opts.log_output = 1;
+                break;
+            case 'M':
+            case 'm':
+                sscanf(pszParam,"%c%c",&type,&(ldraw_commandline_opts.M));
+                // Uppercase S = save steps AND render it offscreen if possible.
+                if (ldraw_commandline_opts.M == 'S')
+                    OffScreenRendering = SetOffScreenRendering();
+                // Uppercase F = save final step AND render it offscreen if possible.
+                if (ldraw_commandline_opts.M == 'F')
+                    OffScreenRendering = SetOffScreenRendering();
+                ldraw_commandline_opts.M = toupper(ldraw_commandline_opts.M);
+                if (pszParam[2])
+                    picfilename = strdup(&pszParam[2]);
+                break;
+            case 'O':
+            case 'o':
+            {
+                float dx, dy;
+                sscanf(pszParam,"%c%f,%f",&type, &dx, &dy);
+                ldraw_commandline_opts.O.x = dx;
+                ldraw_commandline_opts.O.y = dy;
+                ldraw_commandline_opts.O.z = 0.0;
+            }
+                break;
+            case 'N':
+            case 'n':
+                sscanf(pszParam,"%c%d",&type, &zDetailLevel);
+                if (zDetailLevel >= TYPE_MODEL)
+                    zDetailLevel = TYPE_MODEL;
+                else if (zDetailLevel >= TYPE_PART)
+                    zDetailLevel = TYPE_PART;
+                else
+                    zDetailLevel = TYPE_P;
+                break;
+            case 'P':
+            case 'p':
+                ldraw_commandline_opts.poll= 1;
+                break;
+            case 'Q':
+            case 'q':
+                qualityLines = 1;
+                break;
+            case 'R':
+            case 'r':
+                sscanf(pszParam,"%c%s",&type, &output_file_name);
+                ldraw_commandline_opts.output=1;
+                ldraw_commandline_opts.output_depth=1;
+                printf("Save (%s)\n", output_file_name);
+                break;
+            case 's':
+                //downsample = 1;
+            case 'S':
 #if 0
-	sscanf(pszParam,"%c%g",&type,&(ldraw_commandline_opts.S));
+                sscanf(pszParam,"%c%g",&type,&(ldraw_commandline_opts.S));
 #else
-	{
-	  float s;
-	  sscanf(pszParam,"%c%g",&type,&s);
-	  if (s != 0.0)
-	    ldraw_commandline_opts.S = s;
-	  else
-	    autoscaling = 1;
-	}
+            {
+                float s;
+                sscanf(pszParam,"%c%g",&type,&s);
+                if (s != 0.0)
+                    ldraw_commandline_opts.S = s;
+                else
+                    autoscaling = 1;
+            }
 #endif
-	break;
-      case 'T':
-      case 't':
-	ldraw_commandline_opts.rotate = 1;
-	break;
+                break;
+            case 'T':
+            case 't':
+                ldraw_commandline_opts.rotate = 1;
+                break;
 #ifdef TILE_RENDER_OPTION
-      case 'U':
-      case 'u':
-	// We only do this for non-interactive modes like -MS. (check later)
-	tiledRendering = 1;
-	sscanf(pszParam,"%c%d,%d",
-	       &type, &TILE_IMAGE_WIDTH, &TILE_IMAGE_HEIGHT);
-	break;
+            case 'U':
+            case 'u':
+                // We only do this for non-interactive modes like -MS. (check later)
+                tiledRendering = 1;
+                sscanf(pszParam,"%c%d,%d",
+                       &type, &TILE_IMAGE_WIDTH, &TILE_IMAGE_HEIGHT);
+                break;
 #endif
-      case 'V':
-      case 'v':
-	if (strstr(pszParam, ","))
-	{
-	  sscanf(pszParam,"%c%d,%d", &type, &x, &y);
-	  if ((x > 0) && (y > 0))
-	  {
-	    ldraw_commandline_opts.V_x = x;
-	    ldraw_commandline_opts.V_y = y;
-	  }
-	  break;
-	}
-	sscanf(pszParam,"%c%d",&type, &mode);
-	switch(mode) {
-	case -2:
-	  ldraw_commandline_opts.V_x=-2;
-	  ldraw_commandline_opts.V_y=-2;
-	  break;
-	case -1:
-	  ldraw_commandline_opts.V_x=-1;
-	  ldraw_commandline_opts.V_y=-1;
-	  break;
-	case 0:
-	  ldraw_commandline_opts.V_x=320;
-	  ldraw_commandline_opts.V_y=200;
-	  break;
-	case 1:
-	  ldraw_commandline_opts.V_x=640;
-	  ldraw_commandline_opts.V_y=200;
-	  break;
-	case 2:
-	  ldraw_commandline_opts.V_x=640;
-	  ldraw_commandline_opts.V_y=350;
-	  break;
-	case 3:
-	  ldraw_commandline_opts.V_x=640;
-	  ldraw_commandline_opts.V_y=480;
-	  break;
-	case 4:
-	  ldraw_commandline_opts.V_x=800;
-	  ldraw_commandline_opts.V_y=600;
-	  break;
-	case 5:
-	  ldraw_commandline_opts.V_x=1024;
-	  ldraw_commandline_opts.V_y=768;
-	  break;
-	case 6:
-	  ldraw_commandline_opts.V_x=1280;
-	  ldraw_commandline_opts.V_y=1024;
-	case 7:
-	  ldraw_commandline_opts.V_x=1600;
-	  ldraw_commandline_opts.V_y=1024;
-	case 8:
-	  ldraw_commandline_opts.V_x=1600;
-	  ldraw_commandline_opts.V_y=1200;
-	  break;
-	}
-	break;
+            case 'V':
+            case 'v':
+                if (strstr(pszParam, ","))
+                {
+                    sscanf(pszParam,"%c%d,%d", &type, &x, &y);
+                    if ((x > 0) && (y > 0))
+                    {
+                        ldraw_commandline_opts.V_x = x;
+                        ldraw_commandline_opts.V_y = y;
+                    }
+                    break;
+                }
+                sscanf(pszParam,"%c%d",&type, &mode);
+                switch(mode) {
+                case -2:
+                    ldraw_commandline_opts.V_x=-2;
+                    ldraw_commandline_opts.V_y=-2;
+                    break;
+                case -1:
+                    ldraw_commandline_opts.V_x=-1;
+                    ldraw_commandline_opts.V_y=-1;
+                    break;
+                case 0:
+                    ldraw_commandline_opts.V_x=320;
+                    ldraw_commandline_opts.V_y=200;
+                    break;
+                case 1:
+                    ldraw_commandline_opts.V_x=640;
+                    ldraw_commandline_opts.V_y=200;
+                    break;
+                case 2:
+                    ldraw_commandline_opts.V_x=640;
+                    ldraw_commandline_opts.V_y=350;
+                    break;
+                case 3:
+                    ldraw_commandline_opts.V_x=640;
+                    ldraw_commandline_opts.V_y=480;
+                    break;
+                case 4:
+                    ldraw_commandline_opts.V_x=800;
+                    ldraw_commandline_opts.V_y=600;
+                    break;
+                case 5:
+                    ldraw_commandline_opts.V_x=1024;
+                    ldraw_commandline_opts.V_y=768;
+                    break;
+                case 6:
+                    ldraw_commandline_opts.V_x=1280;
+                    ldraw_commandline_opts.V_y=1024;
+                case 7:
+                    ldraw_commandline_opts.V_x=1600;
+                    ldraw_commandline_opts.V_y=1024;
+                case 8:
+                    ldraw_commandline_opts.V_x=1600;
+                    ldraw_commandline_opts.V_y=1200;
+                    break;
+                }
+                break;
 #ifdef WINDOWS
-      case '&':
-	FreeConsole();
-	// NOTE: Perhaps I should compile with -mwindows for no console
-	// and then add a console later with AllocConsole() if no -&
-	// Windows sucks!!!  This should be handled by the cmd line shell!
-	// Perhaps I should write a intermedite app DETACH.EXE which puts it
-	// runs its commandline as a background process.
-	// NOTE:  On win2k (and perhaps) NT you must use quotes: "-&"
-	// Apparently & means something (but not run in background) :-(
-	break;
+            case '&':
+                FreeConsole();
+                // NOTE: Perhaps I should compile with -mwindows for no console
+                // and then add a console later with AllocConsole() if no -&
+                // Windows sucks!!!  This should be handled by the cmd line shell!
+                // Perhaps I should write a intermedite app DETACH.EXE which puts it
+                // runs its commandline as a background process.
+                // NOTE:  On win2k (and perhaps) NT you must use quotes: "-&"
+                // Apparently & means something (but not run in background) :-(
+                break;
 #endif
-      case 'W':
-      case 'w':
-	sscanf(pszParam,"%c%f",&type, &lineWidth);
-	if (lineWidth < 0.0)
-	  lineWidth = 0.0;
-	break;
-      case 'X':
-      case 'x':
-	drawAxis = 1;
-	break;
-      case 'Z':
-      case 'z':
-	{
+            case 'W':
+            case 'w':
+                sscanf(pszParam,"%c%f",&type, &lineWidth);
+                if (lineWidth < 0.0)
+                    lineWidth = 0.0;
+                break;
+            case 'X':
+            case 'x':
+                drawAxis = 1;
+                break;
+            case 'Z':
+            case 'z':
+            {
 #if 0
-	  double g;
-	  sscanf(pszParam,"%c%g",&type,&g);
-	  ldraw_commandline_opts.Z = (int) (Z_SCALE_FACTOR * g + 0.5);
+                double g;
+                sscanf(pszParam,"%c%g",&type,&g);
+                ldraw_commandline_opts.Z = (int) (Z_SCALE_FACTOR * g + 0.5);
 #else
-	  float g;
-	  sscanf(pszParam,"%c%f",&type,&g);
-	  if (pszParam[0] == 'z')
-	  {
-	    projection_znear = g;
-	    camera_znear_set = 1;
-	  }
-	  else // (pszParam[0] == 'Z')
-	  {
-	    projection_zfar = g;
-	    camera_zfar_set = 1;
-	  }
-	  printf("ZClip = (%g, %g)\n", projection_znear, projection_zfar);
+                float g;
+                sscanf(pszParam,"%c%f",&type,&g);
+                if (pszParam[0] == 'z')
+                {
+                    projection_znear = g;
+                    camera_znear_set = 1;
+                }
+                else // (pszParam[0] == 'Z')
+                {
+                    projection_zfar = g;
+                    camera_zfar_set = 1;
+                }
+                printf("ZClip = (%g, %g)\n", projection_znear, projection_zfar);
 #endif
-	}
-	break;
-      case '2': // Downsample when writing image file, and/or prescale up.
-	{
-	  char *p;
-	  for (p = pszParam; p; p = strchr(p, ','))
-	  {
-	    int j, n;
-        UNUSED(n);
+            }
+                break;
+            case '2': // Downsample when writing image file, and/or prescale up.
+            {
+                char *p;
+                for (p = pszParam; p; p = strchr(p, ','))
+                {
+                    int j, n;
+                    UNUSED(n);
 
-	    if (*p == ',')
-	      p++; // skip over the comma char.
-	    if (2 == sscanf(p,"%d%c",&j, &type))
-      {
-	      if (tolower(type) == 'g')  // G for Gaussian blur filtered decimation.
-        {
-		      downsample = 1; // Someday this could be j-1 for bigger filter.
-          printf("Downsample = Yes\n");
+                    if (*p == ',')
+                        p++; // skip over the comma char.
+                    if (2 == sscanf(p,"%d%c",&j, &type))
+                    {
+                        if (tolower(type) == 'g')  // G for Gaussian blur filtered decimation.
+                        {
+                            downsample = 1; // Someday this could be j-1 for bigger filter.
+                            printf("Downsample = Yes\n");
+                        }
+                        else if (tolower(type) == 'x') // X for eg. 2x upscale.
+                        {
+                            upscale = j;
+                            printf("Upscale factor = (%d)\n", upscale);
+                        }
+                    }
+                }
+                break;
+            }
+            }
         }
-	      else if (tolower(type) == 'x') // X for eg. 2x upscale.
-        {
-		      upscale = j;
-          printf("Upscale factor = (%d)\n", upscale);
-        }
-	    }
-	  }
-	break;
-	}
-      }
     }
-  }
 
-  // Init ldconfigfilename and ldconfig with LDraw LDConfig default if not set yet
-  if (!strlen(ldconfig))
-  {
-    sprintf(ldconfigfilename, "LDConfig.ldr");
-    concat_path(pathname, ldconfigfilename, ldconfig);
-    printf("LDraw LDConfig = %s\n", ldconfig);
-  }
-
-  // Tiled rendering does not work offscreen.  Just use one big bitmap.
-  if (OffScreenRendering && tiledRendering)
-  {
-    tiledRendering = 0;
-    x = TILE_IMAGE_WIDTH;
-    y = TILE_IMAGE_HEIGHT;
-    if ((x > 0) && (y > 0))
+    // Init ldconfigfilename and ldconfig with LDraw LDConfig default if not set yet
+    if (!strlen(ldconfig))
     {
-      ldraw_commandline_opts.V_x = x;
-      ldraw_commandline_opts.V_y = y;
+        sprintf(ldconfigfilename, "LDConfig.ldr");
+        concat_path(pathname, ldconfigfilename, ldconfig);
+        printf("LDraw LDConfig = %s\n", ldconfig);
     }
-  }
+
+    // Tiled rendering does not work offscreen.  Just use one big bitmap.
+    if (OffScreenRendering && tiledRendering)
+    {
+        tiledRendering = 0;
+        x = TILE_IMAGE_WIDTH;
+        y = TILE_IMAGE_HEIGHT;
+        if ((x > 0) && (y > 0))
+        {
+            ldraw_commandline_opts.V_x = x;
+            ldraw_commandline_opts.V_y = y;
+        }
+    }
 
 #ifdef FORCE_2G2X
-  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
-  // This is a nice spot to add test settings for LPub3d.
-  // Force -2g2x, set background to black, and lighting to head on.
-  if (OffScreenRendering) // Scale up render window.
-  {
-    downsample = 1;
-    if (upscale == 0)
-      upscale = 2;
-    ldraw_commandline_opts.B = 0x2000000;
-    lightposition0[0] = 0.0;
-    lightposition0[1] = 1000.0;
-    lightposition0[2] = 1000.0;
-    lightposition0[3] = 0.0;
-  }
-  // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
+    // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
+    // This is a nice spot to add test settings for LPub3d.
+    // Force -2g2x, set background to black, and lighting to head on.
+    if (OffScreenRendering) // Scale up render window.
+    {
+        downsample = 1;
+        if (upscale == 0)
+            upscale = 2;
+        ldraw_commandline_opts.B = 0x2000000;
+        lightposition0[0] = 0.0;
+        lightposition0[1] = 1000.0;
+        lightposition0[2] = 1000.0;
+        lightposition0[3] = 0.0;
+    }
+    // DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.  DEBUG.
 #endif
 
-  // If upscaling (in preparation for eventual downsample) then scale up scene.
-  if (upscale) {
-    SilhouetteScale *= (float)upscale;
-    ldraw_commandline_opts.S *= upscale;
-    lineWidth *= upscale;
-    if (OffScreenRendering || camera_globe_set) // Scale up render window.
-    {
-      camera_distance *= upscale;
-      ldraw_commandline_opts.V_x *= upscale;
-      ldraw_commandline_opts.V_y *= upscale;
-      ldraw_commandline_opts.O.x *= upscale;
-      ldraw_commandline_opts.O.y *= upscale;
-      ldraw_commandline_opts.O.z *= upscale;
-    }
-    upscale = 1; // only apply once.  OSX can call ParseParams twice.
-  }
-
-  if (camera_globe_set)
-  {
-    float v[4][4];
-    double distance;
-    double lo, la;
-    double x, y, z;
-    UNUSED(distance);
-    UNUSED(x);
-    UNUSED(y);
-    UNUSED(z);
-
-    if (camera_distance <= 0.0)
-    {
-      camera_distance = projection_fromz;
-      //distance = sqrt(x*x + y*y + z*z);
-    }
-    else // Adjust clip planes for camera_distance (if not manually set).
-    {
-      if (camera_distance > projection_fromz)
-	if (camera_zfar_set == 0)
-	  projection_zfar = camera_distance + 3000;
-      if (camera_distance > 3000)
-	if (camera_znear_set == 0)
-	  projection_znear = 100;
-      if (camera_distance > 10000)
-	if (camera_znear_set == 0)
-	  projection_znear = camera_distance - 3000;
+    // If upscaling (in preparation for eventual downsample) then scale up scene.
+    if (upscale) {
+        SilhouetteScale *= (float)upscale;
+        ldraw_commandline_opts.S *= upscale;
+        lineWidth *= upscale;
+        if (OffScreenRendering || camera_globe_set) // Scale up render window.
+        {
+            camera_distance *= upscale;
+            ldraw_commandline_opts.V_x *= upscale;
+            ldraw_commandline_opts.V_y *= upscale;
+            ldraw_commandline_opts.O.x *= upscale;
+            ldraw_commandline_opts.O.y *= upscale;
+            ldraw_commandline_opts.O.z *= upscale;
+        }
+        upscale = 1; // only apply once.  OSX can call ParseParams twice.
     }
 
-    printf("Znear, Zfar = %g, %g\n", projection_znear, projection_zfar);
+    if (camera_globe_set)
+    {
+        float v[4][4];
+        double distance;
+        double lo, la;
+        double x, y, z;
+        UNUSED(distance);
+        UNUSED(x);
+        UNUSED(y);
+        UNUSED(z);
+
+        if (camera_distance <= 0.0)
+        {
+            camera_distance = projection_fromz;
+            //distance = sqrt(x*x + y*y + z*z);
+        }
+        else // Adjust clip planes for camera_distance (if not manually set).
+        {
+            if (camera_distance > projection_fromz)
+                if (camera_zfar_set == 0)
+                    projection_zfar = camera_distance + 3000;
+            if (camera_distance > 3000)
+                if (camera_znear_set == 0)
+                    projection_znear = 100;
+            if (camera_distance > 10000)
+                if (camera_znear_set == 0)
+                    projection_znear = camera_distance - 3000;
+        }
+
+        printf("Znear, Zfar = %g, %g\n", projection_znear, projection_zfar);
 
 #if 0
-    // Since spin is based on Oblique, subtract -cg30,45.
-    lo = 3.1415927 * (camera_longitude-45) / 180.0;
-    projection_fromz = camera_distance * cos(lo);
-    projection_fromx = camera_distance * sin(lo);
-    la = 3.1415927 * (camera_latitude -30.0) / 180.0;
-    projection_fromy = camera_distance * sin(la);
+        // Since spin is based on Oblique, subtract -cg30,45.
+        lo = 3.1415927 * (camera_longitude-45) / 180.0;
+        projection_fromz = camera_distance * cos(lo);
+        projection_fromx = camera_distance * sin(lo);
+        la = 3.1415927 * (camera_latitude -30.0) / 180.0;
+        projection_fromy = camera_distance * sin(la);
 #else
-    // Base spin on Front but call it Oblique, subtract nothing.
-    lo = 3.1415927 * camera_longitude / 180.0;
-    projection_fromz = camera_distance * cos(lo);
-    projection_fromx = camera_distance * sin(lo);
-    la = 3.1415927 * camera_latitude / 180.0;
-    projection_fromy = camera_distance * sin(la);
+        // Base spin on Front but call it Oblique, subtract nothing.
+        lo = 3.1415927 * camera_longitude / 180.0;
+        projection_fromz = camera_distance * cos(lo);
+        projection_fromx = camera_distance * sin(lo);
+        la = 3.1415927 * camera_latitude / 180.0;
+        projection_fromy = camera_distance * sin(la);
 #endif
 
-    projection_fromz *= cos(la);
-    projection_fromx *= cos(la);
+        projection_fromz *= cos(la);
+        projection_fromx *= cos(la);
 
-    // Err, should I also add projection_toward to projection_from
-    // so the globe is centered around the lookat point.  What does
-    // L3P do?  Test it with a small stack of bricks.
+        // Err, should I also add projection_toward to projection_from
+        // so the globe is centered around the lookat point.  What does
+        // L3P do?  Test it with a small stack of bricks.
 
-    // What happens to the up vector for negative latitudes?
-    // The new l3p says -cr roll vector defaults to 0.
+        // What happens to the up vector for negative latitudes?
+        // The new l3p says -cr roll vector defaults to 0.
 
-    v[0][0] = projection_fromx;
-    v[0][1] = projection_fromy;
-    v[0][2] = projection_fromz;
-    printf("CAM = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
+        v[0][0] = projection_fromx;
+        v[0][1] = projection_fromy;
+        v[0][2] = projection_fromz;
+        printf("CAM = (%g, %g, %g)\n", v[0][0], v[0][1], v[0][2]);
 
-    // Yuck!  Gotta get rid of LdrawOblique!
-    // L3p defaults to Oblique view (-cg30,45) but uses front view for -cg.
-    // L3p puts the origin at the center of model bbox, not ldraw (0,0,0).
-    // Maybe I should offset by the center of the model bbox to match it.
-    // Unfortunately I don't have that until I parse the model...
+        // Yuck!  Gotta get rid of LdrawOblique!
+        // L3p defaults to Oblique view (-cg30,45) but uses front view for -cg.
+        // L3p puts the origin at the center of model bbox, not ldraw (0,0,0).
+        // Maybe I should offset by the center of the model bbox to match it.
+        // Unfortunately I don't have that until I parse the model...
 
-    // When would it not be oblique in parseparams?  ALWAYS switch to Front for -cg.
-    // The real problem here is if someone passed a matrix in via -a.
-    // I'd still be *calling* it oblique, but it could be anything.
-    // Maybe we want to move the model by it and then apply the camera settings.
-    // Gotta think about that.  For now, just switch to front.
-    //if (m_viewMatrix == LdrawOblique)
-    {
-      m_viewMatrix = Front;
-      parse_view(m_viewMatrix);
-      m_viewMatrix = Oblique; // Use Front, but call it oblique for spin.
+        // When would it not be oblique in parseparams?  ALWAYS switch to Front for -cg.
+        // The real problem here is if someone passed a matrix in via -a.
+        // I'd still be *calling* it oblique, but it could be anything.
+        // Maybe we want to move the model by it and then apply the camera settings.
+        // Gotta think about that.  For now, just switch to front.
+        //if (m_viewMatrix == LdrawOblique)
+        {
+            m_viewMatrix = Front;
+            parse_view(m_viewMatrix);
+            m_viewMatrix = Oblique; // Use Front, but call it oblique for spin.
+        }
+
+        // Does the view matrix get set back to oblique when I use the arrows?
+        // Arrow left, then back right.  The view is not the same.  What is up?
+        // Did this happen in version 1.1.5?
+
+        // I think panning works from Oblique, so I should go with that too.
+        // That doesn't seem to work though.  I get both tilts.  I must make
+        // it work with Oblique.  That's used everywhere.
     }
-
-    // Does the view matrix get set back to oblique when I use the arrows?
-    // Arrow left, then back right.  The view is not the same.  What is up?
-    // Did this happen in version 1.1.5?
-
-    // I think panning works from Oblique, so I should go with that too.
-    // That doesn't seem to work though.  I get both tilts.  I must make
-    // it work with Oblique.  That's used everywhere.
-  }
 }
 
 /***************************************************************/

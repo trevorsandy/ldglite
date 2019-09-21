@@ -225,6 +225,7 @@ Command line options (see also the original ldlite docs for more):
 -fh turns on shading mode.
 -fs turns off stud drawing. (l3glite only)
 -fsl draws studs as lines. (l3glite only)
+-fslN draws stud logo. 'N' can be 0-5, 0 no logo is the default value.
 -fe turns off edge lines 
 -fr same as -fe (Render mode?  Rough draft?  I don't know what R stands for.)
 -ffT,E,S,R,G,B turns on fogging 
@@ -270,6 +271,7 @@ Command line options (see also the original ldlite docs for more):
 -ledit or -LEDIT do the same but with draw-to-current and stud-as-line on.
 -wN sets linewidth to N.
 -q quality lines (antialiased)
+-j picks the orthographic projection.
 -J picks the perspective projection.
 -zN sets the near clipping plane.  (default = 10.  100 if GL_DEPTH_BITS < 24)
 -ZN sets the far clipping plane.  (default = 4000)
@@ -278,7 +280,7 @@ Command line options (see also the original ldlite docs for more):
 -cg<la>,<lo>,<r> sets the camera location on globe.  (like l3p)
 -coX,Y,Z sets the model origin for the camera to look at.  (default = 0,0,0)
 -claX,Y,Z same as -coX,Y,Z
--cuX,Y,Z sets the camera up vector.  (default = 0,0,1)
+-cuX,Y,Z sets the camera up vector.  (default = 0,1,0)
 -lcX,Y,Z sets the light location.  (like l3p, except default = -1000,1000,1000)
 -lcX,Y,Z,R,G,B sets the light location and color.
 -lCR,G,B sets the ambient lighting color.

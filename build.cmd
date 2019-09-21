@@ -9,8 +9,8 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 20, 2018
-rem  Copyright (c) 2017 - 2018 by Trevor SANDY
+rem  Last Update: Sep 21, 2019
+rem  Copyright (c) 2017 - 2019 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,7 +45,7 @@ SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
 
 SET PACKAGE=LDGLite
-SET VERSION=1.3.4
+SET VERSION=1.3.5
 SET CONFIGURATION=release
 
 SET THIRD_INSTALL=unknown
@@ -253,7 +253,7 @@ REM SET "LDSEARCHDIRS=%LPUB3D_DATA%\fade^|%LDRAW_UNOFFICIAL%\customParts^|%LDRAW
 SET ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l
 SET LDCONFIG_FILE=tests\LDConfigCustom01.ldr
 SET IN_FILE=tests\Foo2.ldr
-SET OUT_FILE=tests\%PL%bit_%CONFIGURATION%-TestOK_1.3.4_Foo2.png
+SET OUT_FILE=tests\%PL%bit_%CONFIGURATION%-TestOK_1.3.5_Foo2.png
 SET PACKAGE_PATH=app\%PL%bit_%CONFIGURATION%\%PACKAGE%.exe
 SET COMMAND_LINE_ARGS=%ARGS% -ldcF%LDCONFIG_FILE% -mF%OUT_FILE% %IN_FILE%
 SET COMMAND=%PACKAGE_PATH% %COMMAND_LINE_ARGS%
