@@ -74,6 +74,7 @@ sprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 
 /* Preprocessor flags:
  _WIN32      VC++
+ WIN_UTF8_PATHS Paths are UTF-8, and build is Windows
  __TURBOC__  Borland TurboC
  __linux__   RedHat7.3 gcc -E -dM reveals: __ELF__ __i386 __i386__ i386
                  __i586 __i586__ i586 __linux __linux__ linux
@@ -84,6 +85,13 @@ sprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
                  __GNUC__=3 __MACH__=1 __STDC__=1
 */
 /* Naming refers to Windows platform */
+#if defined(_WIN32)
+#define WIN_UTF8_PATHS
+#endif
+#ifdef WIN_UTF8_PATHS
+#include <Windows.h>
+#include <Shlwapi.h>
+#endif
 #if defined(_WIN32) || defined(__TURBOC__)
 // Disable warning message C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead.
 #pragma warning( disable : 4996 )
@@ -222,7 +230,10 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
    {
       i = SplitLDrawSearch(e, &pd->nSymbolicSearchDirs, &pd->SymbolicSearchDirs);
       if (!i)
+      {
+         free(LDrawIni);
          return NULL;           /* No more memory, just give up              */
+      }
       LDrawIni->SearchDirsOrigin = strdup("LDRAWSEARCH environment variable");
    }
    else
@@ -233,7 +244,10 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
          /* LDRAWSEARCH01 set, alloc room for 99 dirs */
          pd->SymbolicSearchDirs = (char **) malloc(99 * sizeof(char *));
          if (!pd->SymbolicSearchDirs)
+         {
+            free(LDrawIni);
             return NULL;        /* No more memory, just give up              */
+         }
          while (pd->nSymbolicSearchDirs <= 99)
          {
             sprintf(Key, "LDRAWSEARCH%02d", pd->nSymbolicSearchDirs + 1);
@@ -242,14 +256,31 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
                break;
             pd->SymbolicSearchDirs[pd->nSymbolicSearchDirs] = strdup(e);
             if (!pd->SymbolicSearchDirs[pd->nSymbolicSearchDirs++])
+            {
+               free(LDrawIni);
                return NULL;     /* No more memory, just give up              */
+            }
          }
          /* Reduce memory to those found */
-         pd->SymbolicSearchDirs =
-            (char **) realloc(pd->SymbolicSearchDirs,
-                              pd->nSymbolicSearchDirs * sizeof(char *));
+         if (pd->nSymbolicSearchDirs > 0)
+         {
+            pd->SymbolicSearchDirs =
+               (char **) realloc(pd->SymbolicSearchDirs,
+               pd->nSymbolicSearchDirs * sizeof(char *));
+         }
+         else
+         {
+            // realloc behavior is implemenation-dependent when requested
+            // size is 0.
+            pd->SymbolicSearchDirs =
+               (char **) realloc(pd->SymbolicSearchDirs,
+               1 * sizeof(char *));
+         }
          if (!pd->SymbolicSearchDirs)
+         {
+            free(LDrawIni);
             return NULL;        /* No more memory, just give up              */
+         }
          LDrawIni->SearchDirsOrigin =
             strdup("LDRAWSEARCH01 etc. environment variables");
       }
@@ -264,12 +295,18 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
             /* Key "1" found, allocate room for 99 dirs */
             pd->SymbolicSearchDirs = (char **) malloc(99 * sizeof(char *));
             if (!pd->SymbolicSearchDirs)
+            {
+               free(LDrawIni);
                return NULL;     /* No more memory, just give up              */
+            }
             while (pd->nSymbolicSearchDirs < 99)
             {
                pd->SymbolicSearchDirs[pd->nSymbolicSearchDirs] = strdup(Str);
                if (!pd->SymbolicSearchDirs[pd->nSymbolicSearchDirs++])
+               {
+                  free(LDrawIni);
                   return NULL;  /* No more memory, just give up              */
+               }
                sprintf(Key, "%d", pd->nSymbolicSearchDirs + 1);
                /* Be sure to read all from same ini file */
                if (!LDrawIniReadIniFile(IniFile, "LDrawSearch", Key,
@@ -281,9 +318,12 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
                (char **) realloc(pd->SymbolicSearchDirs,
                                  pd->nSymbolicSearchDirs * sizeof(char *));
             if (!pd->SymbolicSearchDirs)
+            {
+               free(LDrawIni);
                return NULL;     /* No more memory, just give up              */
+            }
             LDrawIni->SearchDirsOrigin = strdup(IniFile);
-	 }
+         }
          else
          {
             /* Not in env, not in ini file, use default */
@@ -291,7 +331,10 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
                                  &pd->nSymbolicSearchDirs,
                                  &pd->SymbolicSearchDirs);
             if (!i)
+            {
+               free(LDrawIni);
                return NULL;     /* No more memory, just give up              */
+            }
             LDrawIni->SearchDirsOrigin = strdup("Default");
          }
       }
@@ -391,12 +434,15 @@ static void FreeSymbolicDirs(struct LDrawIniS * LDrawIni)
 
 static const char *GetDefaultLDrawSearch(void)
 {
+   // LPub3D Mod - add Unofficial folder
    return "<MODELDIR>"
    "|<HIDE><DEFPRIM><LDRAWDIR>\\P"
    "|<DEFPART><LDRAWDIR>\\PARTS"
    "|<LDRAWDIR>\\MODELS"
    "|<UNOFFIC><HIDE><DEFPRIM><LDRAWDIR>\\Unofficial\\P"
-   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\PARTS";
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\PARTS"
+   "|<UNOFFIC><HIDE><DEFPRIM><LDRAWDIR>\\Unofficial";
+   // LPub3D Mod End
 }
 
 /* Returns 1 if OK, 0 on error */
@@ -406,7 +452,7 @@ static int SplitLDrawSearch(const char *LDrawSearchString, int *nDirs, char ***D
    const char    *t;
    char          *Dir;
    int            n;
-   int            Len;
+   size_t         Len;
 
    /* Count number of dir separators '|' */
    for (n = 1, s = strchr(LDrawSearchString, '|'); s; s = strchr(s + 1, '|'))
@@ -484,7 +530,7 @@ int LDrawIniReadPreferences(const char *ApplicationID,
    CFTypeID       PropType;
 
    AppID = CFStringCreateWithCString(kCFAllocatorDefault, ApplicationID,
-                                     kCFStringEncodingASCII);
+                                     kCFStringEncodingUTF8);
    if (!AppID)
       return 0;
    /* CFPreferencesCopyAppValue looks in ~/Library/Preferences/org.ldraw.plist
@@ -497,7 +543,7 @@ int LDrawIniReadPreferences(const char *ApplicationID,
       if (strcmp(PrefKey, "BaseDirectory") == 0)
          PrefKey = "LDRAWDIR";  /* For backward compatibility                */
       AppleKey = CFStringCreateWithCString(kCFAllocatorDefault, PrefKey,
-                                           kCFStringEncodingASCII);
+                                           kCFStringEncodingUTF8);
       AppleStr = (CFStringRef) CFPreferencesCopyAppValue(AppleKey, AppID);
       CFRelease(AppleKey);
       if (AppleStr)
@@ -511,7 +557,7 @@ int LDrawIniReadPreferences(const char *ApplicationID,
    {
       /* Section (other than "LDraw") specified, look for dictionary */
       AppleSection = CFStringCreateWithCString(kCFAllocatorDefault, Section,
-                                               kCFStringEncodingASCII);
+                                               kCFStringEncodingUTF8);
       PropList = CFPreferencesCopyAppValue(AppleSection, AppID);
       CFRelease(AppleSection);
       if (PropList)
@@ -520,7 +566,7 @@ int LDrawIniReadPreferences(const char *ApplicationID,
          if (PropType == CFDictionaryGetTypeID())
          {
             AppleKey = CFStringCreateWithCString(kCFAllocatorDefault, Key,
-                                                 kCFStringEncodingASCII);
+                                                 kCFStringEncodingUTF8);
             AppleStr = (CFStringRef) CFDictionaryGetValue((CFDictionaryRef) PropList,
                                                           AppleKey);
             CFRelease(AppleKey);
@@ -546,8 +592,8 @@ int LDrawIniReadIniFile(const char *IniFile,
    char           Buf[400];
    FILE          *fp;
    int            InSection;
-   int            SectionLen;
-   int            KeyLen;
+   size_t         SectionLen;
+   size_t         KeyLen;
 
 #ifdef __APPLE__
    KeyLen = strlen(IniFile);
@@ -756,7 +802,7 @@ car.ldr      .
 c:\car.ldr   c:
 /car.ldr
 */
-      i = strlen(ModelPath);
+      i = (int)strlen(ModelPath);
       while (--i >= 0)
       {
          if (ModelPath[i] == '/' || ModelPath[i] == '\\')
@@ -825,8 +871,8 @@ int LDrawIniParseSymbolicSearchDir(struct LDrawSearchDirS * Result,
    const char    *t;
    char          *Dir;
    int            Flags;
-   int            OldLen;
-   int            Len;
+   size_t         OldLen;
+   size_t         Len;
    char          *UnknownFlags;
    const char    *PrefixDir;
 
@@ -843,6 +889,7 @@ int LDrawIniParseSymbolicSearchDir(struct LDrawSearchDirS * Result,
    /* First parse any flags on the form <FLAG> */
    while (*s == '<')
    {
+      char *TempUnknownFlags;
       if (strncmp(s, "<SKIP>", 6) == 0)
       {
          Flags |= LDSDF_SKIP;
@@ -892,9 +939,14 @@ int LDrawIniParseSymbolicSearchDir(struct LDrawSearchDirS * Result,
          break;                 /* Hm, no matching >, use rest as Dir        */
       Len = t - s + 1;
       OldLen = UnknownFlags ? strlen(UnknownFlags) : 0;
-      UnknownFlags = (char *) realloc(UnknownFlags, OldLen + Len + 1);
-      if (!UnknownFlags)
+      TempUnknownFlags = (char *) realloc(UnknownFlags, OldLen + Len + 1);
+      if (!TempUnknownFlags)
+      {
+         if (UnknownFlags)
+            free(UnknownFlags);
          return 0;
+      }
+      UnknownFlags = TempUnknownFlags;
       memcpy(UnknownFlags + OldLen, s, Len);
       UnknownFlags[OldLen + Len] = '\0';
       s += Len;
@@ -945,7 +997,11 @@ int LDrawIniParseSymbolicSearchDir(struct LDrawSearchDirS * Result,
    Len = t ? t - s : strlen(s);
    Dir = (char *) malloc(OldLen + Len + 1 + 1); /* See AddTrailingSlash      */
    if (!Dir)
+   {
+      if (UnknownFlags)
+         free(UnknownFlags);
       return 0;
+   }
    strcpy(Dir, PrefixDir);
    memcpy(Dir + OldLen, s, Len);
    Dir[OldLen + Len] = '\0';
@@ -1055,14 +1111,33 @@ static void L3FixSlashes(register char *Path)
          *Path = BACKSLASH_CHAR;
 }
 
+static int L3IsDirHelper(char *Path)
+{
+#ifdef WIN_UTF8_PATHS
+   int pathBufSize = MultiByteToWideChar(CP_UTF8, 0, Path, -1, NULL, 0);
+   if (pathBufSize > 0)
+   {
+      LPWSTR WPath = malloc(pathBufSize * sizeof(WCHAR));
+      MultiByteToWideChar(CP_UTF8, 0, Path, -1, WPath, pathBufSize);
+      if (PathIsDirectoryW(WPath))
+      {
+         free(WPath);
+         return 1;
+      }
+      free(WPath);
+   }
+#endif
+   struct stat    Stat;
+   if (stat(Path, &Stat) == 0)
+      return (Stat.st_mode & S_IFDIR);
+   return 0;
+}
+
 static int L3IsDir(char *Path)
 {
-   struct stat    Stat;
 #ifdef _WIN32
    char           NewPath[4];
-#endif
 
-#ifdef _WIN32
    if (strlen(Path) == 2 && Path[1] == ':')
    {
       NewPath[0] = Path[0];
@@ -1072,12 +1147,12 @@ static int L3IsDir(char *Path)
       Path = NewPath;
    }
 #endif
-   if (stat(Path, &Stat) == 0)
-      return (Stat.st_mode & S_IFDIR);
+   if (L3IsDirHelper(Path))
+      return 1;
    if (gFileCaseCallback && gFileCaseCallback(Path))
    {
-      if (stat(Path, &Stat) == 0)
-         return (Stat.st_mode & S_IFDIR);
+      if (L3IsDirHelper(Path))
+         return 1;
    }
    return 0;
 }
