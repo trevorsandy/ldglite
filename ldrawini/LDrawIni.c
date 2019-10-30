@@ -89,6 +89,7 @@ sprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 #define WIN_UTF8_PATHS
 #endif
 #ifdef WIN_UTF8_PATHS
+#pragma comment (lib, "shlwapi.lib")
 #include <Windows.h>
 #include <Shlwapi.h>
 #endif
