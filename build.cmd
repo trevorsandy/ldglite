@@ -9,8 +9,8 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: Sep 21, 2019
-rem  Copyright (c) 2017 - 2019 by Trevor SANDY
+rem  Last Update: January 27, 2021
+rem  Copyright (c) 2017 - 2021 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,11 +35,11 @@ IF "%APPVEYOR%" EQU "True" (
   SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.11.1\msvc2015\bin
-  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.1\msvc2015_64\bin
+  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.11.3\msvc2015\bin
+  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.3\msvc2015_64\bin
 )
 
-SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build
+SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
