@@ -132,7 +132,6 @@ int                  WarningLevel;
 float                DetThreshold = 0.0;
 float                DistThreshold = 0.0;
 int                  ShowAllDists = 0;
-int                  HasUnofficial = 0;
 int                  LightDotDat;         /* 1: use light.dat, 0: ignore     */
 /* TurboC has a limited stack size (default _stklen=4096)
    Although I set it to e.g. 16000, it is best to keep automatic variables at a minimum.
@@ -2133,7 +2132,7 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
       {
           /* if stud_style, get stud primitives */
           int set_stud_style = 0;
-          if (PartPtr->IsStud && stud_style && HasUnofficial) {
+          if (PartPtr->IsStud && stud_style) {
               int OpenStud = !strcmp(PartPtr->DatName,"stud2.dat");
               if ((set_stud_style = (OpenStud || !strcmp(PartPtr->DatName,"stud.dat")))) {
                   fp = get_stud_style(PartPtr->DatName,OpenStud);
@@ -2310,16 +2309,6 @@ int                  LoadModel(const char *lpszPathName)
       ModelDir[i] = '\0';
    }
 #endif
-
-   char  PathStr[_MAX_PATH];
-   strcpy(PathStr, LDrawDir);;
-#ifdef WIN32
-   strcat(PathStr, "\\Unofficial");
-#else
-   strcat(PathStr, "/unofficial");
-#endif
-   HasUnofficial = DirHasPandPARTS(PathStr);
-
    PartPtr = &Parts[0];
    if (nParts == 0)
       nParts = 1;                         /* First time a model is loaded    */
