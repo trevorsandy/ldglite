@@ -6,7 +6,7 @@ include($$PWD/../ldgliteglobal.pri)
 # The ABI version.
 VER_MAJ = 1
 VER_MIN = 3
-VER_PAT = 5
+VER_PAT = 6
 VER_BLD = 0
 
 win32 {
@@ -14,7 +14,7 @@ win32 {
 
   QMAKE_TARGET_COMPANY = "Don Heyse"
   QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
-  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2019 Don Heyse, Trevor SANDY"
+  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2021 Don Heyse, Trevor SANDY"
   QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
   RC_LANG = "English (United Kingdom)"
   RC_ICONS = "ldglite.ico"
@@ -186,7 +186,19 @@ macx {
 
 # set config to enable build check
 # CONFIG+=BUILD_CHECK
-# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.5_Foo2.png tests/Foo2.ldr
+# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.6_Foo2.png tests/Foo2.ldr
+#
+# Build Check on Windows:
+# Console:
+# - Launch console at ldglite repository and execute the following:
+# SET LDRAW_DIR=%USERPROFILE%\LDraw
+# SET LDRAWDIR=%LDRAW_DIR%
+# ECHO -Set LDRAWDIR to %LDRAWDIR%.
+# -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.6_Foo2.png tests\Foo2.ldr
+# QtCreator
+# Add to Environment: LDRAWDIR   C:\Users\Trevor\LDraw
+# Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.6_Foo2.png tests\Foo2.ldr
+# Copy tests folder to OUTPUT folder - e.g. .../app/32bit_debug/tests
 BUILD_CHECK: unix {
   # LDraw library path - needed for tests
   LDRAW_PATH = $$(LDRAWDIR)
@@ -196,7 +208,7 @@ BUILD_CHECK: unix {
                        cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01          \
                        -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l  \
                        -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                 \
-                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.5_Foo2.png        \
+                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.6_Foo2.png        \
                        $$_PRO_FILE_PWD_/../tests/Foo2.ldr
   } else {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")

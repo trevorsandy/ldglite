@@ -45,7 +45,7 @@ SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
 
 SET PACKAGE=LDGLite
-SET VERSION=1.3.5
+SET VERSION=1.3.6
 SET CONFIGURATION=release
 
 SET THIRD_INSTALL=unknown
