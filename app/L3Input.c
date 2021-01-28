@@ -413,10 +413,10 @@ void StripQuotes(char *s, char *SubPartDatName)
 
   if (SubPartDatName[0] == '\"')
   {
-    if (s = strchr(s, '\"'))
+    if ((s = strchr(s, '\"')))
     {
       strcpy(SubPartDatName, s+1); /* Strip leading quotes */
-      if (s = strchr(SubPartDatName, '\"'))
+      if ((s = strchr(SubPartDatName, '\"')))
 	*s = 0; /* Strip trailing quotes */
     }
   }
@@ -555,7 +555,7 @@ int                  SaveLine(struct L3LineS *** LinePtrPtrPtr,
    {
       /* Save comment */
       Len = strlen(Comment) + 1;
-      if (Len > sizeof(LinePtr->v))
+      if (Len > (int)sizeof(LinePtr->v))
       {
          LinePtr->Comment = Strdup(Comment);
          if (!LinePtr->Comment)
@@ -1895,7 +1895,7 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
 	 else if (MetaType < METATYPE_TEXMAP)
 	   sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
 	 else
-	   sprintf(SubPartDatName, "L3_TEXMAP_%d", MetaKeywords[MetaType],InternID++);
+       sprintf(SubPartDatName, "L3_TEXMAP_%d", InternID++);
          Data.PartPtr = FindPart(MetaType, SubPartDatName);
 #endif
          if (!Data.PartPtr)

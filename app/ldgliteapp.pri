@@ -46,3 +46,4 @@ OTHER_FILES += \
     $$PWD/Info.plist \
     $$PWD/ldglite_w.command \
     $$PWD/set-ldrawdir.command \
+    $$PWD/../.gitignore

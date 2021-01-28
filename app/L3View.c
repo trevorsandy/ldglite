@@ -290,8 +290,8 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 	    return;
 	  }	
 
-	  if (PartPtr->IsStud)
-	    det = M3Det(m); // Check the determinant of m to fix mirrored studs.
+    if (PartPtr->IsStud)
+        det = M3Det(m); // Check the determinant of m to fix mirrored studs.
 #endif
 
 	for (LinePtr = PartPtr->FirstLine; LinePtr; LinePtr = LinePtr->NextLine)

@@ -308,7 +308,7 @@ static char eresponse[EDIT_LINE_LEN] = "";
 float moveXamount = 10.0;
 float moveYamount = 8.0;
 float moveZamount = 10.0;
-float turnCenter[4][4] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+float turnCenter[4][4] = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
 int turnAxisVisible = 0;
 // staticbuffer is where our non-moving background goes
 // screenbuffer is where the final composite goes
@@ -3269,7 +3269,7 @@ int ldlite_parse_colour_meta(char *s)
 /***************************************************************/
 int ldlite_parse_fade_meta(char *s)
 {
-  int i, n, inverse_index, r, g, b, alpha;
+  int i, n;
 
   // Skip whitespace
   for (; *s != 0; s++)
@@ -3294,7 +3294,7 @@ int ldlite_parse_fade_meta(char *s)
 /***************************************************************/
 int ldlite_parse_silhouette_meta(char *s)
 {
-  int i, n, inverse_index, r, g, b, alpha;
+  int i, n;
   float f;
 
   // Skip whitespace
