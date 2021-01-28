@@ -400,7 +400,7 @@ int SilhouetteColors[256] = {0};
 int nSilhouetteColors = 0;
 int dimLevel = 0; // Same as ldraw_commandline_opts.maxlevel=32767;  // a huge number
 float dimAmount = 0.0;
-int StudLogo  = 0; // Default is no stud logo
+int stud_style  = 0; // Default is no stud logo
 
 int downsample = 0; // decimate output file by 2 with antialias filter.
 int upscale = 0;    // upscale everything needed for eventual downsample.
@@ -8977,7 +8977,7 @@ void ParseParams(int *argc, char **argv)
                         case '3':
                         case '4':
                         case '5':
-                            sscanf(&(pszParam[3]),"%d",&StudLogo);
+                            sscanf(&(pszParam[3]),"%d",&stud_style);
                             break;
                         default:
                             ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;

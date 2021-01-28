@@ -2131,17 +2131,17 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
       /* Don't use POV equivalent (yet, maybe later on output (L3)) */
       if (!PartPtr->FileRead)
       {
-          /* if StudLogo, generate stud primitive */
-          int SetStudLogo = 0;
-          if (PartPtr->IsStud && StudLogo && HasUnofficial) {
+          /* if stud_style, get stud primitives */
+          int set_stud_style = 0;
+          if (PartPtr->IsStud && stud_style && HasUnofficial) {
               int OpenStud = !strcmp(PartPtr->DatName,"stud2.dat");
-              if ((SetStudLogo = (OpenStud || !strcmp(PartPtr->DatName,"stud.dat")))) {
-                  fp = GetStudLogo(PartPtr->DatName,OpenStud);
-                  SetStudLogo = fp != NULL;
+              if ((set_stud_style = (OpenStud || !strcmp(PartPtr->DatName,"stud.dat")))) {
+                  fp = get_stud_style(PartPtr->DatName,OpenStud);
+                  set_stud_style = fp != NULL;
               }
           }
 
-          if (!SetStudLogo)
+          if (!set_stud_style)
               fp = OpenDatFile(PartPtr->DatName);
 
          if (!fp)
@@ -2388,7 +2388,7 @@ void                 LoadModelPost(void)
 }
 #endif
 
-FILE                *GetStudLogo(char *DatName, int OpenStud)
+FILE                *get_stud_style(char *DatName, int OpenStud)
 {
     FILE                *fp;
     char TempPath[_MAX_PATH];
@@ -2400,8 +2400,8 @@ FILE                *GetStudLogo(char *DatName, int OpenStud)
 
     // construct stud logo primitive reference
     char LogoNum[5] = "";
-    if (StudLogo > 1)
-        sprintf(LogoNum,"%d",StudLogo);
+    if (stud_style > 1)
+        sprintf(LogoNum,"%d",stud_style);
     char PrimFile[20] = "";
     if (OpenStud) {
         sprintf(PrimFile, "stud2-logo%s.dat\n", LogoNum);

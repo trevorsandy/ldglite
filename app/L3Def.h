@@ -324,10 +324,10 @@ extern void          FreeLights(void);
 extern int           SaveLine(struct L3LineS *** LinePtrPtrPtr,
                               struct L3LineS * Data, char *Comment);
 extern void         GetLDrawSearchDirs(int *ErrorCode);
-extern FILE        *GetStudLogo(char *DatName,int OpenStud);
+extern FILE        *get_stud_style(char *DatName,int OpenStud);
 
 /* Expose to Main.c and L3Input.c */
-extern int           StudLogo;      // Draw stud logo - there are five types of stud logos
+extern int           stud_style;      // there are seven stud styles including 5 stud logos
 extern char          ldconfig[256];
 extern char          ldconfigfilename[256];
 
