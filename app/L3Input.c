@@ -365,31 +365,6 @@ void                 FreeLights(void)
 }
 #endif
 
-
-static char         *StudPrimitives[] = {
-   "stud5.dat",
-   "stu2.dat",
-   "stu22.dat",
-   "stu22a.dat",
-   "stu23.dat",
-   "stu23a.dat",
-   "stu24.dat",
-   "stu24a.dat",
-   "stud2.dat",
-   "stud2a.dat",
-   "stud3a.dat",
-   "stud4a.dat",
-   "studline.dat",
-   "stu2p01.dat",
-   "studp01.dat",
-   "studel.dat",
-   "stud.dat",
-   "stud3.dat",
-   "stud4.dat",
-};
-
-
-
 /* If this code works, it was written by Lars C. Hassing. */
 /* If not, I don't know who wrote it.                     */
 
@@ -502,6 +477,14 @@ static char         *FirstNonBlank(char *s)
 }
 
 #ifndef USE_OPENGL
+static
+#endif
+int is_stud_primitive(const char* FileName)
+{
+    return memcmp(FileName, "stu", 3) == 0;
+}
+
+#ifndef USE_OPENGL
 static 
 #endif
 struct L3PartS *FindPart(int Internal, char *DatName)
@@ -550,17 +533,9 @@ struct L3PartS *FindPart(int Internal, char *DatName)
       free(PartPtr);
       return (NULL);
    }
-   for (i = sizeof(StudPrimitives) / sizeof(StudPrimitives[0]); --i >= 0;)
+   if (is_stud_primitive(DatName))
    {
-#ifdef USE_OPENGL
-      if (stricmp(DatName, StudPrimitives[i]) == 0)
-#else
-      if (strcmp(DatName, StudPrimitives[i]) == 0)
-#endif
-      {
-         PartPtr->IsStud = 1;
-         break;
-      }
+      PartPtr->IsStud = 1;
    }
    return (PartPtr);
 }                                         /* FindPart                        */
