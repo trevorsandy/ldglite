@@ -225,7 +225,9 @@ Command line options (see also the original ldlite docs for more):
 -fh turns on shading mode.
 -fs turns off stud drawing. (l3glite only)
 -fsl draws studs as lines. (l3glite only)
--fslN draws stud logo. 'N' can be 0-5, 0 no logo is the default value.
+-fssN draws stud style. 'N' can be 0-7, 0 no style is the default value.
+    style 6 and 7 are high contrast and can be fine tuned using the
+    -lhS -lhP -lhB and -lhD command line options.
 -fe turns off edge lines 
 -fr same as -fe (Render mode?  Rough draft?  I don't know what R stands for.)
 -ffT,E,S,R,G,B turns on fogging 
@@ -284,6 +286,21 @@ Command line options (see also the original ldlite docs for more):
 -lcX,Y,Z sets the light location.  (like l3p, except default = -1000,1000,1000)
 -lcX,Y,Z,R,G,B sets the light location and color.
 -lCR,G,B sets the ambient lighting color.
+-lhSR,G,B,A sets the high contrast stud cylinder color - default is 27,42,52,255.
+-lhPR,G,B,A sets the high contrast edge color for parts - default is 0,0,0,255.
+-lhBR,G,B,A sets the high contrast edge color for black parts - default
+    is 255,255,255,255.
+-lhDR,G,B,A sets the high contrast edge color for dark color parts - default
+    is 27,42,52,255.
+-laCN.NN sets the color contrast, valid values are 0.0f to 1.0f. This
+    setting is used when the automate edge colors command option (-laA) is present.
+-laIN.NN sets the point where color values are classified as light or dark when,
+    high contrast stud styles (-fss6/7) are enabled. This setting also provides
+    the saturation value when automate edge colors (-laA) is enabled. valid
+    values are between 0.0f and 1.0f.
+-laA enable automate edge colors. This flag enables the application to
+    automatically adjust part edge colors using the user configurable light/
+    dark colour value, and contrast settings.
 -uX,Y saves a huge output image from window sized tiles.  (see notes below)
 -& windows mode.  Detach from the console window.  Windows version only.
 -- if no DAT filename is given on the command line ldglite will read

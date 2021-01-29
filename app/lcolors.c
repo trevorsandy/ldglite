@@ -24,6 +24,10 @@
 
 #undef GREYSCALE  // Define to force everything to 2-bit 4-level grey for Gameboy & WinCE devices
 
+#define L3_SRGB_TO_LINEAR(v) (powf(v, 2.2f))
+#define L3_LINEAR_TO_SRGB(v) (powf(v, 1.0f / 2.2f))
+#define L3_LUM_FROM_SRGB(r,g,b) ((0.2126f * L3_SRGB_TO_LINEAR(r)) + (0.7152f * L3_SRGB_TO_LINEAR(g)) + (0.0722f * L3_SRGB_TO_LINEAR(b)))
+
 int zcolor_unalias(int index, char *name);
 int zcolor_alias(int index, char *name);
 
@@ -297,6 +301,8 @@ int alias_peeron_colors(void)
 }
 #endif
 
+/***************************************************************/
+
 void zcolor_init()
 {
 	ZCOLOR_TABLE_ENTRY defcolor;
@@ -528,7 +534,6 @@ void zcolor_init()
 	zcolor_modify(504, "Rubber_Flat_Silver", 0x2333333, 0x89, 0x87, 0x88, 0xff, 0x89, 0x87, 0x88, 0xff);
 	zcolor_modify(511,"Rubber_White", 0, 0xFF, 0xFF, 0xFF, 0xff, 0xFF, 0xFF, 0xFF, 0xff);
 
-
 	// LDraw Internal Common Material Colours
 	//0 !COLOUR Main_Colour                  CODE  16   VALUE #7F7F7F   EDGE #333333
 	//0 !COLOUR Edge_Colour                  CODE  24   VALUE #7F7F7F   EDGE #333333
@@ -536,8 +541,10 @@ void zcolor_init()
 	zcolor_modify(494, "Electric_Contact_Alloy", 0x26E6E6E, 0xD0, 0xD0, 0xD0, 0xff, 0xD0, 0xD0, 0xD0, 0xff);
 	zcolor_modify(495, "Electric_Contact_Copper", 0x2723E1D, 0xAE, 0x7A, 0x59, 0xff, 0xAE, 0x7A, 0x59, 0xff);
 
+    // Initialize stud cylinder color
+    add_stud_cylinder_color();
 
-	// And now some Aliases for importing models from peeron via cut-n-paste.
+    // And now some Aliases for importing models from peeron via cut-n-paste.
 	zcolor_alias(256,"Matte-Black"); // rubber for tires.
 	alias_peeron_colors(); // Gotta cross reference missing ones with ldconfig.ldr
 #endif  
@@ -846,25 +853,31 @@ int zcolor_modify(int index, char *name, int inverse_index,
 // c != complement_color(complement_color(c)), for example when c = 7
 int edge_color(int c)
 {
-	if ((c>=0) && (c<ZCOLOR_TABLE_SIZE)) {
-		// Pallette Entries
-		return zcolor_table[c].inverse_index;
-	} else if ((c >= 256)&&(c < 512)) {
-		// dithered colors get complement of higher color
-		return edge_color( ((c-256)/16) );
-	} else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
-		// Numbers of 0x4000000 to 0x7ffffff are hard coded color values. 
-		return (0x4000000); // black
+    if (stud_style > 5 || automate_edge_color)
+    {
+        return get_stud_style_or_auto_edge_color(c);
+    }
+    else
+    {
+        if ((c>=0) && (c<ZCOLOR_TABLE_SIZE)) {
+            // Pallette Entries
+            return zcolor_table[c].inverse_index;
+        } else if ((c >= 256)&&(c < 512)) {
+            // dithered colors get complement of higher color
+            return edge_color( ((c-256)/16) );
+        } else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
+            // Numbers of 0x4000000 to 0x7ffffff are hard coded color values.
+            return (0x4000000); // black
 #ifdef USE_OPENGL
-	} else
-		return lookup_edge_code(c);
-	    
+        } else
+            return lookup_edge_code(c);
 #else
-	} else {
-		// anything else
-		return 0;
-	}
+        } else {
+            // anything else
+            return 0;
+        }
 #endif
+    }
 }
 
 //
@@ -872,96 +885,165 @@ int edge_color(int c)
 // zcs is the secondary color used for dithering
 void translate_color(int c, ZCOLOR *zcp, ZCOLOR *zcs)
 {
-	if ((c>=0) && (c<ZCOLOR_TABLE_SIZE)) {
-		// Pallette Entries
-		*zcp = zcolor_table[c].primary;
-		*zcs = zcolor_table[c].dither;
-	} 
+    if ((c>=0) && (c<ZCOLOR_TABLE_SIZE)) {
+        // Pallette Entries
+        *zcp = zcolor_table[c].primary;
+        *zcs = zcolor_table[c].dither;
+    }
 #ifdef USE_OPENGL
-	//else if ((c >= 256)&&(c<512)) {
-		// Dithered colors are now included in bigger ZCOLOR_TABLE_SIZE
-	//}
-	else if ((c >= 0x2000000)&&(c<=0x3ffffff)) {
-                // L3P extended RGB colors (NOTE: add to ldlite CVS sources.)
-	        zcp->r = (c & 0x00ff0000) >> 16;
-		zcp->g = (c & 0x0000ff00) >> 8;
-		zcp->b = (c & 0x000000ff) >> 0;
-                zcs->r = zcp->r;
-                zcs->g = zcp->g;
-                zcs->b = zcp->b;
-		if (c & 0x1000000) {
-		  zcs->a = 0x0;
-		} else {
-		  zcs->a = 0xff;
-		}
-	}
-	else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
-		// Numbers of 0x4000000 to 0x7ffffff are hard coded color values. 
-	        zcp->r = 17*((c & 0x00000f00) >> 8);
-		zcp->g = 17*((c & 0x000000f0) >> 4);
-		zcp->b = 17*((c & 0x0000000f) >> 0);
-		if (c & 0x1000000) {
-		  zcp->a = 0x0;
-		} else {
-		  zcp->a = 0xff;
-		}
-		zcs->r = 17*((c & 0x00f00000) >> 20);
-		zcs->g = 17*((c & 0x000f0000) >> 16);
-		zcs->b = 17*((c & 0x0000f000) >> 12);
-		// No dithering, just average the numbers  
-		zcp->r = (unsigned char) (((int)zcp->r + (int)zcs->r) / 2);
-		zcp->g = (unsigned char) (((int)zcp->g + (int)zcs->g) / 2);
-		zcp->b = (unsigned char) (((int)zcp->b + (int)zcs->b) / 2);
-                zcs->r = zcp->r;
-                zcs->g = zcp->g;
-                zcs->b = zcp->b;
-		if (c & 0x2000000) {
-		  zcs->a = 0x0;
-		} else {
-		  zcs->a = 0xff;
-		}
-	}
-	else if (lookup_color_code(c, zcp, zcs)) {
-		// This could lookup newly defined colors from a 2nd table of 512.
-                return;
-	}
-	
+    //else if ((c >= 256)&&(c<512)) {
+    // Dithered colors are now included in bigger ZCOLOR_TABLE_SIZE
+    //}
+    else if ((c >= 0x2000000)&&(c<=0x3ffffff)) {
+        // L3P extended RGB colors (NOTE: add to ldlite CVS sources.)
+        zcp->r = (c & 0x00ff0000) >> 16;
+        zcp->g = (c & 0x0000ff00) >> 8;
+        zcp->b = (c & 0x000000ff) >> 0;
+        zcs->r = zcp->r;
+        zcs->g = zcp->g;
+        zcs->b = zcp->b;
+        if (c & 0x1000000) {
+            zcs->a = 0x0;
+        } else {
+            zcs->a = 0xff;
+        }
+    }
+    else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
+        // Numbers of 0x4000000 to 0x7ffffff are hard coded color values.
+        zcp->r = 17*((c & 0x00000f00) >> 8);
+        zcp->g = 17*((c & 0x000000f0) >> 4);
+        zcp->b = 17*((c & 0x0000000f) >> 0);
+        if (c & 0x1000000) {
+            zcp->a = 0x0;
+        } else {
+            zcp->a = 0xff;
+        }
+        zcs->r = 17*((c & 0x00f00000) >> 20);
+        zcs->g = 17*((c & 0x000f0000) >> 16);
+        zcs->b = 17*((c & 0x0000f000) >> 12);
+        // No dithering, just average the numbers
+        zcp->r = (unsigned char) (((int)zcp->r + (int)zcs->r) / 2);
+        zcp->g = (unsigned char) (((int)zcp->g + (int)zcs->g) / 2);
+        zcp->b = (unsigned char) (((int)zcp->b + (int)zcs->b) / 2);
+        zcs->r = zcp->r;
+        zcs->g = zcp->g;
+        zcs->b = zcp->b;
+        if (c & 0x2000000) {
+            zcs->a = 0x0;
+        } else {
+            zcs->a = 0xff;
+        }
+    }
+    else if (lookup_color_code(c, zcp, zcs)) {
+        // This could lookup newly defined colors from a 2nd table of 512.
+        return;
+    }
+
 #else
-	else if ((c >= 256)&&(c<512)) {
-		// Dithered colors
-		*zcp = zcolor_table[(c & 0xf0)>>4].primary;
-		*zcs = zcolor_table[c & 0xf].primary;
-	}
-	else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
-		// Numbers of 0x4000000 to 0x7ffffff are hard coded color values. 
-	        zcp->r = 16*((c & 0x00000f00) >> 8);
-		zcp->g = 16*((c & 0x000000f0) >> 4);
-		zcp->b = 16*((c & 0x0000000f) >> 0);
-		if (c & 0x1000000) {
-		  zcp->a = 0x0;
-		} else {
-		  zcp->a = 0xff;
-		}
-		zcs->r = 16*((c & 0x00f00000) >> 20);
-		zcs->g = 16*((c & 0x000f0000) >> 16);
-		zcs->b = 16*((c & 0x0000f000) >> 12);
-		if (c & 0x2000000) {
-		  zcs->a = 0x0;
-		} else {
-		  zcs->a = 0xff;
-		}
-	} 
+    else if ((c >= 256)&&(c<512)) {
+        // Dithered colors
+        *zcp = zcolor_table[(c & 0xf0)>>4].primary;
+        *zcs = zcolor_table[c & 0xf].primary;
+    }
+    else if ((c >= 0x4000000)&&(c<=0x7ffffff)) {
+        // Numbers of 0x4000000 to 0x7ffffff are hard coded color values.
+        zcp->r = 16*((c & 0x00000f00) >> 8);
+        zcp->g = 16*((c & 0x000000f0) >> 4);
+        zcp->b = 16*((c & 0x0000000f) >> 0);
+        if (c & 0x1000000) {
+            zcp->a = 0x0;
+        } else {
+            zcp->a = 0xff;
+        }
+        zcs->r = 16*((c & 0x00f00000) >> 20);
+        zcs->g = 16*((c & 0x000f0000) >> 16);
+        zcs->b = 16*((c & 0x0000f000) >> 12);
+        if (c & 0x2000000) {
+            zcs->a = 0x0;
+        } else {
+            zcs->a = 0xff;
+        }
+    }
 #endif
-	else {
-	        // anything else - solid grey
-	        zcp->r = 0x7f;
-		zcp->g = 0x7f;
-		zcp->b = 0x7f;
-		zcp->a = 0xff;
-		zcs->r = 0x7f;
-		zcs->g = 0x7f;
-		zcs->b = 0x7f;
-		zcs->a = 0xff;
-	}
+    else {
+        // anything else - solid grey
+        zcp->r = 0x7f;
+        zcp->g = 0x7f;
+        zcp->b = 0x7f;
+        zcp->a = 0xff;
+        zcs->r = 0x7f;
+        zcs->g = 0x7f;
+        zcs->b = 0x7f;
+        zcs->a = 0xff;
+    }
 }
 
+/***************************************************************/
+int get_edge_color_number_from_RGB(ZCOLOR *zcp)
+{
+    char hex_color[16];
+    int n, inverse_index;
+    snprintf(hex_color, sizeof hex_color, "%02x%02x%02x", zcp->r, zcp->g, zcp->b);
+    n = sscanf(hex_color, "%x", &inverse_index);
+    if (n)
+    {
+        inverse_index |= 0x2000000; // Encode EDGE as an L3P extended RGB color.
+        return inverse_index;
+    }
+    if (ldraw_commandline_opts.debug_level == 1)
+      printf("Failed to extract edge color number from RGB %s\n",hex_color);
+    return 0;
+}
+
+int add_stud_cylinder_color(void)
+{
+    int inverse_index = get_edge_color_number_from_RGB(&part_edge_color);
+    if (inverse_index == 0)
+        inverse_index = (0x4000000); // black
+    unsigned r = stud_cylinder_color.r;
+    unsigned g = stud_cylinder_color.g;
+    unsigned b = stud_cylinder_color.b;
+    unsigned a = stud_cylinder_color.a;
+    zcolor_modify(4242,"Stud_Cylinder_Colour", inverse_index, r, g, b, a, r, g, b, a);
+    return 0;
+}
+
+int get_stud_style_or_auto_edge_color(int c)
+{
+    ZCOLOR zcp, zcs;
+    translate_color(c, &zcp, &zcs);
+    float c_value[4];
+    c_value[0] = zcp.r / 255.0f;
+    c_value[1] = zcp.g / 255.0f;
+    c_value[2] = zcp.b / 255.0f;
+    const float value_luminescence = L3_LUM_FROM_SRGB(c_value[0],c_value[1],c_value[2]);
+    const float light_dark_index = L3_SRGB_TO_LINEAR(part_color_value_ld_index);
+
+    if (automate_edge_color) // Automate Edge Colours
+    {
+        float edge_luminescence = 0.0f;
+
+        if (value_luminescence > light_dark_index)
+            edge_luminescence = value_luminescence - (value_luminescence * part_edge_contrast);
+        else
+            edge_luminescence = (1.0f - value_luminescence) * part_edge_contrast + value_luminescence;
+
+        edge_luminescence = L3_LINEAR_TO_SRGB(edge_luminescence);
+
+        ZCOLOR zcp;
+        zcp.r = edge_luminescence * 255;
+        zcp.g = edge_luminescence * 255;
+        zcp.b = edge_luminescence * 255;
+        zcp.a = 255;
+        return get_edge_color_number_from_RGB(&zcp);
+    }
+    else                     // High Contrast Style
+    {
+        if (c == 0)
+            return get_edge_color_number_from_RGB(&black_edge_color);
+        else if (c != 4242 && value_luminescence < light_dark_index)
+            return get_edge_color_number_from_RGB(&dark_edge_color);
+        else
+            return get_edge_color_number_from_RGB(&part_edge_color);
+    }
+}

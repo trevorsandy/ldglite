@@ -83,6 +83,9 @@ extern void          CheckMemoryUsage(void);
 #define L3_UPDATEVIEW_NEWMODEL 37913      /* To avoid OnInitialUpdate()      */
 #endif
 
+#define MAX_DATA_LEN 1024
+#define L3_ARRAY_COUNT(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
+
 #ifdef USE_OPENGL
 #ifndef false
 #define false 0
@@ -184,6 +187,13 @@ struct PovPartS
    int                  FrameLevelObjects;
    float                BBox[2][3];
    char                *PovData;
+};
+
+struct L3StudStylePrimitive
+{
+    char Name[50];
+    char Data[MAX_DATA_LEN];
+    char DataLogo1[MAX_DATA_LEN];
 };
 
 /*
@@ -324,7 +334,8 @@ extern void          FreeLights(void);
 extern int           SaveLine(struct L3LineS *** LinePtrPtrPtr,
                               struct L3LineS * Data, char *Comment);
 extern void         GetLDrawSearchDirs(int *ErrorCode);
-extern FILE        *get_stud_style(char *DatName,int OpenStud);
+extern FILE        *GetStudStyleFile(char *DatName, int open_stud);
+extern int          IsStudStylePrimitive(const char* FileName);
 
 /* Expose to Main.c and L3Input.c */
 extern int           stud_style;      // there are seven stud styles including 5 stud logos

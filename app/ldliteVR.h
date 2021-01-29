@@ -205,6 +205,20 @@ extern QBUF_ID *word_pool;
 #define max(a,b) ((a > b) ? (a) : (b))
 #define min(a,b) ((a > b) ? (b) : (a))
 #endif
+
+extern ZCOLOR stud_cylinder_color;
+extern ZCOLOR part_edge_color;
+extern ZCOLOR black_edge_color;
+extern ZCOLOR dark_edge_color;
+extern float part_edge_contrast;
+extern float part_color_value_ld_index;
+extern int automate_edge_color;
+extern int stud_style;
+extern int add_stud_cylinder_color(void);
+extern int get_stud_style_or_auto_edge_color(int c);
+extern int get_extended_HEX_from_RGB(ZCOLOR *zcp);
+extern void translate_color(int c, ZCOLOR *zcp, ZCOLOR *zcs);
+
 extern char pathname[256]; // base directory for ldraw files
 extern FILE *output_file;
 extern char output_file_name[256];

@@ -2018,7 +2018,6 @@ void                 CalcPartBBox(struct L3PartS * PartPtr, int DoBBox, int DoCa
 #endif
 }
 
-
 /* List of parts with only linetype 2, no need to load in L3P. */
 #ifdef L3P
 static char         *LineType2Primitives[] = {
@@ -2108,9 +2107,9 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
           /* if stud_style, get stud primitives */
           int set_stud_style = 0;
           if (PartPtr->IsStud && stud_style) {
-              int OpenStud = !strcmp(PartPtr->DatName,"stud2.dat");
-              if ((set_stud_style = (OpenStud || !strcmp(PartPtr->DatName,"stud.dat")))) {
-                  fp = get_stud_style(PartPtr->DatName,OpenStud);
+              if ((set_stud_style = IsStudStylePrimitive(PartPtr->DatName)))
+              {
+                  fp = GetStudStyleFile(PartPtr->DatName, (set_stud_style == 2));
                   set_stud_style = fp != NULL;
               }
           }
@@ -2352,57 +2351,165 @@ void                 LoadModelPost(void)
 }
 #endif
 
-FILE                *get_stud_style(char *DatName, int OpenStud)
+#ifndef USE_OPENGL
+static
+#endif
+struct L3StudStylePrimitive StudStylePrimitives[] =
 {
-    FILE                *fp;
-    char TempPath[_MAX_PATH];
-#ifdef WIN32
-    sprintf(TempPath, "%s\\ldgliteTmp_%s", getenv("TEMP"), DatName);
+    { "stud.dat",
+        "0 Stud\n0 Name: stud.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 4242 0 0 0 6 0 0 0 -4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4disc.dat\n",
+        "0 Stud\n0 Name: stud.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 stud-logo.dat\n" },
+    { "8/stud.dat",
+        "0 Stud (Fast-Draw)\n0 Name: 8\\stud.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 4242 0 0 0 6 0 0 0 -4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4disc.dat\n" ,
+        "0 Stud (Fast-Draw)\n0 Name: 8\\stud.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 4242 0 0 0 6 0 0 0 -4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4disc.dat\n" },
+    { "stud2.dat",
+        "0 Stud Open\n0 Name: stud2.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring2.dat\n0\n",
+        "0 Stud Open\n0 Name: stud2.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 stud2-logo.dat\n" },
+    { "8/stud2.dat",
+        "0 Stud Open (Fast-Draw)\n0 Name: 8\\stud2.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring2.dat\n" ,
+        "0 Stud Open (Fast-Draw)\n0 Name: 8\\stud2.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring2.dat\n" },
+    { "stud2a.dat",
+        "0 Stud Open without Base Edges\n0 Name: stud2a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring2.dat\n0\n",
+        "0 Stud Open without Base Edges\n0 Name: stud2a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring2.dat\n0\n" },
+    { "8/stud2a.dat",
+        "0 Stud Open without Base Edges (Fast-Draw)\n0 Name: 8\\stud2a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring2.dat\n",
+        "0 Stud Open without Base Edges (Fast-Draw)\n0 Name: 8\\stud2a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring2.dat\n" },
+    { "stud3.dat",
+        "0 Stud Tube Solid\n0 Name: stud3.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4disc.dat\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n",
+        "0 Stud Tube Solid\n0 Name: stud3.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4disc.dat\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n" },
+    { "8/stud3.dat",
+        "0 Stud Tube Solid (Fast-Draw)\n0 Name: 8\\stud3.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4disc.dat\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n",
+        "0 Stud Tube Solid (Fast-Draw)\n0 Name: 8\\stud3.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 8\4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 8\4-4disc.dat\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 8\4-4cyli.dat\n" },
+    { "stud4.dat",
+        "0 Stud Tube Open\n0 Name: stud4.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n",
+        "0 Stud Tube Open\n0 Name: stud4.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n" },
+    { "8/stud4.dat",
+        "0 Stud Tube Open (Fast-Draw)\n0 Name: 8\\stud4.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n",
+        "0 Stud Tube Open (Fast-Draw)\n0 Name: 8\\stud4.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n" },
+    { "stud4a.dat",
+        "0 Stud Tube Open without Base Edges\n0 Name: stud4a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n",
+        "0 Stud Tube Open without Base Edges\n0 Name: stud4a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive UPDATE 2009-02\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n" },
+    { "8/stud4a.dat",
+        "0 Stud Tube Open without Base Edges (Fast-Draw)\n0 Name: 8\\stud4a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n",
+        "0 Stud Tube Open without Base Edges (Fast-Draw)\n0 Name: 8\\stud4a.dat\n0 Author: James Jessiman\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n" },
+    { "stud4h.dat",
+        "0 Stud Tube Open with Extended Hole\n0 Name: stud4h.dat\n0 Author: Tim Gould [timgould]\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n1 16 0 4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 8 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n",
+        "0 Stud Tube Open with Extended Hole\n0 Name: stud4h.dat\n0 Author: Tim Gould [timgould]\n0 !LDRAW_ORG Primitive UPDATE 2012-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n1 16 0 4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 8 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring3.dat\n0\n" },
+    { "8/stud4h.dat",
+        "0 Stud Tube Open with Extended Hole (Fast-Draw)\n0 Name: 8\\stud4h.dat\n0 Author: Tim Gould [timgould]\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n1 16 0 4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 8 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n",
+        "0 Stud Tube Open with Extended Hole (Fast-Draw)\n0 Name: 8\\stud4h.dat\n0 Author: Tim Gould [timgould]\n0 !LDRAW_ORG 8_Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n1 16 0 4 0 6 0 0 0 1 0 0 0 6 8\4-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 8\4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 8 0 0 0 6 8\4-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 8\4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 8\4-4ring3.dat\n" },
+    { "2-4stud4.dat",
+        "0 Stud Tube Open 0.5\n0 Name: 2-4stud4.dat\n0 Author: Joerg Sommerer [Brickaneer]\n0 !LDRAW_ORG Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 2-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 2-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 2-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 2-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 2-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 2-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 2-4ring3.dat\n",
+        "0 Stud Tube Open 0.5\n0 Name: 2-4stud4.dat\n0 Author: Joerg Sommerer [Brickaneer]\n0 !LDRAW_ORG Primitive UPDATE 2016-01\n\n0 BFC CERTIFY CCW\n\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 2-4edge.dat\n1 16 0 -4 0 8 0 0 0 1 0 0 0 8 2-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 2-4edge.dat\n1 16 0 0 0 8 0 0 0 1 0 0 0 8 2-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 2-4cyli.dat\n1 16 0 -4 0 8 0 0 0 4 0 0 0 8 2-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 2-4ring3.dat\n" },
+    { "stud-logo.dat",
+        "",
+        "0 Stud with LEGO Logo - Non-3D Thin Lines\n0 Name: stud-logo.dat\n0 Author: Paul Easter [pneaster]\n0 !LDRAW_ORG Unofficial_Primitive\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 4242 0 0 0 6 0 0 0 -4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4disc.dat\n\n1 16 0 -4 0 1 0 0 0 1 0 0 0 1 logo.dat\n" },
+    { "8/stud-logo.dat",
+        "",
+        "0 Stud with LEGO Logo - Non-3D Thin Lines (Fast-Draw)\n0 Name: 8\\stud-logo.dat\n0 Author: Steffen [Steffen]\n0 !LDRAW_ORG Unofficial_8_Primitive\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 8\\stud.dat\n" },
+    { "stud2-logo.dat",
+        "",
+        "0 Stud Open with LEGO Logo - Non-3D Thin Lines\n0 Name: stud2-logo.dat\n0 Author: Paul Easter [pneaster]\n0 !LDRAW_ORG Unofficial_Primitive\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 0 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n1 16 0 -4 0 4 0 0 0 1 0 0 0 4 4-4edge.dat\n1 16 0 -4 0 6 0 0 0 1 0 0 0 6 4-4edge.dat\n0 BFC INVERTNEXT\n1 4242 0 -4 0 4 0 0 0 4 0 0 0 4 4-4cyli.dat\n1 4242 0 -4 0 6 0 0 0 4 0 0 0 6 4-4cyli.dat\n1 16 0 -4 0 2 0 0 0 1 0 0 0 2 4-4ring2.dat\n\n1 16 0 0 0 0.6 0 0 0 1 0 0 0 0.6 logo.dat\n" },
+    { "8/stud2-logo.dat",
+        "",
+        "0 Stud Open with LEGO Logo - Non-3D Thin Lines (Fast-Draw)\n0 Name: 8\\stud2-logo.dat\n0 Author: Steffen [Steffen]\n0 !LDRAW_ORG Unofficial_8_Primitive\n\n0 BFC CERTIFY CCW\n\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 8\\stud2.dat\n" }
+};
+
+#ifndef USE_OPENGL
+static
+#endif
+int IsStudStylePrimitive(const char* FileName)
+{
+    if (stud_style < 6)
+        if (strstr(FileName, "-logo") != NULL)
+            return 0;
+
+    register unsigned int         i;
+
+    for (i = 0; i < L3_ARRAY_COUNT(StudStylePrimitives); i++)
+    {
+        if (stud_style < 6 && i > 3) // for styles 0-5, only check for stud and stud2
+            return 0;
+
+#ifdef USE_OPENGL
+        if (stricmp(FileName, StudStylePrimitives[i].Name) == 0)
 #else
-    sprintf(TempPath, "/tmp/ldgliteTmp_%s", DatName);
+        if (strcmp(FileName, StudStylePrimitives[i]) == 0)
+#endif
+        {
+#ifdef USE_OPENGL
+            if (stricmp(FileName, "stud2.dat") == 0)
+#else
+            if (strcmp(FileName, "stud2.dat") == 0)
+#endif
+                return 2;
+            else
+                return 1;
+        }
+    }
+    return 0;
+}
+
+FILE                *GetStudStyleFile(char *DatName, int open_stud)
+{
+    register unsigned int i;
+    FILE            *fp;
+    char data[MAX_DATA_LEN];
+    char StudFile[_MAX_PATH];
+#ifdef WIN32
+    sprintf(StudFile, "%s\\ldglite_stud_style%d_%s", getenv("TEMP"), stud_style, DatName);
+#else
+    sprintf(StudFile, "/tmp/ldglite_stud_style%d_%s", stud_style, DatName);
 #endif
 
-    // construct stud logo primitive reference
-    char LogoNum[5] = "";
-    if (stud_style > 1)
-        sprintf(LogoNum,"%d",stud_style);
-    char PrimFile[20] = "";
-    if (OpenStud) {
-        sprintf(PrimFile, "stud2-logo%s.dat\n", LogoNum);
-    } else {
-        sprintf(PrimFile, "stud-logo%s.dat\n", LogoNum);
+    // return stud logo primitive if already exists
+    fp = fopen(StudFile, "rt");
+    if (fp)
+        return fp;
+
+    if (stud_style < 6)
+    {
+        // construct stud logo primitive reference
+        char style[10] = "";
+        if (stud_style > 1)
+            sprintf(style,"%d", stud_style);
+        sprintf(data, "0 Stud %s\n0 Name: %s\n0 Author: James Jessiman\n0 !LDRAW_ORG Primitive\n0 BFC CERTIFY CCW\n1 16 0 0 0 1 0 0 0 1 0 0 0 1 stud%s-logo%s.dat\n", (open_stud ? "open" : style), DatName, (open_stud ? "2" : ""), style);
+    }
+    else
+    {
+        for (i = 0; i < L3_ARRAY_COUNT(StudStylePrimitives); i++)
+        {
+            if (strcmp(DatName, StudStylePrimitives[i].Name) == 0)
+            {
+                if (stud_style == 6)
+                    strcpy(data, StudStylePrimitives[i].Data);
+                else
+                    strcpy(data, StudStylePrimitives[i].DataLogo1);
+                break;
+            }
+        }
     }
 
-    // construct stud logo primitive content
-    char data[150];
-    strcpy(data, OpenStud ? "0 Stud Open\n" : "0 Stud\n");
-    strcat(data, OpenStud ? "0 Name: stud2.dat\n" : "0 Name: stud.dat\n");
-    strcat(data, "0 Author: James Jessiman\n");
-    strcat(data, "0 !LDRAW_ORG Primitive\n");
-    strcat(data, "0 BFC CERTIFY CCW\n");
-    strcat(data, "1 16 0 0 0 1 0 0 0 1 0 0 0 1 ");
-    strcat(data, PrimFile);
-
     // write stud logo primitive
-    fp = fopen(TempPath, "w");
+    fp = fopen(StudFile, "w");
     if (fp) {
         int s = fputs (data, fp);
         fclose (fp);
         if (s < 0) {
             char msg[50] = "fputs error [";
-            strcat(msg, TempPath);
+            strcat(msg, StudFile);
             strcat(msg, "]");
             ErrorInInput(0, II_WARNING, msg);
         }
     }
 
     // return stud logo primitive
-    fp = fopen(TempPath, "rt");
+    fp = fopen(StudFile, "rt");
     if (fp) {
         return fp;
     } else {
         char msg[50] = "fopen error [";
-        strcat(msg, TempPath);
+        strcat(msg, StudFile);
         strcat(msg, "]");
         ErrorInInput(0, II_WARNING, msg);
     }

@@ -400,10 +400,17 @@ int SilhouetteColors[256] = {0};
 int nSilhouetteColors = 0;
 int dimLevel = 0; // Same as ldraw_commandline_opts.maxlevel=32767;  // a huge number
 float dimAmount = 0.0;
-int stud_style  = 0; // Default is no stud logo
-
 int downsample = 0; // decimate output file by 2 with antialias filter.
 int upscale = 0;    // upscale everything needed for eventual downsample.
+
+ZCOLOR stud_cylinder_color = {27, 42, 52, 255};
+ZCOLOR part_edge_color = {0, 0, 0, 255};
+ZCOLOR black_edge_color = {255, 255, 255, 255};
+ZCOLOR dark_edge_color = {27, 42, 52, 255};
+float part_color_value_ld_index = 0.5f;
+float part_edge_contrast = 0.5f;
+int automate_edge_color = 0;
+int stud_style  = 0; // default is no stud style
 
 #ifdef TILE_RENDER_OPTION
 #include "tr.h"
@@ -3219,48 +3226,48 @@ int ldlite_parse_colour_meta(char *s)
     // Skip whitespace
     for (; *s != 0; s++)
     {
-      if ((*s != ' ') && (*s != '\t'))
-	break;
+        if ((*s != ' ') && (*s != '\t'))
+            break;
     }
 
     // Intercept the LDConfig.ldr !COLOUR meta command.
     if (strncmp(s,"!COLOUR",7) == 0)
     {
-      // 0 !COLOUR Phosphor_White    CODE  21  VALUE #E0FFB0  EDGE #77CC00  ALPHA 250  LUMINANCE 15
-      // Gotta handle LUMINANCE n, RUBBER, CHROME, and PEARLESCENT somehow?
-      char name[256];
-      int i, n, inverse_index, r, g, b, alpha;
+        // 0 !COLOUR Phosphor_White    CODE  21  VALUE #E0FFB0  EDGE #77CC00  ALPHA 250  LUMINANCE 15
+        // Gotta handle LUMINANCE n, RUBBER, CHROME, and PEARLESCENT somehow?
+        char name[256];
+        int i, n, inverse_index, r, g, b, alpha;
 
-      if (ldraw_commandline_opts.debug_level == 1)
-	printf("%s\n", s);
+        if (ldraw_commandline_opts.debug_level == 1)
+            printf("%s\n", s);
 
-      n = sscanf(s, "!COLOUR %s CODE %d VALUE #%x EDGE %d ALPHA %d",
-		 name, &i, &b, &inverse_index, &alpha);
-      if (n == 3) // Retry EDGE as a hex number
-      {
-	n = sscanf(s, "!COLOUR %s CODE %d VALUE #%x EDGE #%x ALPHA %d",
-		   name, &i, &b, &inverse_index, &alpha);
-	// Encode EDGE as an L3P extended RGB color.
-	inverse_index |= 0x2000000;
-      }
-      if (n == 4)
-      {
-	n++;
-	alpha = 255;
-      }
-      if (n != 5)
-      {
-	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("Illegal !COLOUR meta-command syntax %d\n",n);
-      }
-      else
-      {
-	r = (b >> 16) & 0xff;
-	g = (b >> 8) & 0xff;
-	b = b & 0xff;
-	zcolor_modify(i,name,inverse_index, r, g, b, alpha, r, g, b, alpha);
-      }
-      return 1;
+        n = sscanf(s, "!COLOUR %s CODE %d VALUE #%x EDGE %d ALPHA %d",
+                   name, &i, &b, &inverse_index, &alpha);
+        if (n == 3) // Retry EDGE as a hex number
+        {
+            n = sscanf(s, "!COLOUR %s CODE %d VALUE #%x EDGE #%x ALPHA %d",
+                       name, &i, &b, &inverse_index, &alpha);
+            // Encode EDGE as an L3P extended RGB color.
+            inverse_index |= 0x2000000;
+        }
+        if (n == 4)
+        {
+            n++;
+            alpha = 255;
+        }
+        if (n != 5)
+        {
+            if (ldraw_commandline_opts.debug_level == 1)
+                printf("Illegal !COLOUR meta-command syntax %d\n",n);
+        }
+        else
+        {
+            r = (b >> 16) & 0xff;
+            g = (b >> 8) & 0xff;
+            b = b & 0xff;
+            zcolor_modify(i,name,inverse_index, r, g, b, alpha, r, g, b, alpha);
+        }
+        return 1;
     }
 
     return 0;
@@ -6144,6 +6151,29 @@ int edit_mode_fnkeys(int key, int x, int y)
 #define LINETYPE_5_ID	5
 
 /*****************************************************************************/
+char *ScanRGBA(float m[4][4], int numpoints, char *str)
+{
+    int  i, j;
+    char seps[] = "()[]{}<> ,\t"; // Allow parens and commas for readability.
+    char *token;
+
+    for (i = 0, j = 0,token = strtok( str, seps );
+         token != NULL;
+         token = strtok( NULL, seps ), i++ )
+    {
+        if (i > 3)
+        {
+            i = 0;
+            j++;
+        }
+        if (j >= numpoints)
+            break;
+        sscanf(token, "%f", &m[j][i]);
+    }
+    return token; // This is not NULL if there is more of str left to parse.
+}
+
+/*****************************************************************************/
 char *ScanPoints(float m[4][4], int numpoints, char *str)
 {
     int  i, j;
@@ -6151,17 +6181,17 @@ char *ScanPoints(float m[4][4], int numpoints, char *str)
     char *token;
 
     for (i = 0, j = 0,token = strtok( str, seps );
-	 token != NULL;
-	 token = strtok( NULL, seps ), i++ )
+         token != NULL;
+         token = strtok( NULL, seps ), i++ )
     {
-      if (i > 2)
-      {
-	i = 0;
-	j++;
-      }
-      if (j >= numpoints)
-	break;
-      sscanf(token, "%f", &m[j][i]);
+        if (i > 2)
+        {
+            i = 0;
+            j++;
+        }
+        if (j >= numpoints)
+            break;
+        sscanf(token, "%f", &m[j][i]);
     }
     return token; // This is not NULL if there is more of str left to parse.
 }
@@ -6174,17 +6204,17 @@ char *ScanPOINTS(double m[4][4], int numpoints, char *str)
     char *token;
 
     for (i = 0, j = 0,token = strtok( str, seps );
-	 token != NULL;
-	 token = strtok( NULL, seps ), i++ )
+         token != NULL;
+         token = strtok( NULL, seps ), i++ )
     {
-      if (i > 2)
-      {
-	i = 0;
-	j++;
-      }
-      if (j >= numpoints)
-	break;
-      sscanf(token, "%lf", &m[j][i]);
+        if (i > 2)
+        {
+            i = 0;
+            j++;
+        }
+        if (j >= numpoints)
+            break;
+        sscanf(token, "%lf", &m[j][i]);
     }
     return token; // This is not NULL if there is more of str left to parse.
 }
@@ -8969,7 +8999,7 @@ void ParseParams(int *argc, char **argv)
                     ldraw_commandline_opts.F |= TYPE_F_SHADED_MODE; // zShading = 1;
                     break;
                 case 'S':
-                    if (toupper(pszParam[2]) == 'L') {
+                    if (toupper(pszParam[2]) == 'S') {
                         switch (pszParam[3]) {
                         case '0':
                         case '1':
@@ -8977,6 +9007,8 @@ void ParseParams(int *argc, char **argv)
                         case '3':
                         case '4':
                         case '5':
+                        case '6':
+                        case '7':
                             sscanf(&(pszParam[3]),"%d",&stud_style);
                             break;
                         default:
@@ -9180,6 +9212,70 @@ void ParseParams(int *argc, char **argv)
                     lightcolor1[0] = v[0][0];
                     lightcolor1[1] = v[0][1];
                     lightcolor1[2] = v[0][2];
+                }
+                else if (pszParam[1] == 'a') // Automate Edge Lines
+                {
+                    float p;
+                    if (pszParam[2] == 'C')
+                    {
+                        sscanf(&pszParam[3],"%f",&p);
+                        printf("PartEdgeContrast = %g\n", p);
+                        if ((p >= 0.0) && (p <= 1.0))
+                            part_edge_contrast = p;
+                    }
+                    if (pszParam[2] == 'I')
+                    {
+                        sscanf(&pszParam[3],"%f",&p);
+                        printf("PartColorValueLDIndex = %g\n", p);
+                        if ((p >= 0.0) && (p <= 1.0))
+                            part_color_value_ld_index = p;
+                    }
+                    if (pszParam[2] == 'A')
+                    {
+                        printf("part_edge_contrast = (A)\n");
+                        automate_edge_color = 1;
+                    }
+                }
+                else if (pszParam[1] == 'h') // High Contrast Style
+                {
+                    float v[4][4];
+                    v[0][0] = v[0][1] = v[0][2] = v[0][3] = 0.0f;
+                    if (pszParam[2] == 'S')
+                    {
+                        ScanRGBA(v, 1, &(pszParam[3]));
+                        printf("StudCylinderColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                        stud_cylinder_color.r = v[0][0];
+                        stud_cylinder_color.g = v[0][1];
+                        stud_cylinder_color.b = v[0][2];
+                        stud_cylinder_color.a = v[0][3];
+                    }
+                    if (pszParam[2] == 'P')
+                    {
+                        ScanRGBA(v, 1, &(pszParam[3]));
+                        printf("PartEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                        part_edge_color.r = v[0][0];
+                        part_edge_color.g = v[0][1];
+                        part_edge_color.b = v[0][2];
+                        part_edge_color.a = v[0][3];
+                    }
+                    if (pszParam[2] == 'B')
+                    {
+                        ScanRGBA(v, 1, &(pszParam[3]));
+                        printf("BlackEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                        black_edge_color.r = v[0][0];
+                        black_edge_color.g = v[0][1];
+                        black_edge_color.b = v[0][2];
+                        black_edge_color.a = v[0][3];
+                    }
+                    if (pszParam[2] == 'D')
+                    {
+                        ScanRGBA(v, 1, &(pszParam[3]));
+                        printf("DarkEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                        dark_edge_color.r = v[0][0];
+                        dark_edge_color.g = v[0][1];
+                        dark_edge_color.b = v[0][2];
+                        dark_edge_color.a = v[0][3];
+                    }
                 }
                 else
                     ldraw_commandline_opts.log_output = 1;
