@@ -1071,8 +1071,8 @@ int L3_RGB2HSL(V3F* hSL, const ZCOLOR v)
     float M, m, C, h, S, L; // h is H/60
 
     rgb[0] = v.r;
-    rgb[0] = v.g;
-    rgb[0] = v.b;
+    rgb[1] = v.g;
+    rgb[2] = v.b;
 
     Mi = (rgb[0] >= rgb[1]) ? 0 : 1;
     Mi = (rgb[Mi] >= rgb[2]) ? Mi : 2;
@@ -1108,11 +1108,8 @@ int L3_RGB2HSL(V3F* hSL, const ZCOLOR v)
 
 int L3_HSL2RGB(V3F* v, const V3F hSL)
 {
-    float h, S, L, C, X, m;
-
-    h = hSL.r;
-    S = hSL.g;
-    L = hSL.b;
+    float C, X, m;
+    float h=hSL.r, S=hSL.g, L=hSL.b;
 
     C = (1.0f - fabs(2.0f * L - 1.0f)) * S;
     X = C * (1.0f - fabs(fmodf(h, 2.0f) - 1.0f));
@@ -1161,7 +1158,6 @@ int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum, const f
     }
 
     // Get base color in hSL
-    //hSL = TC_RGB2HSL(Value);
     L3_RGB2HSL(&hSL, Value);
 
     // Desaturate
@@ -1169,17 +1165,14 @@ int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum, const f
     hSL.g *= sat;
 
     // Adjusted color to RGB
-    // rgb1 = TC_HSL2RGB(TCVector(hSL[0], hSL[1], 0.5f));
     hSL.b = 0.5f;
     L3_HSL2RGB(&rgb1,hSL);
 
     // Fix adjusted color luma to target value
-    // y1 = TC_LUM_FROM_RGB(rgb1[0], rgb1[1], rgb1[2]);
     y1 = L3_LUM_FROM_RGB(rgb1.r, rgb1.b, rgb1.g);
     if (yt < y1)
     {
         // Make darker via scaling
-        // rgbf = (yt / y1) * rgb1;
         float yq = (yt / y1);
         rgbf.r = yq * rgb1.r;
         rgbf.g = yq * rgb1.g;
@@ -1188,25 +1181,20 @@ int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum, const f
     else
     {
         // Make lighter via scaling anti-color
-        //rgbf = TCVector(1.0f, 1.0f, 1.0f) - rgb1;
         V3F_SUB(&rgbf, 1.0f, 1.0f, 1.0f, rgb1);
 
-        //rgbf *= (1.0f - yt) / (1.0f - y1);
         rgbf.r *= (1.0f - yt) / (1.0f - y1);
         rgbf.g *= (1.0f - yt) / (1.0f - y1);
         rgbf.b *= (1.0f - yt) / (1.0f - y1);
 
-        //rgbf = TCVector(1.0f, 1.0f, 1.0f) - rgbf;
         rgb1 = rgbf;
         V3F_SUB(&rgbf, 1.0f, 1.0f, 1.0f, rgb1);
     }
 
-    //TCVector rgb = TCVector(TC_LINEAR_TO_SRGB(rgbf[0]), TC_LINEAR_TO_SRGB(rgbf[1]), TC_LINEAR_TO_SRGB(rgbf[2])) *= 255;
     rgb1.r = L3_LINEAR_TO_SRGB(rgbf.r) * 255;
     rgb1.g = L3_LINEAR_TO_SRGB(rgbf.g) * 255;
     rgb1.b = L3_LINEAR_TO_SRGB(rgbf.b) * 255;
 
-    // return LDLColor{ (TCByte)rgb[0], (TCByte)rgb[1], (TCByte)rgb[2], 255};
     ZCOLOR zc;
     zc.r = (unsigned char)rgb1.r;
     zc.g = (unsigned char)rgb1.g;
@@ -1272,16 +1260,15 @@ int get_stud_style_or_auto_edge_color(int c)
     v.g = L3_RGB_TO_DEC((int)zcp.g);
     v.b = L3_RGB_TO_DEC((int)zcp.b);
     const float value_luminescence = L3_LUM_FROM_SRGB(v.r,v.g,v.b);
-    const float light_dark_control = automate_edge_color ?
-                part_color_value_ld_index : L3_SRGB_TO_LINEAR(part_color_value_ld_index);
+    const float light_dark_control = automate_edge_color ? part_color_value_ld_index : L3_SRGB_TO_LINEAR(part_color_value_ld_index);
 
     if (automate_edge_color) // Automate Edge Colours
     {
-            const float edge_luminescence = get_edge_luminescence(c);
-            int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, light_dark_control);
-            zcolor_modify(c, NULL, adjusted_inverse_index, true, zcp.r, zcp.g, zcp.b, zcp.a, zcs.r, zcs.g, zcs.b, zcs.a);
-            return adjusted_inverse_index;
-        }
+        const float edge_luminescence = get_edge_luminescence(c);
+        int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, light_dark_control);
+        zcolor_modify(c, NULL, adjusted_inverse_index, true, zcp.r, zcp.g, zcp.b, zcp.a, zcs.r, zcs.g, zcs.b, zcs.a);
+        return adjusted_inverse_index;
+    }
     else                    // High Contrast Style
     {
         if (c == 0)
