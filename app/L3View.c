@@ -444,9 +444,9 @@ static void DrawPart(int IsModel, struct L3PartS *PartPtr, int CurColor, float m
 			      printf("Illegal COLOR syntax %d\n",n);
 			    break;
 			  }
-			  zcolor_modify(i,name,inverse_index,
-					(int)m1[0][0], (int)m1[0][1], (int)m1[0][2], (int)m1[0][3],
-					(int)m1[1][0], (int)m1[1][1], (int)m1[1][2], (int)m1[1][3]);
+              zcolor_modify(i,name,inverse_index, false,
+                    (int)m1[0][0], (int)m1[0][1], (int)m1[0][2], (int)m1[0][3],
+                    (int)m1[1][0], (int)m1[1][1], (int)m1[1][2], (int)m1[1][3]);
 			}
 
 			// Intercept the LDConfig.ldr !COLOUR meta command.

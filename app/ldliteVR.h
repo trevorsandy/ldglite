@@ -146,6 +146,8 @@ typedef struct zcolor_struct {
 #define ZCOLOR_TABLE_DEFAULT_SIZE 64
 #define ZCOLOR_TABLE_SIZE 256
 
+#include <stdbool.h>
+
 typedef struct zcolor_def_table_entry_struct {
 	char *name;
 	int inverse_index;
@@ -155,6 +157,7 @@ typedef struct zcolor_def_table_entry_struct {
 
 typedef struct zcolor_table_entry_struct {
 	int inverse_index;
+    bool adjusted;
 	ZCOLOR primary;
 	ZCOLOR dither;
 } ZCOLOR_TABLE_ENTRY;
@@ -227,9 +230,9 @@ matrix3d * copymat(matrix3d *mat);
 matrix3d* zmatrix_lookup(char *name);
 int zmatrix_alias(char *name, matrix3d *matrix);
 int zpoint_alias(char *name, vector3d *point);
-int zcolor_modify(int index, char *name, int inverse_index,
-				  int p_r, int p_g, int p_b, int p_a,
-				  int d_r, int d_g, int d_b, int d_a);
+int zcolor_modify(int index, char *name, int inverse_index, bool adjusted,
+                  int p_r, int p_g, int p_b, int p_a,
+                  int d_r, int d_g, int d_b, int d_a);
 int zcolor_alias(int index, char *name);
 int stop_include_file(void);
 vector3d* zpoint_lookup(char *name);

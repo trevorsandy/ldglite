@@ -1133,7 +1133,7 @@ case 43:
 			/* alias the new color name to grey */
 			zcolor_alias(7,yyvsp[-10].c);
 	      } else {
-			zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
+            zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,false,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
           }
 		;
     break;}
@@ -1145,7 +1145,7 @@ case 44:
 			/* alias the new color name to grey */
 			zcolor_alias(7,yyvsp[-10].c);
 	      } else {
-			zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
+            zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,false,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
           }
 			if (stop_include_file() == (-1)) { YYACCEPT; };
 		;

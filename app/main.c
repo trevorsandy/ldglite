@@ -3265,7 +3265,7 @@ int ldlite_parse_colour_meta(char *s)
             r = (b >> 16) & 0xff;
             g = (b >> 8) & 0xff;
             b = b & 0xff;
-            zcolor_modify(i,name,inverse_index, r, g, b, alpha, r, g, b, alpha);
+            zcolor_modify(i,name,inverse_index, false, r, g, b, alpha, r, g, b, alpha);
         }
         return 1;
     }
