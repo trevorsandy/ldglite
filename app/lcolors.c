@@ -27,6 +27,9 @@
 #define L3_SRGB_TO_LINEAR(v) (powf(v, 2.2f))
 #define L3_LINEAR_TO_SRGB(v) (powf(v, 1.0f / 2.2f))
 #define L3_LUM_FROM_SRGB(r,g,b) ((0.2126f * L3_SRGB_TO_LINEAR(r)) + (0.7152f * L3_SRGB_TO_LINEAR(g)) + (0.0722f * L3_SRGB_TO_LINEAR(b)))
+#define L3_LUM_FROM_RGB(r,g,b) ((0.2126f * r) + (0.7152f * g) + (0.0722f * b))
+#define L3_RGB_EPSILON (0.5f / 255.0f)
+#define L3_RGB_TO_DEC(v) (v / 255.0f)
 
 int zcolor_unalias(int index, char *name);
 int zcolor_alias(int index, char *name);
@@ -1019,40 +1022,259 @@ int add_stud_cylinder_color(void)
     return 0;
 }
 
+typedef struct vector_3_float
+{
+  float r,g,b;
+} V3F;
+
+void V3F_ASSIGN(V3F* v, const float r, const float g, const float b)
+{
+    v->r = r;
+    v->g = g;
+    v->b = b;
+}
+
+// rgbf = TCVector(1.0f, 1.0f, 1.0f) - rgb1;
+void V3F_SUB(V3F* v, const float r, const float g, const float b, const V3F v1)
+{
+    v->r = r - v1.r;
+    v->g = g - v1.g;
+    v->b = b - v1.b;
+}
+
+int L3_RGB2HSL(V3F* hSL, const ZCOLOR v)
+{
+    int Mi;
+    float rgb[4];
+    float M, m, C, h, S, L; // h is H/60
+
+    rgb[0] = v.r;
+    rgb[0] = v.g;
+    rgb[0] = v.b;
+
+    Mi = (rgb[0] >= rgb[1]) ? 0 : 1;
+    Mi = (rgb[Mi] >= rgb[2]) ? Mi : 2;
+    M = rgb[Mi];
+
+    m = (rgb[0] < rgb[1]) ? rgb[0] : rgb[1];
+    m = (m < rgb[2]) ? m : rgb[2];
+
+    C = M - m;
+    L = (M + m) / 2.0f;
+
+    if (C < L3_RGB_EPSILON)  // C == 0.0
+        h = 0.0f;
+    else if (Mi == 0)        // M == R
+        h = 0.0f + (rgb[1] - rgb[2]) / C;
+    else if (Mi == 1)        // M == G
+        h = 2.0f + (rgb[2] - rgb[0]) / C;
+    else                     // M = B
+        h = 4.0f + (rgb[0] - rgb[1]) / C;
+
+    h = (h < 0.0) ? h + 6.0f : h;
+    h = (h >= 6.0) ? h - 6.0f : h;
+
+    S = ((L < (L3_RGB_EPSILON / 2.0f)) || (L > (1.0f - (L3_RGB_EPSILON / 2.0f))))
+        ? 0.0f : (2.0f * (M - L)) / (1.0f - fabs((2.0f * L) - 1.0f));
+
+    hSL->r = h;
+    hSL->g = S;
+    hSL->b = L;
+
+    return 0;
+}
+
+int L3_HSL2RGB(V3F* v, const V3F hSL)
+{
+    float h, S, L, C, X, m;
+
+    h = hSL.r;
+    S = hSL.g;
+    L = hSL.b;
+
+    C = (1.0f - fabs(2.0f * L - 1.0f)) * S;
+    X = C * (1.0f - fabs(fmodf(h, 2.0f) - 1.0f));
+
+    if (h < 1.0f)
+        V3F_ASSIGN(v, C, X, 0.0f);
+    else if (h < 2.0f)
+        V3F_ASSIGN(v, X, C, 0.0f);
+    else if (h < 3.0f)
+        V3F_ASSIGN(v, 0.0f, C, X);
+    else if (h < 4.0f)
+        V3F_ASSIGN(v, 0.0f, X, C);
+    else if (h < 5.0f)
+        V3F_ASSIGN(v, X, 0.0f, C);
+    else
+        V3F_ASSIGN(v, C, 0.0f, X);
+
+    m = L - C / 2.0f;
+
+    v->r += m;
+    v->g += m;
+    v->b += m;
+
+    return 0;
+}
+
+int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum, const float EdgeLum, const float Contrast, const float Saturation)
+{
+    float y1, yt;
+    float y0 = ValueLum;
+    float ye = EdgeLum;
+    float cont = Contrast;
+    float sat = Saturation;
+    V3F hSL, rgb1, rgbf;
+
+    // Determine luma target
+    if (ye < y0)
+    {
+        // Light base color
+        yt = y0 - cont * y0;
+    }
+    else
+    {
+        // Dark base color
+        yt = y0 + cont * (1.0f - y0);
+    }
+
+    // Get base color in hSL
+    //hSL = TC_RGB2HSL(Value);
+    L3_RGB2HSL(&hSL, Value);
+
+    // Desaturate
+    //hSL[1] *= sat;
+    hSL.g *= sat;
+
+    // Adjusted color to RGB
+    // rgb1 = TC_HSL2RGB(TCVector(hSL[0], hSL[1], 0.5f));
+    hSL.b = 0.5f;
+    L3_HSL2RGB(&rgb1,hSL);
+
+    // Fix adjusted color luma to target value
+    // y1 = TC_LUM_FROM_RGB(rgb1[0], rgb1[1], rgb1[2]);
+    y1 = L3_LUM_FROM_RGB(rgb1.r, rgb1.b, rgb1.g);
+    if (yt < y1)
+    {
+        // Make darker via scaling
+        // rgbf = (yt / y1) * rgb1;
+        float yq = (yt / y1);
+        rgbf.r = yq * rgb1.r;
+        rgbf.g = yq * rgb1.g;
+        rgbf.b = yq * rgb1.b;
+    }
+    else
+    {
+        // Make lighter via scaling anti-color
+        //rgbf = TCVector(1.0f, 1.0f, 1.0f) - rgb1;
+        V3F_SUB(&rgbf, 1.0f, 1.0f, 1.0f, rgb1);
+
+        //rgbf *= (1.0f - yt) / (1.0f - y1);
+        rgbf.r *= (1.0f - yt) / (1.0f - y1);
+        rgbf.g *= (1.0f - yt) / (1.0f - y1);
+        rgbf.b *= (1.0f - yt) / (1.0f - y1);
+
+        //rgbf = TCVector(1.0f, 1.0f, 1.0f) - rgbf;
+        rgb1 = rgbf;
+        V3F_SUB(&rgbf, 1.0f, 1.0f, 1.0f, rgb1);
+    }
+
+    //TCVector rgb = TCVector(TC_LINEAR_TO_SRGB(rgbf[0]), TC_LINEAR_TO_SRGB(rgbf[1]), TC_LINEAR_TO_SRGB(rgbf[2])) *= 255;
+    rgb1.r = L3_LINEAR_TO_SRGB(rgbf.r) * 255;
+    rgb1.g = L3_LINEAR_TO_SRGB(rgbf.g) * 255;
+    rgb1.b = L3_LINEAR_TO_SRGB(rgbf.b) * 255;
+
+    // return LDLColor{ (TCByte)rgb[0], (TCByte)rgb[1], (TCByte)rgb[2], 255};
+    ZCOLOR zc;
+    zc.r = (unsigned char)rgb1.r;
+    zc.g = (unsigned char)rgb1.g;
+    zc.b = (unsigned char)rgb1.b;
+    zc.a = 255;
+    return get_edge_color_number_from_RGB(&zc);;
+}
+
+float get_edge_luminescence(int c)
+{
+    int index = lookup_edge_code(c);
+
+    int r=0, g=0, b=0;
+    if ((index >= 0)&&(index < ZCOLOR_TABLE_SIZE)) {
+        r = zcolor_table[c].primary.r;
+        g = zcolor_table[c].primary.b;
+        r = zcolor_table[c].primary.r;
+    }
+#ifdef USE_OPENGL
+    else if ((index >= 0x2000000)&&(index <= 0x3ffffff)) {
+        r = (index & 0x00ff0000) >> 16;
+        g = (index & 0x0000ff00) >> 8;
+        b = (index & 0x000000ff) >> 0;
+    } else if ((index <= 0x4000000)&&(index <= 0x7ffffff)) {
+        r = 17*((c & 0x00000f00) >> 8);
+        g = 17*((c & 0x000000f0) >> 4);
+        b = 17*((c & 0x0000000f) >> 0);
+        int dr=0, dg=0, db=0;
+        dr = 17*((c & 0x00f00000) >> 20);
+        dg = 17*((c & 0x000f0000) >> 16);
+        db = 17*((c & 0x0000f000) >> 12);
+        // No dithering, just average the numbers
+        r = (unsigned char) (((int)r + (int)dr) / 2);
+        g = (unsigned char) (((int)g + (int)dg) / 2);
+        b = (unsigned char) (((int)b + (int)db) / 2);
+    }
+#endif
+    else {
+        int i;
+        for (i=0; i < nColorCodes; i++) {
+            if (c == zcolor_code_table[i].code){
+                r = zcolor_code_table[i].primary.r;
+                g = zcolor_code_table[i].primary.g;
+                b = zcolor_code_table[i].primary.b;
+                break;
+            }
+        }
+    }
+
+    V3F v;
+    v.r = L3_RGB_TO_DEC(r);
+    v.g = L3_RGB_TO_DEC(g);
+    v.b = L3_RGB_TO_DEC(b);
+    return L3_LUM_FROM_SRGB(v.r,v.g,v.b);
+}
+
 int get_stud_style_or_auto_edge_color(int c)
 {
     ZCOLOR zcp, zcs;
     translate_color(c, &zcp, &zcs);
-    float c_value[4];
-    c_value[0] = zcp.r / 255.0f;
-    c_value[1] = zcp.g / 255.0f;
-    c_value[2] = zcp.b / 255.0f;
-    const float value_luminescence = L3_LUM_FROM_SRGB(c_value[0],c_value[1],c_value[2]);
-    const float light_dark_index = L3_SRGB_TO_LINEAR(part_color_value_ld_index);
+    V3F v;
+    v.r = L3_RGB_TO_DEC((int)zcp.r);
+    v.g = L3_RGB_TO_DEC((int)zcp.g);
+    v.b = L3_RGB_TO_DEC((int)zcp.b);
+    const float value_luminescence = L3_LUM_FROM_SRGB(v.r,v.g,v.b);
+    const float light_dark_control = automate_edge_color ?
+                part_color_value_ld_index : L3_SRGB_TO_LINEAR(part_color_value_ld_index);
 
     if (automate_edge_color) // Automate Edge Colours
     {
-        float edge_luminescence = 0.0f;
-
-        if (value_luminescence > light_dark_index)
-            edge_luminescence = value_luminescence - (value_luminescence * part_edge_contrast);
+        if (true)
+        {
+            return edge_color(c);
+        }
         else
-            edge_luminescence = (1.0f - value_luminescence) * part_edge_contrast + value_luminescence;
+        {
+            const float edge_luminescence = get_edge_luminescence(c);
 
-        edge_luminescence = L3_LINEAR_TO_SRGB(edge_luminescence);
+            int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, light_dark_control);
 
-        ZCOLOR zcp;
-        zcp.r = edge_luminescence * 255;
-        zcp.g = edge_luminescence * 255;
-        zcp.b = edge_luminescence * 255;
-        zcp.a = 255;
-        return get_edge_color_number_from_RGB(&zcp);
+            zcolor_modify(c, NULL, adjusted_inverse_index, true, zcp.r, zcp.g, zcp.b, zcp.a, zcs.r, zcs.g, zcs.b, zcs.a);
+
+            return adjusted_inverse_index;
+        }
     }
-    else                     // High Contrast Style
+    else                    // High Contrast Style
     {
         if (c == 0)
             return get_edge_color_number_from_RGB(&black_edge_color);
-        else if (c != 4242 && value_luminescence < light_dark_index)
+        else if (c != 4242 && value_luminescence < light_dark_control)
             return get_edge_color_number_from_RGB(&dark_edge_color);
         else
             return get_edge_color_number_from_RGB(&part_edge_color);
