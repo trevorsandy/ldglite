@@ -869,7 +869,14 @@ int edge_color(int c)
 {
     if (stud_style > 5 || automate_edge_color)
     {
-        return get_stud_style_or_auto_edge_color(c);
+        if (automate_edge_color && color_is_adjusted(c) == true) {
+            if ((c >= 0) && (c < ZCOLOR_TABLE_SIZE))
+                return zcolor_table[c].inverse_index;
+            else
+                return lookup_edge_code(c);
+        } else {
+            return get_stud_style_or_auto_edge_color(c);
+        }
     }
     else
     {
@@ -1020,6 +1027,21 @@ int add_stud_cylinder_color(void)
     unsigned a = stud_cylinder_color.a;
     zcolor_modify(4242,"Stud_Cylinder_Colour", inverse_index, false, r, g, b, a, r, g, b, a);
     return 0;
+}
+
+bool color_is_adjusted(int c)
+{
+    if ((c >= 0) && (c < ZCOLOR_TABLE_SIZE)) {
+        return zcolor_table[c].adjusted;
+    } else {
+        int i;
+        for (i=0; i < nColorCodes; i++){
+          if (c == zcolor_code_table[i].code){
+              return zcolor_code_table[i].adjusted;
+          }
+        }
+    }
+    return false;
 }
 
 typedef struct vector_3_float
@@ -1255,21 +1277,11 @@ int get_stud_style_or_auto_edge_color(int c)
 
     if (automate_edge_color) // Automate Edge Colours
     {
-        if (true)
-        {
-            return edge_color(c);
-        }
-        else
-        {
             const float edge_luminescence = get_edge_luminescence(c);
-
             int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, light_dark_control);
-
             zcolor_modify(c, NULL, adjusted_inverse_index, true, zcp.r, zcp.g, zcp.b, zcp.a, zcs.r, zcs.g, zcs.b, zcs.a);
-
             return adjusted_inverse_index;
         }
-    }
     else                    // High Contrast Style
     {
         if (c == 0)

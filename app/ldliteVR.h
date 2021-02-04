@@ -217,6 +217,7 @@ extern float part_edge_contrast;
 extern float part_color_value_ld_index;
 extern int automate_edge_color;
 extern int stud_style;
+extern bool color_is_adjusted(int c);
 extern int add_stud_cylinder_color(void);
 extern int get_stud_style_or_auto_edge_color(int c);
 extern int get_extended_HEX_from_RGB(ZCOLOR *zcp);
