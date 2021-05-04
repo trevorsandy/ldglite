@@ -59,7 +59,7 @@ CONFIG(debug, debug|release) {
 !isEmpty(3RD_ARG): CONFIG -= $$3RD_ARG
 CONFIG += $$section(3RD_ARG, =, 0, 0)
 isEmpty(3RD_PREFIX):3RD_PREFIX = $$_PRO_FILE_PWD_/$$section(3RD_ARG, =, 1, 1)
-!exists($${3RD_PREFIX}): message("~~~ ERROR 3rd party repository path not found ~~~")
+!exists($${3RD_PREFIX}): message("~~~ ERROR 3rd party repository path not found $$3RD_PREFIX ~~~")
 
 # same more funky stuff to get the local library prefix - all this just to build on OBS' RHEL
 OSMESA_ARG = $$find(CONFIG, USE_OSMESA_LOCAL.*)

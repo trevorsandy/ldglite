@@ -1,3 +1,14 @@
+# Build and check LPub3D x86 and x86_64 architectures unsing Qt/MinGW/VS2017 platforms
+# Trevor SANDY <trevor.sandy@gmail.com>
+# Last Update: May 04, 2021
+# Copyright (c) 2017 - 2021 by Trevor SANDY
+#
+
+# The following variables can be set to true from
+# AppVeyor Site->Project->Settings->Environment Variables
+#
+# LDGL_SKIP_APPVEYOR_VAR     ; skip AppVeyor build
+
 # Build and check LDGLite x86 and x86_64 architectures unsing Qt platform
 version: 'LDGLite-AV-1.3.6.{build}'
 
@@ -30,6 +41,11 @@ environment:
   LP3D_QT64_MSVC: C:\Qt\5.11.3\msvc2017_64\bin
 
 init:
+ - ps: |
+      If ($env:LDGL_SKIP_APPVEYOR_VAR -eq "true") {
+         write-host "Skip Appveyor build detected in environment variable."
+         Exit-AppveyorBuild
+      }
  - ps: write-host "Building LDGLite x86 and x86_64 architectures..."
  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
  - ps: |

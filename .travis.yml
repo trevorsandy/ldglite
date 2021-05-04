@@ -1,10 +1,20 @@
-language: cpp
+# Build and check LPub3D on Linux and macOS
+# Trevor SANDY <trevor.sandy@gmail.com>
+# Last Update: May 04, 2021
+# Copyright (c) 2017 - 2021 by Trevor SANDY
+#
+
+# The following variables can be set to true from
+# Travis-CI Site->More Options->Settings->Environment Variables
+#
+# LDGL_SKIP_TRAVIS_VAR     ; skip Travis-CI build 
+
 os: linux
-sudo: required
-dist: trusty
+dist: xenial
+language: cpp
 
 git:
-  depth: 200
+  depth: false
 
 branches:
   only:
@@ -29,19 +39,20 @@ jobs:
   - os: linux
     compiler: gcc
     env:
-     - QT_BASE=59
+     - QT_BASE=515
   - os: osx
     compiler: clang
     env:
-     - QT_BASE=59
+     - QT_BASE=515
 
 before_install:
-  # Skip build if the commit message contains [skip travis] or [travis skip]
+  # Skip build if the commit message contains [skip travis] or [travis skip] or environment variable LDGL_SKIP_TRAVIS_VAR is true
   - >
       echo "$TRAVIS_COMMIT_MESSAGE"
       | grep -E  '\[(skip travis|travis skip)\]'
       && echo "[skip travis] detected, exiting."
-      && exit 0 || true
+      && exit 0 || [ "$LDGL_SKIP_TRAVIS_VAR" = "true" ] 
+      && echo "'Skip Travis-CI' build detected in environment variable." && exit 0 || true
   # Build package if commit message contains [build pkg]
   - >
       echo "$TRAVIS_COMMIT_MESSAGE"
@@ -56,7 +67,7 @@ before_install:
       && export LDGL_BUILD_PKG=yes
       && export LDGL_DEPLOY_PKG=yes || true
   # Add private qt repositories
-  - if [[ "$QT_BASE" = "59" && "$TRAVIS_OS_NAME" = "linux" ]]; then sudo add-apt-repository ppa:beineri/opt-qt592-trusty -y; fi
+  - if [[ "$QT_BASE" = "515" && "$TRAVIS_OS_NAME" = "linux" ]]; then sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-$TRAVIS_DIST -y; fi
   # Update repository index and download package dependencies/docker-engine if required
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       sudo apt-get update -qq;
@@ -72,7 +83,7 @@ before_install:
 
 install:
   # Install qt5 on Linux
-  - if [[ "$QT_BASE" = "59" && "$TRAVIS_OS_NAME" = "linux" ]]; then sudo apt-get install -qq qt59base; source /opt/qt59/bin/qt59-env.sh; fi
+  - if [[ "$QT_BASE" = "515" && "$TRAVIS_OS_NAME" = "linux" ]]; then sudo apt-get install -qq qt${QT_BASE}base; source /opt/qt${QT_BASE}/bin/qt${QT_BASE}-env.sh; fi
   # Install qt5 on MacOS, clone lpub3d_macos_3rd party repository and download LDraw library archive files
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew install qt5;
