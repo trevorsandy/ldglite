@@ -9,7 +9,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: January 27, 2021
+rem  Last Update: June 10, 2021
 rem  Copyright (c) 2017 - 2021 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -28,18 +28,23 @@ IF "%APPVEYOR%" EQU "True" (
     ECHO  -%~nx0 terminated!
     GOTO :END
   )
-  SET DIST_DIR=..\..\%LP3D_DIST_DIR%
+  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
 ) ELSE (
   SET DIST_DIR=..\..\lpub3d_windows_3rdparty
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.11.3\msvc2015\bin
-  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.11.3\msvc2015_64\bin
+  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.15.2\msvc2019\bin
+  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.15.2\msvc2019_64\bin
 )
-
+rem Visual C++ 2012 -vcvars_ver=11.0
+rem Visual C++ 2013 -vcvars_ver=12.0
+rem Visual C++ 2015 -vcvars_ver=14.0
+rem Visual C++ 2017 -vcvars_ver=14.1
+rem Visual C++ 2019 -vcvars_ver=14.2
 SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
+SET LP3D_VCVARSALL_VER=-vcvars_ver=14.2
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
@@ -216,16 +221,17 @@ SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURAT
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 rem /c flag suppresses the copyright
 SET LDGLITE_MAKE_ARGS=/c /f Makefile
+rem Set vcvars for AppVeyor or local build environments
 IF "%PATH_PREPENDED%" NEQ "True" (
   SET PATH=%SYS_DIR%
   IF %PLATFORM% EQU x86 (
     ECHO.
     CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars32.bat" -vcvars_ver=14.0
+    CALL "%LP3D_VCVARSALL%\vcvars32.bat" %LP3D_VCVARSALL_VER%
   ) ELSE (
     ECHO.
     CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars64.bat" -vcvars_ver=14.0
+    CALL "%LP3D_VCVARSALL%\vcvars64.bat" %LP3D_VCVARSALL_VER%
   )
   ECHO.
   SET PATH_PREPENDED=True
