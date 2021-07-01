@@ -100,7 +100,7 @@ SET CONFIGURATION=release
 SET THIRD_INSTALL=unknown
 SET INSTALL_32BIT=unknown
 SET INSTALL_64BIT=unknown
-SET PLATFORM=unknown
+SET PLATFORM_ARCH=unknown
 SET LDCONFIG_FILE=unknown
 SET CHECK=unknown
 
@@ -120,19 +120,19 @@ IF NOT [%1]==[] (
 
 rem Parse platform input flags
 IF [%1]==[] (
-  SET PLATFORM=-all
+  SET PLATFORM_ARCH=-all
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="x86" (
-  SET PLATFORM=x86
+  SET PLATFORM_ARCH=x86
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="x86_64" (
-  SET PLATFORM=x86_64
+  SET PLATFORM_ARCH=x86_64
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="-all" (
-  SET PLATFORM=-all
+  SET PLATFORM_ARCH=-all
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="-help" (
@@ -208,20 +208,20 @@ IF /I "%3"=="-chk" (
 )
 
 rem Check if build all platforms
-IF /I "%PLATFORM%"=="-all" (
+IF /I "%PLATFORM_ARCH%"=="-all" (
   GOTO :BUILD_ALL
 )
 
 rem Check if build Win32 and vs2019, set to vs2017 for WinXP compat
 IF "%LP3D_VSVERSION%"=="2019" (
-  CALL :CONFIGURE_VCTOOLS %PLATFORM%
+  CALL :CONFIGURE_VCTOOLS %PLATFORM_ARCH%
 )
 
 rem Configure buid arguments and set environment variables
 CALL :CONFIGURE_BUILD_ENV
 CD /D %PWD%
 ECHO.
-ECHO -Building %PLATFORM% platform, %CONFIGURATION% configuration...
+ECHO -Building %PLATFORM_ARCH% platform, %CONFIGURATION% configuration...
 rem Display QMake version
 ECHO.
 qmake -v & ECHO.
@@ -230,7 +230,7 @@ qmake %LDGLITE_CONFIG_ARGS%
 rem perform build
 nmake.exe
 rem Perform build check if specified
-IF %CHECK%==1 CALL :CHECK_BUILD %PLATFORM%
+IF %CHECK%==1 CALL :CHECK_BUILD %PLATFORM_ARCH%
 rem Package 3rd party install content
 IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
 GOTO :END
@@ -240,7 +240,7 @@ rem Launch qmake/make across all platform builds
 ECHO.
 ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
-  SET PLATFORM=%%P
+  SET PLATFORM_ARCH=%%P
   IF "%LP3D_VSVERSION%"=="2019" (
     CALL :CONFIGURE_VCTOOLS %%P
   )
@@ -272,13 +272,13 @@ IF %1==x64 (
   SET LP3D_VCTOOLSET=v142
 )
 ECHO.
-ECHO -Set %1 MSBuild platform toolset to %LP3D_VCTOOLSET%
+ECHO -Set %1 MSBuild %PLATFORM_ARCH% platform toolset to %LP3D_VCTOOLSET%
 EXIT /b
 
 :CONFIGURE_BUILD_ENV
 CD /D %PWD%
 ECHO.
-ECHO -Configure %PACKAGE% %PLATFORM% build environment...
+ECHO -Configure %PACKAGE% %PLATFORM_ARCH% build environment...
 ECHO.
 ECHO -Cleanup previous %PACKAGE% qmake config files - if any...
 FOR /R %%I IN (
@@ -289,7 +289,7 @@ FOR /R %%I IN (
   "app\Makefile*"
 ) DO DEL /S /Q "%%~I" >nul 2>&1
 ECHO.
-ECHO   PLATFORM (BUILD_ARCH)...[%PLATFORM%]
+ECHO   PLATFORM_ARCHITECTURE...[%PLATFORM_ARCH%]
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 rem /c flag suppresses the copyright
@@ -297,7 +297,7 @@ SET LDGLITE_MAKE_ARGS=/c /f Makefile
 rem Set vcvars for AppVeyor or local build environments
 IF "%PATH_PREPENDED%" NEQ "True" (
   SET PATH=%SYS_DIR%
-  IF %PLATFORM% EQU x86 (
+  IF %PLATFORM_ARCH% EQU x86 (
     ECHO.
     SET WINDOWS_TARGET_PLATFORM_VERSION=%LP3D_VCVERSION%
     IF EXIST "%LP3D_QT32_MSVC%\qtenv2.bat" (
@@ -330,7 +330,7 @@ IF "%PATH_PREPENDED%" NEQ "True" (
       ECHO -%~nx0 terminated!
       GOTO :ERROR_END
     )
-  )  
+  )
   ECHO.
   SET PATH_PREPENDED=True
   SETLOCAL ENABLEDELAYEDEXPANSION
