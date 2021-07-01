@@ -20,6 +20,7 @@ CALL :ELAPSED_BUILD_TIME Start
 SET PWD=%CD%
 
 rem Variables - change these as required by your build environments
+SET LP3D_QTVERSION=5.15.2
 SET LP3D_VSVERSION=2019
 
 IF "%GITHUB%" EQU "True" (
@@ -58,8 +59,8 @@ IF "%GITHUB%" NEQ "True" (
     SET DIST_DIR=..\..\lpub3d_windows_3rdparty
     SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
     SET LDRAW_DIR=%USERPROFILE%\LDraw
-    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
-    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+    SET LP3D_QT32_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+    SET LP3D_QT64_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
   )
 )
 
@@ -241,7 +242,7 @@ ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
   SET PLATFORM=%%P
   IF "%LP3D_VSVERSION%"=="2019" (
-    CALL :CONFIGURE_LP3D_VCTOOLSET %%P
+    CALL :CONFIGURE_VCTOOLS %%P
   )
   rem Configure buid arguments and set environment variables
   CALL :CONFIGURE_BUILD_ENV
@@ -296,13 +297,15 @@ SET LDGLITE_MAKE_ARGS=/c /f Makefile
 rem Set vcvars for AppVeyor or local build environments
 IF "%PATH_PREPENDED%" NEQ "True" (
   SET PATH=%SYS_DIR%
-  SET WINDOWS_TARGET_PLATFORM_VERSION=%LP3D_VCVERSION%
   IF %PLATFORM% EQU x86 (
     ECHO.
+    SET WINDOWS_TARGET_PLATFORM_VERSION=%LP3D_VCVERSION%
     IF EXIST "%LP3D_QT32_MSVC%\qtenv2.bat" (
       CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
     ) ELSE (
-      SET PATH=%LP3D_QT32_MSVC%;%PATH%
+      SETLOCAL ENABLEDELAYEDEXPANSION
+      SET PATH=%LP3D_QT32_MSVC%;!PATH!
+      ENDLOCAL
     )
     IF EXIST "%LP3D_VCVARSALL%\vcvars32.bat" (
       CALL "%LP3D_VCVARSALL%\vcvars32.bat" %LP3D_VCVARSALL_VER%
@@ -316,7 +319,9 @@ IF "%PATH_PREPENDED%" NEQ "True" (
     IF EXIST "%LP3D_QT64_MSVC%\qtenv2.bat" (
       CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
     ) ELSE (
-      SET PATH=%LP3D_QT64_MSVC%;%PATH%
+      SETLOCAL ENABLEDELAYEDEXPANSION
+      SET PATH=%LP3D_QT64_MSVC%;!PATH!
+      ENDLOCAL
     )
     IF EXIST "%LP3D_VCVARSALL%\vcvars64.bat" (
       CALL "%LP3D_VCVARSALL%\vcvars64.bat" %LP3D_VCVARSALL_VER%
@@ -325,7 +330,7 @@ IF "%PATH_PREPENDED%" NEQ "True" (
       ECHO -%~nx0 terminated!
       GOTO :ERROR_END
     )
-  )
+  )  
   ECHO.
   SET PATH_PREPENDED=True
   SETLOCAL ENABLEDELAYEDEXPANSION
