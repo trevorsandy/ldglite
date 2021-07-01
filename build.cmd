@@ -84,7 +84,7 @@ rem Visual C++ 2013 -vcvars_ver=12.0
 rem Visual C++ 2015 -vcvars_ver=14.0
 rem Visual C++ 2017 -vcvars_ver=14.1
 rem Visual C++ 2019 -vcvars_ver=14.2
-SSET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
+SET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
 SET LP3D_VCVERSION=8.1
 SET LP3D_VCTOOLSET=v140
 
@@ -181,7 +181,6 @@ IF "%GITHUB%" EQU "True" (
   ECHO   GITHUB_RUNNER_OS.......[%RUNNER_OS%]
   ECHO   PROJECT REPOSITORY.....[%GITHUB_REPOSITORY%]
   ECHO   DIST_DIRECTORY.........[%DIST_DIR%]
-  ECHO   DIST_DIRECTORY_DEBUG...[%DIST_DIR%]
 )
 IF "%APPVEYOR%" EQU "True" (
   ECHO   BUILD_HOST.............[APPVEYOR CONTINUOUS INTEGRATION SERVICE]
@@ -271,6 +270,7 @@ IF %1==x64 (
   SET LP3D_VCVERSION=10.0
   SET LP3D_VCTOOLSET=v142
 )
+ECHO.
 ECHO -Set %1 MSBuild platform toolset to %LP3D_VCTOOLSET%
 EXIT /b
 
