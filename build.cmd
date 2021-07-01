@@ -1,4 +1,3 @@
-
 @ECHO OFF &SETLOCAL
 
 Title LDGLite Windows auto build script
@@ -9,42 +8,86 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: June 10, 2021
+rem  Last Update: July 01, 2021
 rem  Copyright (c) 2017 - 2021 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
 rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-SET start=%time%
+CALL :ELAPSED_BUILD_TIME Start
 
 SET PWD=%CD%
 
 rem Variables - change these as required by your build environments
+SET LP3D_VSVERSION=2019
+
+IF "%GITHUB%" EQU "True" (
+  IF [%LP3D_DIST_DIR_PATH%] == [] (
+    ECHO.
+    ECHO  -ERROR: Distribution directory path not defined.
+    ECHO  -%~nx0 terminated!
+    GOTO :ERROR_END
+  )
+  IF "%GITHUB_RUNNER_IMAGE%" == "Visual Studio 2019" (
+    SET LP3D_VSVERSION=2019
+  )
+  rem DIST_DIR must be relative to App folder in LDGLite repo
+  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
+  SET LDRAW_DOWNLOAD_DIR=%LP3D_3RD_PARTY_PATH%
+  SET LDRAW_DIR=%LP3D_LDRAW_DIR_PATH%
+)
 IF "%APPVEYOR%" EQU "True" (
   IF [%LP3D_DIST_DIR_PATH%] == [] (
     ECHO.
     ECHO  -ERROR: Distribution directory path not defined.
     ECHO  -%~nx0 terminated!
-    GOTO :END
+    GOTO :ERROR_END
   )
+  IF "%APPVEYOR_BUILD_WORKER_IMAGE%" == "Visual Studio 2019" (
+    SET LP3D_VSVERSION=2019
+  )
+  rem DIST_DIR must be relative to App folder in LDGLite repo
   SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
-) ELSE (
-  SET DIST_DIR=..\..\lpub3d_windows_3rdparty
-  SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
-  SET LDRAW_DIR=%USERPROFILE%\LDraw
-  SET LP3D_QT32_MSVC=C:\Qt\IDE\5.15.2\msvc2019\bin
-  SET LP3D_QT64_MSVC=C:\Qt\IDE\5.15.2\msvc2019_64\bin
 )
+IF "%GITHUB%" NEQ "True" (
+  IF "%APPVEYOR%" NEQ "True" (
+    rem DIST_DIR must be relative to App folder in LDGLite repo
+    SET DIST_DIR=..\..\lpub3d_windows_3rdparty
+    SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
+    SET LDRAW_DIR=%USERPROFILE%\LDraw
+    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+  )
+)
+
+IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build" (
+  SET LP3D_VCVARSALL=C:\Program Files ^(x86^)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
+)
+IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build" (
+  SET LP3D_VCVARSALL=C:\Program Files ^(x86^)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build
+)
+IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build" (
+  SET LP3D_VCVARSALL=C:\Program Files ^(x86^)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build
+)
+IF "%LP3D_VCVARSALL%" == "" (
+  ECHO.
+  ECHO  -ERROR: Microsoft Visual Studio C++ environment not defined.
+  ECHO  -%~nx0 terminated!
+  GOTO :ERROR_END
+)
+
 rem Visual C++ 2012 -vcvars_ver=11.0
 rem Visual C++ 2013 -vcvars_ver=12.0
 rem Visual C++ 2015 -vcvars_ver=14.0
 rem Visual C++ 2017 -vcvars_ver=14.1
 rem Visual C++ 2019 -vcvars_ver=14.2
-SET LP3D_VCVARSALL=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
-SET LP3D_VCVARSALL_VER=-vcvars_ver=14.2
+SSET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
+SET LP3D_VCVERSION=8.1
+SET LP3D_VCTOOLSET=v140
+
 SET SYS_DIR=%SystemRoot%\System32
 SET zipWin64=C:\program files\7-zip
 SET OfficialCONTENT=complete.zip
@@ -130,6 +173,16 @@ IF /I "%2"=="-chk" (
 :BUILD
 rem Display build settings
 ECHO.
+IF "%GITHUB%" EQU "True" (
+  ECHO   BUILD_HOST.............[GITHUB CONTINUOUS INTEGRATION SERVICE]
+  ECHO   BUILD_WORKER_IMAGE.....[%GITHUB_RUNNER_IMAGE%]
+  ECHO   BUILD_JOB..............[%GITHUB_JOB%]
+  ECHO   GITHUB_REF.............[%GITHUB_REF%]
+  ECHO   GITHUB_RUNNER_OS.......[%RUNNER_OS%]
+  ECHO   PROJECT REPOSITORY.....[%GITHUB_REPOSITORY%]
+  ECHO   DIST_DIRECTORY.........[%DIST_DIR%]
+  ECHO   DIST_DIRECTORY_DEBUG...[%DIST_DIR%]
+)
 IF "%APPVEYOR%" EQU "True" (
   ECHO   BUILD_HOST.............[APPVEYOR CONTINUOUS INTEGRATION SERVICE]
   ECHO   BUILD_ID...............[%APPVEYOR_BUILD_ID%]
@@ -140,6 +193,8 @@ IF "%APPVEYOR%" EQU "True" (
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
+ECHO   VC_VERSION.............[%LP3D_VCVERSION%]
+ECHO   VC_TOOLSET.............[%LP3D_VCTOOLSET%]
 ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%]
 ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%]
 ECHO   WORKING_DIRECTORY......[%PWD%]
@@ -155,6 +210,11 @@ IF /I "%3"=="-chk" (
 rem Check if build all platforms
 IF /I "%PLATFORM%"=="-all" (
   GOTO :BUILD_ALL
+)
+
+rem Check if build Win32 and vs2019, set to vs2017 for WinXP compat
+IF "%LP3D_VSVERSION%"=="2019" (
+  CALL :CONFIGURE_VCTOOLS %PLATFORM%
 )
 
 rem Configure buid arguments and set environment variables
@@ -181,6 +241,9 @@ ECHO.
 ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
   SET PLATFORM=%%P
+  IF "%LP3D_VSVERSION%"=="2019" (
+    CALL :CONFIGURE_LP3D_VCTOOLSET %%P
+  )
   rem Configure buid arguments and set environment variables
   CALL :CONFIGURE_BUILD_ENV
   CD /D %PWD%
@@ -201,6 +264,15 @@ FOR %%P IN ( x86, x86_64 ) DO (
   SET PATH_PREPENDED=False
 )
 GOTO :END
+
+:CONFIGURE_VCTOOLS
+IF %1==x64 (
+  SET LP3D_VCVARSALL_VER=-vcvars_ver=14.2
+  SET LP3D_VCVERSION=10.0
+  SET LP3D_VCTOOLSET=v142
+)
+ECHO -Set %1 MSBuild platform toolset to %LP3D_VCTOOLSET%
+EXIT /b
 
 :CONFIGURE_BUILD_ENV
 CD /D %PWD%
@@ -224,14 +296,35 @@ SET LDGLITE_MAKE_ARGS=/c /f Makefile
 rem Set vcvars for AppVeyor or local build environments
 IF "%PATH_PREPENDED%" NEQ "True" (
   SET PATH=%SYS_DIR%
+  SET WINDOWS_TARGET_PLATFORM_VERSION=%LP3D_VCVERSION%
   IF %PLATFORM% EQU x86 (
     ECHO.
-    CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars32.bat" %LP3D_VCVARSALL_VER%
+    IF EXIST "%LP3D_QT32_MSVC%\qtenv2.bat" (
+      CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
+    ) ELSE (
+      SET PATH=%LP3D_QT32_MSVC%;%PATH%
+    )
+    IF EXIST "%LP3D_VCVARSALL%\vcvars32.bat" (
+      CALL "%LP3D_VCVARSALL%\vcvars32.bat" %LP3D_VCVARSALL_VER%
+    ) ELSE (
+      ECHO -ERROR: vcvars32.bat not found.
+      ECHO -%~nx0 terminated!
+      GOTO :ERROR_END
+    )
   ) ELSE (
     ECHO.
-    CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
-    CALL "%LP3D_VCVARSALL%\vcvars64.bat" %LP3D_VCVARSALL_VER%
+    IF EXIST "%LP3D_QT64_MSVC%\qtenv2.bat" (
+      CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
+    ) ELSE (
+      SET PATH=%LP3D_QT64_MSVC%;%PATH%
+    )
+    IF EXIST "%LP3D_VCVARSALL%\vcvars64.bat" (
+      CALL "%LP3D_VCVARSALL%\vcvars64.bat" %LP3D_VCVARSALL_VER%
+    ) ELSE (
+      ECHO -ERROR: vcvars64.bat not found.
+      ECHO -%~nx0 terminated!
+      GOTO :ERROR_END
+    )
   )
   ECHO.
   SET PATH_PREPENDED=True
@@ -436,7 +529,7 @@ CALL :USAGE
 ECHO.
 ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64 or -all [%~nx0 %*].
 ECHO      See Usage.
-GOTO :END
+GOTO :ERROR_END
 
 :CONFIGURATION_ERROR
 ECHO.
@@ -444,7 +537,7 @@ CALL :USAGE
 ECHO.
 ECHO -02. (FLAG ERROR) Configuration flag is invalid [%~nx0 %*].
 ECHO      See Usage.
-GOTO :END
+GOTO :ERROR_END
 
 :COMMAND_ERROR
 ECHO.
@@ -452,7 +545,7 @@ CALL :USAGE
 ECHO.
 ECHO -03. (COMMAND ERROR) Invalid command string [%~nx0 %*].
 ECHO      See Usage.
-GOTO :END
+GOTO :ERROR_END
 
 :USAGE
 ECHO ----------------------------------------------------------------
@@ -499,9 +592,15 @@ ECHO If no flag is supplied, 64bit platform, Release Configuration built by defa
 ECHO ----------------------------------------------------------------
 EXIT /b
 
-:END
-ECHO.
-ECHO -%~nx0 [%PACKAGE% v%VERSION%] finished.
+:ELAPSED_BUILD_TIME
+IF [%1] EQU [] (SET start=%build_start%) ELSE (
+  IF "%1"=="Start" (
+    SET build_start=%time%
+    EXIT /b
+  ) ELSE (
+    SET start=%1
+  )
+)
 SET end=%time%
 SET options="tokens=1-4 delims=:.,"
 FOR /f %options% %%a IN ("%start%") DO SET start_h=%%a&SET /a start_m=100%%b %% 100&SET /a start_s=100%%c %% 100&SET /a start_ms=100%%d %% 100
@@ -518,4 +617,12 @@ IF %hours% lss 0 SET /a hours = 24%hours%
 IF 1%ms% lss 100 SET ms=0%ms%
 ECHO -Elapsed build time %hours%:%mins%:%secs%.%ms%
 ENDLOCAL
+EXIT /b
+
+:ERROR_END
+CALL :ELAPSED_BUILD_TIME
+EXIT /b 3
+
+:END
+CALL :ELAPSED_BUILD_TIME
 EXIT /b
