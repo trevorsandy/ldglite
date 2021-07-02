@@ -52,17 +52,29 @@ ENABLE_TILE_RENDERING {
 ENABLE_PNG {
   DEFINES += USE_PNG
   win32 {
-    message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
+    message("~~~ USING LOCAL COPY OF PNG AND Z LIBRARIES ~~~")
 
     INCLUDEPATH += \
-    $$PWD/../win/png/include
+    $$PWD/../win/png/include \
+    $$PWD/../win/zlib/include
+    
+    BUILD_WORKER_VERSION = $$(LP3D_VSVERSION)
+    isEmpty(BUILD_WORKER_VERSION): BUILD_WORKER_VERSION = 2019
+    message("~~~ Build worker: Visual Studio $$BUILD_WORKER_VERSION ~~~")
+    equals(BUILD_WORKER_VERSION, 2019) {
+        contains(QT_ARCH,i386): VSVER=vs2017
+        else: VSVER=vs2019
+    } else {
+        VSVER=vs2015
+    }
+    message("~~~ $$upper($$QT_ARCH) MSVS library version: $$VSVER ~~~") 
 
     equals (ARCH, 64) {
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -lpng
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib/x64 -lzlib
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -llibpng16-$${VSVER}
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib/x64 -lzlib-$${VSVER}
     } else {
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -lpng
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -llibpng16-$${VSVER}
+        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib-$${VSVER}
     }
 
   } else {
@@ -104,7 +116,7 @@ ENABLE_TEST_GUI {
 
 LIBS += $${LIBS_} $${_LIBS}
 !win32-msvc* {
-LIBS += -lz
+    LIBS += -lz
 }
 
 macx {
