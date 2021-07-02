@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 01, 2021
+rem  Last Update: July 02, 2021
 rem  Copyright (c) 2017 - 2021 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -124,11 +124,11 @@ IF [%1]==[] (
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="x86" (
-  SET PLATFORM_ARCH=x86
+  SET PLATFORM_ARCH=%1
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="x86_64" (
-  SET PLATFORM_ARCH=x86_64
+  SET PLATFORM_ARCH=%1
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="-all" (
@@ -181,7 +181,6 @@ IF "%GITHUB%" EQU "True" (
   ECHO   GITHUB_REF.............[%GITHUB_REF%]
   ECHO   GITHUB_RUNNER_OS.......[%RUNNER_OS%]
   ECHO   PROJECT REPOSITORY.....[%GITHUB_REPOSITORY%]
-  ECHO   DIST_DIRECTORY.........[%DIST_DIR%]
 )
 IF "%APPVEYOR%" EQU "True" (
   ECHO   BUILD_HOST.............[APPVEYOR CONTINUOUS INTEGRATION SERVICE]
@@ -193,10 +192,6 @@ IF "%APPVEYOR%" EQU "True" (
 )
 ECHO   PACKAGE................[%PACKAGE%]
 ECHO   VERSION................[%VERSION%]
-ECHO   VC_VERSION.............[%LP3D_VCVERSION%]
-ECHO   VC_TOOLSET.............[%LP3D_VCTOOLSET%]
-ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%]
-ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%]
 ECHO   WORKING_DIRECTORY......[%PWD%]
 ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
 ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
@@ -212,27 +207,32 @@ IF /I "%PLATFORM_ARCH%"=="-all" (
   GOTO :BUILD_ALL
 )
 
-rem Check if build Win32 and vs2019, set to vs2017 for WinXP compat
-IF "%LP3D_VSVERSION%"=="2019" (
-  CALL :CONFIGURE_VCTOOLS %PLATFORM_ARCH%
-)
-
+ECHO.
+ECHO -Building %PLATFORM_ARCH% platform, %CONFIGURATION% configuration...
+rem If build Win32, set to vs2017 for WinXP compat
+CALL :CONFIGURE_VCTOOLS %PLATFORM_ARCH%
 rem Configure buid arguments and set environment variables
 CALL :CONFIGURE_BUILD_ENV
 CD /D %PWD%
-ECHO.
-ECHO -Building %PLATFORM_ARCH% platform, %CONFIGURATION% configuration...
 rem Display QMake version
 ECHO.
 qmake -v & ECHO.
 rem Configure makefiles
 qmake %LDGLITE_CONFIG_ARGS%
-rem perform build
-nmake.exe
+rem Perform build
+nmake.exe %LDGLITE_MAKE_ARGS%
+rem Check build status
+IF %PLATFORM_ARCH%==x86 (SET EXE=app\32bit_%CONFIGURATION%\%PACKAGE%.exe)
+IF %PLATFORM_ARCH%==x86_64 (SET EXE=app\64bit_%CONFIGURATION%\%PACKAGE%.exe)
+IF NOT EXIST "%EXE%" (
+  ECHO.
+  ECHO "-ERROR - %EXE% was not successfully built - %~nx0 will trminate."
+  GOTO :ERROR_END
+)
 rem Perform build check if specified
-IF %CHECK%==1 CALL :CHECK_BUILD %PLATFORM_ARCH%
+IF %CHECK%==1 (CALL :CHECK_BUILD %PLATFORM_ARCH%)
 rem Package 3rd party install content
-IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
+IF %THIRD_INSTALL%==1 (CALL :3RD_PARTY_INSTALL)
 GOTO :END
 
 :BUILD_ALL
@@ -240,39 +240,50 @@ rem Launch qmake/make across all platform builds
 ECHO.
 ECHO -Build x86 and x86_64 platforms...
 FOR %%P IN ( x86, x86_64 ) DO (
+  ECHO.
+  ECHO  -Building %%P platform, %CONFIGURATION% configuration...
   SET PLATFORM_ARCH=%%P
-  IF "%LP3D_VSVERSION%"=="2019" (
-    CALL :CONFIGURE_VCTOOLS %%P
-  )
-  rem Configure buid arguments and set environment variables
+  CALL :CONFIGURE_VCTOOLS %%P
   CALL :CONFIGURE_BUILD_ENV
   CD /D %PWD%
   ECHO.
-  ECHO  -Building %%P platform, %CONFIGURATION% configuration...
-  rem Display QMake version
-  ECHO.
   qmake -v & ECHO.
-  rem Configure makefiles and launch make
   SETLOCAL ENABLEDELAYEDEXPANSION
   qmake !LDGLITE_CONFIG_ARGS! & nmake.exe !LDGLITE_MAKE_ARGS!
+  IF %%P==x86 (SET EXE=app\32bit_%CONFIGURATION%\%PACKAGE%.exe)
+  IF %%P==x86_64 (SET EXE=app\64bit_%CONFIGURATION%\%PACKAGE%.exe)
+  IF NOT EXIST "!EXE!" (
+    ECHO.
+    ECHO "-ERROR - !EXE! was not successfully built - %~nx0 will trminate."
+    GOTO :ERROR_END
+  )
   ENDLOCAL
-  rem Perform build check if specified
-  IF %CHECK%==1 CALL :CHECK_BUILD %%P
-  rem Package 3rd party install content
-  IF %THIRD_INSTALL%==1 CALL :3RD_PARTY_INSTALL
+  IF %CHECK%==1 (CALL :CHECK_BUILD %%P)
+  IF %THIRD_INSTALL%==1 (CALL :3RD_PARTY_INSTALL)
   rem Reset PATH_PREPENDED
   SET PATH_PREPENDED=False
 )
 GOTO :END
 
 :CONFIGURE_VCTOOLS
-IF %1==x64 (
+ECHO.
+ECHO -Set MSBuild platform toolset...
+IF %1==x86_64 (
   SET LP3D_VCVARSALL_VER=-vcvars_ver=14.2
   SET LP3D_VCVERSION=10.0
   SET LP3D_VCTOOLSET=v142
+) ELSE (
+  SET LP3D_VCVERSION=8.1
+  SET LP3D_VCTOOLSET=v140
+  SET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
 )
 ECHO.
-ECHO -Set %1 MSBuild %PLATFORM_ARCH% platform toolset to %LP3D_VCTOOLSET%
+ECHO   PLATFORM_ARCHITECTURE..[%1]
+ECHO   MSVS_VERSION...........[%LP3D_VSVERSION%]
+ECHO   MSVC_VERSION...........[%LP3D_VCVERSION%]
+ECHO   MSVC_TOOLSET...........[%LP3D_VCTOOLSET%]
+IF %1==x86 (ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%])
+IF %1==x86_64 (ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%])
 EXIT /b
 
 :CONFIGURE_BUILD_ENV
@@ -287,9 +298,8 @@ FOR /R %%I IN (
   "ldrawini\Makefile*"
   "mui\Makefile*"
   "app\Makefile*"
-) DO DEL /S /Q "%%~I" >nul 2>&1
+) DO DEL /S /Q "%%~I" >NUL 2>&1
 ECHO.
-ECHO   PLATFORM_ARCHITECTURE...[%PLATFORM_ARCH%]
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
 ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 rem /c flag suppresses the copyright
@@ -606,6 +616,8 @@ IF [%1] EQU [] (SET start=%build_start%) ELSE (
     SET start=%1
   )
 )
+ECHO.
+ECHO -%~nx0 finished.
 SET end=%time%
 SET options="tokens=1-4 delims=:.,"
 FOR /f %options% %%a IN ("%start%") DO SET start_h=%%a&SET /a start_m=100%%b %% 100&SET /a start_s=100%%c %% 100&SET /a start_ms=100%%d %% 100
