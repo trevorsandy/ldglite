@@ -410,6 +410,7 @@ ZCOLOR dark_edge_color = {27, 42, 52, 255};
 float part_color_value_ld_index = 0.5f;
 float part_edge_contrast = 0.5f;
 int automate_edge_color = 0;
+int is_lpub_highlight_color = 0;
 int stud_style  = 0; // default is no stud style
 
 #ifdef TILE_RENDER_OPTION

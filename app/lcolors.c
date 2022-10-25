@@ -31,6 +31,9 @@
 #define L3_RGB_EPSILON (0.5f / 255.0f)
 #define L3_RGB_TO_DEC(v) (v / 255.0f)
 
+#define LPUB3D_COLOUR_HIGHLIGHT_PREFIX "110"
+#define LPUB3D_COLOUR_NAME_PREFIX      "LPub3D_"
+
 int zcolor_unalias(int index, char *name);
 int zcolor_alias(int index, char *name);
 
@@ -867,7 +870,7 @@ int zcolor_modify(int index, char *name, int inverse_index, bool adjusted,
 // c != complement_color(complement_color(c)), for example when c = 7
 int edge_color(int c)
 {
-    if (stud_style > 5 || automate_edge_color)
+    if (!is_lpub_highlight_color && stud_style > 5 || automate_edge_color)
     {
         if (automate_edge_color && color_is_adjusted(c) == true) {
             if ((c >= 0) && (c < ZCOLOR_TABLE_SIZE))
@@ -1036,7 +1039,7 @@ bool color_is_adjusted(int c)
     } else {
         int i;
         for (i=0; i < nColorCodes; i++){
-          if (c == zcolor_code_table[i].code){
+          if (c == zcolor_code_table[i].code) {
               return zcolor_code_table[i].adjusted;
           }
         }
@@ -1210,8 +1213,8 @@ float get_edge_luminescence(int c)
     int r=0, g=0, b=0;
     if ((index >= 0)&&(index < ZCOLOR_TABLE_SIZE)) {
         r = zcolor_table[c].primary.r;
-        g = zcolor_table[c].primary.b;
-        r = zcolor_table[c].primary.r;
+        g = zcolor_table[c].primary.g;
+        b = zcolor_table[c].primary.b;
     }
 #ifdef USE_OPENGL
     else if ((index >= 0x2000000)&&(index <= 0x3ffffff)) {
@@ -1253,6 +1256,41 @@ float get_edge_luminescence(int c)
 
 int get_stud_style_or_auto_edge_color(int c)
 {
+    char c_number[32];
+    char c_name[64];
+    snprintf(c_number, sizeof(c_number), "%d", c);
+    if ((c >= 0) && (c < ZCOLOR_TABLE_SIZE)) {
+        int i;
+        ZCOLOR_NAMELIST_ENTRY *znep;
+        for(i=znamelist_stack_index; i>=0; i--) {
+            znep = zcolor_namelist_stack[i];
+            while (znep != NULL) {
+                if (c == znep->color_value) {
+                    snprintf(c_name, sizeof(c_name), "%s", znep->name);
+                    break;
+                }
+                znep= znep->next;
+            }
+        }
+    } else {
+        int i;
+        for (i=0; i < nColorCodes; i++) {
+            if (c == zcolor_code_table[i].code) {
+                snprintf(c_name, sizeof(c_name), "%s", zcolor_code_table[i].name);
+                break;
+            }
+        }
+    }
+
+    is_lpub_highlight_color = strncmp(LPUB3D_COLOUR_HIGHLIGHT_PREFIX, c_number, 3) == 0;
+    is_lpub_highlight_color &= strncmp(LPUB3D_COLOUR_NAME_PREFIX, c_name, 7) == 0;
+
+    if (is_lpub_highlight_color) {
+        int edge_c_number = edge_color(c);
+        is_lpub_highlight_color = 0;
+        return edge_c_number;
+    }
+
     ZCOLOR zcp, zcs;
     translate_color(c, &zcp, &zcs);
     V3F v;
