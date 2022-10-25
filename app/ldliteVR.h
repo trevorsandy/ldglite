@@ -245,5 +245,3 @@ int defer_stop_include_file(void);
 void platform_comment(char *comment_string, int level);
 int cache_mpd_subfiles(char *mpd_subfile_name);
 #endif
-
-
