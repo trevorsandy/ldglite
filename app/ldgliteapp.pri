@@ -43,7 +43,11 @@ SOURCES += \
    $$PWD/y.tab.c
 
 OTHER_FILES += \
-    $$PWD/Info.plist \
-    $$PWD/ldglite_w.command \
-    $$PWD/set-ldrawdir.command \
-    $$PWD/../.gitignore
+   $$PWD/Info.plist \
+   $$PWD/ldglite_w.command \
+   $$PWD/set-ldrawdir.command \
+   $$PWD/../.gitignore \
+   $$PWD/../.github/workflows/build.yml \
+   $$PWD/../.github/ISSUE_TEMPLATE/bug_report.md \
+   $$PWD/../.github/ISSUE_TEMPLATE/feature_request.md \
+   $$PWD/../utils/install-dev-packages.sh

@@ -1,0 +1,150 @@
+# Build, check and LDGLite
+# Trevor SANDY <trevor.sandy@gmail.com>
+# Last Update: November 11, 2022
+# Copyright (C) 2022 by Trevor SANDY
+#
+name: Build LDGLite
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-linux:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Work Paths
+        run: |
+          echo "LDRAWDIR=${HOME}/ldraw" >> ${GITHUB_ENV}
+          echo "LDGL_DIST_DIR=lpub3d_linux_3rdparty" >> ${GITHUB_ENV}
+          if [ ! -d "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}" ]; then mkdir -p "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}"; fi
+      - name: Install Qt 5.15.2 64bit
+        uses: jurplel/install-qt-action@v3
+        with: # install dir: is $RUNNER_WORKSPACE (one folder above the starting directory)
+          version: 5.15.2
+          host: linux
+          target: desktop
+          arch: gcc_64
+          archives: qtbase
+          cache: true
+          cache-key-prefix: install-qt-action
+      - name: Development Packages
+        run: |
+          echo "Install development packages..."
+          chmod a+x utils/install-dev-packages.sh && sudo ./utils/install-dev-packages.sh
+      - name: Cache LDraw
+        id: cache-ldraw
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.LDRAWDIR }}
+          key: ldraw-lib
+      - name: LDraw Library
+        run: |
+          if [ ! -d ${LDRAWDIR}/parts ]; then
+            echo "LDraw library not found at ${LDRAWDIR}. Downloading library..."
+            curl -s -O http://www.ldraw.org/library/updates/complete.zip
+            unzip -d ~/ -q complete.zip; rm complete.zip
+            if test -d ${LDRAWDIR}; then echo "LDraw library extracted, LDRAWDIR defined."; fi
+          else
+            echo "LDraw library defined at ${LDRAWDIR}."
+          fi
+      - name: Build LDGLite
+        run: |
+          qmake -v
+          qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_DIST_DIR} CONFIG+=release CONFIG+=BUILD_CHECK
+          make && make install
+
+  build-windows:
+    # if: ${{ false }} # uncomment to disable
+    runs-on: windows-2019
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Work Paths
+        run: |
+          Echo "GITHUB=True" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Echo "LP3D_DIST_DIR_PATH=$(Join-Path (resolve-path ..\) 'lpub3d_windows_3rdparty')" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Echo "LP3D_LDRAW_DIR_PATH=$(Join-Path (resolve-path $Env:USERPROFILE\) 'ldraw')" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Echo "LP3D_3RD_PARTY_PATH=$(resolve-path ..\)" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          Echo "LP3D_BUILD_BASE=$(resolve-path ..\)" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          If ( -Not (Test-Path -Path $(Join-Path (resolve-path ..\) 'lpub3d_windows_3rdparty') ) ) { New-Item -ItemType directory -Path $(Join-Path (resolve-path ..\) 'lpub3d_windows_3rdparty') }
+      - name: Cache LDraw
+        id: cache-ldraw
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.LP3D_LDRAW_DIR_PATH }}
+          key: ldraw-lib
+      - name: Cache QtMSVC 2019
+        id: cache-qt
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.LP3D_BUILD_BASE }}\Qt
+          key: qt-windows-${{ env.QT_CACHE }}
+      - name: Windows 8.1 SDK
+        run: |
+          Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/p/?LinkId=323507 -OutFile sdksetup.exe -UseBasicParsing
+          Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
+        shell: powershell
+      - name: Qt MSVC 2019 64bit # path: ..\Qt\5.15.2\msvc2019_64\bin
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+          host: windows
+          arch: win64_msvc2019_64
+          dir: ${{ env.LP3D_BUILD_BASE }}
+          cache: true
+          cache-key-prefix: install-qt-action
+      - name: Qt MSVC 2019 32bit # path: ..\Qt\5.15.2\msvc2019\bin
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: 5.15.2
+          host: windows
+          arch: win32_msvc2019
+          dir: ${{ env.LP3D_BUILD_BASE }}
+          cache: true
+          cache-key-prefix: install-qt-action
+      - name: Build LDGLite
+        shell: cmd
+        run: .\build.cmd -all -chk
+
+  build-macos:
+    runs-on: macos-11
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Work Paths
+        run: |
+          echo "LDRAWDIR=${HOME}/Library/ldraw" >> ${GITHUB_ENV}
+          echo "LDGL_DIST_DIR=lpub3d_macos_3rdparty" >> ${GITHUB_ENV}
+          if [ ! -d "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}" ]; then mkdir -p "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}"; fi
+      - name: Development Packages
+        run: |
+          echo "/usr/local/opt/ccache/libexec" >> ${GITHUB_PATH}
+          echo "Install development packages..."
+          brew install grep ccache qt5
+          brew link --force qt5;
+          if [[ -d /usr/X11/lib && /usr/X11/include ]]; then echo "Good to go - X11 found."; else brew install --cask xquartz; fi
+      - name: Cache LDraw
+        id: cache-ldraw
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.LDRAWDIR }}
+          key: ldraw-lib
+      - name: LDraw Library
+        run: |
+          if [ ! -d ${LDRAWDIR}/parts ]; then
+            echo "LDraw library not found at ${LDRAWDIR}. Downloading library..."
+            curl -s -O http://www.ldraw.org/library/updates/complete.zip
+            unzip -d ~/Library -q complete.zip; rm complete.zip
+            if test -d ${LDRAWDIR}; then echo "LDraw library extracted, LDRAWDIR defined."; fi
+          fi
+          echo "set LDRAWDIR in environment.plist..."
+          chmod a+x app/set-ldrawdir.command && sudo ./app/set-ldrawdir.command
+          grep -A1 -e 'LDRAWDIR' ~/.MacOSX/environment.plist
+          echo "LDraw library defined at ${LDRAWDIR}."
+      - name: Build LDGLite
+        run: |
+          qmake -v
+          qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_DIST_DIR} CONFIG+=release CONFIG+=BUILD_CHECK
+          make && make install

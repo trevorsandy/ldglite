@@ -164,7 +164,7 @@ macx {
   isEmpty(3RD_DOCDIR):3RD_DOCDIR           = $$3RD_PREFIX/$$3RD_PACKAGE_VER/docs
   isEmpty(3RD_RESOURCES):3RD_RESOURCES     = $$3RD_PREFIX/$$3RD_PACKAGE_VER/resources
 
-  message("~~~ LDGLITE 3RD INSTALL PREFIX $${3RD_PREFIX} ~~~")
+  message("~~~ LDGLITE 3RD INSTALL PREFIX $$shell_path($${3RD_PREFIX}) ~~~")
 
   target.path                 = $${3RD_BINDIR}
   documentation.path          = $${3RD_DOCDIR}

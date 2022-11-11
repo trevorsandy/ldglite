@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: Jun 03, 2022
+rem  Last Update: November 11, 2022
 rem  Copyright (c) 2017 - 2022 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -22,31 +22,59 @@ SET PWD=%CD%
 rem Variables - change these as required by your build environments
 IF "%LP3D_QTVERSION%" == "" SET LP3D_QTVERSION=5.15.2
 IF "%LP3D_VSVERSION%" == "" SET LP3D_VSVERSION=2019
+IF "%CONFIGURATION%" == "" SET CONFIGURATION=release
+IF "%LP3D_3RD_DIST_DIR%" == "" SET LP3D_3RD_DIST_DIR=lpub3d_windows_3rdparty
 
 IF "%GITHUB%" EQU "True" (
-  IF [%LP3D_DIST_DIR_PATH%] == [] (
+  IF "%LP3D_DIST_DIR_PATH%" == "" (
     ECHO.
-    ECHO  -ERROR: Distribution directory path not defined.
+    ECHO  -ERROR - Distribution directory path not defined.
     GOTO :ERROR_END
   )
-  rem DIST_DIR must be relative to App folder in LDGLite repo
+  PUSHD %LP3D_BUILD_BASE%
+  IF NOT EXIST "%LP3D_3RD_DIST_DIR%" (
+    IF EXIST "%LP3D_DIST_DIR_PATH%" (
+      MKLINK /d %LP3D_3RD_DIST_DIR% %LP3D_DIST_DIR_PATH% 2>&1
+    ) ELSE (
+      ECHO.
+      ECHO - ERROR - %LP3D_DIST_DIR_PATH% path not defined
+      GOTO :ERROR_END
+    )
+  )
+  POPD
+  SET ABS_WD=%GITHUB_WORKSPACE%
   SET GITHUB_RUNNER_IMAGE=Visual Studio %LP3D_VSVERSION%
+  rem DIST_DIR must be relative to App folder in LDGLite repo
   SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
-  SET LDRAW_DOWNLOAD_DIR=%LP3D_3RD_PARTY_PATH%
-  SET LDRAW_DIR=%LP3D_LDRAW_DIR_PATH%
+  SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
+  SET LDRAW_DIR=%USERPROFILE%\LDraw
+  IF "%LP3D_QT32_MSVC%" == "" (
+    SET LP3D_QT32_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+  )
+  IF "%LP3D_QT64_MSVC%" == "" (
+    SET LP3D_QT64_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+  )
 )
+
 IF "%APPVEYOR%" EQU "True" (
-  IF [%LP3D_DIST_DIR_PATH%] == [] (
+  IF "%LP3D_DIST_DIR_PATH%" == "" (
     ECHO.
     ECHO  -ERROR: Distribution directory path not defined.
     GOTO :ERROR_END
   )
-  rem DIST_DIR must be relative to App folder in LDGLite repo
   SET APPVEYOR_BUILD_WORKER_IMAGE=Visual Studio %LP3D_VSVERSION%
+  rem DIST_DIR must be relative to App folder in LDGLite repo
   SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
+  IF "%LP3D_QT32_MSVC%" == "" (
+    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+  )
+  IF "%LP3D_QT64_MSVC%" == "" (
+    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+  )
 )
+
 IF "%GITHUB%" NEQ "True" (
   IF "%APPVEYOR%" NEQ "True" (
     rem DIST_DIR must be relative to App folder in LDGLite repo
@@ -92,7 +120,6 @@ SET OfficialCONTENT=complete.zip
 
 SET PACKAGE=LDGLite
 SET VERSION=1.3.6
-SET CONFIGURATION=release
 
 SET THIRD_INSTALL=unknown
 SET INSTALL_32BIT=unknown
@@ -431,9 +458,12 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
         ECHO.
         ECHO -Set LDRAWDIR to %LDRAW_DIR%.
         SET LDRAWDIR=%LDRAW_DIR%
+      ) ELSE (
+        ECHO -[WARNING] LDRAWDIR is not set, %LDRAW_DIR%\parts does not exist.
+        SET CHECK=0
       )
     ) ELSE (
-      ECHO [WARNING] Could not find 7zip executable.
+      ECHO -[WARNING] Could not find 7zip executable.
       SET CHECK=0
     )
   ) ELSE (
