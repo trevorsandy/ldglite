@@ -36,8 +36,7 @@ else:      TARGET = LDGLite
 
 # messages
 message("~~~ LDGLITE $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
-win32: message("~~~ USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
-!isEmpty(SLE_LIBDIR): message("~~~ SLE_15 - USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
+USE_FREEGLUT_LOCAL: message("~~~ USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
 !isEmpty(OSMESA_LIBDIR): message("~~~ OSMESA - USING LOCAL LIBRARIES AT $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
 else:USE_OSMESA_STATIC: message("~~~ NOTICE: USING OSMESA BUILT FROM SOURCE LIBRARY ~~~")
 else:!win32: message("~~~ NOTICE: USING OSMESA SYSTEM LIBRARY")
@@ -214,13 +213,13 @@ macx {
 BUILD_CHECK: unix {
   # LDraw library path - needed for tests
   LDRAW_PATH = $$(LDRAWDIR)
-  !isEmpty(LDRAW_PATH){
+  !isEmpty(LDRAW_PATH) {
     message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
-    QMAKE_POST_LINK += $$escape_expand(\n\t)                                               \
-                       cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01          \
-                       -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l  \
-                       -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                 \
-                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.6_Foo2.png        \
+    QMAKE_POST_LINK += $$escape_expand(\n\t)                                              \
+                       cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01         \
+                       -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l \
+                       -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                \
+                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.6_Foo2.png       \
                        $$_PRO_FILE_PWD_/../tests/Foo2.ldr
   } else {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")

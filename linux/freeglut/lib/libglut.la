@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/user/projects/ldglite/linux/sle15/freeglut/lib'
+libdir='/user/projects/ldglite/linux/freeglut/lib'

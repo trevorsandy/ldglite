@@ -5,6 +5,7 @@
 # CONFIG+=ENABLE_TEST_GUI
 # CONFIG+=MAKE_APP_BUNDLE
 # CONFIG+=USE_OSMESA_STATIC
+# CONFIG+=USE_FREEGLUT_LOCAL # use local freeglut (e.g. Windows, Alma Linux)
 # CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
@@ -125,6 +126,7 @@ macx {
 
 win32 {
   CONFIG += console
+  CONFIG += USE_FREEGLUT_LOCAL
 
   !win32-msvc* {
   QMAKE_LFLAGS += -static
@@ -166,6 +168,7 @@ win32 {
 
   DEFINES += USING_FREEGLUT
   DEFINES += FREEGLUT_STATIC
+
   win32-msvc*: {
   DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
   }
@@ -193,7 +196,17 @@ unix:!macx {
       SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
   }
 
-  INCLUDEPATH +=  $${SYS_LIBINC_}
+  INCLUDEPATH += $${SYS_LIBINC_}
+
+  USE_FREEGLUT_LOCAL {
+    INCLUDEPATH += $$PWD/linux/freeglut/include
+    contains(BUILD_ARCH, aarch64) {
+      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib/aarch64
+    } else {
+      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib
+    }
+    FREEGLUT_LIBS  = -lXxf86vm -lXrandr -lXi
+  }
 
   DEFINES += USE_ALPHA_BUFFER
 
@@ -227,37 +240,46 @@ unix:!macx {
         }
       }
 
-      OSMESA_LDFLAGS   = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --ldflags)
-      isEmpty(OSMESA_LDFLAGS): message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~")
-      _LIBS           += $${OSMESA_LDFLAGS}
+      OSMESA_LDFLAGS = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --ldflags)
+      isEmpty(OSMESA_LDFLAGS): \
+      message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~") \
+      else: \
+      _LIBS         += $${OSMESA_LDFLAGS}
+      !isEmpty(FREEGLUT_LIBDIR): \
+      _LIBS         += $${FREEGLUT_LIBDIR}
+      _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
+      !isEmpty(FREEGLUT_LIBS): \
+      _LIBS         += $${FREEGLUT_LIBS}
+      _LIBS         += -lm
 
-    } else {
-
+    } # USE_OSMESA_STATIC
+    else
+    {
       USE_OSMESA_LOCAL {
-        INCLUDEPATH    += $${OSMESA_LOCAL_PREFIX_}/include
-        OSMESA_LIBDIR   = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
+        INCLUDEPATH   += $${OSMESA_LOCAL_PREFIX_}/include
+        OSMESA_LIBDIR  = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
+        _LIBS         += $${OSMESA_LIBDIR}
       }
-
-      # For some reason SLE 15 on SUSE OBS does not have freeglut.
-      SLE_VER = $$system(echo $$(PLATFORM_PRETTY_OBS))
-      contains(SLE_VER, Enterprise):contains(SLE_VER, 150000) {
-        INCLUDEPATH += \
-        $$PWD/linux/sle15/freeglut/include
-        SLE_LIBDIR = -L$$PWD/linux/sle15/freeglut/lib
-        SLE_LIBS = -lXxf86vm -lXrandr -lXi
-      }
-      # OSMesa (OffScreen) - system dynamic libraries
-      #_LIBS += $${OSMESA_LIBDIR} -lOSMesa -lGLU -lglut -lX11 -lXext -lm
 
       # OSMesa (OffScreen) - system, dynamic libraries and static local freeglut
-      _LIBS += $${OSMESA_LIBDIR} $${SLE_LIBDIR} -lOSMesa -lGLU -lglut -lGL -lX11 -lXext $${SLE_LIBS} -lm
+      !isEmpty(FREEGLUT_LIBDIR): \
+      _LIBS         += $${FREEGLUT_LIBDIR}
+      _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
+      !isEmpty(FREEGLUT_LIBS): \
+      _LIBS         += $${FREEGLUT_LIBS}
+      _LIBS         += -lm
     }
 
-  } else {
+  } # ENABLE_OFFSCREEN_RENDERING
+  else
+  {
     # Mesa (OnScreen) - OpenGL
-    _LIBS += -lGL -lGLU -lglut -lX11 -lXext -lm
+    !isEmpty(FREEGLUT_LIBDIR): \
+    _LIBS         += $${FREEGLUT_LIBDIR}
+    _LIBS         += -lGL -lGLU -lglut -lX11 -lXext
+    _LIBS         += $${FREEGLUT_LIBS}
+    _LIBS         += -lm
   }
-
 }
 
 PRECOMPILED_DIR = $$DESTDIR/.pch
