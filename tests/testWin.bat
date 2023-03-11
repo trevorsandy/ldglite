@@ -9,7 +9,7 @@ rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
 rem  Last Update: September 30, 2018
-rem  Copyright (c) 2018 - 2022 by Trevor SANDY
+rem  Copyright (c) 2018 - 2023 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
