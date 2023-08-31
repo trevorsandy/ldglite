@@ -171,11 +171,16 @@ macx {
   documentation.files         = $$_PRO_FILE_PWD_/../doc/ldglite.1 \
                                 $$_PRO_FILE_PWD_/../doc/LICENCE \
                                 $$_PRO_FILE_PWD_/../doc/README.TXT
-  resources.path              = $${3RD_RESOURCES}
-  resources.files             = set-ldrawdir.command
-  macx: resources.files      += ldglite_w.command
 
-  INSTALLS += target documentation resources
+  INSTALLS += target documentation
+  
+  macx {
+    resources.path              = $${3RD_RESOURCES}
+    resources.files             = set-ldrawdir.command
+    macx: resources.files      += ldglite_w.command
+	
+	INSTALLS += resources
+  }
 
 } else:linux:!macx {
   # someone asked for the standard linux install routine so here it is...
