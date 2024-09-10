@@ -14,7 +14,7 @@ win32 {
 
   QMAKE_TARGET_COMPANY = "Don Heyse"
   QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
-  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017-2023 Don Heyse, Trevor SANDY"
+  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017 - 2024 Don Heyse, Trevor SANDY"
   QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
   RC_LANG = "English (United Kingdom)"
   RC_ICONS = "ldglite.ico"
