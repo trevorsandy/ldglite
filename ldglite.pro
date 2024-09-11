@@ -63,7 +63,18 @@ OTHER_FILES += \
     $$PWD/.travis.yml \
     $$PWD/appveyor.yml \
     $$PWD/build.cmd \
-    $$PWD/.github/workflows/build.yml
+    $$PWD/.github/workflows/build.yml \
+    $$PWD/utils/install-dev-packages.sh \
+    $$PWD/utils/ldglite_osxwrapper.sh \
+    $$PWD/utils/ledit \
+    $$PWD/tests/LDConfigCustom01.ldr \
+    $$PWD/tests/testOSX:sh \
+    $$PWD/tests/testWin.bat \
+    $$PWD/obs/debian/control \
+    $$PWD/obs/debian/rules \
+    $$PWD/obs/ldglite.spec \
+    $$PWD/obs/PKGBUILD
+
 
 BUILD_ARCH = $$(TARGET_CPU)
 !contains(QT_ARCH, unknown):  BUILD_ARCH = $$QT_ARCH

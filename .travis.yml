@@ -93,7 +93,7 @@ install:
   - if [ ! -d ${LDRAWDIR}/parts ]; then
       if [ "$TRAVIS_OS_NAME" = "osx" ]; then LDRAWDIR_ROOT=${HOME}/Library; else LDRAWDIR_ROOT=${HOME}; fi;
       echo "LDraw library not found at ${LDRAWDIR}. Downloading library...";
-      curl -s -O http://www.ldraw.org/library/updates/complete.zip;
+      curl -s -O https://library.ldraw.org/library/updates/complete.zip;
       echo "Extracting LDraw library into ${LDRAWDIR}...";
       unzip -d ${LDRAWDIR_ROOT} -q complete.zip;
       if test -d ${LDRAWDIR}; then echo "LDraw library extracted, LDRAWDIR defined."; fi;

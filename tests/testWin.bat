@@ -300,7 +300,7 @@ ECHO.
 ECHO - LDraw archive library download path: %OutputPATH%
 
 SET WebCONTENT="%OutputPATH%\%OfficialCONTENT%"
-SET WebNAME=http://www.ldraw.org/library/updates/complete.zip
+SET WebNAME=https://library.ldraw.org/library/updates/complete.zip
 
 ECHO.
 ECHO - Download archive file: %WebCONTENT%...
