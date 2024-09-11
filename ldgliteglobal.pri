@@ -129,37 +129,25 @@ win32 {
   CONFIG += USE_FREEGLUT_LOCAL
 
   !win32-msvc* {
-  QMAKE_LFLAGS += -static
-  QMAKE_LFLAGS += -static-libgcc
-  QMAKE_LFLAGS += -static-libstdc++
+    QMAKE_LFLAGS += -static
+    QMAKE_LFLAGS += -static-libgcc
+    QMAKE_LFLAGS += -static-libstdc++
   } else {
-#  QMAKE_LFLAGS += /LTCG
-#  QMAKE_CFLAGS_DEBUG   -= -MDd
-#  QMAKE_CFLAGS_DEBUG   += -MTd
-#  QMAKE_CFLAGS_RELEASE -= -MD
-#  QMAKE_CFLAGS_RELEASE += -MT
-#  QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += -MD
-#  QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += -MT
-#  QMAKE_CFLAGS_WARN_ON -= -W3 -w34100
-#  QMAKE_CFLAGS_WARN_ON += -W0
-#  QMAKE_CXXFLAGS_DEBUG   = $$QMAKE_CFLAGS_DEBUG
-#  QMAKE_CXXFLAGS_RELEASE = $$QMAKE_CFLAGS_RELEASE
-#  QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO = $$QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO
-#  QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_O
+     QMAKE_LFLAGS += -NODEFAULTLIB:LIBCMT
      QMAKE_CFLAGS_WARN_ON -= -W3
      QMAKE_ADDL_MSVC_FLAGS = -GS -Gd -fp:precise -Zc:forScope
      CONFIG(debug, debug|release) {
-         QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
-         QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
-         QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
-         QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
+       QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
+       QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
+       QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
+       QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
      }
      CONFIG(release, debug|release) {
-         QMAKE_ADDL_MSVC_RELEASE_FLAGS = $$QMAKE_ADDL_MSVC_FLAGS -GF -Gy
-         QMAKE_CFLAGS_OPTIMIZE += -Ob1 -Oi -Ot
-         QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
-         QMAKE_CFLAGS_RELEASE  += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
-         QMAKE_CXXFLAGS_RELEASE += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
+       QMAKE_ADDL_MSVC_RELEASE_FLAGS = $$QMAKE_ADDL_MSVC_FLAGS -GF -Gy
+       QMAKE_CFLAGS_OPTIMIZE += -Ob1 -Oi -Ot
+       QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
+       QMAKE_CFLAGS_RELEASE  += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
+       QMAKE_CXXFLAGS_RELEASE += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
      }
      QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_ON
   }
@@ -189,11 +177,11 @@ unix:!macx {
   SYSTEM_PREFIX_      = /usr
   SYS_LIBINC_         = $${SYSTEM_PREFIX_}/include
   exists($${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu) {               # Debian
-      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu
+    SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu
   } else: exists($${SYSTEM_PREFIX_}/lib$${LIB_ARCH}) {               # RedHat, Arch - lIB_ARCH is empyt for 32bit
-      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib$${LIB_ARCH}
+    SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib$${LIB_ARCH}
   } else {                                                           # Arch - acutally should never get here
-      SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
+    SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
   }
 
   INCLUDEPATH += $${SYS_LIBINC_}
