@@ -2,3 +2,5 @@
 *.exe
 ldglite
 ldglite\.pro\.user
+.qmake.stash
+.qtc_clangd\compile_commands.json

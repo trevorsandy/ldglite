@@ -60,7 +60,7 @@ ENABLE_PNG {
     BUILD_WORKER_VERSION = $$(LP3D_VSVERSION)
     isEmpty(BUILD_WORKER_VERSION): BUILD_WORKER_VERSION = 2019
     message("~~~ Build worker: Visual Studio $$BUILD_WORKER_VERSION ~~~")
-    equals(BUILD_WORKER_VERSION, 2019) {
+    equals(BUILD_WORKER_VERSION, 2019) | greaterThan(BUILD_WORKER_VERSION, 2019) {
         contains(QT_ARCH,i386): VSVER=vs2017
         else: VSVER=vs2019
     } else {
@@ -114,6 +114,7 @@ ENABLE_TEST_GUI {
 }
 
 LIBS += $${LIBS_} $${_LIBS}
+
 !win32-msvc* {
     LIBS += -lz
 }
@@ -178,8 +179,8 @@ macx {
     resources.path              = $${3RD_RESOURCES}
     resources.files             = set-ldrawdir.command
     macx: resources.files      += ldglite_w.command
-	
-	INSTALLS += resources
+
+    INSTALLS += resources
   }
 
 } else:linux:!macx {
@@ -215,7 +216,8 @@ macx {
 # Add to Environment: LDRAWDIR   C:\Users\Trevor\LDraw
 # Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.6_Foo2.png tests\Foo2.ldr
 # Copy tests folder to OUTPUT folder - e.g. .../app/32bit_debug/tests
-BUILD_CHECK: unix {
+WINDOWS_CHECK = $$(LP3D_WINDOWS_CHECK)
+BUILD_CHECK: unix|contains(WINDOWS_CHECK, 1) {
   # LDraw library path - needed for tests
   LDRAW_PATH = $$(LDRAWDIR)
   !isEmpty(LDRAW_PATH) {
@@ -232,4 +234,4 @@ BUILD_CHECK: unix {
 }
 
 HEADERS += \
-    functionheaders.h
+  $$PWD/functionheaders.h

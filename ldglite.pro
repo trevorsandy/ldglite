@@ -62,7 +62,8 @@ OTHER_FILES += \
     $$PWD/set-ldrawdir.command \
     $$PWD/.travis.yml \
     $$PWD/appveyor.yml \
-    $$PWD/build.cmd
+    $$PWD/build.cmd \
+    $$PWD/.github/workflows/build.yml
 
 BUILD_ARCH = $$(TARGET_CPU)
 !contains(QT_ARCH, unknown):  BUILD_ARCH = $$QT_ARCH

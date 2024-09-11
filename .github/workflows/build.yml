@@ -1,7 +1,7 @@
 # Build, check and LDGLite
 # Trevor SANDY <trevor.sandy@gmail.com>
-# Last Update: November 11, 2022
-# Copyright (C) 2022 - 2024 by Trevor SANDY
+# Last Update: September 10, 2024
+# Copyright (c) 2022 - 2024 by Trevor SANDY
 #
 name: Build LDGLite
 on:
@@ -10,17 +10,17 @@ on:
       - master
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Work Paths
         run: |
           echo "LDRAWDIR=${HOME}/ldraw" >> ${GITHUB_ENV}
           echo "LDGL_DIST_DIR=lpub3d_linux_3rdparty" >> ${GITHUB_ENV}
           if [ ! -d "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}" ]; then mkdir -p "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}"; fi
       - name: Install Qt 5.15.2 64bit
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with: # install dir: is $RUNNER_WORKSPACE (one folder above the starting directory)
           version: 5.15.2
           host: linux
@@ -35,7 +35,7 @@ jobs:
           chmod a+x utils/install-dev-packages.sh && sudo ./utils/install-dev-packages.sh
       - name: Cache LDraw
         id: cache-ldraw
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.LDRAWDIR }}
           key: ldraw-lib
@@ -57,10 +57,10 @@ jobs:
 
   build-windows:
     # if: ${{ false }} # uncomment to disable
-    runs-on: windows-2019
+    runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Work Paths
         run: |
           Echo "GITHUB=True" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
@@ -71,23 +71,37 @@ jobs:
           If ( -Not (Test-Path -Path $(Join-Path (resolve-path ..\) 'lpub3d_windows_3rdparty') ) ) { New-Item -ItemType directory -Path $(Join-Path (resolve-path ..\) 'lpub3d_windows_3rdparty') }
       - name: Cache LDraw
         id: cache-ldraw
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.LP3D_LDRAW_DIR_PATH }}
           key: ldraw-lib
       - name: Cache QtMSVC 2019
         id: cache-qt
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.LP3D_BUILD_BASE }}\Qt
           key: qt-windows-${{ env.QT_CACHE }}
+      - name: VC 140 Build Tools
+        run: |
+          Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
+          $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
+          $ComponentsToAdd= @(
+            "Microsoft.VisualStudio.Component.VC.140"
+            "Microsoft.VisualStudio.Component.WinXP"
+          )
+          [string]$WorkloadArgs = $ComponentsToAdd | ForEach-Object {" --add " +  $_} # Use --remove to delete component
+          $Arguments = ('/c', "vs_installer.exe", 'modify', '--installPath', "`"$InstallPath`"",$WorkloadArgs, '--quiet', '--norestart', '--nocache')
+          # should be run twice
+          $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+          $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
+        shell: powershell
       - name: Windows 8.1 SDK
         run: |
           Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/p/?LinkId=323507 -OutFile sdksetup.exe -UseBasicParsing
-          Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
+          Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit"
         shell: powershell
       - name: Qt MSVC 2019 64bit # path: ..\Qt\5.15.2\msvc2019_64\bin
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: 5.15.2
           host: windows
@@ -96,7 +110,7 @@ jobs:
           cache: true
           cache-key-prefix: install-qt-action
       - name: Qt MSVC 2019 32bit # path: ..\Qt\5.15.2\msvc2019\bin
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: 5.15.2
           host: windows
@@ -109,10 +123,10 @@ jobs:
         run: .\build.cmd -all -chk
 
   build-macos:
-    runs-on: macos-11
+    runs-on: macos-13
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Work Paths
         run: |
           echo "LDRAWDIR=${HOME}/Library/ldraw" >> ${GITHUB_ENV}
@@ -122,12 +136,12 @@ jobs:
         run: |
           echo "/usr/local/opt/ccache/libexec" >> ${GITHUB_PATH}
           echo "Install development packages..."
-          brew install grep ccache qt5
-          brew link --force qt5;
+          brew install grep ccache qt@5
+          brew link --force qt@5;
           if [[ -d /usr/X11/lib && /usr/X11/include ]]; then echo "Good to go - X11 found."; else brew install --cask xquartz; fi
       - name: Cache LDraw
         id: cache-ldraw
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.LDRAWDIR }}
           key: ldraw-lib

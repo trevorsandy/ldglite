@@ -1,6 +1,6 @@
 @ECHO OFF &SETLOCAL
 
-Title LDGLite Windows auto build script
+Title LDGLite Windows auto build script Debug
 
 rem This script uses Qt to configure and build LDGLite for Windows.
 rem The primary purpose is to automatically build both the 32bit and 64bit
@@ -8,8 +8,8 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: August 29, 2023
-rem  Copyright (c) 2017 - 2024 by Trevor SANDY
+rem  Last Update: September 10, 2024
+rem  Copyright (c) 2019 - 2024 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
 rem but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +20,8 @@ CALL :ELAPSED_BUILD_TIME Start
 SET PWD=%CD%
 
 IF "%LP3D_QTVERSION%" == "" SET "LP3D_QTVERSION=5.15.2"
-IF "%LP3D_VSVERSION%" == "" SET "LP3D_VSVERSION=2019"
+IF "%LP3D_VSVERSION%" == "" SET "LP3D_VSVERSION=2022"
+IF "%LP3D_QTVCVERSION%" == "" SET "LP3D_QTVCVERSION=2019"
 
 IF "%GITHUB%" EQU "True" (
   SET "BUILD_WORKER=True"
@@ -69,10 +70,10 @@ IF "%BUILD_WORKER%" EQU "True" (
   SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
   SET LDRAW_DIR=%USERPROFILE%\LDraw
   IF "%LP3D_QT32_MSVC%" == "" (
-    SET LP3D_QT32_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+    SET LP3D_QT32_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%\bin
   )
   IF "%LP3D_QT64_MSVC%" == "" (
-    SET LP3D_QT64_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+    SET LP3D_QT64_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%_64\bin
   )
 )
 
@@ -88,10 +89,10 @@ IF "%APPVEYOR%" EQU "True" (
   SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
   SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
   IF "%LP3D_QT32_MSVC%" == "" (
-    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%\bin
   )
   IF "%LP3D_QT64_MSVC%" == "" (
-    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%_64\bin
   )
 )
 
@@ -102,15 +103,21 @@ IF "%BUILD_WORKER%" NEQ "True" (
     SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
     SET LDRAW_DIR=%USERPROFILE%\LDraw
     IF "%LP3D_QT32_MSVC%" == "" (
-      SET LP3D_QT32_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%\bin
+      SET LP3D_QT32_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%\bin
     )
     IF "%LP3D_QT64_MSVC%" == "" (
-      SET LP3D_QT64_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_VSVERSION%_64\bin
+      SET LP3D_QT64_MSVC=C:\Qt\IDE\%LP3D_QTVERSION%\msvc%LP3D_QTVCVERSION%_64\bin
     )
   )
 )
 
 IF "%LP3D_CONDA_BUILD%" NEQ "True" (
+  IF EXIST "C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build" (
+    SET LP3D_VCVARSALL_DIR=C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build
+  )
+  IF EXIST "C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Enterprise\VC\Auxiliary\Build" (
+    SET LP3D_VCVARSALL_DIR=C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Enterprise\VC\Auxiliary\Build
+  )
   IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\%LP3D_VSVERSION%\Professional\VC\Auxiliary\Build" (
     SET LP3D_VCVARSALL_DIR=C:\Program Files ^(x86^)\Microsoft Visual Studio\%LP3D_VSVERSION%\Professional\VC\Auxiliary\Build
   )  
@@ -126,19 +133,19 @@ IF "%LP3D_CONDA_BUILD%" NEQ "True" (
 )
 IF NOT EXIST "%LP3D_VCVARSALL_DIR%" (
   ECHO.
-  ECHO  -ERROR - Microsoft Visual Studio C++ environment not defined.
+  ECHO  -ERROR - Microsoft Visual Studio C++ environment [%LP3D_VCVARSALL_DIR%] not defined.
   GOTO :ERROR_END
 )
 
-rem Visual C++ 2012 -vcvars_ver=11.0 version 11.0  _MSC_VER 1700
-rem Visual C++ 2013 -vcvars_ver=12.0 version 12.0  _MSC_VER 1800
-rem Visual C++ 2015 -vcvars_ver=14.0 version 14.0  _MSC_VER 1900
-rem Visual C++ 2017 -vcvars_ver=14.1 version 15.9  _MSC_VER 1916
-rem Visual C++ 2019 -vcvars_ver=14.2 version 16.11 _MSC_VER 1929
-rem Visual C++ 2022 -vcvars_ver=14.2 version 17.3  _MSC_VER 1933
+rem Visual C++ 2012 -vcvars_ver=11.0 Toolset v110 VSVersion 11.0    _MSC_VER 1700
+rem Visual C++ 2013 -vcvars_ver=12.0 Toolset v120 VSVersion 12.0    _MSC_VER 1800
+rem Visual C++ 2015 -vcvars_ver=14.0 Toolset v140 VSVersion 14.0    _MSC_VER 1900
+rem Visual C++ 2017 -vcvars_ver=14.1 Toolset v141 VSVersion 15.9    _MSC_VER 1916
+rem Visual C++ 2019 -vcvars_ver=14.2 Toolset v142 VSVersion 16.11.3 _MSC_VER 1929
+rem Visual C++ 2022 -vcvars_ver=14.4 Toolset v143 VSVersion 17.11.3 _MSC_VER 1941
 IF "%LP3D_MSC_VER%" == "" SET LP3D_MSC_VER=1900
 IF "%LP3D_VCSDKVER%" == "" SET LP3D_VCSDKVER=8.1
-IF "%LP3D_VCTOOLSET%" == "" SET LP3D_VCTOOLSET=v140
+IF "%LP3D_VCTOOLSET%" == "" SET LP3D_VCTOOLSET=v140_xp
 IF "%LP3D_VCVARSALL_VER%" == "" SET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
 
 IF "%LP3D_VALID_7ZIP%" =="" SET LP3D_VALID_7ZIP=0
@@ -323,19 +330,21 @@ ECHO.
 ECHO -Set MSBuild platform toolset...
 IF %1==x86_64 (
   IF "%LP3D_CONDA_BUILD%" NEQ "True" (
-    SET LP3D_MSC_VER=1929
+    SET LP3D_MSC_VER=1941
     SET LP3D_VCSDKVER=10.0
-    SET LP3D_VCTOOLSET=v142
-    SET LP3D_VCVARSALL_VER=-vcvars_ver=14.2
+    SET LP3D_VCTOOLSET=v143
+    SET LP3D_VCVARSALL_VER=-vcvars_ver=14.4
   )
 ) ELSE (
   SET LP3D_VCSDKVER=8.1
-  SET LP3D_VCTOOLSET=v140
+  SET LP3D_VCTOOLSET=v140_xp
   SET LP3D_VCVARSALL_VER=-vcvars_ver=14.0
 )
 ECHO.
 ECHO   PLATFORM_ARCHITECTURE..[%1]
 ECHO   MSVS_VERSION...........[%LP3D_VSVERSION%]
+ECHO   MSVC_QT_VERSION........[%LP3D_QTVCVERSION%]
+ECHO   MSVC_MSC_VERSION.......[%LP3D_MSC_VER%]
 ECHO   MSVC_SDK_VERSION.......[%LP3D_VCSDKVER%]
 ECHO   MSVC_TOOLSET...........[%LP3D_VCTOOLSET%]
 IF "%LP3D_CONDA_BUILD%" NEQ "True" (
@@ -411,6 +420,8 @@ IF "%PATH_PREPENDED%" NEQ "True" (
     ENDLOCAL
   )
   rem Display MSVC Compiler settings
+  ECHO.
+  ECHO -Display _MSC_VER %LP3D_MSC_VER% compiler settings
   ECHO.
   ECHO.%LP3D_MSC_VER% > %TEMP%\settings.c
   cl.exe -Bv -EP %TEMP%\settings.c >NUL
