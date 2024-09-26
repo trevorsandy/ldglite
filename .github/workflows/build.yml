@@ -1,6 +1,6 @@
 # Build, check and LDGLite
 # Trevor SANDY <trevor.sandy@gmail.com>
-# Last Update: September 12, 2024
+# Last Update: September 26, 2024
 # Copyright (c) 2022 - 2024 by Trevor SANDY
 #
 name: Build LDGLite
@@ -10,6 +10,8 @@ on:
       - master
 jobs:
   build-linux:
+    # if: ${{ false }} # uncomment to disabl
+    name: Build Ubuntu 22.04
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -31,8 +33,8 @@ jobs:
           cache-key-prefix: install-qt-action
       - name: Development Packages
         run: |
-          echo "Install development packages..."
-          chmod a+x utils/install-dev-packages.sh && sudo ./utils/install-dev-packages.sh
+          echo -n "Install development packages..."
+          (chmod a+x utils/install-dev-packages.sh && sudo ./utils/install-dev-packages.sh) && echo OK || echo Failed
       - name: Cache LDraw
         id: cache-ldraw
         uses: actions/cache@v4
@@ -57,6 +59,7 @@ jobs:
 
   build-windows:
     # if: ${{ false }} # uncomment to disable
+    name: Build Windows 2022
     runs-on: windows-2022
     steps:
       - name: Checkout
@@ -120,22 +123,39 @@ jobs:
         run: .\build.cmd -all -chk
 
   build-macos:
-    runs-on: macos-13
+    # if: ${{ false }} # uncomment to disabl
+    name: 'Build macOS ${{ matrix.runner-version }}'
+    runs-on: macos-${{ matrix.runner-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner-version: [ 13, 14 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Work Paths
         run: |
-          echo "LDRAWDIR=${HOME}/Library/ldraw" >> ${GITHUB_ENV}
+          echo "LDRAWDIR=${HOME}/Library/LDraw" >> ${GITHUB_ENV}
           echo "LDGL_DIST_DIR=lpub3d_macos_3rdparty" >> ${GITHUB_ENV}
-          if [ ! -d "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}" ]; then mkdir -p "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}"; fi
+          if [ ! -d "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}" ]; then
+            mkdir -p "${HOME}/work/ldglite/ldglite/${LDGL_DIST_DIR}"
+          fi
       - name: Development Packages
         run: |
-          echo "/usr/local/opt/ccache/libexec" >> ${GITHUB_PATH}
-          echo "Install development packages..."
+          if [ "$(uname -m)" = "x86_64" ]; then
+            (cd macx/x86_64/png/lib && ln -s libpng16.a libpng.a)
+            echo "/usr/local/opt/ccache/libexec" >> ${GITHUB_PATH}
+          else
+            echo "/opt/homebrew/opt/ccache/libexec" >> ${GITHUB_PATH}
+          fi
           brew install grep ccache qt@5
           brew link --force qt@5;
-          if [[ -d /usr/X11/lib && /usr/X11/include ]]; then echo "Good to go - X11 found."; else brew install --cask xquartz; fi
+          if [[ -d "/usr/X11/lib" && "/usr/X11/include" ]]; then
+            echo "Good to go - X11 found."
+          else
+            brew install --cask xquartz
+          fi
+
       - name: Cache LDraw
         id: cache-ldraw
         uses: actions/cache@v4
@@ -147,15 +167,18 @@ jobs:
           if [ ! -d ${LDRAWDIR}/parts ]; then
             echo "LDraw library not found at ${LDRAWDIR}. Downloading library..."
             curl -s -O https://library.ldraw.org/library/updates/complete.zip
-            unzip -d ~/Library -q complete.zip; rm complete.zip
+            unzip -d ${HOME}/Library -q complete.zip; rm complete.zip
             if test -d ${LDRAWDIR}; then echo "LDraw library extracted, LDRAWDIR defined."; fi
           fi
           echo "set LDRAWDIR in environment.plist..."
           chmod a+x app/set-ldrawdir.command && sudo ./app/set-ldrawdir.command
-          grep -A1 -e 'LDRAWDIR' ~/.MacOSX/environment.plist
+          grep -A1 -e 'LDRAWDIR' ${HOME}/.MacOSX/environment.plist
           echo "LDraw library defined at ${LDRAWDIR}."
-      - name: Build LDGLite
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v2
+        id: cpu-cores
+      - name: Build macOS ${{ matrix.runner-version }}
         run: |
           qmake -v
-          qmake CONFIG+=3RD_PARTY_INSTALL=${LDGL_DIST_DIR} CONFIG+=release CONFIG+=BUILD_CHECK
-          make && make install
+          qmake CONFIG+=3RD_PARTY_INSTALL=../${LDGL_DIST_DIR} CONFIG+=release CONFIG+=BUILD_CHECK
+          make -j${{ steps.cpu-cores.outputs.count }} && make install

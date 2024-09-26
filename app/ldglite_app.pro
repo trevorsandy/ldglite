@@ -76,34 +76,36 @@ ENABLE_PNG {
         LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib-$${VSVER}
     }
 
-  } else {
-    macx {
-      # To install libpng follow these instructions:
-      # 1. Press Command+Space and type Terminal and press enter/return key.
-      # 2. [Optional - if you don't already have Homebrew installed] Run in Terminal app:
-      #    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
-      #    and press enter/return key. Wait for the command to finish - it may take a long time.
-      # 3. Run:
-      #    brew install libpng --universal [both 32-bit and 64-bit code]
-      # Done! You can now use libpng.
-      #
-      SYSTEM_PNG_HEADERS = /usr/local/include/png.h
-      exists(SYSTEM_PNG_HEADERS) {
-        INCLUDEPATH += /usr/local/include
-      } else {
-        message("~~~ USING LOCAL COPY OF PNG HEADERS ~~~")
-        INCLUDEPATH += $$PWD/../macx/png/include
-      }
-      SYSTEM_PNG_LIB = /usr/local/lib/libpng.a
-      exists(SYSTEM_PNG_LIB) {
-        LIBS_ += /usr/local/lib/libpng.a
-      } else {
-        message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
-        LIBS_ += $$_PRO_FILE_PWD_/../macx/png/lib/libpng.a
-      }
+  } else:macx {
+    contains(QT_ARCH,arm64) {
+        SYSTEM_PNG_HEADERS = /opt/homebrew/include
+        SYSTEM_PNG_LIB = /opt/homebrew/lib/libpng.a
     } else {
-      LIBS_ += -lpng
+        SYSTEM_PNG_HEADERS = /usr/local/include
+        SYSTEM_PNG_LIB = /usr/local/lib/libpng.a
     }
+
+    LOCAL_LIB_PREFIX = $$absolute_path( $$_PRO_FILE_PWD_/../macx )
+
+    exists($${SYSTEM_PNG_HEADERS}/png.h) {
+      message("~~~ USING SYSTEM PNG HEADERS $${SYSTEM_PNG_HEADERS} ~~~")
+      INCLUDEPATH += $${SYSTEM_PNG_HEADERS}
+    } else {
+      message("~~~ USING LOCAL COPY OF PNG HEADERS ~~~")
+      INCLUDEPATH += $${LOCAL_LIB_PREFIX}/png/include
+    }
+
+    exists($${SYSTEM_PNG_LIB}) {
+      message("~~~ USING SYSTEM PNG LIBRARY $${SYSTEM_PNG_LIB} ~~~")
+      LIBS_ += $${SYSTEM_PNG_LIB}
+    } else {
+      message("~~~ USING LOCAL COPY OF PNG LIBRARY ~~~")
+      contains(QT_ARCH,x86_64): \
+      LIBS_ += $${LOCAL_LIB_PREFIX}/x86_64/png/lib/libpng.a
+      else:message("~~~ ERROR: NO LOCAL COPY OF $$upper($$QT_ARCH) PNG LIBRARY AVAILABLE ~~~")
+    }
+  } else {
+    LIBS_ += -lpng
   }
 }
 
@@ -155,7 +157,10 @@ macx {
                        $$escape_expand(\n\t)   \
                        $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
   } else {
-    macx: CONFIG    -= app_bundle   # don't creatre app bundle
+    macx {
+        CONFIG     -= app_bundle   # don't creatre app bundle
+        CONFIG     +=sdk_no_version_check
+    }
   }
 }
 
