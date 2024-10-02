@@ -28,10 +28,10 @@
            </array>
          <key>CFBundleTypeIconFile</key>        <string>ldraw_document.icns</string>
          <key>CFBundleTypeName</key>            <string>Ldraw Document</string>
-         <key>CFBundleTypeMIMETypes</key>    
-           <array>      
-             <string>application/x-ldraw</string>    
-           </array>    
+         <key>CFBundleTypeMIMETypes</key>
+           <array>
+             <string>application/x-ldraw</string>
+           </array>
          <key>CFBundleTypeOSTypes</key>         <array><string>LDR</string></array>
          <key>CFBundleTypeRole</key>            <string>Viewer</string>
          <key>NSDocumentClass</key>             <string>BrowserDocument</string>

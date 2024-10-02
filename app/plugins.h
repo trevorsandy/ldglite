@@ -9,16 +9,16 @@ typedef struct plugstruct_tag {
   char *description;
   char *author;
   char *comment;
-  char *plugtype;  
+  char *plugtype;
 } plugstruct;
 
 char *plugin(plugstruct *plug,
-	   unsigned char *CompleteText,
-	   unsigned char *SelText,
-	   unsigned long *SelStart,
-	   unsigned long *SelLength,
-	   unsigned long *CursoRow,
-	   unsigned long *CursorColum);
+       unsigned char *CompleteText,
+       unsigned char *SelText,
+       unsigned long *SelStart,
+       unsigned long *SelLength,
+       unsigned long *CursoRow,
+       unsigned long *CursorColum);
 
 plugstruct *pluginfo(char *dllname);
 

@@ -24,7 +24,7 @@
 // I guess the plan here is to eventually wean ldglite off of GLUT.
 // Although it's everywhere, GLUT is apparently no longer supported.
 //
-// SDL is probably the best choice.  It seems to be available 
+// SDL is probably the best choice.  It seems to be available
 // everywhere GLUT is, but needs a few extra libs (font, gui) to
 // cover everything ldglite gets from glut.
 //

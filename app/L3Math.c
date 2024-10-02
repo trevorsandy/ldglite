@@ -52,7 +52,7 @@
 #include "math.h"
 
 #ifndef M_PI
-#define M_PI		3.14159265358979323846
+#define M_PI        3.14159265358979323846
 #endif
 
 /* #define V3Load(r, x, y, z) r[0]=(x);r[1]=(y);r[2]=(z) */
@@ -179,7 +179,7 @@ void                 M4V3Mul(float r[4], float m[4][4], float p[4])
 void                 M4V3MulW(float r[4], float m[4][4], float p[4])
 {
    double W;
-   
+
 /*
    W    =  m[3][0] * p[0] + m[3][1] * p[1] + m[3][2] * p[2] + m[3][3];
    r[0] = (m[0][0] * p[0] + m[0][1] * p[1] + m[0][2] * p[2] + m[0][3]) / W;

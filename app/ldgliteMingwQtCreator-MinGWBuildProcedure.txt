@@ -5,44 +5,43 @@ windows only:
 
 Add paths to PATH in Projects/Build Environment
 - export PATH=/c/<mingw>/bin:$PATH
- 
+
 Download, compile and install libpng headers and libraries
-	= DEST=<lpub3d_source>/ldglite/win/png
-	= libpng.a 		=> <DEST>/lib
-	= png.h 		=> <DEST>/include
-	= pngconf.h		=> <DEST>/include
-	= pngdebug.h	=> <DEST>/include
-	= pnginfo.h		=> <DEST>/include
-	= pngpriv.h		=> <DEST>/include
-	= pnglibconf.h 	=> <DEST>/include 
-	= pngstruct.h 	=> <DEST>/include
+    = DEST=<lpub3d_source>/ldglite/win/png
+    = libpng.a      => <DEST>/lib
+    = png.h         => <DEST>/include
+    = pngconf.h     => <DEST>/include
+    = pngdebug.h    => <DEST>/include
+    = pnginfo.h     => <DEST>/include
+    = pngpriv.h     => <DEST>/include
+    = pnglibconf.h  => <DEST>/include
+    = pngstruct.h   => <DEST>/include
 
 - cd <libpng_source>
 - export INCLUDE_PATH=..<lpub3d_source>/ldglite/win/png/include
 - export LIBRARY_PATH=..<lpub3d_source>/ldglite/win/png/lib
-- export BINARY_PATH=./ 
+- export BINARY_PATH=./
 - cp -f scripts/makefile.gcc Makefile.gcc
 - mingw32-make -f Makefile.gcc clean
 - mingw32-make -f Makefile.gcc all
 - mingw32-make -f Makefile.gcc [install | uninstall]
-		
+
 Download, compile and install freeglut/ headers and libraries
-	= DEST=<lpub3d_source>/ldglite/win/freeglut
-	= freeglut.dll			    => <DEST>/bin
-	= include/GL/freeglut.h  	=> <DEST>/include/GL/freeglut.h
-	= include/GL/glut		    => <DEST>/include/GL/glut.h 
-	= include/GL/freeglut_ext.h => <DEST>/include/GL/freeglut_ext.h 
-	= include/GL/freeglut_std.h => <DEST>/include/GL/freeglut_std.h 
+    = DEST=<lpub3d_source>/ldglite/win/freeglut
+    = freeglut.dll              => <DEST>/bin
+    = include/GL/freeglut.h     => <DEST>/include/GL/freeglut.h
+    = include/GL/glut           => <DEST>/include/GL/glut.h
+    = include/GL/freeglut_ext.h => <DEST>/include/GL/freeglut_ext.h
+    = include/GL/freeglut_std.h => <DEST>/include/GL/freeglut_std.h
 
 - download libraries from: www.transmissionzero.co.uk/software/freeglut-devel/
 
 QtCreator
 - Open ldglite in QtCreator (select ldglite.pro)
-	
 
 
 
 
 
-  
-  
+
+

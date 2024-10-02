@@ -38,7 +38,7 @@ typedef struct tagBITMAPFILEHEADER {    /* bmfh */
 /*
   The bitmap header is 40 bytes long.
     32 bytes unsigned Size;            Size of this header, in bytes.
-    32 bytes Width;                    Image width, in pixels.   
+    32 bytes Width;                    Image width, in pixels.
     32 bytes Height;                   Image height, in pixels.  (Pos/Neg, origin at bottom, top)
     16 bytes Planes;                   Number of color planes (always 1).
     16 bytes BitsPerPixel;             1 to 24.  1, 4, 8 and 24 legal.  16 and 32 on Win95.
@@ -51,27 +51,27 @@ typedef struct tagBITMAPFILEHEADER {    /* bmfh */
 */
 
 typedef struct tagBITMAPINFOHEADER{
-	DWORD	biSize;
-	LONG	biWidth;
-	LONG	biHeight;
-	WORD	biPlanes;
-	WORD	biBitCount;
-	DWORD	biCompression;
-	DWORD	biSizeImage;
-	LONG	biXPelsPerMeter;
-	LONG	biYPelsPerMeter;
-	DWORD	biClrUsed;
-	DWORD	biClrImportant;
+    DWORD   biSize;
+    LONG    biWidth;
+    LONG    biHeight;
+    WORD    biPlanes;
+    WORD    biBitCount;
+    DWORD   biCompression;
+    DWORD   biSizeImage;
+    LONG    biXPelsPerMeter;
+    LONG    biYPelsPerMeter;
+    DWORD   biClrUsed;
+    DWORD   biClrImportant;
 } BITMAPINFOHEADER;
 
 typedef BITMAPINFOHEADER *LPBITMAPINFOHEADER;
 typedef BITMAPINFOHEADER *PBITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD {
-	BYTE	rgbBlue;
-	BYTE	rgbGreen;
-	BYTE	rgbRed;
-	BYTE	rgbReserved;
+    BYTE    rgbBlue;
+    BYTE    rgbGreen;
+    BYTE    rgbRed;
+    BYTE    rgbReserved;
 } RGBQUAD;
 
 

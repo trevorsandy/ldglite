@@ -1,7 +1,7 @@
 /* Copyright (c) Mark J. Kilgard, 1997. */
 
-/* This program is freely distributable without licensing fees 
-   and is provided without guarantee or warrantee expressed or 
+/* This program is freely distributable without licensing fees
+   and is provided without guarantee or warrantee expressed or
    implied. This program is -not- in the public domain. */
 
 /* Example showing how to use OpenGL's feedback mode to capture
@@ -11,7 +11,7 @@
 
 /* Compile: cc -o rendereps rendereps.c -lglut -lGLU -lGL -lXmu -lXext -lX11 -lm */
 
-#define LDRAW_EPS	1
+#define LDRAW_EPS   1
 
 #include <assert.h>
 #include <math.h>
@@ -130,7 +130,7 @@ spewPrimitiveEPS(FILE * file, GLfloat * loc)
   Feedback3Dcolor *vertex;
   GLfloat xstep, ystep, rstep, gstep, bstep;
   GLfloat xnext, ynext, rnext, gnext, bnext, distance;
-#ifdef LDRAW_EPS	
+#ifdef LDRAW_EPS
   GLfloat redc, greenc, bluec;
   redc = greenc =  bluec = -1.0;
 #endif
@@ -158,7 +158,7 @@ spewPrimitiveEPS(FILE * file, GLfloat * loc)
 
 #define Max(a,b) (((a)>(b))?(a):(b))
 
-#define EPS_SMOOTH_LINE_FACTOR 0.06  /* Lower for better smooth 
+#define EPS_SMOOTH_LINE_FACTOR 0.06  /* Lower for better smooth
 
                                         lines. */
 
@@ -190,11 +190,11 @@ spewPrimitiveEPS(FILE * file, GLfloat * loc)
       steps = 0;
     }
 
-#ifdef LDRAW_EPS	
+#ifdef LDRAW_EPS
     if (redc != vertex[0].red || greenc != vertex[0].green || bluec != vertex[0].blue)
     {
       fprintf(file, "%g %g %g setrgbcolor\n",
-	      vertex[0].red, vertex[0].green, vertex[0].blue);
+          vertex[0].red, vertex[0].green, vertex[0].blue);
       redc = vertex[0].red;
       greenc = vertex[0].green;
       bluec = vertex[0].blue;
@@ -212,11 +212,11 @@ spewPrimitiveEPS(FILE * file, GLfloat * loc)
       gnext += gstep;
       bnext += bstep;
       fprintf(file, "%g %g lineto stroke\n", xnext, ynext);
-#ifdef LDRAW_EPS	
+#ifdef LDRAW_EPS
       if (redc != rnext || greenc != gnext || bluec != bnext)
     {
       fprintf(file, "%g %g %g setrgbcolor\n",
-	      rnext, gnext, bnext);
+          rnext, gnext, bnext);
       redc = rnext;
       greenc = gnext;
       bluec = bnext;
@@ -264,53 +264,53 @@ spewPrimitiveEPS(FILE * file, GLfloat * loc)
             vertex[i + 1].red, vertex[i + 1].green, vertex[i + 1].blue,
             vertex[i + 2].red, vertex[i + 2].green, vertex[i + 2].blue);
         }
-      } 
-#ifdef LDRAW_EPS	
+      }
+#ifdef LDRAW_EPS
       else if (nvertices == 3)
       {
-	fprintf(file, "%g %g %g %g %g %g ",
-		vertex[0].x, vertex[0].y,
-		vertex[1].x, vertex[1].y,
-		vertex[2].x, vertex[2].y);
+    fprintf(file, "%g %g %g %g %g %g ",
+        vertex[0].x, vertex[0].y,
+        vertex[1].x, vertex[1].y,
+        vertex[2].x, vertex[2].y);
         if (redc != red || greenc != green || bluec != blue)
-	{
-	  fprintf(file, "%g %g %g t3c\n", red, green, blue);
-	  redc = red;
-	  greenc = green;
-	  bluec = blue;
-	}
-	else
-	  fprintf(file, "t3\n");
+    {
+      fprintf(file, "%g %g %g t3c\n", red, green, blue);
+      redc = red;
+      greenc = green;
+      bluec = blue;
+    }
+    else
+      fprintf(file, "t3\n");
       }
       else if (nvertices == 4)
       {
-	fprintf(file, "%g %g %g %g %g %g %g %g ",
-		vertex[0].x, vertex[0].y,
-		vertex[1].x, vertex[1].y,
-		vertex[2].x, vertex[2].y,
-		vertex[3].x, vertex[3].y);
+    fprintf(file, "%g %g %g %g %g %g %g %g ",
+        vertex[0].x, vertex[0].y,
+        vertex[1].x, vertex[1].y,
+        vertex[2].x, vertex[2].y,
+        vertex[3].x, vertex[3].y);
         if (redc != red || greenc != green || bluec != blue)
-	{
-	  fprintf(file, "%g %g %g q4c\n", red, green, blue);
-	  redc = red;
-	  greenc = green;
-	  bluec = blue;
-	}
-	else
-	  fprintf(file, "q4\n");
+    {
+      fprintf(file, "%g %g %g q4c\n", red, green, blue);
+      redc = red;
+      greenc = green;
+      bluec = blue;
+    }
+    else
+      fprintf(file, "q4\n");
       }
 #endif
       else {
         /* Flat shaded polygon; all vertex colors the same. */
         fprintf(file, "newpath\n");
-#ifdef LDRAW_EPS	
+#ifdef LDRAW_EPS
         if (redc != red || greenc != green || bluec != blue)
-	{
-	  fprintf(file, "%g %g %g setrgbcolor\n", red, green, blue);
-	  redc = red;
-	  greenc = green;
-	  bluec = blue;
-	}
+    {
+      fprintf(file, "%g %g %g setrgbcolor\n", red, green, blue);
+      redc = red;
+      greenc = green;
+      bluec = blue;
+    }
 #else
         fprintf(file, "%g %g %g setrgbcolor\n", red, green, blue);
 #endif
@@ -482,7 +482,7 @@ spewSortedFeedback(FILE * file, GLint size, GLfloat * buffer)
   free(prims);
 }
 
-#define EPS_GOURAUD_THRESHOLD 0.1  /* Lower for better (slower) 
+#define EPS_GOURAUD_THRESHOLD 0.1  /* Lower for better (slower)
 
                                       smooth shading. */
 
@@ -521,7 +521,7 @@ spewWireFrameEPS(FILE * file, int doSort, GLint size, GLfloat * buffer, char *cr
     fprintf(file, "%s\n", gouraudtriangleEPS[i]);
   }
 
-#ifdef LDRAW_EPS	
+#ifdef LDRAW_EPS
   // Define some macros to make LDRAW output more compact.
   // Call a t3 macro for polys with 3 vertices.
   // Call a q4 macro for polys with 4 vertices.

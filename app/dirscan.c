@@ -1,7 +1,7 @@
 // ===============================================
 // File:         read.cxx
-// Description:	 
-// Version 1:    
+// Description:
+// Version 1:
 // Current:      26 Sep 1999
 // Author(s):    Thomas Kern
 // ===============================================
@@ -25,7 +25,7 @@
 
 
 //=====================================================================
-//	INCLUDES
+//  INCLUDES
 //=====================================================================
 //
 #include <sys/stat.h>
@@ -102,7 +102,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
 
 #ifdef _WIN32_NATIVE_FILE_OPS
   searchPath = FindFirstFile( (LPCTSTR)wildcard, &dataStruct);
-  if( searchPath == INVALID_HANDLE_VALUE ) 
+  if( searchPath == INVALID_HANDLE_VALUE )
   {
     printf("INVALID_HANDLE_VALUE\n");
     return 0;
@@ -110,7 +110,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
 
   // Skip files before our current window.
   for ( filecount = 0; filecount < firstfile; )
-  { 
+  {
     concat_path(dir, dataStruct.cFileName, filelist[0]);
     if (isDir(filelist[0]))
       strcpy(filelist[0], "");
@@ -124,7 +124,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
   }
   filecount = 0;
   while( filecount < MAX_DIR_ENTRIES )
-  {  
+  {
     concat_path(dir, dataStruct.cFileName, filelist[filecount]);
     if (isDir(filelist[filecount]))
       strcpy(filelist[filecount], "");
@@ -137,29 +137,29 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
 
 #endif
 #ifdef USE_DIRENT
-  if( (searchPath = opendir(wildcard)) ) { 
+  if( (searchPath = opendir(wildcard)) ) {
     // Skip files before our current window.
     for ( filecount = 0; filecount < firstfile; )
-    { 
+    {
       if (!(dataStruct = readdir(searchPath)))
       {
-	closedir(searchPath);
-	return(0);
+    closedir(searchPath);
+    return(0);
       }
       concat_path(dir, dataStruct->d_name, filelist[0]);
       if (isDir(filelist[0]))
-	strcpy(filelist[0], "");
+    strcpy(filelist[0], "");
       else
-	filecount++;
+    filecount++;
     }
     filecount = 0;
     while( filecount < MAX_DIR_ENTRIES
-	   && (dataStruct = readdir(searchPath)) ) {
+       && (dataStruct = readdir(searchPath)) ) {
       concat_path(dir, dataStruct->d_name, filelist[filecount]);
       if (isDir(filelist[0]))
-	strcpy(filelist[0], "");
+    strcpy(filelist[0], "");
       else
-	filecount++;
+    filecount++;
     }
     closedir(searchPath);
   }
@@ -190,7 +190,7 @@ int ScanDirectory(char *dir, char *pattern, int firstfile,
   }
   globfree(&glob_results);
 
-#endif 
+#endif
 
   return filecount;
 }
@@ -219,7 +219,7 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
   char **p;
   UNUSED(length);
 #endif
-    
+
   for(i = 0; i < MAX_DIR_ENTRIES; i++)
     strcpy(filelist[i], "");
 
@@ -227,7 +227,7 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
 
 #ifdef _WIN32_NATIVE_FILE_OPS
   searchPath = FindFirstFile( (LPCTSTR)wildcard, &dataStruct);
-  if( searchPath == INVALID_HANDLE_VALUE ) 
+  if( searchPath == INVALID_HANDLE_VALUE )
   {
     printf("INVALID_HANDLE_VALUE\n");
     return 0;
@@ -263,29 +263,29 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
 
 #endif
 #ifdef USE_DIRENT
-  if( (searchPath = opendir(wildcard)) ) { 
+  if( (searchPath = opendir(wildcard)) ) {
     // Skip files before our current window.
     for ( filecount = 0; filecount < firstfile; )
-    { 
+    {
       if (!(dataStruct = readdir(searchPath)))
       {
-	closedir(searchPath);
-	return(0);
+    closedir(searchPath);
+    return(0);
       }
       concat_path(dir, dataStruct->d_name, filelist[filecount]);
       if (isDir(filelist[filecount]))
-	filecount++;
+    filecount++;
       else
-	strcpy(filelist[filecount], "");
+    strcpy(filelist[filecount], "");
     }
     filecount = 0;
-    while( filecount < MAX_DIR_ENTRIES 
-	   && (dataStruct = readdir(searchPath)) ) {
+    while( filecount < MAX_DIR_ENTRIES
+       && (dataStruct = readdir(searchPath)) ) {
       concat_path(dir, dataStruct->d_name, filelist[filecount]);
       if (isDir(filelist[filecount]))
-	filecount++;
+    filecount++;
       else
-	strcpy(filelist[filecount], "");
+    strcpy(filelist[filecount], "");
     }
     closedir(searchPath);
   }
@@ -325,7 +325,7 @@ int ScanFolder(char *dir, char *pattern, int firstfile,
   }
   globfree(&glob_results);
 
-#endif 
+#endif
 
   return filecount;
 }
@@ -369,8 +369,8 @@ boolean CheckFile(char *file, char *modus)
     strcpy(file, fileName);
     Input = fopen(file, modus);
   }
-    
-  // letztmalig ueberprufen 
+
+  // letztmalig ueberprufen
   if(Input) {
     fclose(Input);
     found = true;

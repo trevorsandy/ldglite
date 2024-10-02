@@ -47,9 +47,9 @@ extern char progname[256];
 
 extern int curstep;
 extern int OffScreenRendering;
-extern int renderbuffer; 
+extern int renderbuffer;
 
-extern int downsample; 
+extern int downsample;
 
 #ifdef OSMESA_OPTION
 #include "GL/osmesa.h"
@@ -133,7 +133,7 @@ FILE *start_bmp(char *filename, int width, int height)
     printf("Could not open %s\n", filename);
     return(NULL);
   }
-  
+
   //bmh = (LPBITMAPINFOHEADER) z.dib;
   bmh = (LPBITMAPINFOHEADER) &bmhbuf;
   bmh->biSize = 40;
@@ -165,7 +165,7 @@ FILE *start_bmp(char *filename, int width, int height)
   fwrite(&bmfh.bfOffBits, 4, 1, fp);
   // 40 bytes
   fwrite(bmh, sizeof(BITMAPINFOHEADER), 1, fp);
-#else  
+#else
   // Copy the 54 bytes of bmfh and bmh into hdr in intel byte order & packing.
   memset(hdr, 0, 54);
   hdr[0] = 'B';
@@ -246,11 +246,11 @@ void write_bmp(char *filename)
       char *b = (char *)OSbuffer;
       b += ((i+yoff)*Width +xoff) *4;
       for (j=0; j<width; j++) {
-	// MESA or OSmesa bug?  ReadPixels gives GBR instead of RGB???
-	pix[3*j] = b[1];
-	pix[3*j+1] = b[0];
-	pix[3*j+2] = b[2];
-	b+=4;
+    // MESA or OSmesa bug?  ReadPixels gives GBR instead of RGB???
+    pix[3*j] = b[1];
+    pix[3*j+1] = b[0];
+    pix[3*j+2] = b[2];
+    b+=4;
       }
     }
     else
@@ -261,12 +261,12 @@ void write_bmp(char *filename)
       for (j = 0; j < width; j++) // RGB -> BGR
       {
         c = p[0];
-#ifdef WINDOWS       
+#ifdef WINDOWS
         p[0] = p[2];
         p[2] = c;
 #else
 #ifdef OSMESA_OPTION
-	// MESA or OSmesa bug?  ReadPixels gives GBR instead of RGB???
+    // MESA or OSmesa bug?  ReadPixels gives GBR instead of RGB???
         p[0] = p[1];
         p[1] = c;
 #endif
@@ -301,7 +301,7 @@ FILE *start_ppm(char *filename, int width, int height)
   printf("LDGLite Output\n");
   printf("====================\n");
   printf("Write PPM %s\n", filename);
-  
+
   fp = fopen(filename, "wb");  // open in binary mode (to use unix \n chars)
   if (!fp) {
     printf("Couldn't open image file: %s\n", filename);
@@ -364,10 +364,10 @@ void write_ppm(char *filename)
       char *b = (char *)OSbuffer;
       b += ((i+yoff)*Width +xoff) *4;
       for (j=0; j<width; j++) {
-	pix[3*j] = b[0];
-	pix[3*j+1] = b[1];
-	pix[3*j+2] = b[2];
-	b+=4;
+    pix[3*j] = b[0];
+    pix[3*j+1] = b[1];
+    pix[3*j+2] = b[2];
+    b+=4;
       }
     }
     else
@@ -398,32 +398,32 @@ write_targa(char *filename, const GLubyte *buffer, int width, int height)
     int i, x, y;
     const GLubyte *ptr = buffer;
     printf ("Write TGA %s\n", filename);
-    fputc (0x00, f);	/* ID Length, 0 => No ID	*/
-    fputc (0x00, f);	/* Color Map Type, 0 => No color map included	*/
-    fputc (0x02, f);	/* Image Type, 2 => Uncompressed, True-color Image */
-    fputc (0x00, f);	/* Next five bytes are about the color map entries */
-    fputc (0x00, f);	/* 2 bytes Index, 2 bytes length, 1 byte size */
+    fputc (0x00, f);    /* ID Length, 0 => No ID    */
+    fputc (0x00, f);    /* Color Map Type, 0 => No color map included   */
+    fputc (0x02, f);    /* Image Type, 2 => Uncompressed, True-color Image */
+    fputc (0x00, f);    /* Next five bytes are about the color map entries */
+    fputc (0x00, f);    /* 2 bytes Index, 2 bytes length, 1 byte size */
     fputc (0x00, f);
     fputc (0x00, f);
     fputc (0x00, f);
-    fputc (0x00, f);	/* X-origin of Image	*/
+    fputc (0x00, f);    /* X-origin of Image    */
     fputc (0x00, f);
-    fputc (0x00, f);	/* Y-origin of Image	*/
+    fputc (0x00, f);    /* Y-origin of Image    */
     fputc (0x00, f);
-    fputc (Width & 0xff, f);      /* Image Width	*/
+    fputc (Width & 0xff, f);      /* Image Width    */
     fputc ((Width>>8) & 0xff, f);
-    fputc (Height & 0xff, f);     /* Image Height	*/
+    fputc (Height & 0xff, f);     /* Image Height   */
     fputc ((Height>>8) & 0xff, f);
-    fputc (0x18, f);		/* Pixel Depth, 0x18 => 24 Bits	*/
-    fputc (0x20, f);		/* Image Descriptor	*/
+    fputc (0x18, f);        /* Pixel Depth, 0x18 => 24 Bits */
+    fputc (0x20, f);        /* Image Descriptor */
     fclose(f);
     f = fopen( filename, "ab" );  /* reopen in binary append mode */
     for (y=height-1; y>=0; y--) {
       for (x=0; x<width; x++) {
-	i = (y*width + x) * 4;
-	fputc(ptr[i+2], f); /* write blue */
-	fputc(ptr[i+1], f); /* write green */
-	fputc(ptr[i], f);   /* write red */
+    i = (y*width + x) * 4;
+    fputc(ptr[i+2], f); /* write blue */
+    fputc(ptr[i+1], f); /* write green */
+    fputc(ptr[i], f);   /* write red */
       }
     }
     fclose(f);
@@ -440,21 +440,21 @@ write_targa(char *filename, const GLubyte *buffer, int width, int height)
 static void png_error_fn(png_structp png_ptr, const char *err_msg)
 {
     UNUSED(err_msg);
-	jmp_buf *j;
-	j= (jmp_buf*) png_get_error_ptr(png_ptr);
-	longjmp(*j, -1);
+    jmp_buf *j;
+    j= (jmp_buf*) png_get_error_ptr(png_ptr);
+    longjmp(*j, -1);
 }
 
 static void png_warning_fn(png_structp png_ptr, const char *warn_msg)
 {
     UNUSED(png_ptr);
     UNUSED(warn_msg);
-	return;
+    return;
 }
 
 /***************************************************************/
-FILE *start_png(char *filename, int width, int height,   
-		png_structp *png_pp, png_infop *info_pp)
+FILE *start_png(char *filename, int width, int height,
+        png_structp *png_pp, png_infop *info_pp)
 {
   char *p;
 
@@ -472,11 +472,11 @@ FILE *start_png(char *filename, int width, int height,
   printf("LDGLite Output\n");
   printf("====================\n");
   printf("Write PNG %s\n", filename);
-  
+
   // Write header stuff
   png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, (void*)(&jbuf),
-				    png_error_fn, png_warning_fn);
-  if (!png_ptr) 
+                    png_error_fn, png_warning_fn);
+  if (!png_ptr)
   {
     printf("No memory to write %s", filename);
     return(NULL);
@@ -502,7 +502,7 @@ FILE *start_png(char *filename, int width, int height,
     printf("Could not open %s\n", filename);
     return(NULL);
   }
-  
+
   png_init_io(png_ptr, fp);
 
   if ( use_png_alpha )
@@ -510,31 +510,31 @@ FILE *start_png(char *filename, int width, int height,
     // Set the default background for transparent image to white.
     // I should just store the current background color in a global and use it.
     // I should also make this a menu option/command line opt.
-    // Perhaps ctl-p for the hot key.  
+    // Perhaps ctl-p for the hot key.
     // Perhaps I need to create 4 image types.  bmp24, bmp8, png, png-alpha
     // and menu/hotkey/cmdline support for cropping modifier.
     background.red = 0xffff;
     background.green = 0xffff;
     background.blue = 0xffff;
 
-    png_set_IHDR(png_ptr, info_ptr, width, height, 8, 
-		 PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
-		 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    png_set_IHDR(png_ptr, info_ptr, width, height, 8,
+         PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE,
+         PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
 
     png_set_bKGD(png_ptr, info_ptr, &background);
   }
   else
   {
-    png_set_IHDR(png_ptr, info_ptr, width, height, 8, 
-		 PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
-		 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    png_set_IHDR(png_ptr, info_ptr, width, height, 8,
+         PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+         PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
   }
 
   // png_set_bgr(png_ptr);
   // png_set_pHYs(png_ptr, info_ptr, resolution_x, resolution_y, 1);
 
   png_write_info(png_ptr, info_ptr);
-  
+
   *png_pp = png_ptr;
   *info_pp = info_ptr;
   return(fp);
@@ -576,7 +576,7 @@ void write_png_avg(char *filename)
       printf("pngsize = (%d, %d) at (%d, %d)\n", width, height, xoff, yoff);
     if ((width <= 0) || (height <= 0)) return;
   }
-  
+
   if (downsample)
     fp = start_png(filename, width/2, height/2, &png_ptr, &info_ptr);
   else
@@ -596,18 +596,18 @@ void write_png_avg(char *filename)
       char *b = (char *)OSbuffer;
       b += ((i+yoff)*Width +xoff) *4;
       for (j=0; j<width; j++) {
-	if (use_png_alpha){
-	  pix[4*j] = b[0];
-	  pix[4*j+1] = b[1];
-	  pix[4*j+2] = b[2];
-	  pix[4*j+3] = b[3];
-	}
-	else {
-	  pix[3*j] = b[0];
-	  pix[3*j+1] = b[1];
-	  pix[3*j+2] = b[2];
-	}
-	b+=4;
+    if (use_png_alpha){
+      pix[4*j] = b[0];
+      pix[4*j+1] = b[1];
+      pix[4*j+2] = b[2];
+      pix[4*j+3] = b[3];
+    }
+    else {
+      pix[3*j] = b[0];
+      pix[3*j+1] = b[1];
+      pix[3*j+2] = b[2];
+    }
+    b+=4;
       }
     }
     else
@@ -617,18 +617,18 @@ void write_png_avg(char *filename)
       glReadPixels(xoff, i+yoff, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
       char *b = pix+3;
       for (j = 0; j < width; j++)
-	if (b[4*j])
-	  b[4*j] = 0xff; // Convert partial alpha to opaque.
+    if (b[4*j])
+      b[4*j] = 0xff; // Convert partial alpha to opaque.
     }
     else
       glReadPixels(xoff, i+yoff, width, 1, GL_RGB, GL_UNSIGNED_BYTE, pix);
 
     if (k > 0) {
       if (--i < 0) // Skip this line because png header doesn't expect it.
-	break; //memcpy(PIX, pix, width*4); 
+    break; //memcpy(PIX, pix, width*4);
       pix = PIX;
       continue;
-    }  
+    }
 #if 1
     // Use fast color averaging algorithm from compuphase.com/graphic/scale3.html
     if (downsample) { // Now downsample to one halfwidth row.
@@ -639,21 +639,21 @@ void write_png_avg(char *filename)
       PX = PIX;                // px = pointer to top row, PX = bottom row ptr.
       p = (unsigned int *)pix; // p = dest ptr (reuse left half of top row).
       for (j=0; j<width; j++) {
-	// Average 2 pixels from one row.
-	a = *(unsigned int *)px;
-	px += 4;
-	b = *(unsigned int *)px;
-	a = (((a ^ b) & m) >> 1) + (a & b); 
-	// Average 2 pixels from next row.
-	c = *(unsigned int *)PX;
-	PX += 4;
-	b = *(unsigned int *)PX;
-	c = (((c ^ b) & m) >> 1) + (c & b); 
-	// Average the average pixels to squeeze 2x2 pixels to 1..
-	a = (((a ^ c) & m) >> 1) + (a & c); 
-	*p++ = a;
-	px += 4;
-	PX += 4;
+    // Average 2 pixels from one row.
+    a = *(unsigned int *)px;
+    px += 4;
+    b = *(unsigned int *)px;
+    a = (((a ^ b) & m) >> 1) + (a & b);
+    // Average 2 pixels from next row.
+    c = *(unsigned int *)PX;
+    PX += 4;
+    b = *(unsigned int *)PX;
+    c = (((c ^ b) & m) >> 1) + (c & b);
+    // Average the average pixels to squeeze 2x2 pixels to 1..
+    a = (((a ^ c) & m) >> 1) + (a & c);
+    *p++ = a;
+    px += 4;
+    PX += 4;
       }
       px = pix; // Restore px pointer to the start of pix buf.
     }
@@ -666,7 +666,7 @@ void write_png_avg(char *filename)
   text_ptr[0].text = "LdGLite";
   text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
   png_set_text(png_ptr, info_ptr, text_ptr, 1);
-  
+
   png_write_end(png_ptr, info_ptr);
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
@@ -674,9 +674,9 @@ void write_png_avg(char *filename)
 
   if (width > 2560)
     free(pix);
-  if (downsample) 
+  if (downsample)
     free(PIX);
-      
+
 }
 #endif
 
@@ -686,7 +686,7 @@ void write_png_avg(char *filename)
 // Then downshift to 12 bits and inverse gamma that back to 8 bits.
 double gamma_val        = 2.2;
 int GAMMA[256];
-unsigned char GAM2RGB[4096]; 
+unsigned char GAM2RGB[4096];
 
 /***************************************************************/
 void write_png(char *filename)
@@ -727,7 +727,7 @@ void write_png(char *filename)
       pix[j++] = zcp.g;
       pix[j]   = zcp.b;
       if (use_png_alpha)
-	pix[++j] = 0;
+    pix[++j] = 0;
     }
     pix = (char *)p2;
     k = k - use_png_alpha;
@@ -753,7 +753,7 @@ void write_png(char *filename)
       printf("pngsize = (%d, %d) at (%d, %d)\n", width, height, xoff, yoff);
     if ((width <= 0) || (height <= 0)) return;
   }
-  
+
   if (downsample)
     fp = start_png(filename, width/2, height/2, &png_ptr, &info_ptr);
   else
@@ -773,18 +773,18 @@ void write_png(char *filename)
       char *b = (char *)OSbuffer;
       b += ((i+yoff)*Width +xoff) *4;
       for (j=0; j<width; j++) {
-	if (use_png_alpha){
-	  pix[4*j] = b[0];
-	  pix[4*j+1] = b[1];
-	  pix[4*j+2] = b[2];
-	  pix[4*j+3] = b[3];
-	}
-	else {
-	  pix[3*j] = b[0];
-	  pix[3*j+1] = b[1];
-	  pix[3*j+2] = b[2];
-	}
-	b+=4;
+    if (use_png_alpha){
+      pix[4*j] = b[0];
+      pix[4*j+1] = b[1];
+      pix[4*j+2] = b[2];
+      pix[4*j+3] = b[3];
+    }
+    else {
+      pix[3*j] = b[0];
+      pix[3*j+1] = b[1];
+      pix[3*j+2] = b[2];
+    }
+    b+=4;
       }
     }
     else
@@ -794,74 +794,74 @@ void write_png(char *filename)
       glReadPixels(xoff, i+yoff, width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pix);
       char *b = pix+3;
       for (j = 0; j < width; j++)
-	if (b[4*j])
-	  b[4*j] = 0xff; // Convert partial alpha to opaque.
+    if (b[4*j])
+      b[4*j] = 0xff; // Convert partial alpha to opaque.
     }
     else
       glReadPixels(xoff, i+yoff, width, 1, GL_RGB, GL_UNSIGNED_BYTE, pix);
 
     if (k > 0) {
       if (--i < 0) // Skip this line because png header doesn't expect it.
-	break; //memcpy(PIX, pix, width*4); 
+    break; //memcpy(PIX, pix, width*4);
       pix = (char *)p2;
       continue;
-    }  
+    }
 
     if (downsample) { // Now downsample to one halfwidth row.
-      unsigned int a, n, N, J; 
+      unsigned int a, n, N, J;
       p = p1; // p = dest ptr (reuse left half of top row).
       n = (3 + use_png_alpha);
       N = 2 * n;
       for (j=0,J=0; j<(width*n); j+=n) {
         // Use 3x3 gaussian blur filter (with gamma correction).
-	// **************************************************************
-	a  = GAMMA[p0[j+0]] >> 4;
-	a += GAMMA[p0[j+n]] >> 3;
-	a += GAMMA[p0[j+N]] >> 4;
-	a += GAMMA[p1[j+0]] >> 3;
-	a += GAMMA[p1[j+n]] >> 2;
-	a += GAMMA[p1[j+N]] >> 3;
-	a += GAMMA[p2[j+0]] >> 4;
-	a += GAMMA[p2[j+n]] >> 3;
-	a += GAMMA[p2[j+N]] >> 4;
-	j++;
-	p[J++] = GAM2RGB[(a >> 4) & 0xfff];
-	a  = GAMMA[p0[j+0]] >> 4;
-	a += GAMMA[p0[j+n]] >> 3;
-	a += GAMMA[p0[j+N]] >> 4;
-	a += GAMMA[p1[j+0]] >> 3;
-	a += GAMMA[p1[j+n]] >> 2;
-	a += GAMMA[p1[j+N]] >> 3;
-	a += GAMMA[p2[j+0]] >> 4;
-	a += GAMMA[p2[j+n]] >> 3;
-	a += GAMMA[p2[j+N]] >> 4;
-	j++;
-	p[J++] = GAM2RGB[(a >> 4) & 0xfff];
-	a  = GAMMA[p0[j+0]] >> 4;
-	a += GAMMA[p0[j+n]] >> 3;
-	a += GAMMA[p0[j+N]] >> 4;
-	a += GAMMA[p1[j+0]] >> 3;
-	a += GAMMA[p1[j+n]] >> 2;
-	a += GAMMA[p1[j+N]] >> 3;
-	a += GAMMA[p2[j+0]] >> 4;
-	a += GAMMA[p2[j+n]] >> 3;
-	a += GAMMA[p2[j+N]] >> 4;
-	j++;
-	p[J++] = GAM2RGB[(a >> 4) & 0xfff];
-	if (use_png_alpha) {
-	  a  = p0[j+0] >> 4;
-	  a += p0[j+n] >> 3;
-	  a += p0[j+N] >> 4;
-	  a += p1[j+0] >> 3;
-	  a += p1[j+n] >> 2;
-	  a += p1[j+N] >> 3;
-	  a += p2[j+0] >> 4;
-	  a += p2[j+n] >> 3;
-	  a += p2[j+N] >> 4;
-	  a &= 0xff;
-	  j++;
-	  p[J++] = a;
-	}
+    // **************************************************************
+    a  = GAMMA[p0[j+0]] >> 4;
+    a += GAMMA[p0[j+n]] >> 3;
+    a += GAMMA[p0[j+N]] >> 4;
+    a += GAMMA[p1[j+0]] >> 3;
+    a += GAMMA[p1[j+n]] >> 2;
+    a += GAMMA[p1[j+N]] >> 3;
+    a += GAMMA[p2[j+0]] >> 4;
+    a += GAMMA[p2[j+n]] >> 3;
+    a += GAMMA[p2[j+N]] >> 4;
+    j++;
+    p[J++] = GAM2RGB[(a >> 4) & 0xfff];
+    a  = GAMMA[p0[j+0]] >> 4;
+    a += GAMMA[p0[j+n]] >> 3;
+    a += GAMMA[p0[j+N]] >> 4;
+    a += GAMMA[p1[j+0]] >> 3;
+    a += GAMMA[p1[j+n]] >> 2;
+    a += GAMMA[p1[j+N]] >> 3;
+    a += GAMMA[p2[j+0]] >> 4;
+    a += GAMMA[p2[j+n]] >> 3;
+    a += GAMMA[p2[j+N]] >> 4;
+    j++;
+    p[J++] = GAM2RGB[(a >> 4) & 0xfff];
+    a  = GAMMA[p0[j+0]] >> 4;
+    a += GAMMA[p0[j+n]] >> 3;
+    a += GAMMA[p0[j+N]] >> 4;
+    a += GAMMA[p1[j+0]] >> 3;
+    a += GAMMA[p1[j+n]] >> 2;
+    a += GAMMA[p1[j+N]] >> 3;
+    a += GAMMA[p2[j+0]] >> 4;
+    a += GAMMA[p2[j+n]] >> 3;
+    a += GAMMA[p2[j+N]] >> 4;
+    j++;
+    p[J++] = GAM2RGB[(a >> 4) & 0xfff];
+    if (use_png_alpha) {
+      a  = p0[j+0] >> 4;
+      a += p0[j+n] >> 3;
+      a += p0[j+N] >> 4;
+      a += p1[j+0] >> 3;
+      a += p1[j+n] >> 2;
+      a += p1[j+N] >> 3;
+      a += p2[j+0] >> 4;
+      a += p2[j+n] >> 3;
+      a += p2[j+N] >> 4;
+      a &= 0xff;
+      j++;
+      p[J++] = a;
+    }
       }
       pix = p0; // Swap ptr to third row into first row ptr so we can reuse the row.
       p0 = p2;
@@ -877,7 +877,7 @@ void write_png(char *filename)
   text_ptr[0].text = "LdGLite";
   text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
   png_set_text(png_ptr, info_ptr, text_ptr, 1);
-  
+
   png_write_end(png_ptr, info_ptr);
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
@@ -889,7 +889,7 @@ void write_png(char *filename)
     free(p0);
     free(p1);
     free(p2);
-  }      
+  }
 }
 #endif
 
@@ -924,7 +924,7 @@ static BOOL SaveBMP8(char* fileName, BYTE* colormappedbuffer, UINT width, UINT h
   int i;
   int pixbuf;
   int nbits = 0;
-  int offset;	// offset into our color-mapped RGB buffer
+  int offset;   // offset into our color-mapped RGB buffer
   BYTE pval;
   char hdr[54];
 
@@ -944,32 +944,32 @@ static BOOL SaveBMP8(char* fileName, BYTE* colormappedbuffer, UINT width, UINT h
   impcolors = colors;
 
   fp = fopen(fileName, "wb+");
-  if (fp == NULL) 
+  if (fp == NULL)
     return FALSE;
-  
+
   bm[0]='B';
   bm[1]='M';
 
   // header stuff
-  bmfh.bfType=*(WORD *)&bm; 
-  bmfh.bfSize= filesize; 
-  bmfh.bfReserved1=0; 
-  bmfh.bfReserved2=0; 
-  bmfh.bfOffBits=pixeloffset; 
+  bmfh.bfType=*(WORD *)&bm;
+  bmfh.bfSize= filesize;
+  bmfh.bfReserved1=0;
+  bmfh.bfReserved2=0;
+  bmfh.bfOffBits=pixeloffset;
 
-  bmh.biSize = bmisize; 
-  bmh.biWidth = cols; 
-  bmh.biHeight = rows; 
-  bmh.biPlanes = planes; 
+  bmh.biSize = bmisize;
+  bmh.biWidth = cols;
+  bmh.biHeight = rows;
+  bmh.biPlanes = planes;
   bmh.biBitCount = 8;
-  bmh.biCompression = compression; 
-  bmh.biSizeImage = cmpsize; 
-  bmh.biXPelsPerMeter = xscale; 
-  bmh.biYPelsPerMeter = yscale; 
+  bmh.biCompression = compression;
+  bmh.biSizeImage = cmpsize;
+  bmh.biXPelsPerMeter = xscale;
+  bmh.biYPelsPerMeter = yscale;
   bmh.biClrUsed = colors;
   bmh.biClrImportant = impcolors;
 
-#if 0	
+#if 0
   fwrite(&bmfh, sizeof (BITMAPFILEHEADER), 1, fp);
   fwrite(&bmh, sizeof (BITMAPINFOHEADER), 1, fp);
 #else
@@ -1014,58 +1014,58 @@ static BOOL SaveBMP8(char* fileName, BYTE* colormappedbuffer, UINT width, UINT h
   fwrite(hdr, 54, 1, fp);
 #endif
 
-  if (cmapsize) 
+  if (cmapsize)
   {
-    for (i = 0; i< colors; i++) 
+    for (i = 0; i< colors; i++)
     {
       putc(colormap[i].rgbRed, fp);
       putc(colormap[i].rgbGreen, fp);
       putc(colormap[i].rgbBlue, fp);
-      putc(0, fp);	// dummy
+      putc(0, fp);  // dummy
     }
   }
 
   byteswritten = BMP_HEADERSIZE + cmapsize;
 
-  for (row = 0; row< (int)height; row++) 
+  for (row = 0; row< (int)height; row++)
   {
     nbits = 0;
-    for (col =0 ; col < (int)width; col++) 
+    for (col =0 ; col < (int)width; col++)
     {
       offset = row * width + col; // offset into our color-mapped RGB buffer
       pval = *(colormappedbuffer + offset);
       pixbuf = (pixbuf << 8) | pval;
       nbits += 8;
-      
-      if (nbits > 8) 
+
+      if (nbits > 8)
       {
-	fclose(fp);
-	return FALSE;
+    fclose(fp);
+    return FALSE;
       }
-      
-      if (nbits == 8) 
+
+      if (nbits == 8)
       {
-	putc(pixbuf, fp);
-	pixbuf=0;
-	nbits=0;
-	byteswritten++;
+    putc(pixbuf, fp);
+    pixbuf=0;
+    nbits=0;
+    byteswritten++;
       }
     } // cols
-    
-    if (nbits > 0) 
+
+    if (nbits > 0)
     {
-      putc(pixbuf, fp);		// write partially filled byte
+      putc(pixbuf, fp);     // write partially filled byte
       byteswritten++;
     }
-    
+
     // DWORD align
     while ((byteswritten -pixeloffset) & 3) {
       putc(0, fp);
       byteswritten++;
     }
-    
-  }	//rows
-  
+
+  } //rows
+
   fclose(fp);
   return TRUE;
 }
@@ -1086,7 +1086,7 @@ void write_bmp8(char *filename)
   BYTE tmpPal[3][256];
   BYTE *colormappedBuffer;
   UINT col;
-  
+
   if (cropping)
   {
     xoff = max(0, z.extent_x1);
@@ -1099,12 +1099,12 @@ void write_bmp8(char *filename)
       printf("bmpsize = (%d, %d) at (%d, %d)\n", width, height, xoff, yoff);
     if ((width <= 0) || (height <= 0)) return;
   }
-  
+
   colormappedBuffer = (BYTE*) malloc (width*height);
   data = (BYTE*)malloc(width*height*3);
 
   printf("Write BMP8 %s\n", filename);
-  
+
   glReadBuffer(renderbuffer);
 #ifdef OSMESA_OPTION
   if (OffScreenRendering)
@@ -1117,10 +1117,10 @@ void write_bmp8(char *filename)
       char *b = (char *)OSbuffer;
       b += ((i+yoff)*Width +xoff) *4;
       for (j=0; j<width; j++) {
-	pix[3*j] = b[0];
-	pix[3*j+1] = b[1];
-	pix[3*j+2] = b[2];
-	b+=4;
+    pix[3*j] = b[0];
+    pix[3*j+1] = b[1];
+    pix[3*j+2] = b[2];
+    b+=4;
       }
       pix += width*3;
     }
@@ -1129,9 +1129,9 @@ void write_bmp8(char *filename)
 #endif
   glReadPixels(xoff, yoff, (GLint)width, (GLint)height, GL_RGB, GL_UNSIGNED_BYTE, data);
 
-  dl1quant(data, colormappedBuffer, width, height, 256, TRUE, tmpPal); 
+  dl1quant(data, colormappedBuffer, width, height, 256, TRUE, tmpPal);
 
-  for (col = 0; col < 256; col++) 
+  for (col = 0; col < 256; col++)
   {
     RGBpal[col].rgbRed=tmpPal[2][col];
     RGBpal[col].rgbGreen=tmpPal[1][col];
@@ -1139,7 +1139,7 @@ void write_bmp8(char *filename)
   }
 
   SaveBMP8(filename, colormappedBuffer, width, height, 256, &RGBpal[0]);
-  
+
   free (colormappedBuffer);
 
   free(data);
@@ -1224,26 +1224,26 @@ int winOffScreenStart()
   // Create the DIBSection. We can also get direct access to the
   // pixels from here
   m_dibSection = CreateDIBSection (NULL, &bitmapInfo, DIB_RGB_COLORS,
-				   (void**)&dib_bits, NULL, 0);
+                   (void**)&dib_bits, NULL, 0);
 
   // We can directly write into this buffer!
   if (dib_bits == NULL)
     return (0);
-  
+
   // Create a DC
   hDC = CreateCompatibleDC (NULL);
   if (hDC == NULL)
     return (0);
-  
+
   // Select the DIB into the DC
   if (!SelectObject (hDC, m_dibSection))
     return (0);
-  
+
   // and then create the OpenGL context
   memset (&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
   pfd.nVersion = 1 ;
   pfd.dwFlags = PFD_DRAW_TO_BITMAP | PFD_SUPPORT_OPENGL | PFD_SUPPORT_GDI;
-  pfd.iPixelType = PFD_TYPE_RGBA ; 
+  pfd.iPixelType = PFD_TYPE_RGBA ;
 #ifdef NOALPHA
   pfd.cColorBits = 24;
 #else
@@ -1258,14 +1258,14 @@ int winOffScreenStart()
   // and bitmap contexts
   pixelformat = ChoosePixelFormat(hDC, (const PIXELFORMATDESCRIPTOR *) &pfd);
   // pixelformat returns a valid index of one (1)
-  if (pixelformat == 0) 
+  if (pixelformat == 0)
     return (0);
 
   if (!SetPixelFormat(hDC, pixelformat, &pfd))
     return (0);
 
   hGLRC = wglCreateContext (hDC);
-  
+
   wglMakeCurrent(hDC, hGLRC);
 
   return(1);
@@ -1280,16 +1280,16 @@ static AGLContext setupAGL(void)
   AGLContext     ctx;
   GLboolean      ok;
   GLsizei        rowbytes;
-  // AGL_ALL_RENDERERS, AGL_FULLSCREEN, AGL_DOUBLEBUFFER, AGL_ACCELERATED, 
+  // AGL_ALL_RENDERERS, AGL_FULLSCREEN, AGL_DOUBLEBUFFER, AGL_ACCELERATED,
   // AGL_DEPTH_SIZE, 32,
   // Found a note on google groups that DEPTH_SIZE does not work with OFFSCREEN
-  GLint          attrib[] = { AGL_RGBA, AGL_PIXEL_SIZE, 32, 
-			      AGL_DEPTH_SIZE, 32,
-			      AGL_OFFSCREEN, AGL_NONE };
-  
+  GLint          attrib[] = { AGL_RGBA, AGL_PIXEL_SIZE, 32,
+                  AGL_DEPTH_SIZE, 32,
+                  AGL_OFFSCREEN, AGL_NONE };
+
   /* Allocate the image buffer */
 #if 0
-  // NOTE: Who allocates the depth buffer?  
+  // NOTE: Who allocates the depth buffer?
   OSbuffer = malloc( Width * Height * 4 * sizeof(GLubyte) );
 #else
   // Try including the depth buffer.  By the way, who allocates depth for OSMesa?
@@ -1305,12 +1305,12 @@ static AGLContext setupAGL(void)
   fmt = aglChoosePixelFormat(NULL, 0, attrib);
   if ( fmt == NULL )
     return NULL;
-  
+
   /* Create an AGL context */
   ctx = aglCreateContext(fmt, NULL);
   if( ctx == NULL )
     return NULL;
-  
+
   /* Attach the off screen area to the context */
   // NOTE:  Should the depth buffer bytes be included in rowbytes?
   //        Or is this why google groups suggest depth fails for OffScreen?
@@ -1318,15 +1318,15 @@ static AGLContext setupAGL(void)
   ok = aglSetOffScreen(ctx, Width, Height, rowbytes, OSbuffer);
   if( !ok )
     return NULL;
-  
+
   /* Make the context the current context */
   ok = aglSetCurrentContext( ctx );
   if( !ok )
     return NULL;
-  
+
   /* The pixel format is no longer needed */
   aglDestroyPixelFormat( fmt );
-  
+
   return ctx;
 }
 
@@ -1369,8 +1369,8 @@ static CGLContextObj setupCGL(void)
 
 #if 0
    //kCGLRGB888A8Bit,
-   //Specifies a format that has 8-32 bits per pixel with an ARGB channel layout, 
-   //and the channels located in the following bits: A=7:0, R=23:16, G=15:8, B=7:0. 
+   //Specifies a format that has 8-32 bits per pixel with an ARGB channel layout,
+   //and the channels located in the following bits: A=7:0, R=23:16, G=15:8, B=7:0.
    //NOTE: I dont get it.  In the docs it says A above is for Accumulation (not Alpha?)
    // Do I need this???
    //kCGLPFAAccumSize, 8,
@@ -1379,14 +1379,14 @@ static CGLContextObj setupCGL(void)
    // I think I only need stencil for moving parts around, but I'd better check...
    CGLPixelFormatAttribute attrs[] =
    {
-   	kCGLPFADepthSize, (CGLPixelFormatAttribute)24,
-   	kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
-   	kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
-   	kCGLPFAStencilSize, (CGLPixelFormatAttribute)8,
-   	kCGLPFAAccelerated, (CGLPixelFormatAttribute)NO,
-   	kCGLPFAPBuffer,
-   	(CGLPixelFormatAttribute)0, // reserved for kCGLPFARemotePBuffer (if shared context)
-   	(CGLPixelFormatAttribute)0
+    kCGLPFADepthSize, (CGLPixelFormatAttribute)24,
+    kCGLPFAColorSize, (CGLPixelFormatAttribute)24,
+    kCGLPFAAlphaSize, (CGLPixelFormatAttribute)8,
+    kCGLPFAStencilSize, (CGLPixelFormatAttribute)8,
+    kCGLPFAAccelerated, (CGLPixelFormatAttribute)NO,
+    kCGLPFAPBuffer,
+    (CGLPixelFormatAttribute)0, // reserved for kCGLPFARemotePBuffer (if shared context)
+    (CGLPixelFormatAttribute)0
    };
 #endif
 
@@ -1597,9 +1597,9 @@ int OffScreenRender()
 #endif
 #ifdef WIN_DIB_OPTION
     DeleteObject(m_dibSection);
-    
+
     wglMakeCurrent(NULL,NULL);
-    
+
     wglDeleteContext(hGLRC);
 
 #endif

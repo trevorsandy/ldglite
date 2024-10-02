@@ -13,13 +13,13 @@ Contents of readme.txt:
     Hot Keys
     LEDIT extensions
     LEDIT emulation quirks
-  Notes 
+  Notes
     Producing image files
     Tiled rendering
     Off screen background rendering
 
 
-			     Introduction
+                 Introduction
 
 Ldglite is a program that lets you create, edit, and view Lego brick
 models stored in LDRAW format. It was created by connecting the LDLite
@@ -42,7 +42,7 @@ hoses, pose minifigs, create train track layouts, etc.
 
 Several internet sites use ldglite as a scripted offscreen renderer,
 generating many pictures of LDRAW parts for inventory lists and
-such. 
+such.
 
 Possibly the most important feature of ldglite is that all of the
 source code is available.
@@ -73,11 +73,11 @@ You must also install the ldraw parts files from www.ldraw.org.
 
 For ldglite to find the parts you must set the environment variable
 LDRAWDIR.  Add this line to your C:\AUTOEXEC.BAT file and reboot your
-PC.  
+PC.
 
     SET LDRAWDIR=C:\LDRAW
 
-As of version 7.1 ldglite can also use the BaseDirectory setting in 
+As of version 7.1 ldglite can also use the BaseDirectory setting in
 ldraw.ini to find the parts files.  The ldraw.ini file is created by
 LDAO and various other ldraw type programs.
 
@@ -87,17 +87,17 @@ To use ldglite from MS Internet Explorer do this:
     2) Select the "View->Folder Options" menu selection.
        ("Tools->Folder Options" on 2000.)
     3) Go to the "File Types" tab.
-    4) Scroll down and double click on the "ldlite Document" line.  
+    4) Scroll down and double click on the "ldlite Document" line.
        If there is no "ldlite Document" line, click the "New Type" button
        and enter "ldlite Document" in the "Description of type" field
        and ".dat" for the "Associated extension".
     5) In the "Content Type" field, type in "application/x-ldraw"
-    6) In the "Actions" area, Click on the "New..." button.  
-       For the Action name, type "open".  
+    6) In the "Actions" area, Click on the "New..." button.
+       For the Action name, type "open".
        For the filename, browse to the location of ldglite.exe
 
 Or on the command line of windows 2000 type something like this:
-    
+
     FTYPE ldlite.document=C:\some\directory\l3glite.exe -v3 "%1"
     ASSOC .dat=ldlite.document
     ASSOC .mpd=ldlite.document
@@ -105,12 +105,12 @@ Or on the command line of windows 2000 type something like this:
     SET PATHEXT=.ldr;.mpd;.dat;%PATHEXT%
 
 The last bit allows you to skip the .ldr extension and just "run" .ldr files
-    
+
 
 For Netscape:
 
     1) Go to the Netscape menu item Edit/Preferences/Navigator/Applications.
-    2) Select "ldlite Document".   
+    2) Select "ldlite Document".
        If you don't find "ldlite Document" then add it.
     3) Edit, and set the mime type to application/x-ldraw.
     4) Browse for the ldglite.exe executable.
@@ -124,7 +124,7 @@ You must install the basic ldraw files from www.ldraw.org
     cd /usr/local
     mkdir ldraw
     cd ldraw
-    unarj x ldraw.exe 
+    unarj x ldraw.exe
     unarj x complete.exe
 
 The default directory for ldraw dat files is /usr/local/ldraw.
@@ -144,7 +144,7 @@ variable LDRAWIRCASE
 Unzip the ldglite distribution.  I zipped it with infozip which is free
 on the web.  (I'm skipping the usual .tgz file since geocities seems to
 choke on it.)  The Mandrake 6.1 linux distribution came with an unzip
-utility preinstalled in /usr/bin. 
+utility preinstalled in /usr/bin.
 
 You must build ldglite
 
@@ -161,21 +161,21 @@ linux distribution before the ldglite would link.
     ln -s libMesaGL.so libGL.so
 
 I think the makefile also assumes you have libpng and libz installed.
-Check makefile.linux for instructions on how to skip them if you have 
+Check makefile.linux for instructions on how to skip them if you have
 trouble linking.
 
 For Netscape, go to the Netscape menu item
 Edit/Preferences/Navigator/Applications, select "ldlite Document",
-Edit, and set the mime type to application/x-ldraw.  If you don't find 
+Edit, and set the mime type to application/x-ldraw.  If you don't find
 "ldlite Document" then add it.
-Set the executable like this.  
+Set the executable like this.
 
     /usr/local/bin/ldglite %s
 
 Feel free to substitute whatever path you use for the executable.  The
 %s is required to pass the temporary filename of the dat file to
 ldglite.  If you want a 640x480 window with shading turned on try something
-like this.  See ldlite docs for help with command line options. 
+like this.  See ldlite docs for help with command line options.
 
     /usr/local/bin/ldglite -v3 -fh %s
 
@@ -194,7 +194,7 @@ You must install the basic ldraw files from www.ldraw.org
 
 For ldglite to find the parts you must set the environment variable
 LDRAWDIR.  Add this line to your C:\AUTOEXEC.BAT file and reboot your
-PC.  
+PC.
 
     SET LDRAWDIR=C:\LDRAW
 
@@ -213,7 +213,7 @@ some garbage at the top of the screen.
                         LdGLite for MacOS README
 
 Installation instructions are online at http://ldglite.sourceforge.net.
-Scroll down to the installation section and follow the link to the 
+Scroll down to the installation section and follow the link to the
 instructions for your flavor of MacOS.
 
 
@@ -226,9 +226,9 @@ Command line options (see also the original ldlite docs for more):
 -fh turns on shading mode.
 -fs turns off stud drawing. (l3glite only)
 -fsl draws studs as lines. (l3glite only)
--fe turns off edge lines 
+-fe turns off edge lines
 -fr same as -fe (Render mode?  Rough draft?  I don't know what R stands for.)
--ffT,E,S,R,G,B turns on fogging 
+-ffT,E,S,R,G,B turns on fogging
    T = fogging type (1 = linear, 2 = exp2, 3 = exp3)
    E,S = end/far, start/near fog clip planes in linear mode.
    E,S = fog density, S= ignored param in exp mode.
@@ -236,16 +236,16 @@ Command line options (see also the original ldlite docs for more):
    All fog params except T are optional.
    Try these:  -ff3,0.0004    -ff3,0.0003,0,0.8,0.8,1.0
 -fmN sets default mouse spin drawing mode bitmask (eg -fm0x80).  Bits are:
-   TYPE_F_NORMAL 		0x0000
-   TYPE_F_LOW_RES 		0x0001
-   TYPE_F_NO_POLYGONS	 	0x0002
-   TYPE_F_NO_LINES		0x0004
-   TYPE_F_BBOX_MODE		0x0008
-   TYPE_F_INVISIBLE		(TYPE_F_NO_POLYGONS | TYPE_F_NO_LINES)
-   TYPE_F_STUDLESS_MODE 	0x0010
-   TYPE_F_STUDONLY_MODE 	0x0020
-   TYPE_F_STUDLINE_MODE 	0x0040
-   TYPE_F_SHADED_MODE	 	0x0080
+   TYPE_F_NORMAL        0x0000
+   TYPE_F_LOW_RES       0x0001
+   TYPE_F_NO_POLYGONS       0x0002
+   TYPE_F_NO_LINES      0x0004
+   TYPE_F_BBOX_MODE     0x0008
+   TYPE_F_INVISIBLE     (TYPE_F_NO_POLYGONS | TYPE_F_NO_LINES)
+   TYPE_F_STUDLESS_MODE     0x0010
+   TYPE_F_STUDONLY_MODE     0x0020
+   TYPE_F_STUDLINE_MODE     0x0040
+   TYPE_F_SHADED_MODE       0x0080
 -v0 displays in a 320x200 window.
 -v-1 displays in fullscreen with no decorations.
 -v-2 displays in fullscreen gamemode (no menus in gamemode).
@@ -259,14 +259,14 @@ Command line options (see also the original ldlite docs for more):
 -mS Does the same, but without opening a window (on most systems).
     You can also include an optional output filename with either of these.
     eg. -mSpicture.png  (-mSpicture#.png replaces # with step numbers)
--iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24 
+-iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24
     5 = PPM.  Use -N to turn off output image cropping.
 -eN.NN fixes polyline offset driver errors.  Try -e0.95 if lines look bad.
 -p turns on polling mode.
 -l logs messages to the ldglite.log file instead of stdout.
 -ld forces the program to use the ldlite parser.
 -l3 forces the program to use the l3 parser.
--le starts the program in LEDIT emulation mode. 
+-le starts the program in LEDIT emulation mode.
 -lE starts the program in LEDIT emulation mode with solid moving pieces.
 -ledit or -LEDIT do the same but with draw-to-current and stud-as-line on.
 -wN sets linewidth to N.
@@ -287,7 +287,7 @@ Command line options (see also the original ldlite docs for more):
 -& windows mode.  Detach from the console window.  Windows version only.
 -- if no DAT filename is given on the command line ldglite will read
    from stdin.  (l3glite does not do this)  Try this:
-     cat file.dat | ldglite -v3 -ms -- 
+     cat file.dat | ldglite -v3 -ms --
    Kinda neat, but I don't know if this is good for much.  Perhaps if you
    have an application that generates dat files you can pipe the output
    through ldglite and produce an image file.  For example ldrawmode for
@@ -298,8 +298,8 @@ Command line options (see also the original ldlite docs for more):
    The result is a nice pretty antialiased image.  Edges are smooth.
    Transparent parts are blended instead of dithered.
 =LDConfig.ldr file. Optionally, you can include an LDConfig.ldr filename
-   as an command line argument. e.g. =foo\\CustomLDConfig.ldr. If not used, 
-   ldglite will attempt to load the LDConfig.ldr from the default locations 
+   as an command line argument. e.g. =foo\\CustomLDConfig.ldr. If not used,
+   ldglite will attempt to load the LDConfig.ldr from the default locations
    (LDRAWDIR and CWD).
 
 Hot Keys (especially useful in fullscreen gamemode):
@@ -344,13 +344,13 @@ B prints a PNG file. (use ALT-B for Alpha transparency)
 q toggles line quality (antialiasing)
 Esc quits.
 
-INSERT key toggles LEDIT emulation mode.  
+INSERT key toggles LEDIT emulation mode.
 (use CTRL-INSERT if you want to render the moving part solid)
 
 An excellent description of the LEDIT Hot Keys can be found at:
   http://library.thinkquest.org/20551/keys.html
 
-			   LEDIT extensions
+               LEDIT extensions
 
 The LEDIT emulation currently contains an extension to the linetype menu
 to allow adding primitive linetypes 2-5.  The parser for this ignores
@@ -365,7 +365,7 @@ Also, in addition to the x,y,z keys to translate the piece along an axis,
 you can now use the v key to translate by an (x,y,z) vector.
 
 The Piece menu now also contains:
-  an (x,y,z) location option 
+  an (x,y,z) location option
   an (x,y,z) scale option (use negative numbers to mirror)
   a matrix replacement option.
   a part inliner option.
@@ -381,7 +381,7 @@ The Edit menu now also contains:
 
 A Rotate menu has been added:  Like the rotate option on the Turn menu.
 
-			LEDIT emulation quirks
+            LEDIT emulation quirks
 
 Part lookup is not currently supported.  Try the printable parts catalog.
   http://moon.pr.erau.edu/~sayrew/lego.html
@@ -392,10 +392,10 @@ Windows users can also use ldlist or the VEC from LDAO for part lookup.
 Empty lines are discarded by the L3 parser.  Use a blank comment instead.
 
 
-				Notes
+                Notes
 
 Lugnet news article http://news.lugnet.com/cad/?n=5344 describes
-how linux users can use ldglite to convert DAT or MPD files to GIF 
+how linux users can use ldglite to convert DAT or MPD files to GIF
 and JPEG.
 
 LDGLite (see http://www.ldraw.org/reference/linux for installation
@@ -428,7 +428,7 @@ No need for any external image decimation program.  (png output only)
   ldglite -i2 -ms -2g,2x model.mpd
 
 
-		       -----------------------
+               -----------------------
 
 Use -uX,Y on the command line to build and save an image larger than
 the screen made out of several tiles, each the size of the ldglite
@@ -444,7 +444,7 @@ rendering passes required for the tiles.
 
   ldglite -l3 -i2 -s2 -w2 -u2000,2000 model.mpd
 
-		       -----------------------
+               -----------------------
 
 Use -mS (uppercase S) to save images without even opening a window.
 This is nice for background rendering processes.  Use this in
@@ -457,7 +457,7 @@ use the X Virtual FrameBuffer (xvfb) to render offscreen.  I suspect
 xvfb may also require the changes to the MESA config file to produce
 large images.
 
-		       -----------------------
+               -----------------------
 
 Here's a batch file for nifty fogged perspective rendering of datsville.
 

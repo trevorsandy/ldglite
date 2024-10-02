@@ -1,4 +1,4 @@
-"Sproaticus" Jeremy H. Sproat writes in lugnet.cad.dev message 7738 
+"Sproaticus" Jeremy H. Sproat writes in lugnet.cad.dev message 7738
 Sun, 25 Aug 2002 20:03:06 GMT
 
 > If you want an easy way to grab the latest stuff from CVS, I recently
@@ -17,7 +17,7 @@ download and install mingw32
 download, compile and install zlib
 
 - download source code from http://www.gzip.org/zlib/
-- note: I placed mine in \projects\zlib\ 
+- note: I placed mine in \projects\zlib\
   (rename directory zlib-1.1.4\ to zlib\)
 - make -f nt\makefile.gcc
 - copy libz.a to \mingw-1.1\lib\

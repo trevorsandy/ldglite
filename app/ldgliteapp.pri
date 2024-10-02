@@ -3,6 +3,8 @@ DEPENDPATH += $$PWD
 HEADERS += \
    $$PWD/dirscan.h \
    $$PWD/f00QuatC.h \
+   $$PWD/functionheaders.h \
+   $$PWD/getargv.h \
    $$PWD/glext.h \
    $$PWD/glui.h \
    $$PWD/glwinkit.h \
@@ -15,6 +17,9 @@ HEADERS += \
    $$PWD/StdAfx.h \
    $$PWD/stub.h \
    $$PWD/tinyfiledialogs.h \
+   $$PWD/wglext.h \
+   $$PWD/win32_dirent.h \
+   $$PWD/wstubs.h \
    $$PWD/y.tab.h \
 
 SOURCES += \
@@ -28,6 +33,7 @@ SOURCES += \
    $$PWD/L3Math.c \
    $$PWD/L3View.c \
    $$PWD/lcolors.c \
+   $$PWD/ldglgui.c \
    $$PWD/ldglmenu.c \
    $$PWD/ldglpr.c \
    $$PWD/ldliteVR_main.c \

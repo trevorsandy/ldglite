@@ -19,24 +19,24 @@
 // Some local settings, play with them at your own peril....
 //
 
-#define DEF_keyboardAngleStep		5.0
-#define DEF_truckStepSize		100 
+#define DEF_keyboardAngleStep       5.0
+#define DEF_truckStepSize       100
 
 //
 // Icky camera globals. :-/
 //
 
 // Position
-GLfloat		camX = 0.0;
-GLfloat		camY = 0.0;
-GLfloat		camZ = 0.0;
+GLfloat     camX = 0.0;
+GLfloat     camY = 0.0;
+GLfloat     camZ = 0.0;
 
 // Orientation
 // Note:  We will be storing this 'pre-inverted'.  This means the quat is always ready for
 // application, and does not need to be inverted, like the position variables....
 // This *does* require us to invert the directions used to modify the quat, however.
 // Win some, lose some....
-f00Quat		camOrient;
+f00Quat     camOrient;
 
 /***************************************************************/
 void
@@ -75,7 +75,7 @@ applyCamera()
 
 /***************************************************************/
 // This is called when we wish to reset the viewpoint.
-void 
+void
 resetCamera()
 {
   // Reset the position
@@ -96,21 +96,21 @@ truckCamera( GLfloat truckBy, bool truckX, bool truckY, bool truckZ )
   GLfloat dirX;
   GLfloat dirY;
   GLfloat dirZ;
-		
+
   f00Quat truckQuat;
   f00Quat_copy( &truckQuat, &camOrient );
 
   if( truckZ )
   {
-    ;	// Don't do anything....
+    ;   // Don't do anything....
   }
   else if( truckX )
   {
-    f00Quat_postMult_3( &truckQuat, 0.0, -90.0, 0.0 );		
+    f00Quat_postMult_3( &truckQuat, 0.0, -90.0, 0.0 );
   }
   else if( truckY )
   {
-    f00Quat_postMult_3( &truckQuat, 90.0, 0.0, 0.0 );		
+    f00Quat_postMult_3( &truckQuat, 90.0, 0.0, 0.0 );
   }
 
   // Ask the Quat class for a unit vector, aligned with the orientation.
@@ -145,7 +145,7 @@ specialFunc( int key, int x, int y )
 
   if ((glutModifiers & GLUT_ACTIVE_CTRL) == 0)
     return 0;
-    
+
   // Ctrl-Alt Arrow keys roll left, right, up, down.
   if (glutModifiers & GLUT_ACTIVE_ALT)
   switch( key )

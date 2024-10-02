@@ -4,16 +4,16 @@
 |tiny file| Unique header file of "tiny file dialogs" created [November 9, 2014]
 | dialogs | Copyright (c) 2014 - 2016 Guillaume Vareille http://ysengrin.com
 \____  ___/ http://tinyfiledialogs.sourceforge.net
-     \|           	                     mailto:tinfyfiledialogs@ysengrin.com
+     \|                                  mailto:tinfyfiledialogs@ysengrin.com
 
             git://git.code.sf.net/p/tinyfiledialogs/code
 
  Please
-	1) let me know
-	- if you are including tiny file dialogs,
-	  I'll be happy to add your link to the list of projects using it.
-	- If you are using it on different hardware / OS / compiler.
-	2) Be the first to leave a review on Sourceforge. Thanks.
+    1) let me know
+    - if you are including tiny file dialogs,
+      I'll be happy to add your link to the list of projects using it.
+    - If you are using it on different hardware / OS / compiler.
+    2) Be the first to leave a review on Sourceforge. Thanks.
 
 tiny file dialogs (cross-platform C C++)
 InputBox PasswordBox MessageBox ColorPicker
@@ -58,7 +58,7 @@ tested with C & C++ compilers
 on Visual Studio MinGW OSX LINUX FREEBSD ILLUMOS SOLARIS MINIX RASPBIAN
 using Gnome Kde Enlightenment Mate Cinnamon Unity
 Lxde Lxqt Xfce WindowMaker IceWm Cde Jds OpenBox
- 
+
 - License -
 
 This software is provided 'as-is', without any express or implied
@@ -89,7 +89,7 @@ and the corresponding closing bracket:
 }
 */
 
-#ifdef	__cplusplus
+#ifdef  __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
@@ -100,13 +100,13 @@ int tinyfd_messageBox (
   char const * const aDialogType , /* "ok" "okcancel" "yesno" */
   char const * const aIconType , /* "info" "warning" "error" "question" */
   int const aDefaultButton ) ; /* 0 for cancel/no , 1 for ok/yes */
-	/* returns 0 for cancel/no , 1 for ok/yes */
+    /* returns 0 for cancel/no , 1 for ok/yes */
 
 char const * tinyfd_inputBox (
-	char const * const aTitle , /* "" */
-	char const * const aMessage , /* "" may NOT contain \n \t on windows */
-	char const * const aDefaultInput ) ;  /* "" , if NULL it's a passwordBox */
-	/* returns NULL on cancel */
+    char const * const aTitle , /* "" */
+    char const * const aMessage , /* "" may NOT contain \n \t on windows */
+    char const * const aDefaultInput ) ;  /* "" , if NULL it's a passwordBox */
+    /* returns NULL on cancel */
 
 char const * tinyfd_saveFileDialog (
   char const * const aTitle , /* "" */
@@ -114,7 +114,7 @@ char const * tinyfd_saveFileDialog (
   int const aNumOfFilterPatterns , /* 0 */
   char const * const * const aFilterPatterns , /* NULL | {"*.jpg","*.png"} */
   char const * const aSingleFilterDescription ) ; /* NULL | "text files" */
-	/* returns NULL on cancel */
+    /* returns NULL on cancel */
 
 char const * tinyfd_openFileDialog (
   char const * const aTitle , /* "" */
@@ -123,33 +123,33 @@ char const * tinyfd_openFileDialog (
   char const * const * const aFilterPatterns , /* NULL {"*.jpg","*.png"} */
   char const * const aSingleFilterDescription , /* NULL | "image files" */
   int const aAllowMultipleSelects ) ; /* 0 or 1 */
-	/* in case of multiple files, the separator is | */
-	/* returns NULL on cancel */
+    /* in case of multiple files, the separator is | */
+    /* returns NULL on cancel */
 
 char const * tinyfd_selectFolderDialog (
-	char const * const aTitle , /* "" */
+    char const * const aTitle , /* "" */
   char const * const aDefaultPath ) ; /* "" */
-	/* returns NULL on cancel */
+    /* returns NULL on cancel */
 
 char const * tinyfd_colorChooser(
-	char const * const aTitle , /* "" */
-	char const * const aDefaultHexRGB , /* NULL or "#FF0000" */
-	unsigned char const aDefaultRGB[3] , /* { 0 , 255 , 255 } */
-	unsigned char aoResultRGB[3] ) ; /* { 0 , 0 , 0 } */
-	/* returns the hexcolor as a string "#FF0000" */
-	/* aoResultRGB also contains the result */
-	/* aDefaultRGB is used only if aDefaultHexRGB is NULL */
-	/* aDefaultRGB and aoResultRGB can be the same array */
-	/* returns NULL on cancel */
+    char const * const aTitle , /* "" */
+    char const * const aDefaultHexRGB , /* NULL or "#FF0000" */
+    unsigned char const aDefaultRGB[3] , /* { 0 , 255 , 255 } */
+    unsigned char aoResultRGB[3] ) ; /* { 0 , 0 , 0 } */
+    /* returns the hexcolor as a string "#FF0000" */
+    /* aoResultRGB also contains the result */
+    /* aDefaultRGB is used only if aDefaultHexRGB is NULL */
+    /* aDefaultRGB and aoResultRGB can be the same array */
+    /* returns NULL on cancel */
 
 /* not cross platform - zenity only */
 char const * tinyfd_arrayDialog (
-	char const * const aTitle , /* "" */
-	int const aNumOfColumns , /* 2 */
-	char const * const * const aColumns , /* {"Column 1","Column 2"} */
-	int const aNumOfRows , /* 2*/
-	char const * const * const aCells ) ;
-		/* {"Row1 Col1","Row1 Col2","Row2 Col1","Row2 Col2"} */
+    char const * const aTitle , /* "" */
+    int const aNumOfColumns , /* 2 */
+    char const * const * const aColumns , /* {"Column 1","Column 2"} */
+    int const aNumOfRows , /* 2*/
+    char const * const * const aCells ) ;
+        /* {"Row1 Col1","Row1 Col2","Row2 Col1","Row2 Col2"} */
 
 
 extern int tinyfd_forceConsole ;  /* 0 (default) or 1
@@ -161,7 +161,7 @@ for unix & windows: 0 (graphic mode) or 1 (console mode).
 on windows it only make sense for console applications */
 
 /* if you pass ¨tinyfd_query¨ as aTitle,
-the functions will not display the dialogs 
+the functions will not display the dialogs
 but will fill tinyfd_response with
 the retain solution and return:
 0 for console mode, 1 for graphic mode */
@@ -172,14 +172,14 @@ extern char tinyfd_response [ 1024 ] ;
 creating the GUI dialogs.
 Then you don't need link against Comdlg32.lib and Ole32.lib */
 
-/*************************************************/  
-/* Use this to check for graphical solution. */  
-/* return is > 0 if you have graphical messages. */  
-/* return is > 0xff if you have file dialogs. */  
+/*************************************************/
+/* Use this to check for graphical solution. */
+/* return is > 0 if you have graphical messages. */
+/* return is > 0xff if you have file dialogs. */
 int tinyfd_gui_test ();
-/*************************************************/  
+/*************************************************/
 
-#ifdef	__cplusplus
+#ifdef  __cplusplus
 }
 #endif /* __cplusplus */
 
@@ -198,7 +198,7 @@ int tinyfd_gui_test ();
   they open a console window for a few seconds.
 - On visual studio:
       set Properties/Configuration Properties/General
-			Character Set to "Multi-Byte" or "Not Set"
+            Character Set to "Multi-Byte" or "Not Set"
 - On windows link against Comdlg32.lib and Ole32.lib
   This linking is not compulsary for console mode (see above).
 - On unix: it tries command line calls, so no such need.
@@ -236,11 +236,11 @@ int tinyfd_gui_test ();
 #include "tinyfiledialogs.h"
 int main()
 {
-	char const * lThePassword;
-	char const * lTheSaveFileName;
-	char const * lTheOpenFileName;
-	FILE * lIn;
-	char lBuffer[1024];
+    char const * lThePassword;
+    char const * lTheSaveFileName;
+    char const * lTheOpenFileName;
+    FILE * lIn;
+    char lBuffer[1024];
 
   tinyfd_forceConsole = tinyfd_messageBox("Hello World",
     "force dialogs into console mode?\
@@ -251,51 +251,51 @@ int main()
     "a password box","your password will be revealed",NULL);
 
   lTheSaveFileName = tinyfd_saveFileDialog (
-	"let us save this password",
+    "let us save this password",
     "passwordFile.txt",
     0,
     NULL,
     NULL );
 
 #pragma warning(disable:4996) // silences warning about fopen
-	lIn = fopen(lTheSaveFileName, "w");
+    lIn = fopen(lTheSaveFileName, "w");
 #pragma warning(default:4996)
-	if (!lIn)
-	{
-		tinyfd_messageBox(
-			"Error",
-			"Can not open this file in writting mode",
-			"ok",
-			"error",
-			1 );
-		return(1);
-	}
-	fputs(lThePassword, lIn);
-	fclose(lIn);
+    if (!lIn)
+    {
+        tinyfd_messageBox(
+            "Error",
+            "Can not open this file in writting mode",
+            "ok",
+            "error",
+            1 );
+        return(1);
+    }
+    fputs(lThePassword, lIn);
+    fclose(lIn);
 
     lTheOpenFileName = tinyfd_openFileDialog (
-		"let us read this password back",
-		"",
-		0,
-		NULL,
-		NULL,
-		0);
+        "let us read this password back",
+        "",
+        0,
+        NULL,
+        NULL,
+        0);
 
 #pragma warning(disable:4996) // silences warning about fopen
-	lIn = fopen(lTheOpenFileName, "r");
+    lIn = fopen(lTheOpenFileName, "r");
 #pragma warning(default:4996)
-	if (!lIn)
-	{
-		tinyfd_messageBox(
-			"Error",
-			"Can not open this file in reading mode",
-			"ok",
-			"error",
-			1 );
-		return(1);
-	}
-	fgets(lBuffer, sizeof(lBuffer), lIn);
-	fclose(lIn);
+    if (!lIn)
+    {
+        tinyfd_messageBox(
+            "Error",
+            "Can not open this file in reading mode",
+            "ok",
+            "error",
+            1 );
+        return(1);
+    }
+    fgets(lBuffer, sizeof(lBuffer), lIn);
+    fclose(lIn);
 
   if ( *lBuffer )
     tinyfd_messageBox("your password is", lBuffer, "ok", "info", 1);
@@ -303,17 +303,17 @@ int main()
 
 OSX :
 $ gcc -o hello.app hello.c tinyfiledialogs.c
- 
+
 UNIX :
 $ gcc -o hello hello.c tinyfiledialogs.c
 
 MinGW :
 > gcc -o hello.exe hello.c tinyfiledialogs.c -LC:/mingw/lib -lcomdlg32 -lole32
- 
+
 VisualStudio :
   Create a console application project,
-	it links against Comdlg32.lib & Ole32.lib.
-	Right click on your Project, select Properties.
-	Configuration Properties/General
-	Character Set to "Multi-Byte" or "Not Set"
+    it links against Comdlg32.lib & Ole32.lib.
+    Right click on your Project, select Properties.
+    Configuration Properties/General
+    Character Set to "Multi-Byte" or "Not Set"
 */

@@ -17,8 +17,8 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 // stdafx.cpp : source file that includes just the standard includes
-//	ldlite.pch will be the pre-compiled header
-//	stdafx.obj will contain the pre-compiled type information
+//  ldlite.pch will be the pre-compiled header
+//  stdafx.obj will contain the pre-compiled type information
 
 #include "stdafx.h"
 

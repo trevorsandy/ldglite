@@ -34,15 +34,15 @@
 /* The "const" storage-class-modifier is valid. */
 #define YY_USE_CONST
 
-#else	/* ! __cplusplus */
+#else   /* ! __cplusplus */
 
 #if __STDC__
 
 #define YY_USE_PROTOS
 #define YY_USE_CONST
 
-#endif	/* __STDC__ */
-#endif	/* ! __cplusplus */
+#endif  /* __STDC__ */
+#endif  /* ! __cplusplus */
 
 #ifdef __TURBOC__
  #pragma warn -rch
@@ -113,10 +113,10 @@ extern FILE *yyin, *yyout;
  * int a single C statement (which needs a semi-colon terminator).  This
  * avoids problems with code like:
  *
- * 	if ( condition_holds )
- *		yyless( 5 );
- *	else
- *		do_something_else();
+ *  if ( condition_holds )
+ *      yyless( 5 );
+ *  else
+ *      do_something_else();
  *
  * Prior to using the do-while the compiler would get upset at the
  * "else" because it interpreted the "if" statement as being all
@@ -126,15 +126,15 @@ extern FILE *yyin, *yyout;
 /* Return all but the first 'n' matched characters back to the input stream. */
 
 #define yyless(n) \
-	do \
-		{ \
-		/* Undo effects of setting up yytext. */ \
-		*yy_cp = yy_hold_char; \
-		YY_RESTORE_YY_MORE_OFFSET \
-		yy_c_buf_p = yy_cp = yy_bp + n - YY_MORE_ADJ; \
-		YY_DO_BEFORE_ACTION; /* set up yytext again */ \
-		} \
-	while ( 0 )
+    do \
+        { \
+        /* Undo effects of setting up yytext. */ \
+        *yy_cp = yy_hold_char; \
+        YY_RESTORE_YY_MORE_OFFSET \
+        yy_c_buf_p = yy_cp = yy_bp + n - YY_MORE_ADJ; \
+        YY_DO_BEFORE_ACTION; /* set up yytext again */ \
+        } \
+    while ( 0 )
 
 #define unput(c) yyunput( c, yytext_ptr )
 
@@ -146,61 +146,61 @@ typedef unsigned int yy_size_t;
 
 
 struct yy_buffer_state
-	{
-	FILE *yy_input_file;
+    {
+    FILE *yy_input_file;
 
-	char *yy_ch_buf;		/* input buffer */
-	char *yy_buf_pos;		/* current position in input buffer */
+    char *yy_ch_buf;        /* input buffer */
+    char *yy_buf_pos;       /* current position in input buffer */
 
-	/* Size of input buffer in bytes, not including room for EOB
-	 * characters.
-	 */
-	yy_size_t yy_buf_size;
+    /* Size of input buffer in bytes, not including room for EOB
+     * characters.
+     */
+    yy_size_t yy_buf_size;
 
-	/* Number of characters read into yy_ch_buf, not including EOB
-	 * characters.
-	 */
-	int yy_n_chars;
+    /* Number of characters read into yy_ch_buf, not including EOB
+     * characters.
+     */
+    int yy_n_chars;
 
-	/* Whether we "own" the buffer - i.e., we know we created it,
-	 * and can realloc() it to grow it, and should free() it to
-	 * delete it.
-	 */
-	int yy_is_our_buffer;
+    /* Whether we "own" the buffer - i.e., we know we created it,
+     * and can realloc() it to grow it, and should free() it to
+     * delete it.
+     */
+    int yy_is_our_buffer;
 
-	/* Whether this is an "interactive" input source; if so, and
-	 * if we're using stdio for input, then we want to use getc()
-	 * instead of fread(), to make sure we stop fetching input after
-	 * each newline.
-	 */
-	int yy_is_interactive;
+    /* Whether this is an "interactive" input source; if so, and
+     * if we're using stdio for input, then we want to use getc()
+     * instead of fread(), to make sure we stop fetching input after
+     * each newline.
+     */
+    int yy_is_interactive;
 
-	/* Whether we're considered to be at the beginning of a line.
-	 * If so, '^' rules will be active on the next match, otherwise
-	 * not.
-	 */
-	int yy_at_bol;
+    /* Whether we're considered to be at the beginning of a line.
+     * If so, '^' rules will be active on the next match, otherwise
+     * not.
+     */
+    int yy_at_bol;
 
-	/* Whether to try to fill the input buffer when we reach the
-	 * end of it.
-	 */
-	int yy_fill_buffer;
+    /* Whether to try to fill the input buffer when we reach the
+     * end of it.
+     */
+    int yy_fill_buffer;
 
-	int yy_buffer_status;
+    int yy_buffer_status;
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
-	/* When an EOF's been seen but there's still some text to process
-	 * then we mark the buffer as YY_EOF_PENDING, to indicate that we
-	 * shouldn't try reading from the input source any more.  We might
-	 * still have a bunch of tokens to match, though, because of
-	 * possible backing-up.
-	 *
-	 * When we actually see the EOF, we change the status to "new"
-	 * (via yyrestart()), so that the user can continue scanning by
-	 * just pointing yyin at a new input file.
-	 */
+    /* When an EOF's been seen but there's still some text to process
+     * then we mark the buffer as YY_EOF_PENDING, to indicate that we
+     * shouldn't try reading from the input source any more.  We might
+     * still have a bunch of tokens to match, though, because of
+     * possible backing-up.
+     *
+     * When we actually see the EOF, we change the status to "new"
+     * (via yyrestart()), so that the user can continue scanning by
+     * just pointing yyin at a new input file.
+     */
 #define YY_BUFFER_EOF_PENDING 2
-	};
+    };
 
 static YY_BUFFER_STATE yy_current_buffer = 0;
 
@@ -214,15 +214,15 @@ static YY_BUFFER_STATE yy_current_buffer = 0;
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
 
-static int yy_n_chars;		/* number of characters read into yy_ch_buf */
+static int yy_n_chars;      /* number of characters read into yy_ch_buf */
 
 
 int yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = (char *) 0;
-static int yy_init = 1;		/* whether we need to initialize */
-static int yy_start = 0;	/* start state number */
+static int yy_init = 1;     /* whether we need to initialize */
+static int yy_start = 0;    /* start state number */
 
 /* Flag which is used to allow yywrap()'s to do buffer switches
  * instead of setting up a fresh yyin.  A bit of a hack ...
@@ -250,18 +250,18 @@ static void yy_flex_free YY_PROTO(( void * ));
 #define yy_new_buffer yy_create_buffer
 
 #define yy_set_interactive(is_interactive) \
-	{ \
-	if ( ! yy_current_buffer ) \
-		yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE ); \
-	yy_current_buffer->yy_is_interactive = is_interactive; \
-	}
+    { \
+    if ( ! yy_current_buffer ) \
+        yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE ); \
+    yy_current_buffer->yy_is_interactive = is_interactive; \
+    }
 
 #define yy_set_bol(at_bol) \
-	{ \
-	if ( ! yy_current_buffer ) \
-		yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE ); \
-	yy_current_buffer->yy_at_bol = at_bol; \
-	}
+    { \
+    if ( ! yy_current_buffer ) \
+        yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE ); \
+    yy_current_buffer->yy_at_bol = at_bol; \
+    }
 
 #define YY_AT_BOL() (yy_current_buffer->yy_at_bol)
 
@@ -287,11 +287,11 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
  * corresponding action - sets up yytext.
  */
 #define YY_DO_BEFORE_ACTION \
-	yytext_ptr = yy_bp; \
-	yyleng = (int) (yy_cp - yy_bp); \
-	yy_hold_char = *yy_cp; \
-	*yy_cp = '\0'; \
-	yy_c_buf_p = yy_cp;
+    yytext_ptr = yy_bp; \
+    yyleng = (int) (yy_cp - yy_bp); \
+    yy_hold_char = *yy_cp; \
+    *yy_cp = '\0'; \
+    yy_c_buf_p = yy_cp;
 
 #define YY_NUM_RULES 35
 #define YY_END_OF_BUFFER 36
@@ -579,7 +579,7 @@ char *yytext;
 /*
  * Lex syntax for LDRAW command files.
  *
- * You must manually add #include <stdlib.h> to beginning of 
+ * You must manually add #include <stdlib.h> to beginning of
  * lex.yy.c (right after the #include <stdio.h>), which is
  * produced from this file via flex.  Otherwise, routines using
  * atof() will get garbage numbers.
@@ -633,13 +633,13 @@ void znamelist_pop();
 // This holds the token stream of a file which has been or
 // is being cached.
 typedef struct {
-	int valid; // one of the CHS_X defines
-	char filename[256];
-	int ftype; // one of the TYPE_X defines
-	int max_tokens;
-	int next_token_index;  // points to the next token to be read/written
-	int     *tokens;
-	YYSTYPE *values;
+    int valid; // one of the CHS_X defines
+    char filename[256];
+    int ftype; // one of the TYPE_X defines
+    int max_tokens;
+    int next_token_index;  // points to the next token to be read/written
+    int     *tokens;
+    YYSTYPE *values;
 } CACHED_STREAM;
 
 // This is the heap of cached files
@@ -748,21 +748,21 @@ YY_MALLOC_DECL
  */
 #ifndef YY_INPUT
 #define YY_INPUT(buf,result,max_size) \
-	if ( yy_current_buffer->yy_is_interactive ) \
-		{ \
-		int c = '*', n; \
-		for ( n = 0; n < max_size && \
-			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
-			buf[n] = (char) c; \
-		if ( c == '\n' ) \
-			buf[n++] = (char) c; \
-		if ( c == EOF && ferror( yyin ) ) \
-			YY_FATAL_ERROR( "input in flex scanner failed" ); \
-		result = n; \
-		} \
-	else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \
-		  && ferror( yyin ) ) \
-		YY_FATAL_ERROR( "input in flex scanner failed" );
+    if ( yy_current_buffer->yy_is_interactive ) \
+        { \
+        int c = '*', n; \
+        for ( n = 0; n < max_size && \
+                 (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
+            buf[n] = (char) c; \
+        if ( c == '\n' ) \
+            buf[n++] = (char) c; \
+        if ( c == EOF && ferror( yyin ) ) \
+            YY_FATAL_ERROR( "input in flex scanner failed" ); \
+        result = n; \
+        } \
+    else if ( ((result = fread( buf, 1, max_size, yyin )) == 0) \
+          && ferror( yyin ) ) \
+        YY_FATAL_ERROR( "input in flex scanner failed" );
 #endif
 
 /* No semi-colon after return; correct usage is to write "yyterminate();" -
@@ -803,565 +803,565 @@ YY_MALLOC_DECL
 #endif
 
 #define YY_RULE_SETUP \
-	YY_USER_ACTION
+    YY_USER_ACTION
 
 YY_DECL
-	{
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
+    {
+    register yy_state_type yy_current_state;
+    register char *yy_cp, *yy_bp;
+    register int yy_act;
 
 
 
-	if ( yy_init )
-		{
-		yy_init = 0;
+    if ( yy_init )
+        {
+        yy_init = 0;
 
 #ifdef YY_USER_INIT
-		YY_USER_INIT;
+        YY_USER_INIT;
 #endif
 
-		if ( ! yy_start )
-			yy_start = 1;	/* first start state */
+        if ( ! yy_start )
+            yy_start = 1;   /* first start state */
 
-		if ( ! yyin )
-			yyin = stdin;
+        if ( ! yyin )
+            yyin = stdin;
 
-		if ( ! yyout )
-			yyout = stdout;
+        if ( ! yyout )
+            yyout = stdout;
 
-		if ( ! yy_current_buffer )
-			yy_current_buffer =
-				yy_create_buffer( yyin, YY_BUF_SIZE );
+        if ( ! yy_current_buffer )
+            yy_current_buffer =
+                yy_create_buffer( yyin, YY_BUF_SIZE );
 
-		yy_load_buffer_state();
-		}
+        yy_load_buffer_state();
+        }
 
-	while ( 1 )		/* loops until end-of-file is reached */
-		{
-		yy_cp = yy_c_buf_p;
+    while ( 1 )     /* loops until end-of-file is reached */
+        {
+        yy_cp = yy_c_buf_p;
 
-		/* Support of yytext. */
-		*yy_cp = yy_hold_char;
+        /* Support of yytext. */
+        *yy_cp = yy_hold_char;
 
-		/* yy_bp points to the position in yy_ch_buf of the start of
-		 * the current run.
-		 */
-		yy_bp = yy_cp;
+        /* yy_bp points to the position in yy_ch_buf of the start of
+         * the current run.
+         */
+        yy_bp = yy_cp;
 
-		yy_current_state = yy_start;
-		yy_state_ptr = yy_state_buf;
-		*yy_state_ptr++ = yy_current_state;
+        yy_current_state = yy_start;
+        yy_state_ptr = yy_state_buf;
+        *yy_state_ptr++ = yy_current_state;
 yy_match:
-		do
-			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
-			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-				{
-				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 138 )
-					yy_c = yy_meta[(unsigned int) yy_c];
-				}
-			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-			*yy_state_ptr++ = yy_current_state;
-			++yy_cp;
-			}
-		while ( yy_base[yy_current_state] != 508 );
+        do
+            {
+            register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+            while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+                {
+                yy_current_state = (int) yy_def[yy_current_state];
+                if ( yy_current_state >= 138 )
+                    yy_c = yy_meta[(unsigned int) yy_c];
+                }
+            yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+            *yy_state_ptr++ = yy_current_state;
+            ++yy_cp;
+            }
+        while ( yy_base[yy_current_state] != 508 );
 
 yy_find_action:
-		yy_current_state = *--yy_state_ptr;
-		yy_lp = yy_accept[yy_current_state];
+        yy_current_state = *--yy_state_ptr;
+        yy_lp = yy_accept[yy_current_state];
 find_rule: /* we branch to this label when backing up */
-		for ( ; ; ) /* until we find what rule we matched */
-			{
-			if ( yy_lp && yy_lp < yy_accept[yy_current_state + 1] )
-				{
-				yy_act = yy_acclist[yy_lp];
-					{
-					yy_full_match = yy_cp;
-					break;
-					}
-				}
-			--yy_cp;
-			yy_current_state = *--yy_state_ptr;
-			yy_lp = yy_accept[yy_current_state];
-			}
+        for ( ; ; ) /* until we find what rule we matched */
+            {
+            if ( yy_lp && yy_lp < yy_accept[yy_current_state + 1] )
+                {
+                yy_act = yy_acclist[yy_lp];
+                    {
+                    yy_full_match = yy_cp;
+                    break;
+                    }
+                }
+            --yy_cp;
+            yy_current_state = *--yy_state_ptr;
+            yy_lp = yy_accept[yy_current_state];
+            }
 
-		YY_DO_BEFORE_ACTION;
+        YY_DO_BEFORE_ACTION;
 
-		if ( yy_act != YY_END_OF_BUFFER )
-			{
-			int yyl;
-			for ( yyl = 0; yyl < yyleng; ++yyl )
-				if ( yytext[yyl] == '\n' )
-					++yylineno;
-			}
+        if ( yy_act != YY_END_OF_BUFFER )
+            {
+            int yyl;
+            for ( yyl = 0; yyl < yyleng; ++yyl )
+                if ( yytext[yyl] == '\n' )
+                    ++yylineno;
+            }
 
-do_action:	/* This label is used only to access EOF actions. */
+do_action:  /* This label is used only to access EOF actions. */
 
 
-		switch ( yy_act )
-	{ /* beginning of action switch */
+        switch ( yy_act )
+    { /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
 { BEGIN(STRING); }
-	YY_BREAK
+    YY_BREAK
 case 2:
 YY_RULE_SETUP
 ;
-	YY_BREAK
+    YY_BREAK
 case 3:
 YY_RULE_SETUP
 {yylval.c = "EOL"; return tEOL;}
-	YY_BREAK
+    YY_BREAK
 case 4:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tFIVE;}
-	YY_BREAK
+    YY_BREAK
 case 5:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tFOUR;}
-	YY_BREAK
+    YY_BREAK
 case 6:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tTHREE;}
-	YY_BREAK
+    YY_BREAK
 case 7:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tTWO;}
-	YY_BREAK
+    YY_BREAK
 case 8:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tONE;}
-	YY_BREAK
+    YY_BREAK
 case 9:
 YY_RULE_SETUP
 {yylval.i = atoi(yytext); return tZERO;}
-	YY_BREAK
+    YY_BREAK
 case 10:
 YY_RULE_SETUP
 {yylval.c = "STEP"; return tSTEP;}
-	YY_BREAK
+    YY_BREAK
 case 11:
 YY_RULE_SETUP
 {yylval.c = "PAUSE"; return tPAUSE;}
-	YY_BREAK
+    YY_BREAK
 case 12:
 YY_RULE_SETUP
 {yylval.c = "WRITE"; return tWRITE;}
-	YY_BREAK
+    YY_BREAK
 case 13:
 YY_RULE_SETUP
 {yylval.c = "PRINT"; return tWRITE;}
-	YY_BREAK
+    YY_BREAK
 case 14:
 YY_RULE_SETUP
 {yylval.c = "CLEAR"; return tCLEAR;}
-	YY_BREAK
+    YY_BREAK
 case 15:
 YY_RULE_SETUP
 {yylval.c = "SAVE"; return tSAVE;}
-	YY_BREAK
+    YY_BREAK
 case 16:
 YY_RULE_SETUP
 {yylval.c = "ROTATE"; return tROTATE;}
-	YY_BREAK
+    YY_BREAK
 case 17:
 YY_RULE_SETUP
 {yylval.c = "TRANSLATE"; return tTRANSLATE;}
-	YY_BREAK
+    YY_BREAK
 case 18:
 YY_RULE_SETUP
 {yylval.c = "SCALE"; return tSCALE;}
-	YY_BREAK
+    YY_BREAK
 case 19:
 YY_RULE_SETUP
 {yylval.c = "TRANSFORM"; return tTRANSFORM;}
-	YY_BREAK
+    YY_BREAK
 case 20:
 YY_RULE_SETUP
 {yylval.c = "COLOR"; return tCOLOR;}
-	YY_BREAK
+    YY_BREAK
 case 21:
 YY_RULE_SETUP
 {yylval.c = "COLORNAME"; return tALIAS;}
-	YY_BREAK
+    YY_BREAK
 case 22:
 YY_RULE_SETUP
-{yylval.c = "POINT"; return tPOINT;}  
-	YY_BREAK
+{yylval.c = "POINT"; return tPOINT;}
+    YY_BREAK
 case 23:
 YY_RULE_SETUP
 {yylval.c = "MATRIX"; return tMATRIX;}
-	YY_BREAK
+    YY_BREAK
 case 24:
 YY_RULE_SETUP
 {yylval.c = "FILE"; return tFILE;}
-	YY_BREAK
+    YY_BREAK
 case 25:
 YY_RULE_SETUP
 {yylval.c = "END"; return tEND;}
-	YY_BREAK
+    YY_BREAK
 case 26:
 YY_RULE_SETUP
-{ 
-		/* eat the string */
-		yylval.c = strsave(yytext); return tIDENT;
-		}
-	YY_BREAK
+{
+        /* eat the string */
+        yylval.c = strsave(yytext); return tIDENT;
+        }
+    YY_BREAK
 case 27:
 YY_RULE_SETUP
 { BEGIN(INITIAL); }
-	YY_BREAK
+    YY_BREAK
 case 28:
 YY_RULE_SETUP
 {
-			int a;
-			a = 0;
-			sscanf(yytext,"%i",&a);
-			yylval.i = a; 
-			return tINT;
-			}
-	YY_BREAK
+            int a;
+            a = 0;
+            sscanf(yytext,"%i",&a);
+            yylval.i = a;
+            return tINT;
+            }
+    YY_BREAK
 case 29:
 YY_RULE_SETUP
 {
-			int a;
-			a = 0;
-			a = atoi(yytext);
-			yylval.i = a; 
-			return tINT;
-			}
-	YY_BREAK
+            int a;
+            a = 0;
+            a = atoi(yytext);
+            yylval.i = a;
+            return tINT;
+            }
+    YY_BREAK
 case 30:
 case 31:
 case 32:
 YY_RULE_SETUP
 {
-			yylval.d = atof(yytext);
-			return tFLOAT;
-			}
-	YY_BREAK
+            yylval.d = atof(yytext);
+            return tFLOAT;
+            }
+    YY_BREAK
 case 33:
 YY_RULE_SETUP
 {yylval.c = strsave(yytext); return tIDENT;}
-	YY_BREAK
+    YY_BREAK
 case 34:
 YY_RULE_SETUP
 {yylval.c = strsave(yytext); return tGARBAGE;}
-	YY_BREAK
+    YY_BREAK
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(STRING):
 {
-	    yylval.c = "EOF";
-	    return tEOF;
+        yylval.c = "EOF";
+        return tEOF;
         }
-	YY_BREAK
+    YY_BREAK
 case 35:
 YY_RULE_SETUP
 ECHO;
-	YY_BREAK
+    YY_BREAK
 
-	case YY_END_OF_BUFFER:
-		{
-		/* Amount of text matched not including the EOB char. */
-		int yy_amount_of_matched_text = (int) (yy_cp - yytext_ptr) - 1;
+    case YY_END_OF_BUFFER:
+        {
+        /* Amount of text matched not including the EOB char. */
+        int yy_amount_of_matched_text = (int) (yy_cp - yytext_ptr) - 1;
 
-		/* Undo the effects of YY_DO_BEFORE_ACTION. */
-		*yy_cp = yy_hold_char;
-		YY_RESTORE_YY_MORE_OFFSET
+        /* Undo the effects of YY_DO_BEFORE_ACTION. */
+        *yy_cp = yy_hold_char;
+        YY_RESTORE_YY_MORE_OFFSET
 
-		if ( yy_current_buffer->yy_buffer_status == YY_BUFFER_NEW )
-			{
-			/* We're scanning a new file or input source.  It's
-			 * possible that this happened because the user
-			 * just pointed yyin at a new source and called
-			 * yylex().  If so, then we have to assure
-			 * consistency between yy_current_buffer and our
-			 * globals.  Here is the right place to do so, because
-			 * this is the first action (other than possibly a
-			 * back-up) that will match for the new input source.
-			 */
-			yy_n_chars = yy_current_buffer->yy_n_chars;
-			yy_current_buffer->yy_input_file = yyin;
-			yy_current_buffer->yy_buffer_status = YY_BUFFER_NORMAL;
-			}
+        if ( yy_current_buffer->yy_buffer_status == YY_BUFFER_NEW )
+            {
+            /* We're scanning a new file or input source.  It's
+             * possible that this happened because the user
+             * just pointed yyin at a new source and called
+             * yylex().  If so, then we have to assure
+             * consistency between yy_current_buffer and our
+             * globals.  Here is the right place to do so, because
+             * this is the first action (other than possibly a
+             * back-up) that will match for the new input source.
+             */
+            yy_n_chars = yy_current_buffer->yy_n_chars;
+            yy_current_buffer->yy_input_file = yyin;
+            yy_current_buffer->yy_buffer_status = YY_BUFFER_NORMAL;
+            }
 
-		/* Note that here we test for yy_c_buf_p "<=" to the position
-		 * of the first EOB in the buffer, since yy_c_buf_p will
-		 * already have been incremented past the NUL character
-		 * (since all states make transitions on EOB to the
-		 * end-of-buffer state).  Contrast this with the test
-		 * in input().
-		 */
-		if ( yy_c_buf_p <= &yy_current_buffer->yy_ch_buf[yy_n_chars] )
-			{ /* This was really a NUL. */
-			yy_state_type yy_next_state;
+        /* Note that here we test for yy_c_buf_p "<=" to the position
+         * of the first EOB in the buffer, since yy_c_buf_p will
+         * already have been incremented past the NUL character
+         * (since all states make transitions on EOB to the
+         * end-of-buffer state).  Contrast this with the test
+         * in input().
+         */
+        if ( yy_c_buf_p <= &yy_current_buffer->yy_ch_buf[yy_n_chars] )
+            { /* This was really a NUL. */
+            yy_state_type yy_next_state;
 
-			yy_c_buf_p = yytext_ptr + yy_amount_of_matched_text;
+            yy_c_buf_p = yytext_ptr + yy_amount_of_matched_text;
 
-			yy_current_state = yy_get_previous_state();
+            yy_current_state = yy_get_previous_state();
 
-			/* Okay, we're now positioned to make the NUL
-			 * transition.  We couldn't have
-			 * yy_get_previous_state() go ahead and do it
-			 * for us because it doesn't know how to deal
-			 * with the possibility of jamming (and we don't
-			 * want to build jamming into it because then it
-			 * will run more slowly).
-			 */
+            /* Okay, we're now positioned to make the NUL
+             * transition.  We couldn't have
+             * yy_get_previous_state() go ahead and do it
+             * for us because it doesn't know how to deal
+             * with the possibility of jamming (and we don't
+             * want to build jamming into it because then it
+             * will run more slowly).
+             */
 
-			yy_next_state = yy_try_NUL_trans( yy_current_state );
+            yy_next_state = yy_try_NUL_trans( yy_current_state );
 
-			yy_bp = yytext_ptr + YY_MORE_ADJ;
+            yy_bp = yytext_ptr + YY_MORE_ADJ;
 
-			if ( yy_next_state )
-				{
-				/* Consume the NUL. */
-				yy_cp = ++yy_c_buf_p;
-				yy_current_state = yy_next_state;
-				goto yy_match;
-				}
+            if ( yy_next_state )
+                {
+                /* Consume the NUL. */
+                yy_cp = ++yy_c_buf_p;
+                yy_current_state = yy_next_state;
+                goto yy_match;
+                }
 
-			else
-				{
-				yy_cp = yy_c_buf_p;
-				goto yy_find_action;
-				}
-			}
+            else
+                {
+                yy_cp = yy_c_buf_p;
+                goto yy_find_action;
+                }
+            }
 
-		else switch ( yy_get_next_buffer() )
-			{
-			case EOB_ACT_END_OF_FILE:
-				{
-				yy_did_buffer_switch_on_eof = 0;
+        else switch ( yy_get_next_buffer() )
+            {
+            case EOB_ACT_END_OF_FILE:
+                {
+                yy_did_buffer_switch_on_eof = 0;
 
-				if ( yywrap() )
-					{
-					/* Note: because we've taken care in
-					 * yy_get_next_buffer() to have set up
-					 * yytext, we can now set up
-					 * yy_c_buf_p so that if some total
-					 * hoser (like flex itself) wants to
-					 * call the scanner after we return the
-					 * YY_NULL, it'll still work - another
-					 * YY_NULL will get returned.
-					 */
-					yy_c_buf_p = yytext_ptr + YY_MORE_ADJ;
+                if ( yywrap() )
+                    {
+                    /* Note: because we've taken care in
+                     * yy_get_next_buffer() to have set up
+                     * yytext, we can now set up
+                     * yy_c_buf_p so that if some total
+                     * hoser (like flex itself) wants to
+                     * call the scanner after we return the
+                     * YY_NULL, it'll still work - another
+                     * YY_NULL will get returned.
+                     */
+                    yy_c_buf_p = yytext_ptr + YY_MORE_ADJ;
 
-					yy_act = YY_STATE_EOF(YY_START);
-					goto do_action;
-					}
+                    yy_act = YY_STATE_EOF(YY_START);
+                    goto do_action;
+                    }
 
-				else
-					{
-					if ( ! yy_did_buffer_switch_on_eof )
-						YY_NEW_FILE;
-					}
-				break;
-				}
+                else
+                    {
+                    if ( ! yy_did_buffer_switch_on_eof )
+                        YY_NEW_FILE;
+                    }
+                break;
+                }
 
-			case EOB_ACT_CONTINUE_SCAN:
-				yy_c_buf_p =
-					yytext_ptr + yy_amount_of_matched_text;
+            case EOB_ACT_CONTINUE_SCAN:
+                yy_c_buf_p =
+                    yytext_ptr + yy_amount_of_matched_text;
 
-				yy_current_state = yy_get_previous_state();
+                yy_current_state = yy_get_previous_state();
 
-				yy_cp = yy_c_buf_p;
-				yy_bp = yytext_ptr + YY_MORE_ADJ;
-				goto yy_match;
+                yy_cp = yy_c_buf_p;
+                yy_bp = yytext_ptr + YY_MORE_ADJ;
+                goto yy_match;
 
-			case EOB_ACT_LAST_MATCH:
-				yy_c_buf_p =
-				&yy_current_buffer->yy_ch_buf[yy_n_chars];
+            case EOB_ACT_LAST_MATCH:
+                yy_c_buf_p =
+                &yy_current_buffer->yy_ch_buf[yy_n_chars];
 
-				yy_current_state = yy_get_previous_state();
+                yy_current_state = yy_get_previous_state();
 
-				yy_cp = yy_c_buf_p;
-				yy_bp = yytext_ptr + YY_MORE_ADJ;
-				goto yy_find_action;
-			}
-		break;
-		}
+                yy_cp = yy_c_buf_p;
+                yy_bp = yytext_ptr + YY_MORE_ADJ;
+                goto yy_find_action;
+            }
+        break;
+        }
 
-	default:
-		YY_FATAL_ERROR(
-			"fatal flex scanner internal error--no action found" );
-	} /* end of action switch */
-		} /* end of scanning one token */
-	} /* end of yylex */
+    default:
+        YY_FATAL_ERROR(
+            "fatal flex scanner internal error--no action found" );
+    } /* end of action switch */
+        } /* end of scanning one token */
+    } /* end of yylex */
 
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
  * Returns a code representing an action:
- *	EOB_ACT_LAST_MATCH -
- *	EOB_ACT_CONTINUE_SCAN - continue scanning from current position
- *	EOB_ACT_END_OF_FILE - end of file
+ *  EOB_ACT_LAST_MATCH -
+ *  EOB_ACT_CONTINUE_SCAN - continue scanning from current position
+ *  EOB_ACT_END_OF_FILE - end of file
  */
 
 static int yy_get_next_buffer()
-	{
-	register char *dest = yy_current_buffer->yy_ch_buf;
-	register char *source = yytext_ptr;
-	register int number_to_move, i;
-	int ret_val;
+    {
+    register char *dest = yy_current_buffer->yy_ch_buf;
+    register char *source = yytext_ptr;
+    register int number_to_move, i;
+    int ret_val;
 
-	if ( yy_c_buf_p > &yy_current_buffer->yy_ch_buf[yy_n_chars + 1] )
-		YY_FATAL_ERROR(
-		"fatal flex scanner internal error--end of buffer missed" );
+    if ( yy_c_buf_p > &yy_current_buffer->yy_ch_buf[yy_n_chars + 1] )
+        YY_FATAL_ERROR(
+        "fatal flex scanner internal error--end of buffer missed" );
 
-	if ( yy_current_buffer->yy_fill_buffer == 0 )
-		{ /* Don't try to fill the buffer, so this is an EOF. */
-		if ( yy_c_buf_p - yytext_ptr - YY_MORE_ADJ == 1 )
-			{
-			/* We matched a single character, the EOB, so
-			 * treat this as a final EOF.
-			 */
-			return EOB_ACT_END_OF_FILE;
-			}
+    if ( yy_current_buffer->yy_fill_buffer == 0 )
+        { /* Don't try to fill the buffer, so this is an EOF. */
+        if ( yy_c_buf_p - yytext_ptr - YY_MORE_ADJ == 1 )
+            {
+            /* We matched a single character, the EOB, so
+             * treat this as a final EOF.
+             */
+            return EOB_ACT_END_OF_FILE;
+            }
 
-		else
-			{
-			/* We matched some text prior to the EOB, first
-			 * process it.
-			 */
-			return EOB_ACT_LAST_MATCH;
-			}
-		}
+        else
+            {
+            /* We matched some text prior to the EOB, first
+             * process it.
+             */
+            return EOB_ACT_LAST_MATCH;
+            }
+        }
 
-	/* Try to read more data. */
+    /* Try to read more data. */
 
-	/* First move last chars to start of buffer. */
-	number_to_move = (int) (yy_c_buf_p - yytext_ptr) - 1;
+    /* First move last chars to start of buffer. */
+    number_to_move = (int) (yy_c_buf_p - yytext_ptr) - 1;
 
-	for ( i = 0; i < number_to_move; ++i )
-		*(dest++) = *(source++);
+    for ( i = 0; i < number_to_move; ++i )
+        *(dest++) = *(source++);
 
-	if ( yy_current_buffer->yy_buffer_status == YY_BUFFER_EOF_PENDING )
-		/* don't do the read, it's not guaranteed to return an EOF,
-		 * just force an EOF
-		 */
-		yy_current_buffer->yy_n_chars = yy_n_chars = 0;
+    if ( yy_current_buffer->yy_buffer_status == YY_BUFFER_EOF_PENDING )
+        /* don't do the read, it's not guaranteed to return an EOF,
+         * just force an EOF
+         */
+        yy_current_buffer->yy_n_chars = yy_n_chars = 0;
 
-	else
-		{
-		int num_to_read =
-			yy_current_buffer->yy_buf_size - number_to_move - 1;
+    else
+        {
+        int num_to_read =
+            yy_current_buffer->yy_buf_size - number_to_move - 1;
 
-		while ( num_to_read <= 0 )
-			{ /* Not enough room in the buffer - grow it. */
+        while ( num_to_read <= 0 )
+            { /* Not enough room in the buffer - grow it. */
 #ifdef YY_USES_REJECT
-			YY_FATAL_ERROR(
+            YY_FATAL_ERROR(
 "input buffer overflow, can't enlarge buffer because scanner uses REJECT" );
 #else
 
-			/* just a shorter name for the current buffer */
-			YY_BUFFER_STATE b = yy_current_buffer;
+            /* just a shorter name for the current buffer */
+            YY_BUFFER_STATE b = yy_current_buffer;
 
-			int yy_c_buf_p_offset =
-				(int) (yy_c_buf_p - b->yy_ch_buf);
+            int yy_c_buf_p_offset =
+                (int) (yy_c_buf_p - b->yy_ch_buf);
 
-			if ( b->yy_is_our_buffer )
-				{
-				int new_size = b->yy_buf_size * 2;
+            if ( b->yy_is_our_buffer )
+                {
+                int new_size = b->yy_buf_size * 2;
 
-				if ( new_size <= 0 )
-					b->yy_buf_size += b->yy_buf_size / 8;
-				else
-					b->yy_buf_size *= 2;
+                if ( new_size <= 0 )
+                    b->yy_buf_size += b->yy_buf_size / 8;
+                else
+                    b->yy_buf_size *= 2;
 
-				b->yy_ch_buf = (char *)
-					/* Include room in for 2 EOB chars. */
-					yy_flex_realloc( (void *) b->yy_ch_buf,
-							 b->yy_buf_size + 2 );
-				}
-			else
-				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = 0;
+                b->yy_ch_buf = (char *)
+                    /* Include room in for 2 EOB chars. */
+                    yy_flex_realloc( (void *) b->yy_ch_buf,
+                             b->yy_buf_size + 2 );
+                }
+            else
+                /* Can't grow it, we don't own it. */
+                b->yy_ch_buf = 0;
 
-			if ( ! b->yy_ch_buf )
-				YY_FATAL_ERROR(
-				"fatal error - scanner input buffer overflow" );
+            if ( ! b->yy_ch_buf )
+                YY_FATAL_ERROR(
+                "fatal error - scanner input buffer overflow" );
 
-			yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
+            yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
 
-			num_to_read = yy_current_buffer->yy_buf_size -
-						number_to_move - 1;
+            num_to_read = yy_current_buffer->yy_buf_size -
+                        number_to_move - 1;
 #endif
-			}
+            }
 
-		if ( num_to_read > YY_READ_BUF_SIZE )
-			num_to_read = YY_READ_BUF_SIZE;
+        if ( num_to_read > YY_READ_BUF_SIZE )
+            num_to_read = YY_READ_BUF_SIZE;
 
-		/* Read in more data. */
-		YY_INPUT( (&yy_current_buffer->yy_ch_buf[number_to_move]),
-			yy_n_chars, num_to_read );
+        /* Read in more data. */
+        YY_INPUT( (&yy_current_buffer->yy_ch_buf[number_to_move]),
+            yy_n_chars, num_to_read );
 
-		yy_current_buffer->yy_n_chars = yy_n_chars;
-		}
+        yy_current_buffer->yy_n_chars = yy_n_chars;
+        }
 
-	if ( yy_n_chars == 0 )
-		{
-		if ( number_to_move == YY_MORE_ADJ )
-			{
-			ret_val = EOB_ACT_END_OF_FILE;
-			yyrestart( yyin );
-			}
+    if ( yy_n_chars == 0 )
+        {
+        if ( number_to_move == YY_MORE_ADJ )
+            {
+            ret_val = EOB_ACT_END_OF_FILE;
+            yyrestart( yyin );
+            }
 
-		else
-			{
-			ret_val = EOB_ACT_LAST_MATCH;
-			yy_current_buffer->yy_buffer_status =
-				YY_BUFFER_EOF_PENDING;
-			}
-		}
+        else
+            {
+            ret_val = EOB_ACT_LAST_MATCH;
+            yy_current_buffer->yy_buffer_status =
+                YY_BUFFER_EOF_PENDING;
+            }
+        }
 
-	else
-		ret_val = EOB_ACT_CONTINUE_SCAN;
+    else
+        ret_val = EOB_ACT_CONTINUE_SCAN;
 
-	yy_n_chars += number_to_move;
-	yy_current_buffer->yy_ch_buf[yy_n_chars] = YY_END_OF_BUFFER_CHAR;
-	yy_current_buffer->yy_ch_buf[yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
+    yy_n_chars += number_to_move;
+    yy_current_buffer->yy_ch_buf[yy_n_chars] = YY_END_OF_BUFFER_CHAR;
+    yy_current_buffer->yy_ch_buf[yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
 
-	yytext_ptr = &yy_current_buffer->yy_ch_buf[0];
+    yytext_ptr = &yy_current_buffer->yy_ch_buf[0];
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
 static yy_state_type yy_get_previous_state()
-	{
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
+    {
+    register yy_state_type yy_current_state;
+    register char *yy_cp;
 
-	yy_current_state = yy_start;
-	yy_state_ptr = yy_state_buf;
-	*yy_state_ptr++ = yy_current_state;
+    yy_current_state = yy_start;
+    yy_state_ptr = yy_state_buf;
+    *yy_state_ptr++ = yy_current_state;
 
-	for ( yy_cp = yytext_ptr + YY_MORE_ADJ; yy_cp < yy_c_buf_p; ++yy_cp )
-		{
-		register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
-		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-			{
-			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 138 )
-				yy_c = yy_meta[(unsigned int) yy_c];
-			}
-		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-		*yy_state_ptr++ = yy_current_state;
-		}
+    for ( yy_cp = yytext_ptr + YY_MORE_ADJ; yy_cp < yy_c_buf_p; ++yy_cp )
+        {
+        register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+        while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+            {
+            yy_current_state = (int) yy_def[yy_current_state];
+            if ( yy_current_state >= 138 )
+                yy_c = yy_meta[(unsigned int) yy_c];
+            }
+        yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+        *yy_state_ptr++ = yy_current_state;
+        }
 
-	return yy_current_state;
-	}
+    return yy_current_state;
+    }
 
 
 /* yy_try_NUL_trans - try to make a transition on the NUL character
  *
  * synopsis
- *	next_state = yy_try_NUL_trans( current_state );
+ *  next_state = yy_try_NUL_trans( current_state );
  */
 
 #ifdef YY_USE_PROTOS
@@ -1370,23 +1370,23 @@ static yy_state_type yy_try_NUL_trans( yy_state_type yy_current_state )
 static yy_state_type yy_try_NUL_trans( yy_current_state )
 yy_state_type yy_current_state;
 #endif
-	{
-	register int yy_is_jam;
+    {
+    register int yy_is_jam;
 
-	register YY_CHAR yy_c = 1;
-	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-		{
-		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 138 )
-			yy_c = yy_meta[(unsigned int) yy_c];
-		}
-	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 137);
-	if ( ! yy_is_jam )
-		*yy_state_ptr++ = yy_current_state;
+    register YY_CHAR yy_c = 1;
+    while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+        {
+        yy_current_state = (int) yy_def[yy_current_state];
+        if ( yy_current_state >= 138 )
+            yy_c = yy_meta[(unsigned int) yy_c];
+        }
+    yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+    yy_is_jam = (yy_current_state == 137);
+    if ( ! yy_is_jam )
+        *yy_state_ptr++ = yy_current_state;
 
-	return yy_is_jam ? 0 : yy_current_state;
-	}
+    return yy_is_jam ? 0 : yy_current_state;
+    }
 
 
 #ifndef YY_NO_UNPUT
@@ -1397,43 +1397,43 @@ static void yyunput( c, yy_bp )
 int c;
 register char *yy_bp;
 #endif
-	{
-	register char *yy_cp = yy_c_buf_p;
+    {
+    register char *yy_cp = yy_c_buf_p;
 
-	/* undo effects of setting up yytext */
-	*yy_cp = yy_hold_char;
+    /* undo effects of setting up yytext */
+    *yy_cp = yy_hold_char;
 
-	if ( yy_cp < yy_current_buffer->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		register int number_to_move = yy_n_chars + 2;
-		register char *dest = &yy_current_buffer->yy_ch_buf[
-					yy_current_buffer->yy_buf_size + 2];
-		register char *source =
-				&yy_current_buffer->yy_ch_buf[number_to_move];
+    if ( yy_cp < yy_current_buffer->yy_ch_buf + 2 )
+        { /* need to shift things up to make room */
+        /* +2 for EOB chars. */
+        register int number_to_move = yy_n_chars + 2;
+        register char *dest = &yy_current_buffer->yy_ch_buf[
+                    yy_current_buffer->yy_buf_size + 2];
+        register char *source =
+                &yy_current_buffer->yy_ch_buf[number_to_move];
 
-		while ( source > yy_current_buffer->yy_ch_buf )
-			*--dest = *--source;
+        while ( source > yy_current_buffer->yy_ch_buf )
+            *--dest = *--source;
 
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		yy_current_buffer->yy_n_chars =
-			yy_n_chars = yy_current_buffer->yy_buf_size;
+        yy_cp += (int) (dest - source);
+        yy_bp += (int) (dest - source);
+        yy_current_buffer->yy_n_chars =
+            yy_n_chars = yy_current_buffer->yy_buf_size;
 
-		if ( yy_cp < yy_current_buffer->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
+        if ( yy_cp < yy_current_buffer->yy_ch_buf + 2 )
+            YY_FATAL_ERROR( "flex scanner push-back overflow" );
+        }
 
-	*--yy_cp = (char) c;
+    *--yy_cp = (char) c;
 
-	if ( c == '\n' )
-		--yylineno;
+    if ( c == '\n' )
+        --yylineno;
 
-	yytext_ptr = yy_bp;
-	yy_hold_char = *yy_cp;
-	yy_c_buf_p = yy_cp;
-	}
-#endif	/* ifndef YY_NO_UNPUT */
+    yytext_ptr = yy_bp;
+    yy_hold_char = *yy_cp;
+    yy_c_buf_p = yy_cp;
+    }
+#endif  /* ifndef YY_NO_UNPUT */
 
 
 #ifdef __cplusplus
@@ -1441,74 +1441,74 @@ static int yyinput()
 #else
 static int input()
 #endif
-	{
-	int c;
+    {
+    int c;
 
-	*yy_c_buf_p = yy_hold_char;
+    *yy_c_buf_p = yy_hold_char;
 
-	if ( *yy_c_buf_p == YY_END_OF_BUFFER_CHAR )
-		{
-		/* yy_c_buf_p now points to the character we want to return.
-		 * If this occurs *before* the EOB characters, then it's a
-		 * valid NUL; if not, then we've hit the end of the buffer.
-		 */
-		if ( yy_c_buf_p < &yy_current_buffer->yy_ch_buf[yy_n_chars] )
-			/* This was really a NUL. */
-			*yy_c_buf_p = '\0';
+    if ( *yy_c_buf_p == YY_END_OF_BUFFER_CHAR )
+        {
+        /* yy_c_buf_p now points to the character we want to return.
+         * If this occurs *before* the EOB characters, then it's a
+         * valid NUL; if not, then we've hit the end of the buffer.
+         */
+        if ( yy_c_buf_p < &yy_current_buffer->yy_ch_buf[yy_n_chars] )
+            /* This was really a NUL. */
+            *yy_c_buf_p = '\0';
 
-		else
-			{ /* need more input */
-			int offset = yy_c_buf_p - yytext_ptr;
-			++yy_c_buf_p;
+        else
+            { /* need more input */
+            int offset = yy_c_buf_p - yytext_ptr;
+            ++yy_c_buf_p;
 
-			switch ( yy_get_next_buffer() )
-				{
-				case EOB_ACT_LAST_MATCH:
-					/* This happens because yy_g_n_b()
-					 * sees that we've accumulated a
-					 * token and flags that we need to
-					 * try matching the token before
-					 * proceeding.  But for input(),
-					 * there's no matching to consider.
-					 * So convert the EOB_ACT_LAST_MATCH
-					 * to EOB_ACT_END_OF_FILE.
-					 */
+            switch ( yy_get_next_buffer() )
+                {
+                case EOB_ACT_LAST_MATCH:
+                    /* This happens because yy_g_n_b()
+                     * sees that we've accumulated a
+                     * token and flags that we need to
+                     * try matching the token before
+                     * proceeding.  But for input(),
+                     * there's no matching to consider.
+                     * So convert the EOB_ACT_LAST_MATCH
+                     * to EOB_ACT_END_OF_FILE.
+                     */
 
-					/* Reset buffer status. */
-					yyrestart( yyin );
+                    /* Reset buffer status. */
+                    yyrestart( yyin );
 
-					/* fall through */
+                    /* fall through */
 
-				case EOB_ACT_END_OF_FILE:
-					{
-					if ( yywrap() )
-						return EOF;
+                case EOB_ACT_END_OF_FILE:
+                    {
+                    if ( yywrap() )
+                        return EOF;
 
-					if ( ! yy_did_buffer_switch_on_eof )
-						YY_NEW_FILE;
+                    if ( ! yy_did_buffer_switch_on_eof )
+                        YY_NEW_FILE;
 #ifdef __cplusplus
-					return yyinput();
+                    return yyinput();
 #else
-					return input();
+                    return input();
 #endif
-					}
+                    }
 
-				case EOB_ACT_CONTINUE_SCAN:
-					yy_c_buf_p = yytext_ptr + offset;
-					break;
-				}
-			}
-		}
+                case EOB_ACT_CONTINUE_SCAN:
+                    yy_c_buf_p = yytext_ptr + offset;
+                    break;
+                }
+            }
+        }
 
-	c = *(unsigned char *) yy_c_buf_p;	/* cast for 8-bit char's */
-	*yy_c_buf_p = '\0';	/* preserve yytext */
-	yy_hold_char = *++yy_c_buf_p;
+    c = *(unsigned char *) yy_c_buf_p;  /* cast for 8-bit char's */
+    *yy_c_buf_p = '\0'; /* preserve yytext */
+    yy_hold_char = *++yy_c_buf_p;
 
-	if ( c == '\n' )
-		++yylineno;
+    if ( c == '\n' )
+        ++yylineno;
 
-	return c;
-	}
+    return c;
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1517,13 +1517,13 @@ void yyrestart( FILE *input_file )
 void yyrestart( input_file )
 FILE *input_file;
 #endif
-	{
-	if ( ! yy_current_buffer )
-		yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE );
+    {
+    if ( ! yy_current_buffer )
+        yy_current_buffer = yy_create_buffer( yyin, YY_BUF_SIZE );
 
-	yy_init_buffer( yy_current_buffer, input_file );
-	yy_load_buffer_state();
-	}
+    yy_init_buffer( yy_current_buffer, input_file );
+    yy_load_buffer_state();
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1532,28 +1532,28 @@ void yy_switch_to_buffer( YY_BUFFER_STATE new_buffer )
 void yy_switch_to_buffer( new_buffer )
 YY_BUFFER_STATE new_buffer;
 #endif
-	{
-	if ( yy_current_buffer == new_buffer )
-		return;
+    {
+    if ( yy_current_buffer == new_buffer )
+        return;
 
-	if ( yy_current_buffer )
-		{
-		/* Flush out information for old buffer. */
-		*yy_c_buf_p = yy_hold_char;
-		yy_current_buffer->yy_buf_pos = yy_c_buf_p;
-		yy_current_buffer->yy_n_chars = yy_n_chars;
-		}
+    if ( yy_current_buffer )
+        {
+        /* Flush out information for old buffer. */
+        *yy_c_buf_p = yy_hold_char;
+        yy_current_buffer->yy_buf_pos = yy_c_buf_p;
+        yy_current_buffer->yy_n_chars = yy_n_chars;
+        }
 
-	yy_current_buffer = new_buffer;
-	yy_load_buffer_state();
+    yy_current_buffer = new_buffer;
+    yy_load_buffer_state();
 
-	/* We don't actually know whether we did this switch during
-	 * EOF (yywrap()) processing, but the only time this flag
-	 * is looked at is after yywrap() is called, so it's safe
-	 * to go ahead and always set it.
-	 */
-	yy_did_buffer_switch_on_eof = 1;
-	}
+    /* We don't actually know whether we did this switch during
+     * EOF (yywrap()) processing, but the only time this flag
+     * is looked at is after yywrap() is called, so it's safe
+     * to go ahead and always set it.
+     */
+    yy_did_buffer_switch_on_eof = 1;
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1561,12 +1561,12 @@ void yy_load_buffer_state( void )
 #else
 void yy_load_buffer_state()
 #endif
-	{
-	yy_n_chars = yy_current_buffer->yy_n_chars;
-	yytext_ptr = yy_c_buf_p = yy_current_buffer->yy_buf_pos;
-	yyin = yy_current_buffer->yy_input_file;
-	yy_hold_char = *yy_c_buf_p;
-	}
+    {
+    yy_n_chars = yy_current_buffer->yy_n_chars;
+    yytext_ptr = yy_c_buf_p = yy_current_buffer->yy_buf_pos;
+    yyin = yy_current_buffer->yy_input_file;
+    yy_hold_char = *yy_c_buf_p;
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1576,28 +1576,28 @@ YY_BUFFER_STATE yy_create_buffer( file, size )
 FILE *file;
 int size;
 #endif
-	{
-	YY_BUFFER_STATE b;
+    {
+    YY_BUFFER_STATE b;
 
-	b = (YY_BUFFER_STATE) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
-	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
+    b = (YY_BUFFER_STATE) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
+    if ( ! b )
+        YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_buf_size = size;
+    b->yy_buf_size = size;
 
-	/* yy_ch_buf has to be 2 characters longer than the size given because
-	 * we need to put in 2 end-of-buffer characters.
-	 */
-	b->yy_ch_buf = (char *) yy_flex_alloc( b->yy_buf_size + 2 );
-	if ( ! b->yy_ch_buf )
-		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
+    /* yy_ch_buf has to be 2 characters longer than the size given because
+     * we need to put in 2 end-of-buffer characters.
+     */
+    b->yy_ch_buf = (char *) yy_flex_alloc( b->yy_buf_size + 2 );
+    if ( ! b->yy_ch_buf )
+        YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_is_our_buffer = 1;
+    b->yy_is_our_buffer = 1;
 
-	yy_init_buffer( b, file );
+    yy_init_buffer( b, file );
 
-	return b;
-	}
+    return b;
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1606,18 +1606,18 @@ void yy_delete_buffer( YY_BUFFER_STATE b )
 void yy_delete_buffer( b )
 YY_BUFFER_STATE b;
 #endif
-	{
-	if ( ! b )
-		return;
+    {
+    if ( ! b )
+        return;
 
-	if ( b == yy_current_buffer )
-		yy_current_buffer = (YY_BUFFER_STATE) 0;
+    if ( b == yy_current_buffer )
+        yy_current_buffer = (YY_BUFFER_STATE) 0;
 
-	if ( b->yy_is_our_buffer )
-		yy_flex_free( (void *) b->yy_ch_buf );
+    if ( b->yy_is_our_buffer )
+        yy_flex_free( (void *) b->yy_ch_buf );
 
-	yy_flex_free( (void *) b );
-	}
+    yy_flex_free( (void *) b );
+    }
 
 
 #ifndef YY_ALWAYS_INTERACTIVE
@@ -1635,22 +1635,22 @@ FILE *file;
 #endif
 
 
-	{
-	yy_flush_buffer( b );
+    {
+    yy_flush_buffer( b );
 
-	b->yy_input_file = file;
-	b->yy_fill_buffer = 1;
+    b->yy_input_file = file;
+    b->yy_fill_buffer = 1;
 
 #if YY_ALWAYS_INTERACTIVE
-	b->yy_is_interactive = 1;
+    b->yy_is_interactive = 1;
 #else
 #if YY_NEVER_INTERACTIVE
-	b->yy_is_interactive = 0;
+    b->yy_is_interactive = 0;
 #else
-	b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+    b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
 #endif
 #endif
-	}
+    }
 
 
 #ifdef YY_USE_PROTOS
@@ -1660,27 +1660,27 @@ void yy_flush_buffer( b )
 YY_BUFFER_STATE b;
 #endif
 
-	{
-	if ( ! b )
-		return;
+    {
+    if ( ! b )
+        return;
 
-	b->yy_n_chars = 0;
+    b->yy_n_chars = 0;
 
-	/* We always need two end-of-buffer characters.  The first causes
-	 * a transition to the end-of-buffer state.  The second causes
-	 * a jam in that state.
-	 */
-	b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
-	b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
+    /* We always need two end-of-buffer characters.  The first causes
+     * a transition to the end-of-buffer state.  The second causes
+     * a jam in that state.
+     */
+    b->yy_ch_buf[0] = YY_END_OF_BUFFER_CHAR;
+    b->yy_ch_buf[1] = YY_END_OF_BUFFER_CHAR;
 
-	b->yy_buf_pos = &b->yy_ch_buf[0];
+    b->yy_buf_pos = &b->yy_ch_buf[0];
 
-	b->yy_at_bol = 1;
-	b->yy_buffer_status = YY_BUFFER_NEW;
+    b->yy_at_bol = 1;
+    b->yy_buffer_status = YY_BUFFER_NEW;
 
-	if ( b == yy_current_buffer )
-		yy_load_buffer_state();
-	}
+    if ( b == yy_current_buffer )
+        yy_load_buffer_state();
+    }
 
 
 #ifndef YY_NO_SCAN_BUFFER
@@ -1691,33 +1691,33 @@ YY_BUFFER_STATE yy_scan_buffer( base, size )
 char *base;
 yy_size_t size;
 #endif
-	{
-	YY_BUFFER_STATE b;
+    {
+    YY_BUFFER_STATE b;
 
-	if ( size < 2 ||
-	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
-	     base[size-1] != YY_END_OF_BUFFER_CHAR )
-		/* They forgot to leave room for the EOB's. */
-		return 0;
+    if ( size < 2 ||
+         base[size-2] != YY_END_OF_BUFFER_CHAR ||
+         base[size-1] != YY_END_OF_BUFFER_CHAR )
+        /* They forgot to leave room for the EOB's. */
+        return 0;
 
-	b = (YY_BUFFER_STATE) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
-	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
+    b = (YY_BUFFER_STATE) yy_flex_alloc( sizeof( struct yy_buffer_state ) );
+    if ( ! b )
+        YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
 
-	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
-	b->yy_buf_pos = b->yy_ch_buf = base;
-	b->yy_is_our_buffer = 0;
-	b->yy_input_file = 0;
-	b->yy_n_chars = b->yy_buf_size;
-	b->yy_is_interactive = 0;
-	b->yy_at_bol = 1;
-	b->yy_fill_buffer = 0;
-	b->yy_buffer_status = YY_BUFFER_NEW;
+    b->yy_buf_size = size - 2;  /* "- 2" to take care of EOB's */
+    b->yy_buf_pos = b->yy_ch_buf = base;
+    b->yy_is_our_buffer = 0;
+    b->yy_input_file = 0;
+    b->yy_n_chars = b->yy_buf_size;
+    b->yy_is_interactive = 0;
+    b->yy_at_bol = 1;
+    b->yy_fill_buffer = 0;
+    b->yy_buffer_status = YY_BUFFER_NEW;
 
-	yy_switch_to_buffer( b );
+    yy_switch_to_buffer( b );
 
-	return b;
-	}
+    return b;
+    }
 #endif
 
 
@@ -1728,13 +1728,13 @@ YY_BUFFER_STATE yy_scan_string( yyconst char *yy_str )
 YY_BUFFER_STATE yy_scan_string( yy_str )
 yyconst char *yy_str;
 #endif
-	{
-	int len;
-	for ( len = 0; yy_str[len]; ++len )
-		;
+    {
+    int len;
+    for ( len = 0; yy_str[len]; ++len )
+        ;
 
-	return yy_scan_bytes( yy_str, len );
-	}
+    return yy_scan_bytes( yy_str, len );
+    }
 #endif
 
 
@@ -1746,34 +1746,34 @@ YY_BUFFER_STATE yy_scan_bytes( bytes, len )
 yyconst char *bytes;
 int len;
 #endif
-	{
-	YY_BUFFER_STATE b;
-	char *buf;
-	yy_size_t n;
-	int i;
+    {
+    YY_BUFFER_STATE b;
+    char *buf;
+    yy_size_t n;
+    int i;
 
-	/* Get memory for full buffer, including space for trailing EOB's. */
-	n = len + 2;
-	buf = (char *) yy_flex_alloc( n );
-	if ( ! buf )
-		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
+    /* Get memory for full buffer, including space for trailing EOB's. */
+    n = len + 2;
+    buf = (char *) yy_flex_alloc( n );
+    if ( ! buf )
+        YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
 
-	for ( i = 0; i < len; ++i )
-		buf[i] = bytes[i];
+    for ( i = 0; i < len; ++i )
+        buf[i] = bytes[i];
 
-	buf[len] = buf[len+1] = YY_END_OF_BUFFER_CHAR;
+    buf[len] = buf[len+1] = YY_END_OF_BUFFER_CHAR;
 
-	b = yy_scan_buffer( buf, n );
-	if ( ! b )
-		YY_FATAL_ERROR( "bad buffer in yy_scan_bytes()" );
+    b = yy_scan_buffer( buf, n );
+    if ( ! b )
+        YY_FATAL_ERROR( "bad buffer in yy_scan_bytes()" );
 
-	/* It's okay to grow etc. this buffer, and we should throw it
-	 * away when we're done.
-	 */
-	b->yy_is_our_buffer = 1;
+    /* It's okay to grow etc. this buffer, and we should throw it
+     * away when we're done.
+     */
+    b->yy_is_our_buffer = 1;
 
-	return b;
-	}
+    return b;
+    }
 #endif
 
 
@@ -1784,49 +1784,49 @@ static void yy_push_state( int new_state )
 static void yy_push_state( new_state )
 int new_state;
 #endif
-	{
-	if ( yy_start_stack_ptr >= yy_start_stack_depth )
-		{
-		yy_size_t new_size;
+    {
+    if ( yy_start_stack_ptr >= yy_start_stack_depth )
+        {
+        yy_size_t new_size;
 
-		yy_start_stack_depth += YY_START_STACK_INCR;
-		new_size = yy_start_stack_depth * sizeof( int );
+        yy_start_stack_depth += YY_START_STACK_INCR;
+        new_size = yy_start_stack_depth * sizeof( int );
 
-		if ( ! yy_start_stack )
-			yy_start_stack = (int *) yy_flex_alloc( new_size );
+        if ( ! yy_start_stack )
+            yy_start_stack = (int *) yy_flex_alloc( new_size );
 
-		else
-			yy_start_stack = (int *) yy_flex_realloc(
-					(void *) yy_start_stack, new_size );
+        else
+            yy_start_stack = (int *) yy_flex_realloc(
+                    (void *) yy_start_stack, new_size );
 
-		if ( ! yy_start_stack )
-			YY_FATAL_ERROR(
-			"out of memory expanding start-condition stack" );
-		}
+        if ( ! yy_start_stack )
+            YY_FATAL_ERROR(
+            "out of memory expanding start-condition stack" );
+        }
 
-	yy_start_stack[yy_start_stack_ptr++] = YY_START;
+    yy_start_stack[yy_start_stack_ptr++] = YY_START;
 
-	BEGIN(new_state);
-	}
+    BEGIN(new_state);
+    }
 #endif
 
 
 #ifndef YY_NO_POP_STATE
 static void yy_pop_state()
-	{
-	if ( --yy_start_stack_ptr < 0 )
-		YY_FATAL_ERROR( "start-condition stack underflow" );
+    {
+    if ( --yy_start_stack_ptr < 0 )
+        YY_FATAL_ERROR( "start-condition stack underflow" );
 
-	BEGIN(yy_start_stack[yy_start_stack_ptr]);
-	}
+    BEGIN(yy_start_stack[yy_start_stack_ptr]);
+    }
 #endif
 
 
 #ifndef YY_NO_TOP_STATE
 static int yy_top_state()
-	{
-	return yy_start_stack[yy_start_stack_ptr - 1];
-	}
+    {
+    return yy_start_stack[yy_start_stack_ptr - 1];
+    }
 #endif
 
 #ifndef YY_EXIT_FAILURE
@@ -1839,10 +1839,10 @@ static void yy_fatal_error( yyconst char msg[] )
 static void yy_fatal_error( msg )
 char msg[];
 #endif
-	{
-	(void) fprintf( stderr, "%s\n", msg );
-	exit( YY_EXIT_FAILURE );
-	}
+    {
+    (void) fprintf( stderr, "%s\n", msg );
+    exit( YY_EXIT_FAILURE );
+    }
 
 
 
@@ -1850,16 +1850,16 @@ char msg[];
 
 #undef yyless
 #define yyless(n) \
-	do \
-		{ \
-		/* Undo effects of setting up yytext. */ \
-		yytext[yyleng] = yy_hold_char; \
-		yy_c_buf_p = yytext + n; \
-		yy_hold_char = *yy_c_buf_p; \
-		*yy_c_buf_p = '\0'; \
-		yyleng = n; \
-		} \
-	while ( 0 )
+    do \
+        { \
+        /* Undo effects of setting up yytext. */ \
+        yytext[yyleng] = yy_hold_char; \
+        yy_c_buf_p = yytext + n; \
+        yy_hold_char = *yy_c_buf_p; \
+        *yy_c_buf_p = '\0'; \
+        yyleng = n; \
+        } \
+    while ( 0 )
 
 
 /* Internal utility routines. */
@@ -1873,11 +1873,11 @@ char *s1;
 yyconst char *s2;
 int n;
 #endif
-	{
-	register int i;
-	for ( i = 0; i < n; ++i )
-		s1[i] = s2[i];
-	}
+    {
+    register int i;
+    for ( i = 0; i < n; ++i )
+        s1[i] = s2[i];
+    }
 #endif
 
 #ifdef YY_NEED_STRLEN
@@ -1887,13 +1887,13 @@ static int yy_flex_strlen( yyconst char *s )
 static int yy_flex_strlen( s )
 yyconst char *s;
 #endif
-	{
-	register int n;
-	for ( n = 0; s[n]; ++n )
-		;
+    {
+    register int n;
+    for ( n = 0; s[n]; ++n )
+        ;
 
-	return n;
-	}
+    return n;
+    }
 #endif
 
 
@@ -1903,9 +1903,9 @@ static void *yy_flex_alloc( yy_size_t size )
 static void *yy_flex_alloc( size )
 yy_size_t size;
 #endif
-	{
-	return (void *) malloc( size );
-	}
+    {
+    return (void *) malloc( size );
+    }
 
 #ifdef YY_USE_PROTOS
 static void *yy_flex_realloc( void *ptr, yy_size_t size )
@@ -1914,16 +1914,16 @@ static void *yy_flex_realloc( ptr, size )
 void *ptr;
 yy_size_t size;
 #endif
-	{
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-	}
+    {
+    /* The cast to (char *) in the following accommodates both
+     * implementations that use char* generic pointers, and those
+     * that use void* generic pointers.  It works with the latter
+     * because both ANSI C and C++ allow castless assignment from
+     * any pointer type to void*, and deal with argument conversions
+     * as though doing an assignment.
+     */
+    return (void *) realloc( (char *) ptr, size );
+    }
 
 #ifdef YY_USE_PROTOS
 static void yy_flex_free( void *ptr )
@@ -1931,16 +1931,16 @@ static void yy_flex_free( void *ptr )
 static void yy_flex_free( ptr )
 void *ptr;
 #endif
-	{
-	free( ptr );
-	}
+    {
+    free( ptr );
+    }
 
 #if YY_MAIN
 int main()
-	{
-	yylex();
-	return 0;
-	}
+    {
+    yylex();
+    return 0;
+    }
 #endif
 
 int start_include_file(char *root_name)
@@ -1954,297 +1954,297 @@ int start_include_file(char *root_name)
   int ftype=0;
   CACHED_STREAM *found_it;
   int i;
-  
+
   if ( include_stack_ptr >= (MAX_INCLUDE_DEPTH-1) ) {
-	  fprintf( stderr, "Includes nested too deeply" );
-	  exit( 1 );
+      fprintf( stderr, "Includes nested too deeply" );
+      exit( 1 );
   }
   // look up to see if file is in cache.
   {
-	  found_it = NULL;
-	  for(i=0; i<cached_file_stack_index; i++) {
-		  switch (cached_streams[i].valid) {
-		  case CHS_UNUSED:
-			  break;
-		  case CHS_PROBLEM:
-		  case CHS_FILLING:
-		  case CHS_FILLED:
-			  if(!stricmp(root_name,cached_streams[i].filename)) {
-				  found_it = &(cached_streams[i]);
-			  }
-			  break;
-		  }
-	  }		  
+      found_it = NULL;
+      for(i=0; i<cached_file_stack_index; i++) {
+          switch (cached_streams[i].valid) {
+          case CHS_UNUSED:
+              break;
+          case CHS_PROBLEM:
+          case CHS_FILLING:
+          case CHS_FILLED:
+              if(!stricmp(root_name,cached_streams[i].filename)) {
+                  found_it = &(cached_streams[i]);
+              }
+              break;
+          }
+      }
   }
 
   if ((found_it) && (found_it->valid == CHS_FILLED)) {
-	  // we can replay the cached file
-	  include_stack_ptr++;
-	  cached_file_stack[include_stack_ptr] = found_it;
-	  found_it->next_token_index = 0;
-	  current_type[include_stack_ptr] = found_it->ftype;
-	  return 0;
+      // we can replay the cached file
+      include_stack_ptr++;
+      cached_file_stack[include_stack_ptr] = found_it;
+      found_it->next_token_index = 0;
+      current_type[include_stack_ptr] = found_it->ftype;
+      return 0;
   } else {
-	  // read it from the file system
-	  ftype = TYPE_P;
+      // read it from the file system
+      ftype = TYPE_P;
 #ifdef USE_OPENGL
-	  // We probably should NOT fixcase for the model dir, and random files.
-	  strcpy(fixed_root_name, root_name);
-	  platform_fixcase(fixed_root_name); // fix case for parts and prims.
-#if 1     
-	  for (i = 0; i < LDrawIni->nSearchDirs; i++)
-	  {
-	    concat_path(LDrawIni->SearchDirs[i].Dir, fixed_root_name, filename);
-	    if (LDrawIni->SearchDirs[i].Flags & LDSDF_DEFPRIM) 
-	      ftype = TYPE_P;
-	    else if (LDrawIni->SearchDirs[i].Flags & LDSDF_DEFPART)
-	      ftype = TYPE_PART;
-	    else if (LDrawIni->SearchDirs[i].Flags & LDSDF_MODELDIR)
-	      ftype = TYPE_MODEL;
-	    else
-	      ftype = TYPE_OTHER;
-	    fp = fopen( filename, "r" );
-	    if (fp)
-	      break;
-	  }
+      // We probably should NOT fixcase for the model dir, and random files.
+      strcpy(fixed_root_name, root_name);
+      platform_fixcase(fixed_root_name); // fix case for parts and prims.
+#if 1
+      for (i = 0; i < LDrawIni->nSearchDirs; i++)
+      {
+        concat_path(LDrawIni->SearchDirs[i].Dir, fixed_root_name, filename);
+        if (LDrawIni->SearchDirs[i].Flags & LDSDF_DEFPRIM)
+          ftype = TYPE_P;
+        else if (LDrawIni->SearchDirs[i].Flags & LDSDF_DEFPART)
+          ftype = TYPE_PART;
+        else if (LDrawIni->SearchDirs[i].Flags & LDSDF_MODELDIR)
+          ftype = TYPE_MODEL;
+        else
+          ftype = TYPE_OTHER;
+        fp = fopen( filename, "r" );
+        if (fp)
+          break;
+      }
 #else
-	  concat_path(primitivepath, fixed_root_name, filename);
-	  if ((!strcmp(root_name,  "-")) || (!strcmp(root_name,  "\"-\"")))
-	    fp = stdin; 
-	  else
-	    fp = fopen( filename, "r" );
-	  if ( ! fp ) {
-		  ftype = TYPE_PART;
-		  concat_path(partspath, fixed_root_name, filename);
-		  fp = fopen( filename, "r" );
-	  }
-	  if ( ! fp ) {
-		  ftype = TYPE_MODEL;
-		  concat_path(modelspath, root_name, filename); 
-		  fp = fopen( filename, "r" );
-	  }
-	  if ( ! fp ) {
-		  ftype = TYPE_OTHER;
-		  concat_path(datfilepath, root_name, filename); 
-		  //sprintf(filename,"%s",root_name);	
-		  fp = fopen( filename, "r" );
-	  }
-	  if ( ! fp ) {
-	  	  char PrePath[256];
-		  ftype = TYPE_P;
-		  concat_path(pathname, "\\unofficial\\p\\", PrePath);
-		  platform_fixcase(PrePath); // fix case for parts and prims.
-		  concat_path(PrePath, fixed_root_name, filename);
-		  fp = fopen( filename, "r" );
-	  }
-	  if ( ! fp ) {
-	  	  char PrePath[256];
-		  ftype = TYPE_PART;
-		  concat_path(pathname, "\\unofficial\\parts\\", PrePath);
-		  platform_fixcase(PrePath); // fix case for parts and prims.
-		  concat_path(PrePath, fixed_root_name, filename);
-		  fp = fopen( filename, "r" );
-	  }
-	  if ( ! fp ) {
-	  	  char PrePath[256];
-		  ftype = TYPE_PART;
-		  concat_path(pathname, "\\unofficial\\lsynth\\", PrePath);
-		  platform_fixcase(PrePath); // fix case for parts and prims.
-		  concat_path(PrePath, fixed_root_name, filename);
-		  fp = fopen( filename, "r" );
-	  }
-#endif	  
-	  if ( ! fp ) {	
-		  char buf[300];
-		  sprintf(buf,
-			  "Warning: can't find file \"%s\" anywhere, ignoring\n",
-			  root_name);
-		  zWrite(buf);
-		  ftype = 0;
-	  }
-#else
-	  sprintf(filename,"%s/p/%s",pathname, root_name);
-	  fp = fopen( filename, "r" );
-	  if ( ! fp ) {
-		  ftype = TYPE_PART;
-		  sprintf(filename,"%s/parts/%s",pathname,root_name);	
-		  fp = fopen( filename, "r" );
-		  if ( ! fp ) {
-			  ftype = TYPE_MODEL;
-			  sprintf(filename,"%s/models/%s",pathname,root_name);	
-			  fp = fopen( filename, "r" );
-			  if ( ! fp ) {
-				  ftype = TYPE_OTHER;
-				  sprintf(filename,"%s",root_name);	
-				  fp = fopen( filename, "r" );
-				  if ( ! fp ) {	
-					  char buf[300];
-					  sprintf(buf,
-						  "Warning: can't find file \"%s\" anywhere, ignoring\n",
-						  root_name);
-					  zWrite(buf);
-					  ftype = 0;
-				  }
-			  }
-		  }
-	  }
+      concat_path(primitivepath, fixed_root_name, filename);
+      if ((!strcmp(root_name,  "-")) || (!strcmp(root_name,  "\"-\"")))
+        fp = stdin;
+      else
+        fp = fopen( filename, "r" );
+      if ( ! fp ) {
+          ftype = TYPE_PART;
+          concat_path(partspath, fixed_root_name, filename);
+          fp = fopen( filename, "r" );
+      }
+      if ( ! fp ) {
+          ftype = TYPE_MODEL;
+          concat_path(modelspath, root_name, filename);
+          fp = fopen( filename, "r" );
+      }
+      if ( ! fp ) {
+          ftype = TYPE_OTHER;
+          concat_path(datfilepath, root_name, filename);
+          //sprintf(filename,"%s",root_name);
+          fp = fopen( filename, "r" );
+      }
+      if ( ! fp ) {
+          char PrePath[256];
+          ftype = TYPE_P;
+          concat_path(pathname, "\\unofficial\\p\\", PrePath);
+          platform_fixcase(PrePath); // fix case for parts and prims.
+          concat_path(PrePath, fixed_root_name, filename);
+          fp = fopen( filename, "r" );
+      }
+      if ( ! fp ) {
+          char PrePath[256];
+          ftype = TYPE_PART;
+          concat_path(pathname, "\\unofficial\\parts\\", PrePath);
+          platform_fixcase(PrePath); // fix case for parts and prims.
+          concat_path(PrePath, fixed_root_name, filename);
+          fp = fopen( filename, "r" );
+      }
+      if ( ! fp ) {
+          char PrePath[256];
+          ftype = TYPE_PART;
+          concat_path(pathname, "\\unofficial\\lsynth\\", PrePath);
+          platform_fixcase(PrePath); // fix case for parts and prims.
+          concat_path(PrePath, fixed_root_name, filename);
+          fp = fopen( filename, "r" );
+      }
 #endif
-	  if(fp) {
-		  include_stack_ptr++;
+      if ( ! fp ) {
+          char buf[300];
+          sprintf(buf,
+              "Warning: can't find file \"%s\" anywhere, ignoring\n",
+              root_name);
+          zWrite(buf);
+          ftype = 0;
+      }
+#else
+      sprintf(filename,"%s/p/%s",pathname, root_name);
+      fp = fopen( filename, "r" );
+      if ( ! fp ) {
+          ftype = TYPE_PART;
+          sprintf(filename,"%s/parts/%s",pathname,root_name);
+          fp = fopen( filename, "r" );
+          if ( ! fp ) {
+              ftype = TYPE_MODEL;
+              sprintf(filename,"%s/models/%s",pathname,root_name);
+              fp = fopen( filename, "r" );
+              if ( ! fp ) {
+                  ftype = TYPE_OTHER;
+                  sprintf(filename,"%s",root_name);
+                  fp = fopen( filename, "r" );
+                  if ( ! fp ) {
+                      char buf[300];
+                      sprintf(buf,
+                          "Warning: can't find file \"%s\" anywhere, ignoring\n",
+                          root_name);
+                      zWrite(buf);
+                      ftype = 0;
+                  }
+              }
+          }
+      }
+#endif
+      if(fp) {
+          include_stack_ptr++;
 #if 0
-		  fprintf(stderr,"%d: %s\n",
-			  include_stack_ptr,filename);fflush(stderr);
+          fprintf(stderr,"%d: %s\n",
+              include_stack_ptr,filename);fflush(stderr);
 #endif
-		  fp_stack[include_stack_ptr] = fp;
-		  include_stack[include_stack_ptr] = YY_CURRENT_BUFFER;
-		  yyin = fp;
-		  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
-		  current_type[include_stack_ptr] = ftype;
-		  // if entry in cache is not marked bad, cache this file
-		  if (((ftype == TYPE_P) || (ftype == TYPE_PART))
-			  && (found_it == NULL)) {
-			  CACHED_STREAM *chs = NULL;
-			  
-			  // find an unused place to store this cached file
-			  if (cached_file_stack_index < MAX_CACHED_FILES) {
-					  chs = &(cached_streams[cached_file_stack_index]);
-					  chs->valid = CHS_FILLING;
-					  strcpy(chs->filename, root_name);
-					  chs->ftype = ftype;
-					  chs->next_token_index = 0;
-					  // malloc here
-					  chs->tokens =  (int *)malloc(MAX_CACHED_TOKENS*sizeof(int));
-					  if (chs->tokens == NULL) {
-					    chs->valid = CHS_PROBLEM;
-					  } else {
-					    chs->values = (YYSTYPE *)malloc(MAX_CACHED_TOKENS*sizeof(YYSTYPE));
-						if (chs->values == NULL) {
-						  free(chs->tokens);
-						  chs->valid = CHS_PROBLEM;
-						} else {
-					      cached_file_stack_index++;
-						  chs->max_tokens = MAX_CACHED_TOKENS;
-						}
-					  }
-			  }
-			  // save name and type
-			  // set entry in stack so yylex stores the tokens
-			  cached_file_stack[include_stack_ptr] = chs;
-			  if (ldraw_commandline_opts.debug_level>0){
-				  char buf[256];
-				  if (chs != NULL) {
-					  sprintf(buf,"Caching file %s in slot %d",filename, (cached_file_stack_index-1));
-				  } else {
-					  sprintf(buf,"No room to cache file %s",filename);
-				  }
-				  zWrite(buf);
-			  }
-		  } else {
-		      // do not cache this file
-			  cached_file_stack[include_stack_ptr] = NULL;
-	      }
-		  return 0;
-	  } else {
-		  return -1;
-	  }
+          fp_stack[include_stack_ptr] = fp;
+          include_stack[include_stack_ptr] = YY_CURRENT_BUFFER;
+          yyin = fp;
+          yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
+          current_type[include_stack_ptr] = ftype;
+          // if entry in cache is not marked bad, cache this file
+          if (((ftype == TYPE_P) || (ftype == TYPE_PART))
+              && (found_it == NULL)) {
+              CACHED_STREAM *chs = NULL;
+
+              // find an unused place to store this cached file
+              if (cached_file_stack_index < MAX_CACHED_FILES) {
+                      chs = &(cached_streams[cached_file_stack_index]);
+                      chs->valid = CHS_FILLING;
+                      strcpy(chs->filename, root_name);
+                      chs->ftype = ftype;
+                      chs->next_token_index = 0;
+                      // malloc here
+                      chs->tokens =  (int *)malloc(MAX_CACHED_TOKENS*sizeof(int));
+                      if (chs->tokens == NULL) {
+                        chs->valid = CHS_PROBLEM;
+                      } else {
+                        chs->values = (YYSTYPE *)malloc(MAX_CACHED_TOKENS*sizeof(YYSTYPE));
+                        if (chs->values == NULL) {
+                          free(chs->tokens);
+                          chs->valid = CHS_PROBLEM;
+                        } else {
+                          cached_file_stack_index++;
+                          chs->max_tokens = MAX_CACHED_TOKENS;
+                        }
+                      }
+              }
+              // save name and type
+              // set entry in stack so yylex stores the tokens
+              cached_file_stack[include_stack_ptr] = chs;
+              if (ldraw_commandline_opts.debug_level>0){
+                  char buf[256];
+                  if (chs != NULL) {
+                      sprintf(buf,"Caching file %s in slot %d",filename, (cached_file_stack_index-1));
+                  } else {
+                      sprintf(buf,"No room to cache file %s",filename);
+                  }
+                  zWrite(buf);
+              }
+          } else {
+              // do not cache this file
+              cached_file_stack[include_stack_ptr] = NULL;
+          }
+          return 0;
+      } else {
+          return -1;
+      }
   }
 }
 
 int defer_stop_include_file(void)
 {
-	static int init=0;
-	int i;
-	if(!init) {
-		init = 1;
-		for(i=0; i<MAX_INCLUDE_DEPTH; i++) {
-			defered_flag[i] = 0;
-		}
-	}
-	defered_flag[include_stack_ptr-1] = 1;
-	return 0;
+    static int init=0;
+    int i;
+    if(!init) {
+        init = 1;
+        for(i=0; i<MAX_INCLUDE_DEPTH; i++) {
+            defered_flag[i] = 0;
+        }
+    }
+    defered_flag[include_stack_ptr-1] = 1;
+    return 0;
 }
 
 int stop_include_file(void)
 {
-	if ( include_stack_ptr > 0 ) {	
-		if ((cached_file_stack[include_stack_ptr] != NULL) &&
-			(cached_file_stack[include_stack_ptr]->valid == CHS_FILLED)) {
-			// we were working from cache, so do not close or delete any yy_stuff
-			cached_file_stack[include_stack_ptr] = NULL;
-			ldlite_profile.cache_hits++;
-		} else {
-			if ((cached_file_stack[include_stack_ptr] != NULL) &&
-				(cached_file_stack[include_stack_ptr]->valid == CHS_FILLING)) {
-				cached_file_stack[include_stack_ptr]->valid = CHS_FILLED;
-				ldlite_profile.cached_files++;
-				if (ldraw_commandline_opts.debug_level>0){
-					char buf[256];
-					sprintf(buf,"Cached %s, used %d tokens",
-						cached_file_stack[include_stack_ptr]->filename,
-						cached_file_stack[include_stack_ptr]->next_token_index);
-					zWrite(buf);
-				}
-			} else {
-			  ldlite_profile.uncached_files++;
-			}
-			cached_file_stack[include_stack_ptr] = NULL;
-			yy_delete_buffer( YY_CURRENT_BUFFER );
-			yy_switch_to_buffer( include_stack[include_stack_ptr] );
-			fclose(fp_stack[include_stack_ptr]);
-		}
-		/* free transform matrix and translation vector */
-		pop_transform();
-		/* free zcolor table */
-		znamelist_pop();
+    if ( include_stack_ptr > 0 ) {
+        if ((cached_file_stack[include_stack_ptr] != NULL) &&
+            (cached_file_stack[include_stack_ptr]->valid == CHS_FILLED)) {
+            // we were working from cache, so do not close or delete any yy_stuff
+            cached_file_stack[include_stack_ptr] = NULL;
+            ldlite_profile.cache_hits++;
+        } else {
+            if ((cached_file_stack[include_stack_ptr] != NULL) &&
+                (cached_file_stack[include_stack_ptr]->valid == CHS_FILLING)) {
+                cached_file_stack[include_stack_ptr]->valid = CHS_FILLED;
+                ldlite_profile.cached_files++;
+                if (ldraw_commandline_opts.debug_level>0){
+                    char buf[256];
+                    sprintf(buf,"Cached %s, used %d tokens",
+                        cached_file_stack[include_stack_ptr]->filename,
+                        cached_file_stack[include_stack_ptr]->next_token_index);
+                    zWrite(buf);
+                }
+            } else {
+              ldlite_profile.uncached_files++;
+            }
+            cached_file_stack[include_stack_ptr] = NULL;
+            yy_delete_buffer( YY_CURRENT_BUFFER );
+            yy_switch_to_buffer( include_stack[include_stack_ptr] );
+            fclose(fp_stack[include_stack_ptr]);
+        }
+        /* free transform matrix and translation vector */
+        pop_transform();
+        /* free zcolor table */
+        znamelist_pop();
 
-		defered_flag[include_stack_ptr] = 0;
-		if (current_type[include_stack_ptr] >= zDetailLevel) {
-			zStep(-1,0);
-		}
-		include_stack_ptr--;
-		if (defered_flag[include_stack_ptr] != 0) {
-			return stop_include_file();
-		} else {
-			return include_stack_ptr;
-		}
-	} else {
-		/* free transform matrix and translation vector */
-		pop_transform();
-		/* free zcolor table */
-		znamelist_pop();
-		//	  yy_delete_buffer( YY_CURRENT_BUFFER );
-		if (ldraw_commandline_opts.debug_level>0){
-			char buf[256];
-			sprintf(buf,"Profile: %d cached, %d uncached, %d hits",
-				ldlite_profile.cached_files,ldlite_profile.uncached_files,
-				ldlite_profile.cache_hits);
-			zWrite(buf);
-		}
-		return (-1);
-	}
+        defered_flag[include_stack_ptr] = 0;
+        if (current_type[include_stack_ptr] >= zDetailLevel) {
+            zStep(-1,0);
+        }
+        include_stack_ptr--;
+        if (defered_flag[include_stack_ptr] != 0) {
+            return stop_include_file();
+        } else {
+            return include_stack_ptr;
+        }
+    } else {
+        /* free transform matrix and translation vector */
+        pop_transform();
+        /* free zcolor table */
+        znamelist_pop();
+        //    yy_delete_buffer( YY_CURRENT_BUFFER );
+        if (ldraw_commandline_opts.debug_level>0){
+            char buf[256];
+            sprintf(buf,"Profile: %d cached, %d uncached, %d hits",
+                ldlite_profile.cached_files,ldlite_profile.uncached_files,
+                ldlite_profile.cache_hits);
+            zWrite(buf);
+        }
+        return (-1);
+    }
 }
 
 void stop_caching()
 {
-	if (cached_file_stack[include_stack_ptr] != NULL) {
-		if (cached_file_stack[include_stack_ptr]->valid == CHS_FILLING) {
-			cached_file_stack[include_stack_ptr]->valid = CHS_PROBLEM;
-		}
-	}
-	return;
+    if (cached_file_stack[include_stack_ptr] != NULL) {
+        if (cached_file_stack[include_stack_ptr]->valid == CHS_FILLING) {
+            cached_file_stack[include_stack_ptr]->valid = CHS_PROBLEM;
+        }
+    }
+    return;
 }
 
 int is_current_file_not_cached()
 {
-	if (cached_file_stack[include_stack_ptr] == NULL) {
-		return 1;
-	} else {
-		if (cached_file_stack[include_stack_ptr]->valid == CHS_PROBLEM) {
-			return 1;
-		} else {
-			return 0;
-		}
-	}
+    if (cached_file_stack[include_stack_ptr] == NULL) {
+        return 1;
+    } else {
+        if (cached_file_stack[include_stack_ptr]->valid == CHS_PROBLEM) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }
 
 // TBD: This function probably has memory leaks.
@@ -2259,44 +2259,44 @@ int cache_mpd_subfiles(char *mpd_subfile_name)
   // if this file is already cached, return
   // look up to see if file is in cache.
   {
-	  int i;
+      int i;
 
 #ifdef USE_OPENGL
 #if 0
-	  // Since we never go to the filesystem to fetch this filename
-	  // we do not have to fix the case.  (stricmp() is good enough)
-	  // platform_fixcase(mpd_subfile_name);
+      // Since we never go to the filesystem to fetch this filename
+      // we do not have to fix the case.  (stricmp() is good enough)
+      // platform_fixcase(mpd_subfile_name);
 
 #else
-	  printf("caching MPD file %s\n", mpd_subfile_name);
+      printf("caching MPD file %s\n", mpd_subfile_name);
 #endif
 #endif
 
-	  for(i=0; i<cached_file_stack_index; i++) {
-		  switch (cached_streams[i].valid) {
-		  case CHS_UNUSED:
-			  break;
-		  case CHS_PROBLEM:
-		  case CHS_FILLING:
-			  if(!stricmp(mpd_subfile_name,cached_streams[i].filename)) {
-				  return(-1);
-			  }
-			  break;
-		  case CHS_FILLED:
-			  if(!stricmp(mpd_subfile_name,cached_streams[i].filename)) {
-				  return(0);
-			  }
-			  break;
-		  }
-	  }		  
+      for(i=0; i<cached_file_stack_index; i++) {
+          switch (cached_streams[i].valid) {
+          case CHS_UNUSED:
+              break;
+          case CHS_PROBLEM:
+          case CHS_FILLING:
+              if(!stricmp(mpd_subfile_name,cached_streams[i].filename)) {
+                  return(-1);
+              }
+              break;
+          case CHS_FILLED:
+              if(!stricmp(mpd_subfile_name,cached_streams[i].filename)) {
+                  return(0);
+              }
+              break;
+          }
+      }
   }
-			  
+
   // find an unused place to store this cached file
   if (cached_file_stack_index >= MAX_CACHED_FILES) {
     if (ldraw_commandline_opts.debug_level>0){
- 	  char buf[256];
-	  sprintf(buf,"Not caching MPD subfile %s, too many files already cached.",mpd_subfile_name);
-	  zWrite(buf);
+      char buf[256];
+      sprintf(buf,"Not caching MPD subfile %s, too many files already cached.",mpd_subfile_name);
+      zWrite(buf);
     }
     return(-1);
   }
@@ -2309,193 +2309,193 @@ int cache_mpd_subfiles(char *mpd_subfile_name)
   chs->tokens =  (int *)malloc(MAX_CACHED_TOKENS*sizeof(int));
   if (chs->tokens == NULL) {
     if (ldraw_commandline_opts.debug_level>0){
- 	  char buf[256];
-	  sprintf(buf,"Not caching MPD subfile %s, out of memory (1).",mpd_subfile_name);
-	  zWrite(buf);
+      char buf[256];
+      sprintf(buf,"Not caching MPD subfile %s, out of memory (1).",mpd_subfile_name);
+      zWrite(buf);
     }
-	return (-1);
+    return (-1);
   }
   chs->values = (YYSTYPE *)malloc(MAX_CACHED_TOKENS*sizeof(YYSTYPE));
   if (chs->values == NULL) {
       free(chs->tokens);
       if (ldraw_commandline_opts.debug_level>0){
- 	    char buf[256];
-	    sprintf(buf,"Not caching MPD subfile %s, out of memory (2).",mpd_subfile_name);
-	    zWrite(buf);
+        char buf[256];
+        sprintf(buf,"Not caching MPD subfile %s, out of memory (2).",mpd_subfile_name);
+        zWrite(buf);
       }
-	  return (-1);
+      return (-1);
   }
   chs->max_tokens = MAX_CACHED_TOKENS;
   cached_file_stack_index++;
 
   if (ldraw_commandline_opts.debug_level>0){
-	  char buf[256];
-	  sprintf(buf,"Caching MPD subfile %s",mpd_subfile_name);
-	  zWrite(buf);
+      char buf[256];
+      sprintf(buf,"Caching MPD subfile %s",mpd_subfile_name);
+      zWrite(buf);
   }
   state = 0;
   while (1) {
-	rc = my_yylex();
-	if (rc == tEOF) {
-		chs->tokens[chs->next_token_index] = rc;
-		chs->values[chs->next_token_index] = yylval;
-		chs->next_token_index++;
-		if (chs->valid == CHS_FILLING) {
-	        chs->valid = CHS_FILLED;
- 	        if (ldraw_commandline_opts.debug_level>0){
-					char buf[256];
-					sprintf(buf,"Cached %s, used %d tokens",
-						chs->filename,
-						chs->next_token_index);
-					zWrite(buf);
-	        }
-		}
-	  return(0);
-	} else {
-	  if (chs->next_token_index >= (chs->max_tokens-1)) {  /* leave room for EOF */
+    rc = my_yylex();
+    if (rc == tEOF) {
+        chs->tokens[chs->next_token_index] = rc;
+        chs->values[chs->next_token_index] = yylval;
+        chs->next_token_index++;
+        if (chs->valid == CHS_FILLING) {
+            chs->valid = CHS_FILLED;
+            if (ldraw_commandline_opts.debug_level>0){
+                    char buf[256];
+                    sprintf(buf,"Cached %s, used %d tokens",
+                        chs->filename,
+                        chs->next_token_index);
+                    zWrite(buf);
+            }
+        }
+      return(0);
+    } else {
+      if (chs->next_token_index >= (chs->max_tokens-1)) {  /* leave room for EOF */
 #if 0
-	  /* TBD: realloc */
-		stop_caching();
-		if (ldraw_commandline_opts.debug_level>0){ 
-			char buf[256];
-			sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
-			zWrite(buf);
-		}
+      /* TBD: realloc */
+        stop_caching();
+        if (ldraw_commandline_opts.debug_level>0){
+            char buf[256];
+            sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
+            zWrite(buf);
+        }
 #else
-		chs->tokens = (int *)realloc(chs->tokens, 2*chs->max_tokens*sizeof(int));
-		chs->values = (YYSTYPE *)realloc(chs->values, 2*chs->max_tokens*sizeof(YYSTYPE));
-		chs->max_tokens = 2*chs->max_tokens;
-		if ((chs->tokens == NULL) || (chs->values == NULL))
-		  {
-	  	    stop_caching();
-		    if (ldraw_commandline_opts.debug_level>0){ 
-			  char buf[256];
-			  sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
-			  zWrite(buf);
-		    }
-		  } else {
-		    if (ldraw_commandline_opts.debug_level>0){ 
-			  char buf[256];
-			  sprintf(buf,"MPD subfile %s is large, increasing cache to %d tokens",chs->filename, chs->max_tokens);
-			  zWrite(buf);
-		    }
-		  }
+        chs->tokens = (int *)realloc(chs->tokens, 2*chs->max_tokens*sizeof(int));
+        chs->values = (YYSTYPE *)realloc(chs->values, 2*chs->max_tokens*sizeof(YYSTYPE));
+        chs->max_tokens = 2*chs->max_tokens;
+        if ((chs->tokens == NULL) || (chs->values == NULL))
+          {
+            stop_caching();
+            if (ldraw_commandline_opts.debug_level>0){
+              char buf[256];
+              sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
+              zWrite(buf);
+            }
+          } else {
+            if (ldraw_commandline_opts.debug_level>0){
+              char buf[256];
+              sprintf(buf,"MPD subfile %s is large, increasing cache to %d tokens",chs->filename, chs->max_tokens);
+              zWrite(buf);
+            }
+          }
 
 #endif
-	  } else {
-		chs->tokens[chs->next_token_index] = rc;
-		chs->values[chs->next_token_index] = yylval;
-		chs->next_token_index++;
-	  }
-	  switch (state) {
-	   case 0:
-	    if (rc == tZERO) {
-			state = 1;
-		}
-		break;
-	   case 1:
-	    if (rc == tFILE) {
-		  state = 2;
-		} else {
-		  state = 0;
-		}
-		break;
-	   case 2:
-	    if (rc = tIDENT) {
-		  if (chs->valid == CHS_FILLING) {
-		    // remove "0 FILE name" from this stream...
-		    chs->next_token_index -= 3;
-			// and insert an EOF character
-		    chs->tokens[chs->next_token_index] = tEOF;
-		    chs->values[chs->next_token_index].c  = "EOF";
-		    chs->next_token_index++;
+      } else {
+        chs->tokens[chs->next_token_index] = rc;
+        chs->values[chs->next_token_index] = yylval;
+        chs->next_token_index++;
+      }
+      switch (state) {
+       case 0:
+        if (rc == tZERO) {
+            state = 1;
+        }
+        break;
+       case 1:
+        if (rc == tFILE) {
+          state = 2;
+        } else {
+          state = 0;
+        }
+        break;
+       case 2:
+        if (rc = tIDENT) {
+          if (chs->valid == CHS_FILLING) {
+            // remove "0 FILE name" from this stream...
+            chs->next_token_index -= 3;
+            // and insert an EOF character
+            chs->tokens[chs->next_token_index] = tEOF;
+            chs->values[chs->next_token_index].c  = "EOF";
+            chs->next_token_index++;
             //
-		    chs->valid = CHS_FILLED;
-		    if (ldraw_commandline_opts.debug_level>0){
-					char buf[256];
-					sprintf(buf,"Cached %s, used %d tokens",
-						chs->filename,
-						chs->next_token_index);
-					zWrite(buf);
-		    }
-		  }
-		  return cache_mpd_subfiles(yylval.c);
-		} else {
-		  state = 0;
-		}
-		break;
-	  }
+            chs->valid = CHS_FILLED;
+            if (ldraw_commandline_opts.debug_level>0){
+                    char buf[256];
+                    sprintf(buf,"Cached %s, used %d tokens",
+                        chs->filename,
+                        chs->next_token_index);
+                    zWrite(buf);
+            }
+          }
+          return cache_mpd_subfiles(yylval.c);
+        } else {
+          state = 0;
+        }
+        break;
+      }
 #if 0 /* not needed ? */
-	  if (chs->next_token_index >= chs->max_tokens) {
-	    /* TBD: realloc */
-		stop_caching();
-		if (ldraw_commandline_opts.debug_level>0){ 
-			char buf[256];
-			sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
-			zWrite(buf);
-		}
-	  }
+      if (chs->next_token_index >= chs->max_tokens) {
+        /* TBD: realloc */
+        stop_caching();
+        if (ldraw_commandline_opts.debug_level>0){
+            char buf[256];
+            sprintf(buf,"MPD subfile %s is too large to cache",chs->filename);
+            zWrite(buf);
+        }
+      }
 #endif
-	}
+    }
   }
 }
 
 int yylex(void)
 {
-	static int init=0;
-	int rc;
+    static int init=0;
+    int rc;
 
-	if(!init) {
-		int i;
+    if(!init) {
+        int i;
 
-		init=1;
-		include_stack_ptr = 0;
-		for (i=0; i<MAX_INCLUDE_DEPTH; i++) {
-			cached_file_stack[i] = NULL;
-		}
-		for (i=0; i<MAX_CACHED_FILES; i++) {
-			cached_streams[i].valid = CHS_UNUSED;
-		}
-		ldlite_profile.cached_files=0;
-		ldlite_profile.uncached_files=0;
-		ldlite_profile.cache_hits=0;
-	}
+        init=1;
+        include_stack_ptr = 0;
+        for (i=0; i<MAX_INCLUDE_DEPTH; i++) {
+            cached_file_stack[i] = NULL;
+        }
+        for (i=0; i<MAX_CACHED_FILES; i++) {
+            cached_streams[i].valid = CHS_UNUSED;
+        }
+        ldlite_profile.cached_files=0;
+        ldlite_profile.uncached_files=0;
+        ldlite_profile.cache_hits=0;
+    }
 
-	if (cached_file_stack[include_stack_ptr] == NULL) {
-		// top level .dat file (or caching disabled), do not cache
-		return my_yylex();
-	} else {
-		CACHED_STREAM *chs;
-		// we are inside an included file.  Either it is being cached or has already been cached
-		chs = cached_file_stack[include_stack_ptr];
-		switch(chs->valid) {
-		case CHS_UNUSED:
-		case CHS_PROBLEM:
-			// error condition?
-			return my_yylex();
-			break;
-		case CHS_FILLING:
-			rc = my_yylex();
-			chs->tokens[chs->next_token_index] = rc;
-			chs->values[chs->next_token_index] = yylval;
-			chs->next_token_index++;
-			if (chs->next_token_index >= chs->max_tokens) {
-			    /* TBD: realloc */
-				stop_caching();
-				if (ldraw_commandline_opts.debug_level>0){ 
-					char buf[256];
-					sprintf(buf,"File %s is too large to cache",chs->filename);
-					zWrite(buf);
-				}
-			}
-			return rc;
-			break;
-		case CHS_FILLED:
-			rc = chs->tokens[chs->next_token_index];
-			yylval = chs->values[chs->next_token_index];
-			chs->next_token_index++;
-			return rc;
-			break;
-		}
-	}
+    if (cached_file_stack[include_stack_ptr] == NULL) {
+        // top level .dat file (or caching disabled), do not cache
+        return my_yylex();
+    } else {
+        CACHED_STREAM *chs;
+        // we are inside an included file.  Either it is being cached or has already been cached
+        chs = cached_file_stack[include_stack_ptr];
+        switch(chs->valid) {
+        case CHS_UNUSED:
+        case CHS_PROBLEM:
+            // error condition?
+            return my_yylex();
+            break;
+        case CHS_FILLING:
+            rc = my_yylex();
+            chs->tokens[chs->next_token_index] = rc;
+            chs->values[chs->next_token_index] = yylval;
+            chs->next_token_index++;
+            if (chs->next_token_index >= chs->max_tokens) {
+                /* TBD: realloc */
+                stop_caching();
+                if (ldraw_commandline_opts.debug_level>0){
+                    char buf[256];
+                    sprintf(buf,"File %s is too large to cache",chs->filename);
+                    zWrite(buf);
+                }
+            }
+            return rc;
+            break;
+        case CHS_FILLED:
+            rc = chs->tokens[chs->next_token_index];
+            yylval = chs->values[chs->next_token_index];
+            chs->next_token_index++;
+            return rc;
+            break;
+        }
+    }
 }

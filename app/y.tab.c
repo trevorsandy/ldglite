@@ -4,33 +4,33 @@
 
 #define YYBISON 1  /* Identify Bison output.  */
 
-#define	tIDENT	257
-#define	tGARBAGE	258
-#define	tINT	259
-#define	tFLOAT	260
-#define	tZERO	261
-#define	tONE	262
-#define	tTWO	263
-#define	tTHREE	264
-#define	tFOUR	265
-#define	tFIVE	266
-#define	tSTEP	267
-#define	tPAUSE	268
-#define	tWRITE	269
-#define	tCLEAR	270
-#define	tSAVE	271
-#define	tEOL	272
-#define	tEOF	273
-#define	tROTATE	274
-#define	tTRANSLATE	275
-#define	tEND	276
-#define	tSCALE	277
-#define	tTRANSFORM	278
-#define	tCOLOR	279
-#define	tALIAS	280
-#define	tPOINT	281
-#define	tMATRIX	282
-#define	tFILE	283
+#define tIDENT      257
+#define tGARBAGE    258
+#define tINT        259
+#define tFLOAT      260
+#define tZERO       261
+#define tONE        262
+#define tTWO        263
+#define tTHREE      264
+#define tFOUR       265
+#define tFIVE       266
+#define tSTEP       267
+#define tPAUSE      268
+#define tWRITE      269
+#define tCLEAR      270
+#define tSAVE       271
+#define tEOL        272
+#define tEOF        273
+#define tROTATE     274
+#define tTRANSLATE  275
+#define tEND        276
+#define tSCALE      277
+#define tTRANSFORM  278
+#define tCOLOR      279
+#define tALIAS      280
+#define tPOINT      281
+#define tMATRIX     282
+#define tFILE       283
 
 #include <string.h>
 #include "stdio.h"
@@ -40,7 +40,7 @@
 #define NO_COMMENTS
 #undef NO_LINES
 
-char yyfilename[256];			/* Input filename */
+char yyfilename[256];           /* Input filename */
 char *ldraw_model=NULL;
 int tmp_i;
 void yyerror ( char * );
@@ -58,16 +58,16 @@ int is_current_file_not_cached(void);
 void platform_comment(char *, int level);
 int edge_color(int);
 matrix3d * savemat(float a, float b, float c,
-		   float d, float e, float f,
-		   float g, float h, float i);
+           float d, float e, float f,
+           float g, float h, float i);
 
 
 typedef union {
-	char *c;
-	int i;
-	double d;
-	vector3d *v;
-	matrix3d *m;
+    char *c;
+    int i;
+    double d;
+    vector3d *v;
+    matrix3d *m;
 } YYSTYPE;
 #include <stdio.h>
 
@@ -79,9 +79,9 @@ typedef union {
 
 
 
-#define	YYFINAL		213
-#define	YYFLAG		-32768
-#define	YYNTBASE	30
+#define YYFINAL     213
+#define YYFLAG      -32768
+#define YYNTBASE    30
 
 #define YYTRANSLATE(x) ((unsigned)(x) <= 283 ? yytranslate[x] : 65)
 
@@ -306,7 +306,7 @@ static const short yypgoto[] = {-32768,
 };
 
 
-#define	YYLAST		519
+#define YYLAST      519
 
 
 static const short yytable[] = {    59,
@@ -467,7 +467,7 @@ static const short yycheck[] = {     4,
    since that symbol is in the user namespace.  */
 #if (defined (_MSDOS) || defined (_MSDOS_)) && !defined (__TURBOC__)
 #if 0 /* No need for malloc.h, which pollutes the namespace;
-	 instead, just don't use alloca.  */
+     instead, just don't use alloca.  */
 #include <malloc.h>
 #endif
 #else /* not MSDOS, or __TURBOC__ */
@@ -480,7 +480,7 @@ static const short yycheck[] = {     4,
 #else /* not MSDOS, or __TURBOC__, or _AIX */
 #if 0
 #ifdef __hpux /* haible@ilog.fr says this works for HPUX 9.05 and up,
-		 and on HPUX 10.  Eventually we can turn this on.  */
+         and on HPUX 10.  Eventually we can turn this on.  */
 #define YYSTACK_USE_ALLOCA
 #define alloca __builtin_alloca
 #endif /* __hpux */
@@ -502,50 +502,50 @@ static const short yycheck[] = {     4,
    It is replaced by the list of actions, each action
    as one case of the switch.  */
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		-2
-#define YYEOF		0
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT 	goto yyabortlab
-#define YYERROR		goto yyerrlab1
+#define yyerrok     (yyerrstatus = 0)
+#define yyclearin   (yychar = YYEMPTY)
+#define YYEMPTY     -2
+#define YYEOF       0
+#define YYACCEPT    goto yyacceptlab
+#define YYABORT     goto yyabortlab
+#define YYERROR     goto yyerrlab1
 /* Like YYERROR except do call yyerror.
    This remains here temporarily to ease the
    transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
-#define YYFAIL		goto yyerrlab
+#define YYFAIL      goto yyerrlab
 #define YYRECOVERING()  (!!yyerrstatus)
 #define YYBACKUP(token, value) \
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    { yychar = (token), yylval = (value);			\
-      yychar1 = YYTRANSLATE (yychar);				\
-      YYPOPSTACK;						\
-      goto yybackup;						\
-    }								\
-  else								\
-    { yyerror ("syntax error: cannot back up"); YYERROR; }	\
+do                              \
+  if (yychar == YYEMPTY && yylen == 1)              \
+    { yychar = (token), yylval = (value);           \
+      yychar1 = YYTRANSLATE (yychar);               \
+      YYPOPSTACK;                       \
+      goto yybackup;                        \
+    }                               \
+  else                              \
+    { yyerror ("syntax error: cannot back up"); YYERROR; }  \
 while (0)
 
-#define YYTERROR	1
-#define YYERRCODE	256
+#define YYTERROR    1
+#define YYERRCODE   256
 
 #ifndef YYPURE
-#define YYLEX		yylex()
+#define YYLEX       yylex()
 #endif
 
 #ifdef YYPURE
 #ifdef YYLSP_NEEDED
 #ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
+#define YYLEX       yylex(&yylval, &yylloc, YYLEX_PARAM)
 #else
-#define YYLEX		yylex(&yylval, &yylloc)
+#define YYLEX       yylex(&yylval, &yylloc)
 #endif
 #else /* not YYLSP_NEEDED */
 #ifdef YYLEX_PARAM
-#define YYLEX		yylex(&yylval, YYLEX_PARAM)
+#define YYLEX       yylex(&yylval, YYLEX_PARAM)
 #else
-#define YYLEX		yylex(&yylval)
+#define YYLEX       yylex(&yylval)
 #endif
 #endif /* not YYLSP_NEEDED */
 #endif
@@ -554,27 +554,27 @@ while (0)
 
 #ifndef YYPURE
 
-int	yychar;			/*  the lookahead symbol		*/
-YYSTYPE	yylval;			/*  the semantic value of the		*/
-				/*  lookahead symbol			*/
+int yychar;         /*  the lookahead symbol        */
+YYSTYPE yylval;         /*  the semantic value of the       */
+                /*  lookahead symbol            */
 
 #ifdef YYLSP_NEEDED
-YYLTYPE yylloc;			/*  location data for the lookahead	*/
-				/*  symbol				*/
+YYLTYPE yylloc;         /*  location data for the lookahead */
+                /*  symbol              */
 #endif
 
-int yynerrs;			/*  number of parse errors so far       */
+int yynerrs;            /*  number of parse errors so far       */
 #endif  /* not YYPURE */
 
 #if YYDEBUG != 0
-int yydebug;			/*  nonzero means print parse trace	*/
+int yydebug;            /*  nonzero means print parse trace */
 /* Since this is uninitialized, it does not stop multiple parsers
    from coexisting.  */
 #endif
 
-/*  YYINITDEPTH indicates the initial size of the parser's stacks	*/
+/*  YYINITDEPTH indicates the initial size of the parser's stacks   */
 
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 #define YYINITDEPTH 200
 #endif
 
@@ -594,9 +594,9 @@ int yydebug;			/*  nonzero means print parse trace	*/
    definitions require.  With GCC, __builtin_memcpy takes an arg
    of type size_t, but it can handle unsigned int.  */
 
-#if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
-#else				/* not GNU C or C++ */
+#if __GNUC__ > 1        /* GNU C and GNU C++ define this.  */
+#define __yy_memcpy(TO,FROM,COUNT)  __builtin_memcpy(TO,FROM,COUNT)
+#else               /* not GNU C or C++ */
 #ifndef __cplusplus
 
 /* This is the most reliable way to avoid incompatibilities
@@ -671,17 +671,17 @@ yyparse(YYPARSE_PARAM_ARG)
   register int yyn;
   register short *yyssp;
   register YYSTYPE *yyvsp;
-  int yyerrstatus;	/*  number of tokens to shift before error messages enabled */
-  int yychar1 = 0;		/*  lookahead token as an internal (translated) token number */
+  int yyerrstatus;  /*  number of tokens to shift before error messages enabled */
+  int yychar1 = 0;      /*  lookahead token as an internal (translated) token number */
 
-  short	yyssa[YYINITDEPTH];	/*  the state stack			*/
-  YYSTYPE yyvsa[YYINITDEPTH];	/*  the semantic value stack		*/
+  short yyssa[YYINITDEPTH]; /*  the state stack         */
+  YYSTYPE yyvsa[YYINITDEPTH];   /*  the semantic value stack        */
 
-  short *yyss = yyssa;		/*  refer to the stacks thru separate pointers */
-  YYSTYPE *yyvs = yyvsa;	/*  to allow yyoverflow to reallocate them elsewhere */
+  short *yyss = yyssa;      /*  refer to the stacks thru separate pointers */
+  YYSTYPE *yyvs = yyvsa;    /*  to allow yyoverflow to reallocate them elsewhere */
 
 #ifdef YYLSP_NEEDED
-  YYLTYPE yylsa[YYINITDEPTH];	/*  the location stack			*/
+  YYLTYPE yylsa[YYINITDEPTH];   /*  the location stack          */
   YYLTYPE *yyls = yylsa;
   YYLTYPE *yylsp;
 
@@ -702,9 +702,9 @@ yyparse(YYPARSE_PARAM_ARG)
 #endif
 #endif
 
-  YYSTYPE yyval;		/*  the variable used to return		*/
-				/*  semantic values from the action	*/
-				/*  routines				*/
+  YYSTYPE yyval;        /*  the variable used to return     */
+                /*  semantic values from the action */
+                /*  routines                */
 
   int yylen;
 
@@ -716,7 +716,7 @@ yyparse(YYPARSE_PARAM_ARG)
   yystate = 0;
   yyerrstatus = 0;
   yynerrs = 0;
-  yychar = YYEMPTY;		/* Cause a token to be read.  */
+  yychar = YYEMPTY;     /* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
@@ -751,20 +751,20 @@ yynewstate:
 
 #ifdef yyoverflow
       /* Each stack pointer address is followed by the size of
-	 the data in use in that stack, in bytes.  */
+     the data in use in that stack, in bytes.  */
 #ifdef YYLSP_NEEDED
       /* This used to be a conditional around just the two extra args,
-	 but that might be undefined if yyoverflow is a macro.  */
+     but that might be undefined if yyoverflow is a macro.  */
       yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yyls1, size * sizeof (*yylsp),
-		 &yystacksize);
+         &yyss1, size * sizeof (*yyssp),
+         &yyvs1, size * sizeof (*yyvsp),
+         &yyls1, size * sizeof (*yylsp),
+         &yystacksize);
 #else
       yyoverflow("parser stack overflow",
-		 &yyss1, size * sizeof (*yyssp),
-		 &yyvs1, size * sizeof (*yyvsp),
-		 &yystacksize);
+         &yyss1, size * sizeof (*yyssp),
+         &yyvs1, size * sizeof (*yyvsp),
+         &yystacksize);
 #endif
 
       yyss = yyss1; yyvs = yyvs1;
@@ -774,34 +774,34 @@ yynewstate:
 #else /* no yyoverflow */
       /* Extend the stack our own way.  */
       if (yystacksize >= YYMAXDEPTH)
-	{
-	  yyerror("parser stack overflow");
-	  if (yyfree_stacks)
-	    {
-	      free (yyss);
-	      free (yyvs);
+    {
+      yyerror("parser stack overflow");
+      if (yyfree_stacks)
+        {
+          free (yyss);
+          free (yyvs);
 #ifdef YYLSP_NEEDED
-	      free (yyls);
+          free (yyls);
 #endif
-	    }
-	  return 2;
-	}
+        }
+      return 2;
+    }
       yystacksize *= 2;
       if (yystacksize > YYMAXDEPTH)
-	yystacksize = YYMAXDEPTH;
+    yystacksize = YYMAXDEPTH;
 #ifndef YYSTACK_USE_ALLOCA
       yyfree_stacks = 1;
 #endif
       yyss = (short *) YYSTACK_ALLOC (yystacksize * sizeof (*yyssp));
       __yy_memcpy ((char *)yyss, (char *)yyss1,
-		   size * (unsigned int) sizeof (*yyssp));
+           size * (unsigned int) sizeof (*yyssp));
       yyvs = (YYSTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yyvsp));
       __yy_memcpy ((char *)yyvs, (char *)yyvs1,
-		   size * (unsigned int) sizeof (*yyvsp));
+           size * (unsigned int) sizeof (*yyvsp));
 #ifdef YYLSP_NEEDED
       yyls = (YYLTYPE *) YYSTACK_ALLOC (yystacksize * sizeof (*yylsp));
       __yy_memcpy ((char *)yyls, (char *)yyls1,
-		   size * (unsigned int) sizeof (*yylsp));
+           size * (unsigned int) sizeof (*yylsp));
 #endif
 #endif /* no yyoverflow */
 
@@ -813,11 +813,11 @@ yynewstate:
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Stack size increased to %d\n", yystacksize);
+    fprintf(stderr, "Stack size increased to %d\n", yystacksize);
 #endif
 
       if (yyssp >= yyss + yystacksize - 1)
-	YYABORT;
+    YYABORT;
     }
 
 #if YYDEBUG != 0
@@ -847,21 +847,21 @@ yynewstate:
     {
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Reading a token: ");
+    fprintf(stderr, "Reading a token: ");
 #endif
       yychar = YYLEX;
     }
 
   /* Convert token to internal form (in yychar1) for indexing tables with */
 
-  if (yychar <= 0)		/* This means end of input. */
+  if (yychar <= 0)      /* This means end of input. */
     {
       yychar1 = 0;
-      yychar = YYEOF;		/* Don't call YYLEX any more */
+      yychar = YYEOF;       /* Don't call YYLEX any more */
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Now at end of input.\n");
+    fprintf(stderr, "Now at end of input.\n");
 #endif
     }
   else
@@ -870,15 +870,15 @@ yynewstate:
 
 #if YYDEBUG != 0
       if (yydebug)
-	{
-	  fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
-	  /* Give the individual parser a way to print the precise meaning
-	     of a token, for further debugging info.  */
+    {
+      fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
+      /* Give the individual parser a way to print the precise meaning
+         of a token, for further debugging info.  */
 #ifdef YYPRINT
-	  YYPRINT (stderr, yychar, yylval);
+      YYPRINT (stderr, yychar, yylval);
 #endif
-	  fprintf (stderr, ")\n");
-	}
+      fprintf (stderr, ")\n");
+    }
 #endif
     }
 
@@ -898,7 +898,7 @@ yynewstate:
   if (yyn < 0)
     {
       if (yyn == YYFLAG)
-	goto yyerrlab;
+    goto yyerrlab;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -949,11 +949,11 @@ yyreduce:
       int i;
 
       fprintf (stderr, "Reducing via rule %d (line %d), ",
-	       yyn, yyrline[yyn]);
+           yyn, yyrline[yyn]);
 
       /* Print the symbols being reduced, and their result.  */
       for (i = yyprhs[yyn]; yyrhs[i] > 0; i++)
-	fprintf (stderr, "%s ", yytname[yyrhs[i]]);
+    fprintf (stderr, "%s ", yytname[yyrhs[i]]);
       fprintf (stderr, " -> %s\n", yytname[yyr1[yyn]]);
     }
 #endif
@@ -963,1044 +963,1044 @@ yyreduce:
 
 case 27:
 {
-			yyval.d = 0.0;
-		;
+            yyval.d = 0.0;
+        ;
     break;}
 case 28:
 {
-			yyval.d = 1.0;
-		;
+            yyval.d = 1.0;
+        ;
     break;}
 case 29:
 {
-			yyval.d = 2.0;
-		;
+            yyval.d = 2.0;
+        ;
     break;}
 case 30:
 {
-			yyval.d = 3.0;
-		;
+            yyval.d = 3.0;
+        ;
     break;}
 case 31:
 {
-			yyval.d = 4.0;
-		;
+            yyval.d = 4.0;
+        ;
     break;}
 case 32:
 {
-			yyval.d = 5.0;
-		;
+            yyval.d = 5.0;
+        ;
     break;}
 case 33:
 {
-			yyval.d = 1.0 * (yyvsp[0].i);
+            yyval.d = 1.0 * (yyvsp[0].i);
 #ifndef NO_COMMENTS
-			printf("tINT: %f\n",yyvsp[0].i);
+            printf("tINT: %f\n",yyvsp[0].i);
 #endif
-		;
+        ;
     break;}
 case 34:
 {
-			yyval.d =1.0 * (yyvsp[0].d);
+            yyval.d =1.0 * (yyvsp[0].d);
 #ifndef NO_COMMENTS
-			printf("tFLOAT: %f\n",yyvsp[0].d);
+            printf("tFLOAT: %f\n",yyvsp[0].d);
 #endif
-		;
+        ;
     break;}
 case 35:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-		  } else {
-			zStep(stepcount,1);
-			stepcount++;
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zStep(stepcount,1);
+            stepcount++;
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 36:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-		  } else {
-			zStep(stepcount,1);
-			stepcount++;
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zStep(stepcount,1);
+            stepcount++;
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		  if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+          if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 37:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zPause();
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zPause();
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 38:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zPause();
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zPause();
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 39:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zWrite(yyvsp[-1].c);
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zWrite(yyvsp[-1].c);
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 40:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zWrite(yyvsp[-1].c);
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zWrite(yyvsp[-1].c);
           }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 41:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zClear();
-		  }
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zClear();
+          }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 42:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zClear();
-		  }
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zClear();
+          }
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 43:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d not supported: %s %g %s %g %g %g %g %g %g %g %g %g\n",
-			  yyvsp[-13].i, yyvsp[-12].c, yyvsp[-11].d, yyvsp[-10].c, yyvsp[-9].d, yyvsp[-8].d, yyvsp[-7].d, yyvsp[-6].d, yyvsp[-5].d, yyvsp[-4].d, yyvsp[-3].d, yyvsp[-2].d, yyvsp[-1].d);
-			/* alias the new color name to grey */
-			zcolor_alias(7,yyvsp[-10].c);
-	      } else {
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d not supported: %s %g %s %g %g %g %g %g %g %g %g %g\n",
+              yyvsp[-13].i, yyvsp[-12].c, yyvsp[-11].d, yyvsp[-10].c, yyvsp[-9].d, yyvsp[-8].d, yyvsp[-7].d, yyvsp[-6].d, yyvsp[-5].d, yyvsp[-4].d, yyvsp[-3].d, yyvsp[-2].d, yyvsp[-1].d);
+            /* alias the new color name to grey */
+            zcolor_alias(7,yyvsp[-10].c);
+          } else {
             zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,false,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
           }
-		;
+        ;
     break;}
 case 44:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d not supported: %s %g %s %g %g %g %g %g %g %g %g %g\n",
-			  yyvsp[-13].i, yyvsp[-12].c, yyvsp[-11].d, yyvsp[-10].c, yyvsp[-9].d, yyvsp[-8].d, yyvsp[-7].d, yyvsp[-6].d, yyvsp[-5].d, yyvsp[-4].d, yyvsp[-3].d, yyvsp[-2].d, yyvsp[-1].d);
-			/* alias the new color name to grey */
-			zcolor_alias(7,yyvsp[-10].c);
-	      } else {
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d not supported: %s %g %s %g %g %g %g %g %g %g %g %g\n",
+              yyvsp[-13].i, yyvsp[-12].c, yyvsp[-11].d, yyvsp[-10].c, yyvsp[-9].d, yyvsp[-8].d, yyvsp[-7].d, yyvsp[-6].d, yyvsp[-5].d, yyvsp[-4].d, yyvsp[-3].d, yyvsp[-2].d, yyvsp[-1].d);
+            /* alias the new color name to grey */
+            zcolor_alias(7,yyvsp[-10].c);
+          } else {
             zcolor_modify((int)yyvsp[-11].d,yyvsp[-10].c,(int)yyvsp[-9].d,false,(int)yyvsp[-8].d,(int)yyvsp[-7].d,(int)yyvsp[-6].d,(int)yyvsp[-5].d,(int)yyvsp[-4].d,(int)yyvsp[-3].d,(int)yyvsp[-2].d,(int)yyvsp[-1].d);
           }
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 45:
 {
-			zcolor_alias((int)yyvsp[-1].i,yyvsp[-2].c);
-		    if (is_current_file_not_cached()) {
+            zcolor_alias((int)yyvsp[-1].i,yyvsp[-2].c);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 46:
 {
-			zcolor_alias((int)yyvsp[-1].i,yyvsp[-2].c);
-		    if (is_current_file_not_cached()) {
+            zcolor_alias((int)yyvsp[-1].i,yyvsp[-2].c);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
-		    }
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            }
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 47:
 {
-			zpoint_alias(yyvsp[-2].c,yyvsp[-1].v);
-		    if (is_current_file_not_cached()) {
+            zpoint_alias(yyvsp[-2].c,yyvsp[-1].v);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 48:
 {
-			zpoint_alias(yyvsp[-2].c,yyvsp[-1].v);
-		    if (is_current_file_not_cached()) {
+            zpoint_alias(yyvsp[-2].c,yyvsp[-1].v);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
             }
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 49:
 {
-			zmatrix_alias(yyvsp[-2].c,yyvsp[-1].m);
-		    if (is_current_file_not_cached()) {
+            zmatrix_alias(yyvsp[-2].c,yyvsp[-1].m);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 50:
 {
-			zmatrix_alias(yyvsp[-2].c,yyvsp[-1].m);
-		    if (is_current_file_not_cached()) {
+            zmatrix_alias(yyvsp[-2].c,yyvsp[-1].m);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-2].c);
 #else
-		      free(yyvsp[-2].c);
+              free(yyvsp[-2].c);
 #endif
-		    }
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            }
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 51:
 {
             if (cache_mpd_subfiles(yyvsp[-1].c) == 0) {
-			  mpd_subfile_name = yyvsp[-1].c;
-			} else {
+              mpd_subfile_name = yyvsp[-1].c;
+            } else {
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
             }
-			YYACCEPT;
-		;
+            YYACCEPT;
+        ;
     break;}
 case 52:
 {
             if (cache_mpd_subfiles(yyvsp[-1].c) == 0) {
-			  mpd_subfile_name = yyvsp[-1].c;
-			} else {
+              mpd_subfile_name = yyvsp[-1].c;
+            } else {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		      free(yyvsp[-1].c);
+              free(yyvsp[-1].c);
 #endif
             }
-			YYACCEPT;
-		;
+            YYACCEPT;
+        ;
     break;}
 case 53:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zSave(stepcount);
-		  }
-			stepcount++;
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zSave(stepcount);
+          }
+            stepcount++;
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 54:
 {
-		  if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		    fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
-	      } else {
-			zSave(stepcount);
-		  }
-			stepcount++;
+          if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+            fprintf(output_file,"%d %s %s\n",yyvsp[-3].i, yyvsp[-2].c, yyvsp[-1].c);
+          } else {
+            zSave(stepcount);
+          }
+            stepcount++;
 #ifdef USE_QBUF_MALLOC
-		    qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+            qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 55:
 {
-		push_transform(yyvsp[-1].v, NULL);
-		;
+        push_transform(yyvsp[-1].v, NULL);
+        ;
     break;}
 case 56:
 {
-		push_transform(yyvsp[-1].v, NULL);
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        push_transform(yyvsp[-1].v, NULL);
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 57:
 {
-		pop_transform();
-		;
+        pop_transform();
+        ;
     break;}
 case 58:
 {
-		pop_transform();
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        pop_transform();
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 59:
 {
-		  /* axis degree representation */
-		  push_rotation(yyvsp[-1].v, yyvsp[-2].d);
-		;
+          /* axis degree representation */
+          push_rotation(yyvsp[-1].v, yyvsp[-2].d);
+        ;
     break;}
 case 60:
 {
-		  /* axis degree representation */
-		  push_rotation(yyvsp[-1].v, yyvsp[-2].d);
-		  if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+          /* axis degree representation */
+          push_rotation(yyvsp[-1].v, yyvsp[-2].d);
+          if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 61:
 {
-			pop_transform();
-		;
+            pop_transform();
+        ;
     break;}
 case 62:
 {
-		    pop_transform();
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            pop_transform();
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 63:
 {
-		push_transform(NULL, savemat((float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d)));
-		;
+        push_transform(NULL, savemat((float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d)));
+        ;
     break;}
 case 64:
 {
-		push_transform(NULL, savemat((float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d)));
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        push_transform(NULL, savemat((float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d),0,0,0,(float)(yyvsp[-1].d)));
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 65:
 {
-		pop_transform();
-		;
+        pop_transform();
+        ;
     break;}
 case 66:
 {
-		pop_transform();
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        pop_transform();
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 67:
 {
-		  push_transform(yyvsp[-2].v, yyvsp[-1].m);
-		;
+          push_transform(yyvsp[-2].v, yyvsp[-1].m);
+        ;
     break;}
 case 68:
 {
-		  push_transform(yyvsp[-2].v, yyvsp[-1].m);
-		  if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+          push_transform(yyvsp[-2].v, yyvsp[-1].m);
+          if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 69:
 {
-		pop_transform();
-		;
+        pop_transform();
+        ;
     break;}
 case 70:
 {
-		pop_transform();
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        pop_transform();
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 71:
 {
-		  if (is_current_file_not_cached()) {
-			yyval.c = yyvsp[0].c;
-		  } else {
+          if (is_current_file_not_cached()) {
+            yyval.c = yyvsp[0].c;
+          } else {
 #ifdef USE_QBUF_MALLOC
-		    yyval.c = (char *)qbufGetPtr(word_pool);
+            yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	        yyval.c = malloc(128);
+            yyval.c = malloc(128);
 #endif
-	        strcpy(yyval.c,yyvsp[0].c);
-		  }
+            strcpy(yyval.c,yyvsp[0].c);
+          }
 #if 0
-		  fprintf(stderr,"Got word \"%s\"\n",yyvsp[0].c);
-		  fflush(stderr);
+          fprintf(stderr,"Got word \"%s\"\n",yyvsp[0].c);
+          fflush(stderr);
 #endif
-		 ;
+         ;
     break;}
 case 72:
-{ 
-		  if (is_current_file_not_cached()) {
-			yyval.c = yyvsp[0].c;
-		  } else {
+{
+          if (is_current_file_not_cached()) {
+            yyval.c = yyvsp[0].c;
+          } else {
 #ifdef USE_QBUF_MALLOC
-		    yyval.c = (char *)qbufGetPtr(word_pool);
+            yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	        yyval.c = malloc(128);
+            yyval.c = malloc(128);
 #endif
-	        strcpy(yyval.c,yyvsp[0].c);
-		  }
+            strcpy(yyval.c,yyvsp[0].c);
+          }
 #if 0
           fprintf(stderr,"Got garbage characters \"%s\"\n",yyvsp[0].c);
-	      fflush(stderr);
+          fflush(stderr);
 #endif
-		;
+        ;
     break;}
 case 73:
-{ 
+{
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  sprintf(yyval.c,"%g",yyvsp[0].d); 
+          sprintf(yyval.c,"%g",yyvsp[0].d);
 #if 0
-		  fprintf(stderr,"Got word \"%s\"\n",yyval.c);
-		  fflush(stderr);
+          fprintf(stderr,"Got word \"%s\"\n",yyval.c);
+          fflush(stderr);
 #endif
-		;
+        ;
     break;}
 case 74:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 75:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 76:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 77:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 78:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 79:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 80:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 81:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 82:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 83:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 84:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 85:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 86:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 87:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,yyvsp[0].c);
-		;
+          strcpy(yyval.c,yyvsp[0].c);
+        ;
     break;}
 case 88:
 {
 #ifdef USE_QBUF_MALLOC
-	      yyval.c = (char *)qbufGetPtr(word_pool);
+          yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	      yyval.c = malloc(128);
+          yyval.c = malloc(128);
 #endif
-		  strcpy(yyval.c,"");
-		;
+          strcpy(yyval.c,"");
+        ;
     break;}
 case 89:
-{ 
-		// any Word string should be long enough hold all concatinated Words,
-		// so we do not need to malloc a new string, just strcat them.
-		yyval.c = yyvsp[-1].c;
-		strcat(yyvsp[-1].c, " ");
-		strcat(yyvsp[-1].c, yyvsp[0].c);
+{
+        // any Word string should be long enough hold all concatinated Words,
+        // so we do not need to malloc a new string, just strcat them.
+        yyval.c = yyvsp[-1].c;
+        strcat(yyvsp[-1].c, " ");
+        strcat(yyvsp[-1].c, yyvsp[0].c);
 #ifdef USE_QBUF_MALLOC
-		  qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
+          qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
 #else
-		  free(yyvsp[0].c);
+          free(yyvsp[0].c);
 #endif
-		;
+        ;
     break;}
 case 90:
 {
 #ifndef NO_COMMENTS
-		printf("# %s\n",yyvsp[-1].c);
-		fflush(stdout);
+        printf("# %s\n",yyvsp[-1].c);
+        fflush(stdout);
 #endif
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %s\n",yyvsp[-2].i, yyvsp[-1].c);
-	    } else {
-		  platform_comment(yyvsp[-1].c, include_stack_ptr);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %s\n",yyvsp[-2].i, yyvsp[-1].c);
+        } else {
+          platform_comment(yyvsp[-1].c, include_stack_ptr);
         }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+        qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		free(yyvsp[-1].c);
+        free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 91:
 {
 #ifndef NO_COMMENTS
-		printf("# %s\n",yyvsp[-1].c);
-		fflush(stdout);
+        printf("# %s\n",yyvsp[-1].c);
+        fflush(stdout);
 #endif
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %s\n",yyvsp[-2].i, yyvsp[-1].c);
-	    } else {
- 		  platform_comment(yyvsp[-1].c, include_stack_ptr);
-		}
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %s\n",yyvsp[-2].i, yyvsp[-1].c);
+        } else {
+          platform_comment(yyvsp[-1].c, include_stack_ptr);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+        qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		free(yyvsp[-1].c);
+        free(yyvsp[-1].c);
 #endif
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 92:
 {
-		;
+        ;
     break;}
 case 93:
 {
-			if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+            if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 94:
 {
-			if (yyvsp[0].d == 16.0) {
-			  yyval.i = current_color[include_stack_ptr];
-			} else if (yyvsp[0].d == 24.0) {
-			  yyval.i = edge_color(current_color[include_stack_ptr]);
-			} else {
-			  yyval.i = (int) yyvsp[0].d;
-			}
-		;
+            if (yyvsp[0].d == 16.0) {
+              yyval.i = current_color[include_stack_ptr];
+            } else if (yyvsp[0].d == 24.0) {
+              yyval.i = edge_color(current_color[include_stack_ptr]);
+            } else {
+              yyval.i = (int) yyvsp[0].d;
+            }
+        ;
     break;}
 case 95:
 {
-			yyval.i = zcolor_lookup(yyvsp[0].c);
-		    if (is_current_file_not_cached()) {
+            yyval.i = zcolor_lookup(yyvsp[0].c);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
 #else
-		      free(yyvsp[0].c);
+              free(yyvsp[0].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 96:
 {
 #if 1
-			yyval.m = savemat(yyvsp[-8].d,yyvsp[-7].d,yyvsp[-6].d,yyvsp[-5].d,yyvsp[-4].d,yyvsp[-3].d,yyvsp[-2].d,yyvsp[-1].d,yyvsp[0].d);
+            yyval.m = savemat(yyvsp[-8].d,yyvsp[-7].d,yyvsp[-6].d,yyvsp[-5].d,yyvsp[-4].d,yyvsp[-3].d,yyvsp[-2].d,yyvsp[-1].d,yyvsp[0].d);
 #else
-			yyval.m = savemat(yyvsp[0].d,yyvsp[-1].d,yyvsp[-2].d,yyvsp[-3].d,yyvsp[-4].d,yyvsp[-5].d,yyvsp[-6].d,yyvsp[-7].d,yyvsp[-8].d);
+            yyval.m = savemat(yyvsp[0].d,yyvsp[-1].d,yyvsp[-2].d,yyvsp[-3].d,yyvsp[-4].d,yyvsp[-5].d,yyvsp[-6].d,yyvsp[-7].d,yyvsp[-8].d);
 #endif
-		;
+        ;
     break;}
 case 97:
 {
-		    yyval.m = zmatrix_lookup(yyvsp[0].c);
-		    if (is_current_file_not_cached()) {
+            yyval.m = zmatrix_lookup(yyvsp[0].c);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
 #else
-		      free(yyvsp[0].c);
+              free(yyvsp[0].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 98:
 {
-			double a, b, c;
-			vector3d *v;
-			a = yyvsp[-2].d;
-			b = yyvsp[-1].d;
-			c = yyvsp[0].d;
-			v = savevec(a,b,c);
-			yyval.v = v;
+            double a, b, c;
+            vector3d *v;
+            a = yyvsp[-2].d;
+            b = yyvsp[-1].d;
+            c = yyvsp[0].d;
+            v = savevec(a,b,c);
+            yyval.v = v;
 #ifndef NO_COMMENTS
-			printf("Position (%f, %f, %f)\n",v->x, v->y, v->z);
+            printf("Position (%f, %f, %f)\n",v->x, v->y, v->z);
 #endif
-		;
+        ;
     break;}
 case 99:
 {
-		    yyval.v = zpoint_lookup(yyvsp[0].c);
-		    if (is_current_file_not_cached()) {
+            yyval.v = zpoint_lookup(yyvsp[0].c);
+            if (is_current_file_not_cached()) {
 #ifdef USE_QBUF_MALLOC
-		      qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
+              qbufReleasePtr(word_pool, (char *)yyvsp[0].c);
 #else
-		      free(yyvsp[0].c);
+              free(yyvsp[0].c);
 #endif
-		    }
-		;
+            }
+        ;
     break;}
 case 100:
 {
-		  if (is_current_file_not_cached()) {
-			yyval.c = yyvsp[0].c;
-		  } else {
+          if (is_current_file_not_cached()) {
+            yyval.c = yyvsp[0].c;
+          } else {
 #ifdef USE_QBUF_MALLOC
-		    yyval.c = (char *)qbufGetPtr(word_pool);
+            yyval.c = (char *)qbufGetPtr(word_pool);
 #else
-	        yyval.c = malloc(128);
+            yyval.c = malloc(128);
 #endif
-	        strcpy(yyval.c,yyvsp[0].c);
-		  }
-		;
+            strcpy(yyval.c,yyvsp[0].c);
+          }
+        ;
     break;}
 case 101:
 {
-		if (ldraw_commandline_opts.output == 1) {
-			if (include_stack_ptr >= ldraw_commandline_opts.output_depth ) {
-  				transform_vec_inplace(yyvsp[-3].v);
-  				transform_mat_inplace(yyvsp[-2].m);
-				fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g %s\n",
-					yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
-					(yyvsp[-2].m)->a, (yyvsp[-2].m)->b, (yyvsp[-2].m)->c, (yyvsp[-2].m)->d, (yyvsp[-2].m)->e, (yyvsp[-2].m)->f, 
-					(yyvsp[-2].m)->g, (yyvsp[-2].m)->h, (yyvsp[-2].m)->i, yyvsp[-1].c);
-			} else {
-				if (start_include_file(yyvsp[-1].c) == 0) {
-					fprintf(output_file,"0 inlining %s\n",yyvsp[-1].c);
-	  				/* update transform matricies */
-					push_transform(yyvsp[-3].v, yyvsp[-2].m);
-					znamelist_push();
-					current_color[include_stack_ptr] = yyvsp[-4].i;
-				} else {
+        if (ldraw_commandline_opts.output == 1) {
+            if (include_stack_ptr >= ldraw_commandline_opts.output_depth ) {
+                transform_vec_inplace(yyvsp[-3].v);
+                transform_mat_inplace(yyvsp[-2].m);
+                fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g %s\n",
+                    yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
+                    (yyvsp[-2].m)->a, (yyvsp[-2].m)->b, (yyvsp[-2].m)->c, (yyvsp[-2].m)->d, (yyvsp[-2].m)->e, (yyvsp[-2].m)->f,
+                    (yyvsp[-2].m)->g, (yyvsp[-2].m)->h, (yyvsp[-2].m)->i, yyvsp[-1].c);
+            } else {
+                if (start_include_file(yyvsp[-1].c) == 0) {
+                    fprintf(output_file,"0 inlining %s\n",yyvsp[-1].c);
+                    /* update transform matricies */
+                    push_transform(yyvsp[-3].v, yyvsp[-2].m);
+                    znamelist_push();
+                    current_color[include_stack_ptr] = yyvsp[-4].i;
+                } else {
 #ifndef NO_COMMENTS
-				printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
+                printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
 #endif
-				}
-			}
-	    } else {
-	      if (start_include_file(yyvsp[-1].c) == 0) {
-	  	  /* update transform matricies */
-		  push_transform(yyvsp[-3].v, yyvsp[-2].m);
-		  znamelist_push();
-		  current_color[include_stack_ptr] = yyvsp[-4].i;
-		  } else {
+                }
+            }
+        } else {
+          if (start_include_file(yyvsp[-1].c) == 0) {
+          /* update transform matricies */
+          push_transform(yyvsp[-3].v, yyvsp[-2].m);
+          znamelist_push();
+          current_color[include_stack_ptr] = yyvsp[-4].i;
+          } else {
 #ifndef NO_COMMENTS
-		  printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
+          printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
 #endif
-		  }
-		}
+          }
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+        qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		    free(yyvsp[-1].c);
+            free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 102:
 {
-		if (ldraw_commandline_opts.output == 1) {
-			if (include_stack_ptr >= ldraw_commandline_opts.output_depth ) {
-  				transform_vec_inplace(yyvsp[-3].v);
-  				transform_mat_inplace(yyvsp[-2].m);
-				fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g %s\n",
-					yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
-					(yyvsp[-2].m)->a, (yyvsp[-2].m)->b, (yyvsp[-2].m)->c, (yyvsp[-2].m)->d, (yyvsp[-2].m)->e, (yyvsp[-2].m)->f, 
-					(yyvsp[-2].m)->g, (yyvsp[-2].m)->h, (yyvsp[-2].m)->i, yyvsp[-1].c);
-			} else {
-				if (start_include_file(yyvsp[-1].c) == 0) {
-					fprintf(output_file,"0 inlining %s\n",yyvsp[-1].c);
-	  				/* update transform matricies */
-					push_transform(yyvsp[-3].v, yyvsp[-2].m);
-					znamelist_push();
-					current_color[include_stack_ptr] = yyvsp[-4].i;
-					defer_stop_include_file();
-				} else {
+        if (ldraw_commandline_opts.output == 1) {
+            if (include_stack_ptr >= ldraw_commandline_opts.output_depth ) {
+                transform_vec_inplace(yyvsp[-3].v);
+                transform_mat_inplace(yyvsp[-2].m);
+                fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g %s\n",
+                    yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
+                    (yyvsp[-2].m)->a, (yyvsp[-2].m)->b, (yyvsp[-2].m)->c, (yyvsp[-2].m)->d, (yyvsp[-2].m)->e, (yyvsp[-2].m)->f,
+                    (yyvsp[-2].m)->g, (yyvsp[-2].m)->h, (yyvsp[-2].m)->i, yyvsp[-1].c);
+            } else {
+                if (start_include_file(yyvsp[-1].c) == 0) {
+                    fprintf(output_file,"0 inlining %s\n",yyvsp[-1].c);
+                    /* update transform matricies */
+                    push_transform(yyvsp[-3].v, yyvsp[-2].m);
+                    znamelist_push();
+                    current_color[include_stack_ptr] = yyvsp[-4].i;
+                    defer_stop_include_file();
+                } else {
 #ifndef NO_COMMENTS
-					printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
+                    printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
 #endif
-					if (stop_include_file() == (-1)) { YYACCEPT; };
-				}
-			}
-		} else {
-		  if (start_include_file(yyvsp[-1].c) == 0) {
-		    /* update transform matricies */
-		    push_transform(yyvsp[-3].v, yyvsp[-2].m);
-		    znamelist_push();
-		    current_color[include_stack_ptr] = yyvsp[-4].i;
-		  } else {
+                    if (stop_include_file() == (-1)) { YYACCEPT; };
+                }
+            }
+        } else {
+          if (start_include_file(yyvsp[-1].c) == 0) {
+            /* update transform matricies */
+            push_transform(yyvsp[-3].v, yyvsp[-2].m);
+            znamelist_push();
+            current_color[include_stack_ptr] = yyvsp[-4].i;
+          } else {
 #ifndef NO_COMMENTS
-		  printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
+          printf("# Cannot find %s, ignoring.\n",yyvsp[-1].c);
 #endif
-		  }
-	    }
+          }
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
+        qbufReleasePtr(word_pool, (char *)yyvsp[-1].c);
 #else
-		free(yyvsp[-1].c);
+        free(yyvsp[-1].c);
 #endif
-		;
+        ;
     break;}
 case 103:
 {
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g\n",
-		  yyvsp[-4].i, yyvsp[-3].i, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_line(yyvsp[-2].v, yyvsp[-1].v, yyvsp[-3].i);
-		}
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g\n",
+          yyvsp[-4].i, yyvsp[-3].i, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_line(yyvsp[-2].v, yyvsp[-1].v, yyvsp[-3].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		;
+        ;
     break;}
 case 104:
 {
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g\n",
-		  yyvsp[-4].i, yyvsp[-3].i, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_line(yyvsp[-2].v, yyvsp[-1].v, yyvsp[-3].i);
-		}
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g\n",
+          yyvsp[-4].i, yyvsp[-3].i, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_line(yyvsp[-2].v, yyvsp[-1].v, yyvsp[-3].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 105:
 {
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
-		  (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z, (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_triangle(yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-4].i);
-		}
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
+          (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z, (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_triangle(yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-4].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		;
+        ;
     break;}
 case 106:
 {
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
-		  (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z, (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_triangle(yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-4].i);
-		}
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-5].i, yyvsp[-4].i, (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z,
+          (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z, (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_triangle(yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-4].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 107:
 {
-		transform_vec_inplace(yyvsp[-4].v);
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
-		  (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-  		  render_quad(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
-		}
+        transform_vec_inplace(yyvsp[-4].v);
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
+          (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_quad(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-4].v);
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-4].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		;
+        ;
     break;}
 case 108:
 {
-		transform_vec_inplace(yyvsp[-4].v);
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
-		  (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_quad(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
-		}
+        transform_vec_inplace(yyvsp[-4].v);
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
+          (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_quad(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-4].v);
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-4].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 case 109:
 {
-		transform_vec_inplace(yyvsp[-4].v);
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
-		  (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_five(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
-		}
+        transform_vec_inplace(yyvsp[-4].v);
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
+          (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_five(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-4].v);
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-4].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		;
+        ;
     break;}
 case 110:
 {
-		transform_vec_inplace(yyvsp[-4].v);
-		transform_vec_inplace(yyvsp[-3].v);
-		transform_vec_inplace(yyvsp[-2].v);
-		transform_vec_inplace(yyvsp[-1].v);
-		if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
-		  fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
-		  yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
-		  (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
-		  (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
-	    } else {
-		  render_five(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
-	    }
+        transform_vec_inplace(yyvsp[-4].v);
+        transform_vec_inplace(yyvsp[-3].v);
+        transform_vec_inplace(yyvsp[-2].v);
+        transform_vec_inplace(yyvsp[-1].v);
+        if ((ldraw_commandline_opts.output == 1)&&(include_stack_ptr <= ldraw_commandline_opts.output_depth )) {
+          fprintf(output_file,"%d %d %g %g %g %g %g %g %g %g %g %g %g %g\n",
+          yyvsp[-6].i, yyvsp[-5].i, (yyvsp[-4].v)->x, (yyvsp[-4].v)->y, (yyvsp[-4].v)->z,
+          (yyvsp[-3].v)->x, (yyvsp[-3].v)->y, (yyvsp[-3].v)->z, (yyvsp[-2].v)->x, (yyvsp[-2].v)->y, (yyvsp[-2].v)->z,
+          (yyvsp[-1].v)->x, (yyvsp[-1].v)->y, (yyvsp[-1].v)->z);
+        } else {
+          render_five(yyvsp[-4].v, yyvsp[-3].v, yyvsp[-2].v, yyvsp[-1].v, yyvsp[-5].i);
+        }
 #ifdef USE_QBUF_MALLOC
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
-		qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-4].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-3].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-2].v);
+        qbufReleasePtr(vector_pool, (char *)yyvsp[-1].v);
 #else
-		free(yyvsp[-4].v);
-		free(yyvsp[-3].v);
-		free(yyvsp[-2].v);
-		free(yyvsp[-1].v);
+        free(yyvsp[-4].v);
+        free(yyvsp[-3].v);
+        free(yyvsp[-2].v);
+        free(yyvsp[-1].v);
 #endif
-		if (stop_include_file() == (-1)) { YYACCEPT; };
-		;
+        if (stop_include_file() == (-1)) { YYACCEPT; };
+        ;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
@@ -2018,7 +2018,7 @@ case 110:
       short *ssp1 = yyss - 1;
       fprintf (stderr, "state stack now");
       while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
+    fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
@@ -2068,44 +2068,44 @@ yyerrlab:   /* here on detecting error */
       yyn = yypact[yystate];
 
       if (yyn > YYFLAG && yyn < YYLAST)
-	{
-	  int size = 0;
-	  char *msg;
-	  int x, count;
+    {
+      int size = 0;
+      char *msg;
+      int x, count;
 
-	  count = 0;
-	  /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
-	  for (x = (yyn < 0 ? -yyn : 0);
-	       x < (sizeof(yytname) / sizeof(char *)); x++)
-	    if (yycheck[x + yyn] == x)
-	      size += strlen(yytname[x]) + 15, count++;
-	  msg = (char *) malloc(size + 15);
-	  if (msg != 0)
-	    {
-	      strcpy(msg, "parse error");
+      count = 0;
+      /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
+      for (x = (yyn < 0 ? -yyn : 0);
+           x < (sizeof(yytname) / sizeof(char *)); x++)
+        if (yycheck[x + yyn] == x)
+          size += strlen(yytname[x]) + 15, count++;
+      msg = (char *) malloc(size + 15);
+      if (msg != 0)
+        {
+          strcpy(msg, "parse error");
 
-	      if (count < 5)
-		{
-		  count = 0;
-		  for (x = (yyn < 0 ? -yyn : 0);
-		       x < (sizeof(yytname) / sizeof(char *)); x++)
-		    if (yycheck[x + yyn] == x)
-		      {
-			strcat(msg, count == 0 ? ", expecting `" : " or `");
-			strcat(msg, yytname[x]);
-			strcat(msg, "'");
-			count++;
-		      }
-		}
-	      yyerror(msg);
-	      free(msg);
-	    }
-	  else
-	    yyerror ("parse error; also virtual memory exceeded");
-	}
+          if (count < 5)
+        {
+          count = 0;
+          for (x = (yyn < 0 ? -yyn : 0);
+               x < (sizeof(yytname) / sizeof(char *)); x++)
+            if (yycheck[x + yyn] == x)
+              {
+            strcat(msg, count == 0 ? ", expecting `" : " or `");
+            strcat(msg, yytname[x]);
+            strcat(msg, "'");
+            count++;
+              }
+        }
+          yyerror(msg);
+          free(msg);
+        }
+      else
+        yyerror ("parse error; also virtual memory exceeded");
+    }
       else
 #endif /* YYERROR_VERBOSE */
-	yyerror("parse error");
+    yyerror("parse error");
     }
 
   goto yyerrlab1;
@@ -2117,11 +2117,11 @@ yyerrlab1:   /* here on error raised explicitly by an action */
 
       /* return failure if at end of input */
       if (yychar == YYEOF)
-	YYABORT;
+    YYABORT;
 
 #if YYDEBUG != 0
       if (yydebug)
-	fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
+    fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
 #endif
 
       yychar = YYEMPTY;
@@ -2130,7 +2130,7 @@ yyerrlab1:   /* here on error raised explicitly by an action */
   /* Else will try to reuse lookahead token
      after shifting the error token.  */
 
-  yyerrstatus = 3;		/* Each real token shifted decrements this */
+  yyerrstatus = 3;      /* Each real token shifted decrements this */
 
   goto yyerrhandle;
 
@@ -2158,7 +2158,7 @@ yyerrpop:   /* pop the current state because it cannot handle the error token */
       short *ssp1 = yyss - 1;
       fprintf (stderr, "Error: state stack now");
       while (ssp1 != yyssp)
-	fprintf (stderr, " %d", *++ssp1);
+    fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
@@ -2177,7 +2177,7 @@ yyerrhandle:
   if (yyn < 0)
     {
       if (yyn == YYFLAG)
-	goto yyerrpop;
+    goto yyerrpop;
       yyn = -yyn;
       goto yyreduce;
     }
@@ -2237,7 +2237,7 @@ void yyerror(s)
 vector3d * savevec(float x, float y, float z)
 {
   vector3d *tmp;
-  
+
 #ifdef USE_QBUF_MALLOC
   tmp = (vector3d *)qbufGetPtr(vector_pool);
 #else
@@ -2252,7 +2252,7 @@ vector3d * savevec(float x, float y, float z)
 vector3d * copyvec(vector3d *vec)
 {
   vector3d *tmp;
-  
+
 #ifdef USE_QBUF_MALLOC
   tmp = (vector3d *)qbufGetPtr(vector_pool);
 #else
@@ -2308,8 +2308,8 @@ int print_transform(vector3d *t,matrix3d *m)
 void pop_transform()
 {
   if(transform_stack_ptr < 0) {
-	zWrite("Error in transform stack\n");
-	exit(-1);
+    zWrite("Error in transform stack\n");
+    exit(-1);
   }
 #ifdef USE_QBUF_MALLOC
   qbufReleasePtr(vector_pool, (char *)current_translation[transform_stack_ptr]);
@@ -2327,66 +2327,66 @@ int push_rotation(vector3d *axis, double degrees)
   matrix3d *m;
   double a,b,c,s, veclen_inv, sin2a;
 
-	// convert axis and degrees into a quaternion
+    // convert axis and degrees into a quaternion
     veclen_inv = 1.0/sqrt(axis->x*axis->x + axis->y*axis->y + axis->z*axis->z);
-	sin2a = sin((3.1415927*degrees)/360.0);
-	a = sin2a * axis->x * veclen_inv;
-	b = sin2a * axis->y * veclen_inv;
-	c = sin2a * axis->z * veclen_inv;
-	s = cos((3.1415927*degrees)/360.0);
-	// convert quaternion into a rotation matrix.
+    sin2a = sin((3.1415927*degrees)/360.0);
+    a = sin2a * axis->x * veclen_inv;
+    b = sin2a * axis->y * veclen_inv;
+    c = sin2a * axis->z * veclen_inv;
+    s = cos((3.1415927*degrees)/360.0);
+    // convert quaternion into a rotation matrix.
 #ifdef USE_QBUF_MALLOC
       m = (matrix3d *)qbufGetPtr(matrix_pool);
 #else
       m = (matrix3d *)malloc(sizeof(matrix3d));
 #endif
-	m->a = (float)(1 - 2*b*b-2*c*c);
-	m->b = (float)(2*a*b - 2*s*c);
-	m->c = (float)(2*a*c + 2*s*b);
-	m->d = (float)(2*a*b+2*s*c);
-	m->e = (float)(1 - 2*a*a - 2*c*c);
-	m->f = (float)(2*b*c - 2*s*a);
-	m->g = (float)(2*a*c - 2*s*b);
-	m->h = (float)(2*b*c + 2*s*a);
-	m->i = (float)(1 - 2*a*a - 2*b*b);
+    m->a = (float)(1 - 2*b*b-2*c*c);
+    m->b = (float)(2*a*b - 2*s*c);
+    m->c = (float)(2*a*c + 2*s*b);
+    m->d = (float)(2*a*b+2*s*c);
+    m->e = (float)(1 - 2*a*a - 2*c*c);
+    m->f = (float)(2*b*c - 2*s*a);
+    m->g = (float)(2*a*c - 2*s*b);
+    m->h = (float)(2*b*c + 2*s*a);
+    m->i = (float)(1 - 2*a*a - 2*b*b);
 
-	push_transform(NULL,m);
+    push_transform(NULL,m);
 #ifdef USE_QBUF_MALLOC
   qbufReleasePtr(vector_pool, (char *)axis);
 #else
   free(axis);
 #endif
-	return 0;
+    return 0;
 }
 
 int push_transform(vector3d *t,matrix3d *m)
 {
   vector3d *oldt;
-  matrix3d *oldm; 
-  
+  matrix3d *oldm;
+
   if(transform_stack_ptr >= (MAX_TRANSFORM_DEPTH-1)) {
-	zWrite("Transform stack overflow\n");
-	exit(-1);
+    zWrite("Transform stack overflow\n");
+    exit(-1);
   }
   if (transform_stack_ptr < 0) {
-	if (m == NULL) {
+    if (m == NULL) {
 #ifdef USE_QBUF_MALLOC
       m = (matrix3d *)qbufGetPtr(matrix_pool);
 #else
       m = (matrix3d *)malloc(sizeof(matrix3d));
 #endif
-	  m->a = 1.0; m->b = 0.0; m->c = 0.0;
-	  m->d = 0.0; m->e = 1.0; m->f = 0.0;
-	  m->g = 0.0; m->h = 0.0; m->i = 1.0;
-	}
-	if (t == NULL) {
+      m->a = 1.0; m->b = 0.0; m->c = 0.0;
+      m->d = 0.0; m->e = 1.0; m->f = 0.0;
+      m->g = 0.0; m->h = 0.0; m->i = 1.0;
+    }
+    if (t == NULL) {
 #ifdef USE_QBUF_MALLOC
      t = (vector3d *)qbufGetPtr(vector_pool);
 #else
      t= (vector3d *)malloc(sizeof(vector3d));
 #endif
-	 t->x = 0.0; t->y = 0.0; t->z = 0.0;
-	}
+     t->x = 0.0; t->y = 0.0; t->z = 0.0;
+    }
   } else {
   oldm = current_transform[transform_stack_ptr];
   oldt = current_translation[transform_stack_ptr];
@@ -2396,14 +2396,14 @@ int push_transform(vector3d *t,matrix3d *m)
   fprintf(stdout,"Transform current:\n");
   print_transform(t, m);
 #endif
-	if (m == NULL) {
+    if (m == NULL) {
 #ifdef USE_QBUF_MALLOC
       m = (matrix3d *)qbufGetPtr(matrix_pool);
 #else
       m = (matrix3d *)malloc(sizeof(matrix3d));
 #endif
       *m = *oldm;
-	} else {
+    } else {
       matrix3d newm;
       newm.a = oldm->a * m->a + oldm->b * m->d + oldm->c * m->g;
       newm.b = oldm->a * m->b + oldm->b * m->e + oldm->c * m->h;
@@ -2416,7 +2416,7 @@ int push_transform(vector3d *t,matrix3d *m)
       newm.i = oldm->g * m->c + oldm->h * m->f + oldm->i * m->i;
       *m = newm;
   }
-  if (t == NULL) {  
+  if (t == NULL) {
 #ifdef USE_QBUF_MALLOC
      t = (vector3d *)qbufGetPtr(vector_pool);
 #else
@@ -2437,17 +2437,17 @@ int push_transform(vector3d *t,matrix3d *m)
 #if 0
   fprintf(stdout,"Transform %d:\n",transform_stack_ptr);
   print_transform(current_translation[transform_stack_ptr],
-	          current_transform[transform_stack_ptr]);
+              current_transform[transform_stack_ptr]);
 #endif
   return 0;
 }
 
 matrix3d * savemat(float a, float b, float c,
-		   float d, float e, float f,
-		   float g, float h, float i)
+           float d, float e, float f,
+           float g, float h, float i)
 {
   matrix3d *tmp;
-  
+
 #ifdef USE_QBUF_MALLOC
   tmp = (matrix3d *)qbufGetPtr(matrix_pool);
 #else
@@ -2468,7 +2468,7 @@ matrix3d * savemat(float a, float b, float c,
 matrix3d * copymat(matrix3d *mat)
 {
   matrix3d *tmp;
-  
+
 #ifdef USE_QBUF_MALLOC
   tmp = (matrix3d *)qbufGetPtr(matrix_pool);
 #else

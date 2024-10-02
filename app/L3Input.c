@@ -148,7 +148,7 @@ static char          Path[_MAX_PATH];
 static char          SubPartDatName[_MAX_PATH];
 static char          ErrStr[400];
 #ifdef USE_OPENGL
-char                *Dirs[] = {"\\P\\", "\\Parts\\", "\\Models\\", 
+char                *Dirs[] = {"\\P\\", "\\Parts\\", "\\Models\\",
                                "\\Unofficial\\P\\", "\\Unofficial\\Parts\\",
                                "\\Unofficial\\Lsynth\\"};
 
@@ -169,7 +169,7 @@ void GetLDrawSearchDirs(int *ErrorCode)
     {
       /* Neither environment variable, nor ldraw.ini, simply try current dir */
       if (DirHasPandPARTS("."))
-	LDrawIni = LDrawIniGet(".", NULL, &LDrawIniErrorCode);
+    LDrawIni = LDrawIniGet(".", NULL, &LDrawIniErrorCode);
     }
   }
   if (!LDrawIni)
@@ -186,7 +186,7 @@ You may type the set command at the DOS prompt or put it into C:\\AUTOEXEC.BAT\n
   }
   else {
     extern int LDSearchDirsGet(struct LDrawIniS * LDrawIni);
-    
+
     i = LDSearchDirsGet(LDrawIni);
     if (!i){
       printf("Out of memory adding search dirs.\n");
@@ -195,7 +195,7 @@ You may type the set command at the DOS prompt or put it into C:\\AUTOEXEC.BAT\n
   }
 
   strcpy(pathname, LDrawIni->LDrawDir); // Needed for old ldglite code.
-  
+
   // That NULL at the end is the modelpath.  Do we have it yet?
   // If not, then we may need to redo this when we do have it.
   i = LDrawIniComputeRealDirs(LDrawIni, 1, 0, NULL);
@@ -291,7 +291,7 @@ char                *Strdup(const char *Str)
 }
 
 #ifndef USE_OPENGL
-static 
+static
 #endif
 void          FreePart(struct L3PartS * PartPtr);
 
@@ -315,7 +315,7 @@ static void          FreeLines(struct L3PartS * PartPtr)
 }
 
 #ifndef USE_OPENGL
-static 
+static
 #endif
 void          FreePart(struct L3PartS * PartPtr)
 {
@@ -405,7 +405,7 @@ char *L3fgets(char *Str, int n, FILE *fp)
 }
 
 #ifndef USE_OPENGL
-static 
+static
 #else
 void StripQuotes(char *s, char *SubPartDatName)
 {
@@ -417,13 +417,13 @@ void StripQuotes(char *s, char *SubPartDatName)
     {
       strcpy(SubPartDatName, s+1); /* Strip leading quotes */
       if ((s = strchr(SubPartDatName, '\"')))
-	*s = 0; /* Strip trailing quotes */
+    *s = 0; /* Strip trailing quotes */
     }
   }
   // NOTE:  This is kinda lame.
   else if ((sub = strstr(s, SubPartDatName)) == strstr(s, SubPartDatName))
   {
-    strcpy(SubPartDatName, sub); 
+    strcpy(SubPartDatName, sub);
   }
 }
 #endif
@@ -485,7 +485,7 @@ int is_stud_primitive(const char* FileName)
 }
 
 #ifndef USE_OPENGL
-static 
+static
 #endif
 struct L3PartS *FindPart(int Internal, char *DatName)
 {
@@ -592,7 +592,7 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
    if (!fp)
    {
       /* If not in current directory then look in P, PARTS and MODELS */
-#if 1     
+#if 1
      for (i = 0; i < LDrawIni->nSearchDirs; i++)
      {
        concat_path(LDrawIni->SearchDirs[i].Dir, DatName, Path);
@@ -607,31 +607,31 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
       for (i = 0; i < sizeof(Dirs) / sizeof(char *); i++)
       {
 #ifdef USE_OPENGL
-	 if (stricmp(Dirs[i], "\\P\\") == 0)
-	   concat_path(primitivepath, DatName, Path);
-	 if (stricmp(Dirs[i], "\\Parts\\") == 0)
-	   concat_path(partspath, DatName, Path);
-	 if (stricmp(Dirs[i], "\\Models\\") == 0)
-	   concat_path(modelspath, DatName, Path);
-	 if (stricmp(Dirs[i], "\\Unofficial\\P\\") == 0)
-	 {
-	   char PrePath[_MAX_PATH];
-	   concat_path(LDrawDir, Dirs[i], PrePath);
-	   concat_path(PrePath, DatName, Path);
-	 }
-	 if (stricmp(Dirs[i], "\\Unofficial\\Parts\\") == 0)
-	 {
-	   char PrePath[_MAX_PATH];
-	   concat_path(LDrawDir, Dirs[i], PrePath);
-	   concat_path(PrePath, DatName, Path);
-	 }
-	 if (stricmp(Dirs[i], "\\Unofficial\\LSynth\\") == 0)
-	 {
-	   char PrePath[_MAX_PATH];
-	   concat_path(LDrawDir, Dirs[i], PrePath);
-	   concat_path(PrePath, DatName, Path);
-	 }
-#else	
+     if (stricmp(Dirs[i], "\\P\\") == 0)
+       concat_path(primitivepath, DatName, Path);
+     if (stricmp(Dirs[i], "\\Parts\\") == 0)
+       concat_path(partspath, DatName, Path);
+     if (stricmp(Dirs[i], "\\Models\\") == 0)
+       concat_path(modelspath, DatName, Path);
+     if (stricmp(Dirs[i], "\\Unofficial\\P\\") == 0)
+     {
+       char PrePath[_MAX_PATH];
+       concat_path(LDrawDir, Dirs[i], PrePath);
+       concat_path(PrePath, DatName, Path);
+     }
+     if (stricmp(Dirs[i], "\\Unofficial\\Parts\\") == 0)
+     {
+       char PrePath[_MAX_PATH];
+       concat_path(LDrawDir, Dirs[i], PrePath);
+       concat_path(PrePath, DatName, Path);
+     }
+     if (stricmp(Dirs[i], "\\Unofficial\\LSynth\\") == 0)
+     {
+       char PrePath[_MAX_PATH];
+       concat_path(LDrawDir, Dirs[i], PrePath);
+       concat_path(PrePath, DatName, Path);
+     }
+#else
          strcpy(Path, LDrawDir);
          strcat(Path, Dirs[i]);
          strcat(Path, DatName);
@@ -647,7 +647,7 @@ static FILE         *OpenDatFile2(char *DatName, char *Extension)
       {
          /* If still not found, try directory of the model itself */
 #ifdef USE_OPENGL
-	 concat_path(datfilepath, DatName, Path);
+     concat_path(datfilepath, DatName, Path);
 #else
          strcpy(Path, ModelDir);
          strcat(Path, DatName);
@@ -1387,7 +1387,7 @@ static int           ReadMetaLine(struct L3LineS * LinePtr)
         a,b,c,d,e,f,g,h,i specify the scale/rotation matrix.
 
     0 !TEXMAP x1 y1 z1 x2 y2 z2 x3 y3 z3 filename
-    0 !: geometry for mapping texture 
+    0 !: geometry for mapping texture
     0 !TEXMAP FALLBACK
     surrounded lines
     0 !TEXMAP END
@@ -1419,12 +1419,12 @@ static int           ReadMetaLine(struct L3LineS * LinePtr)
    if (MetaType == METATYPE_TEXMAP)
    {
      n = sscanf(IInfo.InputStr,
-		"%*d %*s %s %s %f %f %f %f %f %f %f %f %f %s",
-		TexStr, TexTyp,
-		&LinePtr->v[0][0], &LinePtr->v[0][1], &LinePtr->v[0][2],
-		&LinePtr->v[1][0], &LinePtr->v[1][1], &LinePtr->v[1][2],
-		&LinePtr->v[2][0], &LinePtr->v[2][1], &LinePtr->v[2][2],
-		TexNam);
+        "%*d %*s %s %s %f %f %f %f %f %f %f %f %f %s",
+        TexStr, TexTyp,
+        &LinePtr->v[0][0], &LinePtr->v[0][1], &LinePtr->v[0][2],
+        &LinePtr->v[1][0], &LinePtr->v[1][1], &LinePtr->v[1][2],
+        &LinePtr->v[2][0], &LinePtr->v[2][1], &LinePtr->v[2][2],
+        TexNam);
    }
    else
 
@@ -1484,26 +1484,26 @@ Exercise 5.15 p. 227. There is a sign error in the book!                     */
       case METATYPE_TRANSFORM:
          break;
       case METATYPE_TEXMAP:
-	 {
+     {
 #if 0
-	   int texture;
-	   int w, h;
-	   extern int loadTexture(char *, int *, int *);
-	   
-	   sprintf(MetaStr, "textures\\%s", TexNam);
-	   printf("TEXMAP %s\n", MetaStr);
-	   texture = loadTexture(MetaStr, &w, &h);
-	   printf("TEXMAP %s = %d (%dx%d pixels)\n", TexNam, texture, w, h);
+       int texture;
+       int w, h;
+       extern int loadTexture(char *, int *, int *);
+
+       sprintf(MetaStr, "textures\\%s", TexNam);
+       printf("TEXMAP %s\n", MetaStr);
+       texture = loadTexture(MetaStr, &w, &h);
+       printf("TEXMAP %s = %d (%dx%d pixels)\n", TexNam, texture, w, h);
 #endif
-	 }
-	 // Fake an identity transform for now.  Gotta store the texture number somewhere.
-	 memset(LinePtr, 0, sizeof(struct L3LineS));
+     }
+     // Fake an identity transform for now.  Gotta store the texture number somewhere.
+     memset(LinePtr, 0, sizeof(struct L3LineS));
          LinePtr->v[0][0] = LinePtr->v[1][1] = LinePtr->v[2][2] = LinePtr->v[3][3] = 1;
          break;
    }
    LinePtr->v[3][3] = 1.0;
 #ifdef USE_OPENGL
-   // Preserve leading whitespace in unused RandomColor field. 
+   // Preserve leading whitespace in unused RandomColor field.
    LinePtr->RandomColor = strspn(IInfo.InputStr, " \t"); // Was wiped by memset above.
    // Save a copy of the original ldlite macro for LEDIT mode saves.
    LinePtr->Comment = Strdup(IInfo.InputStr);
@@ -1590,7 +1590,7 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
             continue;
          }
 #else
-	 // Save ALL empty lines as comments (for LEDIT mode).
+     // Save ALL empty lines as comments (for LEDIT mode).
          //Data.Comment = Strdup(" ");
          /* Reuse the 64 bytes of float v[4][4] */
          Data.Comment = (char *) Data.v;
@@ -1602,7 +1602,7 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
       {
 #ifdef USE_OPENGL
          // Preserve leading whitespace in unused RandomColor field.
-         Data.RandomColor = strspn(IInfo.InputStr, " \t");  
+         Data.RandomColor = strspn(IInfo.InputStr, " \t");
 #endif
          switch (Data.LineType)
          {
@@ -1644,8 +1644,8 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
                      }
                      PartPtr->FileRead = 1;
 #ifdef USE_OPENGL
-		     /* Allow quotes around filename... */
-		     StripQuotes(s, SubPartDatName);
+             /* Allow quotes around filename... */
+             StripQuotes(s, SubPartDatName);
 #endif
                      FixDatName(SubPartDatName);
                      NewPartPtr = FindPart(0, SubPartDatName);
@@ -1691,13 +1691,13 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
                   }
                   break;
                }
-	       // ReadMetaLine is really only for transforms
-	       // But we need to notice some other metas at parse time.
-	       // Need to enable fading render path for runtime FADE cmds to work.
-	       else if (ldlite_parse_fade_meta(s)) {
-	       }
-	       else if (ldlite_parse_silhouette_meta(s)) {
-	       }
+           // ReadMetaLine is really only for transforms
+           // But we need to notice some other metas at parse time.
+           // Need to enable fading render path for runtime FADE cmds to work.
+           else if (ldlite_parse_fade_meta(s)) {
+           }
+           else if (ldlite_parse_silhouette_meta(s)) {
+           }
                if (FileType == HEADER)
                   FileType = DAT0;
                if (strncmp(s, "~Moved to ", 10) == 0)
@@ -1769,7 +1769,7 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
          {
 #ifdef USE_OPENGL
             /* Allow quotes around filename... */
-	    StripQuotes(IInfo.InputStr, SubPartDatName);
+        StripQuotes(IInfo.InputStr, SubPartDatName);
 #endif
             /* Watch out for uppercase and (back)slashes in filename... */
             FixDatName(SubPartDatName);
@@ -1817,7 +1817,7 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
          {
             /* Only serious errors for subparts, when checking parts */
             int SaveWarningLevel;
-            
+
             SaveWarningLevel = WarningLevel;
             WarningLevel = 0;
             i = CheckLine(&Data, SubPartDatName, PartPtr);
@@ -1889,12 +1889,12 @@ static int           ReadDatFile(FILE *fp, struct L3PartS * PartPtr,
          sprintf(SubPartDatName, "L3Transf%d", InternID++);
          Data.PartPtr = FindPart(1, SubPartDatName);
 #else
-	 // Make it easier in LEDIT mode to tell what metatype is in the internal file.
-	 if (MetaType == METATYPE_ROTATE)
-	   sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
-	 else if (MetaType < METATYPE_TEXMAP)
-	   sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
-	 else
+     // Make it easier in LEDIT mode to tell what metatype is in the internal file.
+     if (MetaType == METATYPE_ROTATE)
+       sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
+     else if (MetaType < METATYPE_TEXMAP)
+       sprintf(SubPartDatName, "L3_%s_%d", MetaKeywords[MetaType],InternID++);
+     else
        sprintf(SubPartDatName, "L3_TEXMAP_%d", InternID++);
          Data.PartPtr = FindPart(MetaType, SubPartDatName);
 #endif
@@ -2036,7 +2036,7 @@ static char         *LineType2Primitives[] = {
 resolve any linetype 1 parts                                                 */
 /* Return: 0=OK, 1=NotFound, 2=Recursion */
 #ifndef USE_OPENGL
-static 
+static
 #endif
 int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDatfile)
 {
@@ -2062,7 +2062,7 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
 #endif
 #ifdef USE_OPENGL_RECURSION_HACK
       PartPtr->Investigated = 1; // Mark this part for when we pop out.
-#endif      
+#endif
       return (2);                         /* Recursion                       */
    }
    PartPtr->Recursion = 1;                /* Candidate for recursion         */
@@ -2167,16 +2167,16 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
                   );
                ErrorInInput(0, 0, ErrStr);
 #ifdef USE_OPENGL_RECURSION_HACK
-	       if (PartPtr->Investigated)
-	       {
-		 ErrorInInput(0, 0, "Skipping part");
-		 // Pretend we could not find recursive part and move on.
-		 PartPtr->FileRead = 1;   /* Only show error message once    */
-		 PartPtr->Resolved = 1;
-		 PartPtr->Recursion = 0;  /* No longer suspected             */
-		 return (1);              /* Not found */
-	       }
-	       else
+           if (PartPtr->Investigated)
+           {
+         ErrorInInput(0, 0, "Skipping part");
+         // Pretend we could not find recursive part and move on.
+         PartPtr->FileRead = 1;   /* Only show error message once    */
+         PartPtr->Resolved = 1;
+         PartPtr->Recursion = 0;  /* No longer suspected             */
+         return (1);              /* Not found */
+           }
+           else
 #endif
                return (2);                /* Recursion                       */
             }

@@ -235,12 +235,12 @@ int sc[4];
 
 // Stuff for editing mode
 // contents of back buffer after glutSwapBuffers():
-#define SWAP_TYPE_UNDEFINED 0 	// unknown
-#define SWAP_TYPE_SWAP 1	// former front buffer
-#define SWAP_TYPE_COPY 2	// unchanged
-#define SWAP_TYPE_NODAMAGE 3	// unchanged even by X expose() events
-#define SWAP_TYPE_KTX 4		// use the GL_KTX_buffer_region extension
-#define SWAP_TYPE_APPLE 5	// OSX fakes GL_FRONT by drawing in GL_BACK
+#define SWAP_TYPE_UNDEFINED 0   // unknown
+#define SWAP_TYPE_SWAP 1        // former front buffer
+#define SWAP_TYPE_COPY 2        // unchanged
+#define SWAP_TYPE_NODAMAGE 3    // unchanged even by X expose() events
+#define SWAP_TYPE_KTX 4         // use the GL_KTX_buffer_region extension
+#define SWAP_TYPE_APPLE 5       // OSX fakes GL_FRONT by drawing in GL_BACK
 
 // Lookup some of these extensions for reference:
 // GL_APPLE_flush_render {provides glSwapAPPLE() glFlushRenderAPPLE(), glFinishRenderAPPLE()}
@@ -582,7 +582,7 @@ void pasteCommand(int x, int y)
 
     // token is one line of text.
     if ((ecommand[0] == 'p') || ((i > 0) && (ecommand[0] == 'c')) ||
-	(ecommand[0] == 'L') || (ecommand[0] == 'S'))
+    (ecommand[0] == 'L') || (ecommand[0] == 'S'))
     {
       // NOTE: Should skip leading white space, trailing white space.
       // Search for first '.' char and grab filename/path around it.
@@ -597,114 +597,114 @@ void pasteCommand(int x, int y)
       if ((ecommand[0] == 'p') || ((i > 0) && (ecommand[0] == 'c')))
       {
 
-	//if (strstr(token, "Part # Color Description"))
-	if (stristr(token, "Qty") && stristr(token, "PartNum") &&
-	    stristr(token, "Color") && stristr(token, "Description"))
-	{
-	  printf("// Hey, it's an inventory from peeron.com.\n");
-	  inventory = 1;
-	  token = strtok( NULL, seps); // Move on to the actual inventory.
-	  printf("Got token <%s> from clipboard\n", token);
-	}
+    //if (strstr(token, "Part # Color Description"))
+    if (stristr(token, "Qty") && stristr(token, "PartNum") &&
+        stristr(token, "Color") && stristr(token, "Description"))
+    {
+      printf("// Hey, it's an inventory from peeron.com.\n");
+      inventory = 1;
+      token = strtok( NULL, seps); // Move on to the actual inventory.
+      printf("Got token <%s> from clipboard\n", token);
+    }
       }
 
       // Look for '.' and remove trailing, leading whitespace.
       // If no '.' found, focus on the first word.
       if ((!inventory) && (p = strchr(token, '.')))
       {
-	// Eliminate trailing whitespace
+    // Eliminate trailing whitespace
     if ((s = strpbrk(p, whitespace)))
-	  *s = 0;
-	//printf("got trailing <%s> from clipboard\n", token);
+      *s = 0;
+    //printf("got trailing <%s> from clipboard\n", token);
 
-	// Eliminate leading whitespace
-	*p = 0;
+    // Eliminate leading whitespace
+    *p = 0;
     if ((s = strrpbrk(token, whitespace)))
-	  token = s+1;
-	*p = '.';
+      token = s+1;
+    *p = '.';
       }
       else
-	token += strspn(token, whitespace); // Eliminate leading whitespace
+    token += strspn(token, whitespace); // Eliminate leading whitespace
       //printf("got leading <%s> from clipboard\n", token);
 
       if (!inventory)
       {
-	// If not inventory and we still have whitespace, then its a comment.
+    // If not inventory and we still have whitespace, then its a comment.
     if ((s = strrpbrk(token, whitespace)))
-	{
-	  if ((i > 0) && (ecommand[0] == 'c'))
-	  {
-	    edit_mode_keyboard('\n', x, y);
-	    edit_mode_keyboard('i', x, y);
+    {
+      if ((i > 0) && (ecommand[0] == 'c'))
+      {
+        edit_mode_keyboard('\n', x, y);
+        edit_mode_keyboard('i', x, y);
         ecommand[0] = 'p';
-	  }
-	  if (ecommand[0] == 'p')
-	  {
-	    ecommand[0] = 'C';  // Switch to a comment
-  	    strcpy(dst, "  ");
-  	    strcat(dst, token);
-	    continue;
-	  }
-	}
+      }
+      if (ecommand[0] == 'p')
+      {
+        ecommand[0] = 'C';  // Switch to a comment
+        strcpy(dst, "  ");
+        strcat(dst, token);
+        continue;
+      }
+    }
       }
       else
       {
-	n = sscanf(token, "%d", &count);
-	//printf("count = %d\n", count);
-	p = strpbrk(token, whitespace);
-	//printf("got trailing <%s> from clipboard\n", p);
-	if ((n == 0) || !p)
-	{
-	  if ((i > 0) && (ecommand[0] == 'c'))
-	  {
-	    edit_mode_keyboard('\n', x, y);
-	    edit_mode_keyboard('i', x, y);
-	  }
-	  ecommand[0] = 'C';  // Switch to a comment
-	  strcpy(dst, "  ");
-	  strcat(dst, token);
-	  inventory = 0; // All done with inventory.
-	  continue;
-	}
+    n = sscanf(token, "%d", &count);
+    //printf("count = %d\n", count);
+    p = strpbrk(token, whitespace);
+    //printf("got trailing <%s> from clipboard\n", p);
+    if ((n == 0) || !p)
+    {
+      if ((i > 0) && (ecommand[0] == 'c'))
+      {
+        edit_mode_keyboard('\n', x, y);
+        edit_mode_keyboard('i', x, y);
+      }
+      ecommand[0] = 'C';  // Switch to a comment
+      strcpy(dst, "  ");
+      strcat(dst, token);
+      inventory = 0; // All done with inventory.
+      continue;
+    }
 
-	if (strncmp(p, "     ", 4))
-	  n = sscanf(p, "   %s    %s", partstr, colorstr); // Found a partname.
-	else if (!strncmp(p, "      ", 5))
-	{
-	  // no part or color on this line.  Sticker sheet or cloth or whatever?
-	  sprintf(colorstr, "unknown");
-	  strcpy(partstr, p);
-	}
-	else
-	{
-	  // No part on this line.  Convert comment into bogus partname.
-	  p += strspn(p, whitespace); // Eliminate leading whitespace
-	  n = sscanf(p, "%s", colorstr);  // Get the color
+    if (strncmp(p, "     ", 4))
+      n = sscanf(p, "   %s    %s", partstr, colorstr); // Found a partname.
+    else if (!strncmp(p, "      ", 5))
+    {
+      // no part or color on this line.  Sticker sheet or cloth or whatever?
+      sprintf(colorstr, "unknown");
+      strcpy(partstr, p);
+    }
+    else
+    {
+      // No part on this line.  Convert comment into bogus partname.
+      p += strspn(p, whitespace); // Eliminate leading whitespace
+      n = sscanf(p, "%s", colorstr);  // Get the color
       if ((token = strpbrk(p, whitespace)))  // Find next whitespace
-	    p = token + strspn(token, whitespace); // Eliminate leading whitespace
+        p = token + strspn(token, whitespace); // Eliminate leading whitespace
 
-	  // Eliminate trailing whitespace
-	  token = p;
-	  for (p += (strlen(token)-1); p >= token; p--)
-	  {
-	    if ((*p == ' ') || (*p == '\t'))
-	      *p = 0;
-	    else
-	      break;
-	  }
-	  //printf("filling spaces <%s>\n",token);
-	  // Eliminate internal spaces
-	  for (p = token; *p; p++)
-	    if ((*p == ' ') || (*p == '\t'))
-	      *p = '_';
-	  //printf("copying token <%s>\n",token);
-	  strcpy(partstr, token);
-	}
-	//printf("setting setting token to part <%s>\n", partstr);
+      // Eliminate trailing whitespace
+      token = p;
+      for (p += (strlen(token)-1); p >= token; p--)
+      {
+        if ((*p == ' ') || (*p == '\t'))
+          *p = 0;
+        else
+          break;
+      }
+      //printf("filling spaces <%s>\n",token);
+      // Eliminate internal spaces
+      for (p = token; *p; p++)
+        if ((*p == ' ') || (*p == '\t'))
+          *p = '_';
+      //printf("copying token <%s>\n",token);
+      strcpy(partstr, token);
+    }
+    //printf("setting setting token to part <%s>\n", partstr);
         token = partstr;
-	color = zcolor_lookup(colorstr);
-	printf("Part = <%s>, color = <%s> = %d\n", token, colorstr, color);
-	sprintf(colorstr, "%d", color);
+    color = zcolor_lookup(colorstr);
+    printf("Part = <%s>, color = <%s> = %d\n", token, colorstr, color);
+    sprintf(colorstr, "%d", color);
       }
     }
 
@@ -713,44 +713,44 @@ void pasteCommand(int x, int y)
       // If subsequent part, insert last part and start this one.
       if (i > 0)
       {
-	edit_mode_keyboard('\n', x, y);
-	edit_mode_keyboard('i', x, y);
-	pasteMove(pastecount++);
-	edit_mode_keyboard('p', x, y);
+    edit_mode_keyboard('\n', x, y);
+    edit_mode_keyboard('i', x, y);
+    pasteMove(pastecount++);
+    edit_mode_keyboard('p', x, y);
       }
       else
-	pasteMove(pastecount++);
+    pasteMove(pastecount++);
       strcat(dst, token);
 
       // Only do more than one if it's a part.
       // NOTE:  Should also do multiple lines for comments.
       if (ecommand[0] != 'p')
-	break;
+    break;
 
       if (color >= 0)
       {
-	edit_mode_keyboard('\n', x, y);
-	edit_mode_keyboard('c', x, y);
-	strcat(dst, colorstr);
+    edit_mode_keyboard('\n', x, y);
+    edit_mode_keyboard('c', x, y);
+    strcat(dst, colorstr);
       }
 
       if (inventory)
-	for (n = 1; n < count; n++)
-	{
-	  edit_mode_keyboard('\n', x, y);
-	  edit_mode_keyboard('i', x, y);
-	  pasteMove(pastecount++);
+    for (n = 1; n < count; n++)
+    {
+      edit_mode_keyboard('\n', x, y);
+      edit_mode_keyboard('i', x, y);
+      pasteMove(pastecount++);
 #if 1
-	  edit_mode_keyboard('p', x, y);
-	  strcat(dst, token);
-	  if (color >= 0)
-	  {
-	    edit_mode_keyboard('\n', x, y);
-	    edit_mode_keyboard('c', x, y);
-	    strcat(dst, colorstr);
-	  }
+      edit_mode_keyboard('p', x, y);
+      strcat(dst, token);
+      if (color >= 0)
+      {
+        edit_mode_keyboard('\n', x, y);
+        edit_mode_keyboard('c', x, y);
+        strcat(dst, colorstr);
+      }
 #endif
-	}
+    }
     }
   }
 
@@ -902,10 +902,10 @@ void RestoreColorBuffer(void)
         glPixelTransferi(GL_ALPHA_SCALE, 1);
         glPixelTransferi(GL_ALPHA_BIAS, 0);
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
-	glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 
   // Turn off any smoothing or blending modes.
     glDisable( GL_POINT_SMOOTH );
@@ -939,14 +939,14 @@ void RestoreColorBuffer(void)
     glDrawPixels(sc[2],sc[3],GL_RGBA,GL_UNSIGNED_BYTE,cbufdata);
 #else
 #ifdef RESTORE_COLOR_ALL
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
         glPixelStorei(GL_UNPACK_ROW_LENGTH,0); //Width
         glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
 
     glDrawPixels(Width,Height,GL_RGBA,GL_UNSIGNED_BYTE,cbufdata);
 #else
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
         glPixelStorei(GL_UNPACK_ROW_LENGTH,Width); //Width
         glPixelStorei(GL_UNPACK_SKIP_ROWS, sc[1]);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, sc[0]);
@@ -998,14 +998,14 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
   if ((srcbuffer == staticbuffer) && (destbuffer == screenbuffer))
   {
     if ((buffer_swap_mode == SWAP_TYPE_COPY)
-	|| (buffer_swap_mode == SWAP_TYPE_NODAMAGE)
-	|| (buffer_swap_mode == SWAP_TYPE_APPLE) // OSX seems to COPY (according to blender)
-	)
+    || (buffer_swap_mode == SWAP_TYPE_NODAMAGE)
+    || (buffer_swap_mode == SWAP_TYPE_APPLE) // OSX seems to COPY (according to blender)
+    )
     {
       printf("CopyColorBuffer(%s to %s) = glutswapBuffers(mode=%d)\n",
-	     ((srcbuffer==GL_FRONT)? "Front" : "Back"),
-	     ((destbuffer==GL_FRONT)? "Front" : "Back"),
-	     buffer_swap_mode);
+         ((srcbuffer==GL_FRONT)? "Front" : "Back"),
+         ((destbuffer==GL_FRONT)? "Front" : "Back"),
+         buffer_swap_mode);
 
       glutSwapBuffers(); // Found GL_WIN_swap_hint extension
 #ifdef WINTIMER
@@ -1017,11 +1017,11 @@ void CopyColorBuffer(int srcbuffer, int destbuffer)
   }
 
   printf("CopyColorBuffer(%s to %s)\n",
-	 ((srcbuffer==GL_FRONT)? "Front" : "Back"),
-	 ((destbuffer==GL_FRONT)? "Front" : "Back"));
+     ((srcbuffer==GL_FRONT)? "Front" : "Back"),
+     ((destbuffer==GL_FRONT)? "Front" : "Back"));
 
   glPushAttrib(GL_COLOR_BUFFER_BIT|GL_CURRENT_BIT|GL_DEPTH_BUFFER_BIT|
-	       GL_FOG_BIT|GL_LIGHTING_BIT|GL_VIEWPORT_BIT);
+           GL_FOG_BIT|GL_LIGHTING_BIT|GL_VIEWPORT_BIT);
 
   glPixelZoom(1, 1);
   glDisable(GL_STENCIL_TEST);
@@ -1110,10 +1110,10 @@ void printModelMat(char *name)
 
   glGetDoublev(GL_MODELVIEW_MATRIX, model);
   printf("%s(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n", name,
-	 model[0], model[1] , model[2], model[3],
-	 model[4], model[5] , model[6], model[7],
-	 model[8], model[9] , model[10], model[11],
-	 model[12], model[13] , model[14], model[15]);
+     model[0], model[1] , model[2], model[3],
+     model[4], model[5] , model[6], model[7],
+     model[8], model[9] , model[10], model[11],
+     model[12], model[13] , model[14], model[15]);
 }
 
 /***************************************************************/
@@ -1235,7 +1235,7 @@ void printPOVMatrix(FILE *f)
  fprintf(f,"\tlocation <%g,%g,%g>\n",cc[0],cc[1],cc[2]);
 #else
  fprintf(f,"\tlocation <%g,%g,%g> +PCT/100.0*<%g,%g,%g>\n",
-	 cc[0],cc[1],cc[2], dist[0],dist[1],dist[2]);
+     cc[0],cc[1],cc[2], dist[0],dist[1],dist[2]);
   // NOTE: what is the axis to rotate about for l3p STEREO?
   // Is it the perpendicular bisector at the look_from point?
   // figure it out and switch to vaxis_rotate() for location.
@@ -1277,7 +1277,7 @@ void printPOVMatrix(FILE *f)
     lp[i] = lightcolor0[i];
   }
  fprintf(f,"light_source {\n\t<%g,%g,%g>\n\tcolor rgb <%g,%g,%g>\n}\n\n",
-	 lpp[0],lpp[1],lpp[2], lp[0],lp[1],lp[2]);
+     lpp[0],lpp[1],lpp[2], lp[0],lp[1],lp[2]);
 #endif
 
   {
@@ -1290,18 +1290,18 @@ void printPOVMatrix(FILE *f)
       strcpy(filename, datfilename);
 
    fprintf(f,"l3p -cc%g,%g,%g -cla%g,%g,%g -ca%g %s -b%d\n\n",
-	   cc[0],cc[1],cc[2], cla[0],cla[1],cla[2], angle,
-	   filename, ldraw_commandline_opts.B);
+       cc[0],cc[1],cc[2], cla[0],cla[1],cla[2], angle,
+       filename, ldraw_commandline_opts.B);
   }
 
   printModelMat("ModelM");
   getCamera(m, up);
 
  fprintf(f,"%s(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n", "Camera",
-	 m[0][0], m[0][1] , m[0][2], m[0][3],
-	 m[1][0], m[1][1] , m[1][2], m[1][3],
-	 m[2][0], m[2][1] , m[2][2], m[2][3],
-	 m[3][0], m[3][1] , m[3][2], m[3][3]);
+     m[0][0], m[0][1] , m[0][2], m[0][3],
+     m[1][0], m[1][1] , m[1][2], m[1][3],
+     m[2][0], m[2][1] , m[2][2], m[2][3],
+     m[3][0], m[3][1] , m[3][2], m[3][3]);
  fprintf(f,"%s(%g,%g,%g)\n", "Offset", up[0], up[1], up[2]);
 
 
@@ -1348,19 +1348,19 @@ void printLdrawMatrix(FILE *f)
       (ldraw_commandline_opts.O.y != 0.0))
   {
     sprintf(s,"-o%g,%g ", ldraw_commandline_opts.O.x,
-	    ldraw_commandline_opts.O.y);
+        ldraw_commandline_opts.O.y);
     s = matrix_string + strlen(matrix_string);
   }
   sprintf(s,"-a%g,%g,%g,%g,%g,%g,%g,%g,%g",
-	  ldraw_commandline_opts.A.a,
-	  ldraw_commandline_opts.A.b,
-	  ldraw_commandline_opts.A.c,
-	  ldraw_commandline_opts.A.d,
-	  ldraw_commandline_opts.A.e,
-	  ldraw_commandline_opts.A.f,
-	  ldraw_commandline_opts.A.g,
-	  ldraw_commandline_opts.A.h,
-	  ldraw_commandline_opts.A.i);
+      ldraw_commandline_opts.A.a,
+      ldraw_commandline_opts.A.b,
+      ldraw_commandline_opts.A.c,
+      ldraw_commandline_opts.A.d,
+      ldraw_commandline_opts.A.e,
+      ldraw_commandline_opts.A.f,
+      ldraw_commandline_opts.A.g,
+      ldraw_commandline_opts.A.h,
+      ldraw_commandline_opts.A.i);
 
  fprintf(f,"%s %s %s\n",progname, matrix_string, filename);
 }
@@ -1428,7 +1428,7 @@ void draw_string_bitmap(void *font, const char* string)
 void
 DoRasterString( float x, float y, char *s )
 {
-  char c;			/* one character to print		*/
+  char c;           /* one character to print       */
 
 #ifdef USE_GLFONT
   if (fontname)
@@ -1470,7 +1470,7 @@ DoRasterString( float x, float y, char *s )
 void
 DoMenuString( float x, float y, char *s )
 {
-  char c;			/* one character to print		*/
+  char c;           /* one character to print       */
   int accelcolor = 0;
 
 #ifdef USE_GLFONT
@@ -1493,17 +1493,17 @@ DoMenuString( float x, float y, char *s )
     {
       if (c == '&')
       {
-	glColor4f( 0.0, 0.0, 0.5, 1.0 );	/* Current char is dark blue */
-	accelcolor = 1;
-	continue;
+    glColor4f( 0.0, 0.0, 0.5, 1.0 );    /* Current char is dark blue */
+    accelcolor = 1;
+    continue;
       }
       ss[0] = c; // glutBitmapCharacter()
       glFontTextOut (ss, x/fontwidth, y/fontwidth+2, 1);
       x += (Font.Char[c-Font.IntStart].dx * fontwidth); // glutBitmapWidth()
       if (accelcolor)
       {
-	glColor4f( 0.0, 0.0, 0.0, 1.0 );  // Black
-	accelcolor = 0;
+    glColor4f( 0.0, 0.0, 0.0, 1.0 );  // Black
+    accelcolor = 0;
       }
     }
     glFontEnd (); //Needs to be called after text output
@@ -1524,7 +1524,7 @@ DoMenuString( float x, float y, char *s )
 #ifndef AGL
     if (c == '&')
     {
-      glColor4f( 0.0, 0.0, 0.5, 1.0 );	/* Current char is dark blue */
+      glColor4f( 0.0, 0.0, 0.5, 1.0 );  /* Current char is dark blue */
       glRasterPos2f( x, y );
       accelcolor = 1;
       continue;
@@ -1560,35 +1560,35 @@ void NewColorPrompt()
     h = lineheight;
     for(i = -1; ( c = *s ) != '\0'; s++ )
     {
-	if (c == ' ')
-	{
-	    i++;
-	    if (i == 16)
-		i = 19; // Skip to tan
-	    if (i == 20)
-		i = 25; // Skip to orange
-	    if (i > 25)
-		zc.r =  zc.g =  zc.b = 144;
-	    else
-		translate_color(i,&zc,&zs);
-	}
-	w = glutBitmapWidth( GLUT_BITMAP_HELVETICA_12, c );
-	glColor3ub(zc.r, zc.g, zc.b);
-	glBegin(GL_QUADS);
-	glVertex2i(x, y);
-	glVertex2i(x+w,y);
-	glVertex2i(x+w, y+h);
-	glVertex2i(x, y+h);
-	glEnd();
-	if (i == 6)
-	    glColor4f( 0.8, 0.8, 0.8, 1.0 );		/* white on brown*/
-	else if (i)
-	    glColor4f( 0.0, 0.0, 0.0, 1.0 );		/* black  	*/
-	else
-	    glColor4f( 0.5, 0.5, 0.5, 1.0 );		/* grey  	*/
-	glRasterPos2f( x-2, y+2 );
-	glutBitmapCharacter( GLUT_BITMAP_HELVETICA_12, c );
-	x += w;
+    if (c == ' ')
+    {
+        i++;
+        if (i == 16)
+        i = 19; // Skip to tan
+        if (i == 20)
+        i = 25; // Skip to orange
+        if (i > 25)
+        zc.r =  zc.g =  zc.b = 144;
+        else
+        translate_color(i,&zc,&zs);
+    }
+    w = glutBitmapWidth( GLUT_BITMAP_HELVETICA_12, c );
+    glColor3ub(zc.r, zc.g, zc.b);
+    glBegin(GL_QUADS);
+    glVertex2i(x, y);
+    glVertex2i(x+w,y);
+    glVertex2i(x+w, y+h);
+    glVertex2i(x, y+h);
+    glEnd();
+    if (i == 6)
+        glColor4f( 0.8, 0.8, 0.8, 1.0 );        /* white on brown*/
+    else if (i)
+        glColor4f( 0.0, 0.0, 0.0, 1.0 );        /* black    */
+    else
+        glColor4f( 0.5, 0.5, 0.5, 1.0 );        /* grey     */
+    glRasterPos2f( x-2, y+2 );
+    glutBitmapCharacter( GLUT_BITMAP_HELVETICA_12, c );
+    x += w;
     }
 }
 
@@ -1700,7 +1700,7 @@ int edit_mode_gui()
       movestr = "Normal";
 
     sprintf(eline[0],"Line: %d  View: %s  Zoom: x%.3f  Move: %s",
-	    curpiece, viewstr, ldraw_commandline_opts.S, movestr);
+        curpiece, viewstr, ldraw_commandline_opts.S, movestr);
   }
   }
 
@@ -1712,14 +1712,14 @@ int edit_mode_gui()
     // Is that what happens when dirtyWindow is 0?
     dirtyWindow = 1;
     glutPostRedisplay();
-	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    // fix osx error: non-void function 'edit_mode_gui' should return a value
     return 0;
   }
   // If nothing is happening and hiding the LEDIT GUI just return.
   else if ((show_edit_mode_gui == 0) && (ecommand[0] == 0))
   {
     printf("glFlush(edit_mode_gui(middle))\n"); glFlush();
-	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    // fix osx error: non-void function 'edit_mode_gui' should return a value
     return 0;
   }
   show_edit_mode_gui &= 1;  // Clear the clear gui bit (2).
@@ -1754,14 +1754,14 @@ int edit_mode_gui()
   glMatrixMode( GL_MODELVIEW );
   glPushMatrix();
   glLoadIdentity();
-  glColor4f( 0.5, 0.5, 0.5, 1.0 );		/* grey  	*/
+  glColor4f( 0.5, 0.5, 0.5, 1.0 );      /* grey     */
   glBegin(GL_QUADS);
   glVertex2f(0.0, Height);
   glVertex2f(Width, Height);
   glVertex2f(Width, Height-(lineheight*4.5));
   glVertex2f(0.0, Height-(lineheight*4.5));
   glEnd();
-  glColor4f( 0.0, 0.0, 0.0, 1.0 );		/* black  	*/
+  glColor4f( 0.0, 0.0, 0.0, 1.0 );      /* black    */
   if (strlen(ecommand))
   {
     DoMenuString( charwidth, Height - lineheight, eline[0] );
@@ -1777,9 +1777,9 @@ int edit_mode_gui()
     DoRasterString( charwidth, Height - lineheight, eline[0] );
     DoRasterString( charwidth, Height - lineheight*2.0, eline[1] );
   }
-  glColor4f( 0.5, 0.0, 0.0, 1.0 );		/* Current line is dark red */
+  glColor4f( 0.5, 0.0, 0.0, 1.0 );      /* Current line is dark red */
   DoRasterString( charwidth, Height - lineheight*3.0, eline[2] );
-  glColor4f( 0.0, 0.0, 0.0, 1.0 );		/* black  	*/
+  glColor4f( 0.0, 0.0, 0.0, 1.0 );      /* black    */
   DoRasterString( charwidth, Height - lineheight*4.0, eline[3] );
   glPopMatrix();
   glMatrixMode( GL_PROJECTION );
@@ -1819,7 +1819,7 @@ extern void write_bmp8(char *filename);
 #ifdef USE_PNG
 #include "png.h"
 extern FILE *start_png(char *filename, int width, int height,
-		       png_structp *png_pp, png_infop *info_pp);
+               png_structp *png_pp, png_infop *info_pp);
 extern void write_png(char *filename);
 #endif
 
@@ -1854,7 +1854,7 @@ int platform_write_step_comment(char *comment_string)
 #ifndef ALWAYS_REDRAW
   glColor3f(1.0, 1.0, 1.0); // white
 #else
-  glColor4f( 0.3, 0.3, 0.3, 0.5 );		/* grey  	*/
+  glColor4f( 0.3, 0.3, 0.3, 0.5 );      /* grey     */
 #endif
   glDisable( GL_DEPTH_TEST ); /* don't test for depth -- just put in front  */
   DoRasterString( 1.0, 1.0, comment_string );
@@ -1951,7 +1951,7 @@ void platform_step_filename(int step, char *filename)
 }
 
 /***************************************************************/
-char * extend_filename(	char *filename)
+char * extend_filename( char *filename)
 {
   char *p;
 
@@ -2050,7 +2050,7 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
 
   if (ldraw_commandline_opts.debug_level == 1)
     printf("platform_step(%d, %d, %d) %c\n", step, level, pause,
-	   ldraw_commandline_opts.M);
+       ldraw_commandline_opts.M);
 
   // This is probably a great place to handle begin & end display lists.
   if (step == INT_MAX) {
@@ -2059,7 +2059,7 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
     if (ldraw_commandline_opts.debug_level == 1)
       printf("Finished\n");
   }
-  else 	if (step >= 0) {
+  else  if (step >= 0) {
     //platform_step_commentbuf)
   }
   else {
@@ -2076,8 +2076,8 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
   if ((step >= 0 ) && ((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F'))) {
 
     //    printf("Platform_Step(%d, %d, %d, %d, %d) %c\n",
-    //	   step, level, pause, curstep, stepcount,
-    //	   ldraw_commandline_opts.M);
+    //     step, level, pause, curstep, stepcount,
+    //     ldraw_commandline_opts.M);
 
     // if something has been drawn, save bitmap
     if ((step == INT_MAX) && (pause == 0)) {
@@ -2088,7 +2088,7 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
     }
     else if (qualityLines && (step != curstep) && (step != INT_MAX)) {
       // qualityLines = Multistage drawing.  Must count steps.
-      //	curstep++; // Move on to next step
+      //    curstep++; // Move on to next step
     }
     else if ((level<=ldraw_commandline_opts.maxlevel) && ((ldraw_commandline_opts.M == 'S')||(step == INT_MAX))) {
       // save bitmap
@@ -2099,17 +2099,17 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
       // This only happens when keyboard or menu requests a bitmap.
       if ((step == INT_MAX) && (level == 0) && (pause == -1)&& (!picfilename))
       {
-	int i = 0;
-	char *p = extend_filename(filename);
+          int i = 0;
+          char *p = extend_filename(filename);
 
-	while ( (access( filename, 0 )) != -1 )
-	{
-	  /* The file already exists */
-	  i++;
-	  sprintf(p,"%0d",i);
-	  extend_filename(filename);
-	}
-      }
+          while ( (access( filename, 0 )) != -1 )
+          {
+              // The file already exists
+              i++;
+              sprintf(p,"%0d",i);
+              extend_filename(filename);
+          }
+      } //
 
 //*************************************************************************
 //NOTE: Write a fn to calc zp->extents_* by checking zbuf a line at a time.
@@ -2121,39 +2121,39 @@ void platform_step(int step, int level, int pause, ZIMAGE *zp)
 //*************************************************************************
 
       if (zp == NULL) // Avoid NULL ptr crash on 'B' when debug printing.
-	zp = &z;
+    zp = &z;
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("EXTENTS: (%d, %d) -> (%d, %d)\n",
-	       zp->extent_x1, zp->extent_y1, zp->extent_x2, zp->extent_y2);
+    printf("EXTENTS: (%d, %d) -> (%d, %d)\n",
+           zp->extent_x1, zp->extent_y1, zp->extent_x2, zp->extent_y2);
 
 #ifdef USE_PNG
       if (ldraw_image_type == IMAGE_TYPE_PNG_RGB)
       {
-	use_png_alpha = 0;
-	write_png(filename);
+    use_png_alpha = 0;
+    write_png(filename);
       }
       else if (ldraw_image_type == IMAGE_TYPE_PNG_RGBA)
       {
-	use_png_alpha = 1;
-	write_png(filename);
+    use_png_alpha = 1;
+    write_png(filename);
       }
       else
 #endif
       if (ldraw_image_type == IMAGE_TYPE_PPM)
-	write_ppm(filename);
+    write_ppm(filename);
       else
 #ifdef USE_BMP8
       if (ldraw_image_type == IMAGE_TYPE_BMP8)
-	write_bmp8(filename);
+    write_bmp8(filename);
       else
 #endif
-	write_bmp(filename);
+    write_bmp(filename);
     }
   }
   if (pause && (ldraw_commandline_opts.M == 'P')&&(step!=INT_MAX))  {
     if (step >= 0) {
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("STEP %d level %d pause %d\n", step+1, level, pause);
+    printf("STEP %d level %d pause %d\n", step+1, level, pause);
     }
   }
 }
@@ -2192,7 +2192,7 @@ int GetPrivateProfileInt(char *appName, char *appVar, int varDefault, char *file
 
 /***************************************************************/
 int GetPrivateProfileString(char *appName, char *appVar, char *varDefault,
-			    char *retString, int strSize, char *fileName)
+                char *retString, int strSize, char *fileName)
 {
   UNUSED(appName);
   UNUSED(appVar);
@@ -2346,10 +2346,10 @@ int _strlwr(char *str)
 ***************************************************************/
 GLfloat zoom = 0.0;
 
-GLboolean selection     = GL_FALSE;	/* rendering to selection buffer */
+GLboolean selection     = GL_FALSE; /* rendering to selection buffer */
 
 #define SELECT_BUFFER 32
-GLuint select_buffer[SELECT_BUFFER];	/* selection buffer */
+GLuint select_buffer[SELECT_BUFFER];    /* selection buffer */
 
 GLint mouse_state = -1;
 GLint mouse_button = -1;
@@ -2524,7 +2524,7 @@ void linequalitysetup()
 
     //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
     if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) &&
-	((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
+    ((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_FALSE); //disable alpha updates
     // This will clip anything blended with the background when saved
     // as a transparent PNG.  Sharp outside edges, but no halo effect.
@@ -2563,7 +2563,7 @@ void linequalitysetup()
   {
     //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
     if ((ldraw_image_type == IMAGE_TYPE_PNG_RGBA) &&
-	((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
+    ((ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F')))
       glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); //enable alpha updates
     //TESTING! TESTING! TESTING! TESTING! TESTING! TESTING! TESTING!
 
@@ -2903,11 +2903,11 @@ void reshape(int width, int height)
 #if 0
     if (editing)
     {
-	// Leave some space at the top of the screen for the "GUI"
-	// NOTE: This would work better if reshape() called myreshape()
-	// which contains all this code except perhaps the Width, Height =.
-	// Also replace all calls to reshape() with myreshape().
-	// This way I can tell real reshape events from my calls.
+    // Leave some space at the top of the screen for the "GUI"
+    // NOTE: This would work better if reshape() called myreshape()
+    // which contains all this code except perhaps the Width, Height =.
+    // Also replace all calls to reshape() with myreshape().
+    // This way I can tell real reshape events from my calls.
 
       // Scissor is probably easier than viewport
       glEnable(GL_SCISSOR_TEST);
@@ -2919,7 +2919,7 @@ void reshape(int width, int height)
     if (editing)
     {
       if ((width != Width) && (height != Height))
-	   NukeSavedDepthBuffer();
+       NukeSavedDepthBuffer();
     }
 
     Width = width;
@@ -2953,12 +2953,12 @@ void reshape(int width, int height)
     // Hmmm, do these convert things to screen coords and vice versa?
     // Convert coords from screen(x,y,0) to world(x,y,z)?
     gluProject((GLdouble)x, (GLdouble)y, 0.0,
-	       model, proj, view,
-	       &pan_x, &pan_y, &pan_z);
+           model, proj, view,
+           &pan_x, &pan_y, &pan_z);
     // Convert coords from world(x,y,z) to screen(x,y,z)?
     gluUnProject((GLdouble)x, (GLdouble)y, pan_z,
-		 model, proj, view,
-		 &pan_x, &pan_y, &pan_z);
+         model, proj, view,
+         &pan_x, &pan_y, &pan_z);
 #endif
 
 
@@ -3023,10 +3023,10 @@ void rendersetup(void)
 
   glGetDoublev(GL_MODELVIEW_MATRIX, model);
   printf("%s(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n", "MV",
-	 model[0], model[1] , model[2], model[3],
-	 model[4], model[5] , model[6], model[7],
-	 model[8], model[9] , model[10], model[11],
-	 model[12], model[13] , model[14], model[15]);
+     model[0], model[1] , model[2], model[3],
+     model[4], model[5] , model[6], model[7],
+     model[8], model[9] , model[10], model[11],
+     model[12], model[13] , model[14], model[15]);
 
 //#define CONVERT_F00_CAMERA  1
 #ifdef CONVERT_F00_CAMERA
@@ -3131,7 +3131,7 @@ void rendersetup(void)
 #endif
 #ifdef USE_QUATERNION
   printf("spin(%0.2f, %0.2f, %0.2f, %0.2f)\n",
-	 qspin[3], qspin[0], qspin[1], qspin[2]);
+     qspin[3], qspin[0], qspin[1], qspin[2]);
   glRotatef(qspin[3], qspin[0], qspin[1], qspin[2]);
 #endif
 
@@ -3149,14 +3149,14 @@ void rendersetup(void)
     switch (fogging)
     {
       case 2:
-	fogMode = GL_EXP;
-	break;
+    fogMode = GL_EXP;
+    break;
       case 3:
-	fogMode = GL_EXP;
-	break;
+    fogMode = GL_EXP;
+    break;
       default:
-	fogMode = GL_LINEAR;
-	break;
+    fogMode = GL_LINEAR;
+    break;
     }
     glEnable(GL_FOG);
     glFogi(GL_FOG_MODE, fogMode);
@@ -3356,12 +3356,13 @@ void getextents(void)
   {
     memset(&Data, 0, sizeof(Data));
     n = sscanf("1 16 1 0 0 0 1 0 0 0 1 0 0 0",
-	       "%d %d %f %f %f %f %f %f %f %f %f %f %f %f",
+           "%d %d %f %f %f %f %f %f %f %f %f %f %f %f",
                  &Data.LineType, &Data.Color,
                  &Data.v[0][0], &Data.v[0][1], &Data.v[0][2],
                  &Data.v[1][0], &Data.v[1][1], &Data.v[1][2],
                  &Data.v[2][0], &Data.v[2][1], &Data.v[2][2],
                  &Data.v[3][0], &Data.v[3][1], &Data.v[3][2]);
+    UNUSED(n);
     Data.v[3][3] = 1;
     Data.PartPtr = &Parts[0];
 
@@ -3478,6 +3479,7 @@ render(void)
 
     // L3Time_t ttt = L3GetTime();
     res = LoadModel(datfilename);
+    UNUSED(res);
     // ttt = L3GetTime() - ttt;
     LoadModelPost();
     // printf("LoadModel: %d",ttt);
@@ -3596,13 +3598,13 @@ render(void)
       ldraw_commandline_opts.F |= TYPE_F_NO_POLYGONS; // zWire = 1;
       stepcount = 0; // NOTE: Not sure what effect this will have...
       if (qualityLines)
-	z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
+    z_line_offset += 0.2; // Nudge antialiased lines up in depth buffer.
       // Set Silhouette lines back a bit (No. looks even worse)
       //z_line_offset -= 0.3; // (SilhouetteWidth/2.0);
       DrawModel();
       //z_line_offset += 0.3; // (SilhouetteWidth/2.0);
       if (qualityLines)
-	z_line_offset -= 0.2; // Nudge antialiased lines up in depth buffer.
+    z_line_offset -= 0.2; // Nudge antialiased lines up in depth buffer.
       SilhouetteOnly = 0;
       SilhouetteEdge = -1;
       printf("Silhouette done %g, %d\n", SilhouetteWidth, SilhouetteEdge);
@@ -3730,15 +3732,15 @@ render(void)
     {
       // set file name to first subfile
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("Draw MPD %s\n", mpd_subfile_name);
+    printf("Draw MPD %s\n", mpd_subfile_name);
 
       zcolor_init();
 
       push_extents(); // Save the cropping extents before zReset();
       rc = zReset(&(client_rect_right),&(client_rect_bottom));
       if (rc != 0) {
-	printf("Out of Memory, exiting");
-	exit(-1);
+    printf("Out of Memory, exiting");
+    exit(-1);
       }
       pop_extents();
 
@@ -3955,46 +3957,46 @@ void TiledDisplay(void)
 
       /* save tile into tile row buffer*/
       {
-	 int curTileWidth = trGet(tr, TR_CURRENT_TILE_WIDTH);
-	 int bytesPerImageRow = TILE_IMAGE_WIDTH*3*sizeof(GLubyte);
-	 int bytesPerTileRow = (TILE_WIDTH-2*TILE_BORDER) * 3*sizeof(GLubyte);
-	 int xOffset = curColumn * bytesPerTileRow;
-	 int bytesPerCurrentTileRow = (curTileWidth-2*TILE_BORDER)*3*sizeof(GLubyte);
-	 int i;
-	 for (i=0;i<TILE_HEIGHT;i++) {
-	    memcpy(buffer + i*bytesPerImageRow + xOffset, /* Dest */
-		   tile + i*bytesPerTileRow,              /* Src */
-		   bytesPerCurrentTileRow);               /* Byte count*/
-	 }
+     int curTileWidth = trGet(tr, TR_CURRENT_TILE_WIDTH);
+     int bytesPerImageRow = TILE_IMAGE_WIDTH*3*sizeof(GLubyte);
+     int bytesPerTileRow = (TILE_WIDTH-2*TILE_BORDER) * 3*sizeof(GLubyte);
+     int xOffset = curColumn * bytesPerTileRow;
+     int bytesPerCurrentTileRow = (curTileWidth-2*TILE_BORDER)*3*sizeof(GLubyte);
+     int i;
+     for (i=0;i<TILE_HEIGHT;i++) {
+        memcpy(buffer + i*bytesPerImageRow + xOffset, /* Dest */
+           tile + i*bytesPerTileRow,              /* Src */
+           bytesPerCurrentTileRow);               /* Byte count*/
+     }
       }
 
       if (curColumn == trGet(tr, TR_COLUMNS)-1) {
-	/* write this buffered row of tiles to the file */
-	int curTileHeight = trGet(tr, TR_CURRENT_TILE_HEIGHT);
-	int bytesPerImageRow = TILE_IMAGE_WIDTH*3*sizeof(GLubyte);
-	int i;
-	GLubyte *rowPtr;
+    /* write this buffered row of tiles to the file */
+    int curTileHeight = trGet(tr, TR_CURRENT_TILE_HEIGHT);
+    int bytesPerImageRow = TILE_IMAGE_WIDTH*3*sizeof(GLubyte);
+    int i;
+    GLubyte *rowPtr;
 
-	// NOTE: This works, but appears to be off by a single pixel on
-	// the horizontal seams.  (even when TILE_BORDER is 0)
-	// It looks like we're getting 1 extra row of pixels.
-	for (i=TILE_BORDER*2;i<curTileHeight;i++) {
-	  /* Remember, OpenGL images are bottom to top.  Have to reverse. */
-	  rowPtr = buffer + (curTileHeight-1-i) * bytesPerImageRow;
+    // NOTE: This works, but appears to be off by a single pixel on
+    // the horizontal seams.  (even when TILE_BORDER is 0)
+    // It looks like we're getting 1 extra row of pixels.
+    for (i=TILE_BORDER*2;i<curTileHeight;i++) {
+      /* Remember, OpenGL images are bottom to top.  Have to reverse. */
+      rowPtr = buffer + (curTileHeight-1-i) * bytesPerImageRow;
 
 #ifdef USE_PNG
-	  if ((ldraw_image_type == IMAGE_TYPE_PNG_RGB) ||
-	      (ldraw_image_type == IMAGE_TYPE_PNG_RGBA))
-	  {
-	    png_write_row(png_ptr, rowPtr);
-	  }
-	  else
+      if ((ldraw_image_type == IMAGE_TYPE_PNG_RGB) ||
+          (ldraw_image_type == IMAGE_TYPE_PNG_RGBA))
+      {
+        png_write_row(png_ptr, rowPtr);
+      }
+      else
 #endif
-	  if ((ldraw_image_type == IMAGE_TYPE_BMP) ||
-	      (ldraw_image_type == IMAGE_TYPE_BMP8))
-	  {
-	    long offset = foffset;
-	    offset += (height-k) * width * 3;
+      if ((ldraw_image_type == IMAGE_TYPE_BMP) ||
+          (ldraw_image_type == IMAGE_TYPE_BMP8))
+      {
+        long offset = foffset;
+        offset += (height-k) * width * 3;
 	    fseek(f, offset, SEEK_SET);
 	    k++;
 
@@ -4002,19 +4004,19 @@ void TiledDisplay(void)
 	    for (j = 0; j < width; j++) // RGB -> BGR
 	    {
 	      c = p[0];
-	      p[0] = p[2];
-	      p[2] = c;
-	      p+=3;
-	    }
-	    fwrite(rowPtr, 1,width*3, f);
-	  }
-	  else
+          p[0] = p[2];
+          p[2] = c;
+          p+=3;
+        }
+        fwrite(rowPtr, 1,width*3, f);
+      }
+      else
 
-	  /************* Save a row to the ppm output file *************/
-	  // NOTE: We will have to disable ALPHA (just use RGB) for png files.
-	  fwrite(rowPtr, 1, TILE_IMAGE_WIDTH*3, f);
-	  /*************************************************************/
-	}
+      /************* Save a row to the ppm output file *************/
+      // NOTE: We will have to disable ALPHA (just use RGB) for png files.
+      fwrite(rowPtr, 1, TILE_IMAGE_WIDTH*3, f);
+      /*************************************************************/
+    }
       }
 
    }
@@ -4150,13 +4152,13 @@ void test_ktx_buffer_region(char *str)
 #if defined(WINDOWS)
 #include "wglext.h"
 
-PFNWGLCREATEBUFFERREGIONARBPROC		wglCreateBufferRegionARB = NULL;
-PFNWGLDELETEBUFFERREGIONARBPROC		wglDeleteBufferRegionARB = NULL;
-PFNWGLSAVEBUFFERREGIONARBPROC		wglSaveBufferRegionARB = NULL;
-PFNWGLRESTOREBUFFERREGIONARBPROC	wglRestoreBufferRegionARB = NULL;
+PFNWGLCREATEBUFFERREGIONARBPROC     wglCreateBufferRegionARB = NULL;
+PFNWGLDELETEBUFFERREGIONARBPROC     wglDeleteBufferRegionARB = NULL;
+PFNWGLSAVEBUFFERREGIONARBPROC       wglSaveBufferRegionARB = NULL;
+PFNWGLRESTOREBUFFERREGIONARBPROC    wglRestoreBufferRegionARB = NULL;
 
-HANDLE			buffer_handle;
-HDC				hDC;
+HANDLE          buffer_handle;
+HDC             hDC;
 
 PFNWGLGETEXTENSIONSSTRINGARBPROC        wglGetExtensionsStringARB = NULL;
 
@@ -4270,7 +4272,7 @@ void SaveDepthBuffer(void)
     if (ldraw_commandline_opts.debug_level == 1)
       printf("sd_sbox = %d, %d, %d, %d\n", sc[0], sc[1], sc[2], sc[3]);
 #endif
-	glPixelStorei(GL_PACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_PACK_ALIGNMENT,1); //4
         glPixelStorei(GL_PACK_ROW_LENGTH,0); //Width
         glPixelStorei(GL_PACK_SKIP_ROWS,0);
         glPixelStorei(GL_PACK_SKIP_PIXELS,0);
@@ -4374,7 +4376,7 @@ void RestoreDepthBuffer(void)
     glDrawPixels(sc[2],sc[3],GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,zbufdata);
 #else
 #ifdef RESTORE_DEPTH_ALL
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
         glPixelStorei(GL_UNPACK_ROW_LENGTH,0); //Width
         glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
@@ -4390,7 +4392,7 @@ void RestoreDepthBuffer(void)
     //glDrawPixels(Width,Height,GL_DEPTH_COMPONENT,GL_FLOAT,zbufdata);
     glDrawPixels(Width,Height,GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,zbufdata);
 #else
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1); //4
         glPixelStorei(GL_UNPACK_ROW_LENGTH,Width); //Width
         glPixelStorei(GL_UNPACK_SKIP_ROWS, sc[1]);
         glPixelStorei(GL_UNPACK_SKIP_PIXELS, sc[0]);
@@ -4694,8 +4696,8 @@ void CopyStaticBuffer(int forcedsave)
       glDrawBuffer(staticbuffer);
       if (!goodZ)
       {
-	glDrawBufferRegion(zbuffer_region,0,0,Width,Height,0,0);
-	glDrawBufferRegion(cbuffer_region,0,0,Width,Height,0,0);
+    glDrawBufferRegion(zbuffer_region,0,0,Width,Height,0,0);
+    glDrawBufferRegion(cbuffer_region,0,0,Width,Height,0,0);
       }
       {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
       glDrawBuffer(screenbuffer);
@@ -4880,74 +4882,74 @@ void display(void)
     {
       if (panning)
       {
-	glDrawBuffer(staticbuffer);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	render();
+    glDrawBuffer(staticbuffer);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    render();
 #ifdef MESA_XOR_TEST
-	// Delay swap until after XOR moving part for Mesa.
-	if (buffer_swap_mode != SWAP_TYPE_NODAMAGE) // Mesa
+    // Delay swap until after XOR moving part for Mesa.
+    if (buffer_swap_mode != SWAP_TYPE_NODAMAGE) // Mesa
 #endif
-	{printf("glutSwapBuffers()\n"); glutSwapBuffers();}
-	glDrawBuffer(renderbuffer);
+    {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
+    glDrawBuffer(renderbuffer);
       }
       if (SOLID_EDIT_MODE)
       {
-	if (!panning)
-	{
-	  if (movingpiece == curpiece)
-	  {
-	    glDrawBuffer(staticbuffer);
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    render();
-	    SaveDepthBuffer();
-	    CopyStaticBuffer(1);
-	  }
-	  else
-	  {
-	    glDrawBuffer(renderbuffer);
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    render();
-	  }
-	}
-	rendersetup();
-	if (movingpiece == curpiece)
-	  DrawMovingPiece();
-	else
-	  XORcurPiece();
+    if (!panning)
+    {
+      if (movingpiece == curpiece)
+      {
+        glDrawBuffer(staticbuffer);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render();
+        SaveDepthBuffer();
+        CopyStaticBuffer(1);
       }
       else
       {
-	if (!panning)
-	{
-	  if (movingpiece == curpiece)
-	  {
-	    Select1Part(curpiece);
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    render();
-	    UnSelect1Part(curpiece);
-	  }
-	  else
-	  {
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    render();
-	  }
-	}
-	rendersetup();
-	XORcurPiece();
+        glDrawBuffer(renderbuffer);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render();
+      }
+    }
+    rendersetup();
+    if (movingpiece == curpiece)
+      DrawMovingPiece();
+    else
+      XORcurPiece();
+      }
+      else
+      {
+    if (!panning)
+    {
+      if (movingpiece == curpiece)
+      {
+        Select1Part(curpiece);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render();
+        UnSelect1Part(curpiece);
+      }
+      else
+      {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        render();
+      }
+    }
+    rendersetup();
+    XORcurPiece();
       }
 #ifdef MESA_XOR_TEST
       if (buffer_swap_mode == SWAP_TYPE_NODAMAGE) // Mesa
       {
-	renderbuffer = screenbuffer;
-	glDrawBuffer(screenbuffer);
-	// Solid moving part must be drawn in GL_FRONT if not panning.
-	if (!SOLID_EDIT_MODE || (movingpiece != curpiece) || panning)
-	  {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
+    renderbuffer = screenbuffer;
+    glDrawBuffer(screenbuffer);
+    // Solid moving part must be drawn in GL_FRONT if not panning.
+    if (!SOLID_EDIT_MODE || (movingpiece != curpiece) || panning)
+      {printf("glutSwapBuffers()\n"); glutSwapBuffers();}
       }
 #endif
       if (!panning)
       {
-	edit_mode_gui();
+    edit_mode_gui();
       }
     }
 
@@ -4991,24 +4993,24 @@ void display(void)
     {
       if (stepcount == curstep)
       {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	curstep = 0; // Reset to first step
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    curstep = 0; // Reset to first step
       }
       else
       {
 #ifndef ALWAYS_REDRAW
-	// XOR erase the previous comment.
-	sprintf(buf,"Step %d of %d.  ",curstep+1, stepcount+1);
-	strcat(buf, "Click on drawing to continue.");
-	platform_write_step_comment(buf);
+    // XOR erase the previous comment.
+    sprintf(buf,"Step %d of %d.  ",curstep+1, stepcount+1);
+    strcat(buf, "Click on drawing to continue.");
+    platform_write_step_comment(buf);
 
-	// Save the cropping extents from the previous step
-	// so I can restore them after zReset().
-	save_extents();
+    // Save the cropping extents from the previous step
+    // so I can restore them after zReset().
+    save_extents();
 #else
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #endif
-	curstep++; // Move on to next step
+    curstep++; // Move on to next step
       }
     }
   }
@@ -5058,7 +5060,7 @@ void display(void)
 #ifndef ALWAYS_REDRAW
       // Restore the cropping extents from the previous step if needed.
       if (curstep > 0)
-	merge_extents();
+    merge_extents();
 #endif
     }
   }
@@ -5147,15 +5149,15 @@ void rotate_about(float x, float y, float z, float degrees);
 void parse_view(char *viewMatrix)
 {
       sscanf(viewMatrix,"%f,%f,%f,%f,%f,%f,%f,%f,%f",
-	     &(ldraw_commandline_opts.A.a),
-	     &(ldraw_commandline_opts.A.b),
-	     &(ldraw_commandline_opts.A.c),
-	     &(ldraw_commandline_opts.A.d),
-	     &(ldraw_commandline_opts.A.e),
-	     &(ldraw_commandline_opts.A.f),
-	     &(ldraw_commandline_opts.A.g),
-	     &(ldraw_commandline_opts.A.h),
-	     &(ldraw_commandline_opts.A.i));
+         &(ldraw_commandline_opts.A.a),
+         &(ldraw_commandline_opts.A.b),
+         &(ldraw_commandline_opts.A.c),
+         &(ldraw_commandline_opts.A.d),
+         &(ldraw_commandline_opts.A.e),
+         &(ldraw_commandline_opts.A.f),
+         &(ldraw_commandline_opts.A.g),
+         &(ldraw_commandline_opts.A.h),
+         &(ldraw_commandline_opts.A.i));
 }
 
 /***************************************************************/
@@ -5224,7 +5226,7 @@ void HiLightNewPiece(int piecenum)
       dirtyWindow = 1;
       glutPostRedisplay();
       if (ldraw_commandline_opts.debug_level == 1)
-	  Print1Part(curpiece, stdout);
+      Print1Part(curpiece, stdout);
       edit_mode_gui();
       return;
     }
@@ -5576,11 +5578,11 @@ char *loadpluglist(void)
   char plugpath[512];
   char filename[512];
 
-  DIR			*dirp;
-  struct dirent		*dir;
-  struct stat		statbuf;
-  int			i = 0;
-  int			n = 0;
+  DIR           *dirp;
+  struct dirent     *dir;
+  struct stat       statbuf;
+  int           i = 0;
+  int           n = 0;
 
   long filesize;
   char *buffer;
@@ -5749,7 +5751,7 @@ int runplugin(int n)
   }
 
   partname = plugin(plugins[i], CompleteText, SelText, &SelStart, &SelLength,
-		    &CursoRow, &CursorColum);
+            &CursoRow, &CursorColum);
 
   if (partname)
   {
@@ -5887,7 +5889,7 @@ void enterEditMode()
 
     if (editingprevmode != 'C')
       if (stepcount != curstep)
-	glutPostRedisplay();  // gotta redisplay to draw the whole thing.
+    glutPostRedisplay();  // gotta redisplay to draw the whole thing.
 
     curstep = 0; // Reset to first step
     dirtyWindow = 1;
@@ -5905,7 +5907,7 @@ void enterEditMode()
     {
       XORcurPiece();
       if (ldraw_commandline_opts.debug_level == 1)
-	  Print1Part(curpiece, stdout);
+      Print1Part(curpiece, stdout);
       edit_mode_gui();
     }
 }
@@ -5976,34 +5978,34 @@ int edit_mode_fnkeys(int key, int x, int y)
     {
       switch(key) {
       case GLUT_KEY_PAGE_UP:
-	partlookup -= 10;
-	if (partlookup < 1)
-	  partlookup = 1;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    partlookup -= 10;
+    if (partlookup < 1)
+      partlookup = 1;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_PAGE_DOWN:
-	partlookup += 10;
-	if (partlookup > partlistsize)
-	  partlookup = partlistsize;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    partlookup += 10;
+    if (partlookup > partlistsize)
+      partlookup = partlistsize;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_UP:
-	partlookup -= 1;
-	if (partlookup < 1)
-	  partlookup = 1;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    partlookup -= 1;
+    if (partlookup < 1)
+      partlookup = 1;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_DOWN:
-	partlookup += 1;
-	if (partlookup > partlistsize)
-	  partlookup = partlistsize;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    partlookup += 1;
+    if (partlookup > partlistsize)
+      partlookup = partlistsize;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       default:
-	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("fnkey = %d = '%c'\n",key,key);
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    if (ldraw_commandline_opts.debug_level == 1)
+      printf("fnkey = %d = '%c'\n",key,key);
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       }
     return 1;
     }
@@ -6012,34 +6014,34 @@ int edit_mode_fnkeys(int key, int x, int y)
     {
       switch(key) {
       case GLUT_KEY_PAGE_UP:
-	pluglookup -= 10;
-	if (pluglookup < 1)
-	  pluglookup = 1;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    pluglookup -= 10;
+    if (pluglookup < 1)
+      pluglookup = 1;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_PAGE_DOWN:
-	pluglookup += 10;
-	if (pluglookup > pluglistsize)
-	  pluglookup = pluglistsize;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    pluglookup += 10;
+    if (pluglookup > pluglistsize)
+      pluglookup = pluglistsize;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_UP:
-	pluglookup -= 1;
-	if (pluglookup < 1)
-	  pluglookup = 1;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    pluglookup -= 1;
+    if (pluglookup < 1)
+      pluglookup = 1;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       case GLUT_KEY_DOWN:
-	pluglookup += 1;
-	if (pluglookup > pluglistsize)
-	  pluglookup = pluglistsize;
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    pluglookup += 1;
+    if (pluglookup > pluglistsize)
+      pluglookup = pluglistsize;
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       default:
-	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("fnkey = %d = '%c'\n",key,key);
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+    if (ldraw_commandline_opts.debug_level == 1)
+      printf("fnkey = %d = '%c'\n",key,key);
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       }
     return 1;
     }
@@ -6047,7 +6049,7 @@ int edit_mode_fnkeys(int key, int x, int y)
     switch(key) {
     default:
       if (ldraw_commandline_opts.debug_level == 1)
-	  printf("fnkey = %d = '%c'\n",key,key);
+      printf("fnkey = %d = '%c'\n",key,key);
       edit_mode_gui(); // Redisplay the GUI
       break;
     }
@@ -6101,55 +6103,55 @@ int edit_mode_fnkeys(int key, int x, int y)
 }
 
 /***************************************************************/
-#define MAIN_MENU_ID 	'/'
-#define FILE_MENU_ID 	'F'
-#define EDIT_MENU_ID 	'E'
-#define VIEW_MENU_ID 	'V'
-#define TURN_MENU_ID 	'T'
-#define PIECE_MENU_ID 	'P'
-#define OPTS_MENU_ID 	'O'
+#define MAIN_MENU_ID    '/'
+#define FILE_MENU_ID    'F'
+#define EDIT_MENU_ID    'E'
+#define VIEW_MENU_ID    'V'
+#define TURN_MENU_ID    'T'
+#define PIECE_MENU_ID   'P'
+#define OPTS_MENU_ID    'O'
 
-#define OFFSET_MENU_ID 	'o'
-#define OFFSET_X_ID	'1'
-#define OFFSET_Y_ID	'2'
-#define OFFSET_Z_ID	'3'
-#define OFFSET_V_ID	'4'
+#define OFFSET_MENU_ID  'o'
+#define OFFSET_X_ID '1'
+#define OFFSET_Y_ID '2'
+#define OFFSET_Z_ID '3'
+#define OFFSET_V_ID '4'
 
-#define FILE_LOAD_ID 	'L'
-#define FILE_SAVE_ID 	'S'
-#define FILE_EXIT_ID 	'E'
+#define FILE_LOAD_ID    'L'
+#define FILE_SAVE_ID    'S'
+#define FILE_EXIT_ID    'E'
 
-#define TURN_X_ID	'X'
-#define TURN_Y_ID	'Y'
-#define TURN_Z_ID	'Z'
+#define TURN_X_ID   'X'
+#define TURN_Y_ID   'Y'
+#define TURN_Z_ID   'Z'
 
 // C-X, C-Y, C-Z, C-O
-#define ROTATE_X_ID	24
-#define ROTATE_Y_ID	25
-#define ROTATE_Z_ID	26
-#define ROTATE_O_ID	15
+#define ROTATE_X_ID 24
+#define ROTATE_Y_ID 25
+#define ROTATE_Z_ID 26
+#define ROTATE_O_ID 15
 
-#define MOVE_X_ID	'x'
-#define MOVE_Y_ID	'y'
-#define MOVE_Z_ID	'z'
-#define MOVE_V_ID	'v'
+#define MOVE_X_ID   'x'
+#define MOVE_Y_ID   'y'
+#define MOVE_Z_ID   'z'
+#define MOVE_V_ID   'v'
 
-#define GOTO_MENU_ID	'G'
-#define COLOR_MENU_ID	'c'
-#define PART_SWAP_ID	'p'
-#define PART_SCALE_ID	's'
-#define PART_MATRIX_ID	'm'
-#define PART_LOC_ID	'l'
+#define GOTO_MENU_ID    'G'
+#define COLOR_MENU_ID   'c'
+#define PART_SWAP_ID    'p'
+#define PART_SCALE_ID   's'
+#define PART_MATRIX_ID  'm'
+#define PART_LOC_ID 'l'
 
 #define EDIT_LINE_ID    'e'
 #define EDIT_COMMENT_ID 'C'
 #define EDIT_HOSE_ID    'h'
 #define EDIT_PLUGIN_ID  'g'
 
-#define LINETYPE_2_ID	2
-#define LINETYPE_3_ID	3
-#define LINETYPE_4_ID	4
-#define LINETYPE_5_ID	5
+#define LINETYPE_2_ID   2
+#define LINETYPE_3_ID   3
+#define LINETYPE_4_ID   4
+#define LINETYPE_5_ID   5
 
 /*****************************************************************************/
 char *ScanRGBA(float m[4][4], int numpoints, char *str)
@@ -6254,14 +6256,15 @@ char *getfilename(char *s, char *filename)
 /***************************************************************/
 int tfd_loadfile()
 {
-  /* Test some of the other dialogs.  Try colordialog... */
-  /*     char *foo = tinyfd_messageBox("Hello World",
-  /*     "Which do you prefer?\n\t(yes or no)", "yesno", "question", 0); */
-  /*     printf("messagebox => <%s>\n",foo); */
-  /*     unsigned char const aDefaultRGB[3] = { 0 , 255 , 255 }; */
-  /*     unsigned char aoResultRGB[3] = { 0 , 0 , 0 }; */
-  /*     char *foo = tinyfd_colorChooser("Pick a color",NULL,aDefaultRGB,aoResultRGB); */
-  /*     printf("color => <%s>\n",foo); */
+  /* Test some of the other dialogs.  Try colordialog...
+      char *foo = tinyfd_messageBox("Hello World",
+      "Which do you prefer?\n\t(yes or no)", "yesno", "question", 0);
+      printf("messagebox => <%s>\n",foo);
+      unsigned char const aDefaultRGB[3] = { 0 , 255 , 255 };
+      unsigned char aoResultRGB[3] = { 0 , 0 , 0 };
+      char *foo = tinyfd_colorChooser("Pick a color",NULL,aDefaultRGB,aoResultRGB);
+      printf("color => <%s>\n",foo);
+  */
 #ifdef MACOS_X
   // tinyfiledialogs removes the "*." prefix
   const char *filter[2] = {"*.org.ldraw.ldr","*.org.ldraw.mpd"};
@@ -6322,7 +6325,7 @@ int edit_mode_keyboard(int key, int x, int y)
     return 0;
 
   // If we have a command going then work on that.
-  if (i = strlen(ecommand))
+  if ((i = strlen(ecommand)))
   {
     if (key == 27)
     {
@@ -6340,65 +6343,65 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'f':
-	sprintf(eprompt[0], "File: ");
-	sprintf(eprompt[1], "&Load &Save &Exit");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "File: ");
+    sprintf(eprompt[1], "&Load &Save &Exit");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'e':
-	sprintf(eprompt[0], "Edit: ");
-	sprintf(eprompt[1], "&Insert &Delete &Swap &Line-type  &Hoser &Plugins");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "Edit: ");
+    sprintf(eprompt[1], "&Insert &Delete &Swap &Line-type  &Hoser &Plugins");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'v':
-	sprintf(eprompt[0], "View: ");
-	sprintf(eprompt[1], "&Front &Right &Left &Back &Over &Under &Three-&D &In &Center");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "View: ");
+    sprintf(eprompt[1], "&Front &Right &Left &Back &Over &Under &Three-&D &In &Center");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'p':
-	sprintf(eprompt[0], "Piece: ");
-	sprintf(eprompt[1], "&File &Color &Goto  &Location &Scale &Matrix  &Inline");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "Piece: ");
+    sprintf(eprompt[1], "&File &Color &Goto  &Location &Scale &Matrix  &Inline");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'o':
-	sprintf(eprompt[0], "Options: ");
-	sprintf(eprompt[1], "&Line-as-stud &Start-at-line &Draw-to-current");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "Options: ");
+    sprintf(eprompt[1], "&Line-as-stud &Start-at-line &Draw-to-current");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 't':
-	sprintf(eprompt[0], "Turn: ");
-	sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis &Center-set  &Origin &Axis &Rotate");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "Turn: ");
+    sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis &Center-set  &Origin &Axis &Rotate");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'r':
-	sprintf(eprompt[0], "Rotate: ");
-	sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    sprintf(eprompt[0], "Rotate: ");
+    sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       case 'h':
-	show_edit_mode_gui ^= 1;
-	show_edit_mode_gui |= 2;
-	clear_edit_mode_gui();
-	edit_mode_gui();
-	break;
+    show_edit_mode_gui ^= 1;
+    show_edit_mode_gui |= 2;
+    clear_edit_mode_gui();
+    edit_mode_gui();
+    break;
       case 'q':
-	exit(0);
-	break;
+    exit(0);
+    break;
       default:
-	break;
+    break;
       }
       return 1;
     }
@@ -6408,13 +6411,13 @@ int edit_mode_keyboard(int key, int x, int y)
       clear_edit_mode_gui();
       sprintf(eprompt[0], "Offset %c-axis: ", toupper(key));
       if (key == 'x')
-	ecommand[0] = '1';
+    ecommand[0] = '1';
       if (key == 'y')
-	ecommand[0] = '2';
+    ecommand[0] = '2';
       if (key == 'z')
-	ecommand[0] = '3';
+    ecommand[0] = '3';
       if (key == 'v')
-	ecommand[0] = '4';
+    ecommand[0] = '4';
       ecommand[1] = 0;
       edit_mode_gui();
       return 1;
@@ -6426,12 +6429,12 @@ int edit_mode_keyboard(int key, int x, int y)
       case 'x':
       case 'y':
       case 'z':
-	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Rotate %c-axis angle: ", toupper(key));
-	ecommand[0] = key - 0x60; // change 'x' to C-X etc.
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    clear_edit_mode_gui();
+    sprintf(eprompt[0], "Rotate %c-axis angle: ", toupper(key));
+    ecommand[0] = key - 0x60; // change 'x' to C-X etc.
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       }
       return 1;
     }
@@ -6442,48 +6445,48 @@ int edit_mode_keyboard(int key, int x, int y)
       case 'x':
       case 'y':
       case 'z':
-	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Turn %c-axis angle: ", toupper(key));
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    clear_edit_mode_gui();
+    sprintf(eprompt[0], "Turn %c-axis angle: ", toupper(key));
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'c':
-	// Center set axis
-	if (Get1PartPos(curpiece, turnCenter) == 0)
+    // Center set axis
+    if (Get1PartPos(curpiece, turnCenter) == 0)
           turnCenter[0][3] = turnCenter[1][3] = turnCenter[2][3] = 0.0;
-	printf("Turn Center at %f, %f, %f\n", turnCenter[0][3], turnCenter[1][3], turnCenter[2][3]);
-	clear_edit_mode_gui();
-	if (turnAxisVisible)
-	{
-	  dirtyWindow = 1;
-	  glutPostRedisplay();
-	}
-	else
-	  edit_mode_gui();
-	return 1;
+    printf("Turn Center at %f, %f, %f\n", turnCenter[0][3], turnCenter[1][3], turnCenter[2][3]);
+    clear_edit_mode_gui();
+    if (turnAxisVisible)
+    {
+      dirtyWindow = 1;
+      glutPostRedisplay();
+    }
+    else
+      edit_mode_gui();
+    return 1;
       case 'o':
         sprintf(eprompt[0], "Turn Origin (x y z): ");
-	eprompt[1][0] = 0;
-	ecommand[0] = key - 0x60; // change 'o' to C-O.
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    eprompt[1][0] = 0;
+    ecommand[0] = key - 0x60; // change 'o' to C-O.
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'a':
-	turnAxisVisible ^= 1;
-	// printf("TurnAxisVisible = %d\n", turnAxisVisible);
-	clear_edit_mode_gui();
-	dirtyWindow = 1;
-	glutPostRedisplay();
-	return 1;
+    turnAxisVisible ^= 1;
+    // printf("TurnAxisVisible = %d\n", turnAxisVisible);
+    clear_edit_mode_gui();
+    dirtyWindow = 1;
+    glutPostRedisplay();
+    return 1;
       case 'r':
-	// Switch to the rotate menu
-	sprintf(eprompt[0], "Rotate: ");
-	sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis");
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	break;
+    // Switch to the rotate menu
+    sprintf(eprompt[0], "Rotate: ");
+    sprintf(eprompt[1], "&X-axis &Y-axis &Z-axis");
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    break;
       }
       return 1;
     }
@@ -6493,32 +6496,32 @@ int edit_mode_keyboard(int key, int x, int y)
       switch(key) {
       case 'l':
       case 'o': // Also allow O for Open
-	//tinyfd_forceConsole = 1;
-	if (tinyfd_gui_test() < 0x100)
-	{
-	  clear_edit_mode_gui();
-	  sprintf(eprompt[0], "Load file: ");
-	  ecommand[0] = toupper(key);
+    //tinyfd_forceConsole = 1;
+    if (tinyfd_gui_test() < 0x100)
+    {
+      clear_edit_mode_gui();
+      sprintf(eprompt[0], "Load file: ");
+      ecommand[0] = toupper(key);
       sprintf(&(ecommand[1]), "%s", datfilename);
-	  edit_mode_gui();
-	  return 1;
-	}
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	//edit_mode_gui();
-	if (tfd_loadfile()){
-	  curstep = 0; // Reset to first step
-	  dirtyWindow = 1;
-	  UnSelect1Part(curpiece); // UnSelect part before Loading
-	  curpiece = 0;
-	  movingpiece = -1;
-	  list_made = 0; // Gotta reparse the file.
-	  SetTitle(1); // Change the title of the window.
-	  glutPostRedisplay();
-	}
-	else
-	  edit_mode_gui();
-	return 1;
+      edit_mode_gui();
+      return 1;
+    }
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    //edit_mode_gui();
+    if (tfd_loadfile()){
+      curstep = 0; // Reset to first step
+      dirtyWindow = 1;
+      UnSelect1Part(curpiece); // UnSelect part before Loading
+      curpiece = 0;
+      movingpiece = -1;
+      list_made = 0; // Gotta reparse the file.
+      SetTitle(1); // Change the title of the window.
+      glutPostRedisplay();
+    }
+    else
+      edit_mode_gui();
+    return 1;
       case 's':
 	if (tinyfd_gui_test() < 0x100)
 	{
@@ -6529,19 +6532,19 @@ int edit_mode_keyboard(int key, int x, int y)
 	  edit_mode_gui();
 	  return 1;
 	}
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	tfd_saveas();
-	i = UnSelect1Part(curpiece); // Link part back in before printing
-	Print1Model(datfilename);
-	SetTitle(1); // Change the title of the window.
-	if (i != -1)
-	  Select1Part(curpiece); // Unlink part again if needed.
-	//edit_mode_gui();
-	return 1;
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    tfd_saveas();
+    i = UnSelect1Part(curpiece); // Link part back in before printing
+    Print1Model(datfilename);
+    SetTitle(1); // Change the title of the window.
+    if (i != -1)
+      Select1Part(curpiece); // Unlink part again if needed.
+    //edit_mode_gui();
+    return 1;
       case 'e':
       case 'x': // Also allow X for exit.
-	exit(0);
+    exit(0);
       // case 'm': // Someday add options for individual "0 FILE" sections of mpd files.
       }
       return 1;
@@ -6551,44 +6554,44 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'i':
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	InsertNewPiece();
-	return 1;
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    InsertNewPiece();
+    return 1;
       case 'd':
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	DelCurPiece();
-	return 1;
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    DelCurPiece();
+    return 1;
       case 's':
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	UnLightCurPiece();
-	Switch1Part(curpiece);
-	HiLightNewPiece(curpiece);
-	return 1;
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    UnLightCurPiece();
+    Switch1Part(curpiece);
+    HiLightNewPiece(curpiece);
+    return 1;
       case 'l':
-	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Line Type: ");
-	sprintf(eprompt[1], "&Piece &Comment &Step &2 &3 &4 &5");
-	ecommand[0] = 'e'; // EDIT_LINE_ID
-	edit_mode_gui();
-	return 1;
+    clear_edit_mode_gui();
+    sprintf(eprompt[0], "Line Type: ");
+    sprintf(eprompt[1], "&Piece &Comment &Step &2 &3 &4 &5");
+    ecommand[0] = 'e'; // EDIT_LINE_ID
+    edit_mode_gui();
+    return 1;
       case 'h':
-	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Hoser steps: ");
-	ecommand[0] = 'h'; // EDIT_HOSE_ID
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    clear_edit_mode_gui();
+    sprintf(eprompt[0], "Hoser steps: ");
+    ecommand[0] = 'h'; // EDIT_HOSE_ID
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'p':
-	clear_edit_mode_gui();
-	sprintf(eprompt[0], "Plugins: ");
-	ecommand[0] = 'g'; // EDIT_PLUGIN_ID
-	ecommand[1] = 0;
-	loadpluglist();
-	edit_mode_gui(); // Redisplay the GUI
-	return 1;
+    clear_edit_mode_gui();
+    sprintf(eprompt[0], "Plugins: ");
+    ecommand[0] = 'g'; // EDIT_PLUGIN_ID
+    ecommand[1] = 0;
+    loadpluglist();
+    edit_mode_gui(); // Redisplay the GUI
+    return 1;
       }
       return 1;
     }
@@ -6597,40 +6600,40 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'p':
-	sprintf(eprompt[0], "New Part: ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 'p';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[0], "New Part: ");
+    eprompt[1][0] = 0;
+    ecommand[0] = 'p';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'c':
-	sprintf(eprompt[0], "Comment: ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 'C';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[0], "Comment: ");
+    eprompt[1][0] = 0;
+    ecommand[0] = 'C';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 's':
-	EraseCurPiece();
-	movingpiece = -1;
-	Comment1Part(curpiece, "STEP");
-	glDepthMask(GL_TRUE); // enable updates to depth buffer
-	dirtyWindow = 1;
-	glutPostRedisplay();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	clear_edit_mode_gui();
-	return 1;
+    EraseCurPiece();
+    movingpiece = -1;
+    Comment1Part(curpiece, "STEP");
+    glDepthMask(GL_TRUE); // enable updates to depth buffer
+    dirtyWindow = 1;
+    glutPostRedisplay();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    clear_edit_mode_gui();
+    return 1;
       case '2':
       case '3':
       case '4':
       case '5':
-	sprintf(eprompt[0], "Enter Coords for Type %c Primitive: ", key);
-	eprompt[1][0] = 0;
-	ecommand[0] = key - '0';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[0], "Enter Coords for Type %c Primitive: ", key);
+    eprompt[1][0] = 0;
+    ecommand[0] = key - '0';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       }
       return 1;
     }
@@ -6639,71 +6642,71 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'f':
-	m_viewMatrix = Front;
-	newview = 1;
-	break;
+    m_viewMatrix = Front;
+    newview = 1;
+    break;
       case 'r':
-	m_viewMatrix = Right;
-	newview = 1;
-	break;
+    m_viewMatrix = Right;
+    newview = 1;
+    break;
       case 'l':
-	m_viewMatrix = Left;
-	newview = 1;
-	break;
+    m_viewMatrix = Left;
+    newview = 1;
+    break;
       case 'b':
-	m_viewMatrix = Back;
-	newview = 1;
-	break;
+    m_viewMatrix = Back;
+    newview = 1;
+    break;
       case 'o':
-	m_viewMatrix = Above;
-	newview = 1;
-	break;
+    m_viewMatrix = Above;
+    newview = 1;
+    break;
       case 'u':
-	m_viewMatrix = Beneath;
-	newview = 1;
-	break;
+    m_viewMatrix = Beneath;
+    newview = 1;
+    break;
       case 't':
-	m_viewMatrix = LdrawOblique;
-	newview = 1;
-	break;
+    m_viewMatrix = LdrawOblique;
+    newview = 1;
+    break;
       case 'i':
-	clear_edit_mode_gui();
-	HiLightCurPiece(curpiece);
-	ldraw_commandline_opts.S *= (1.0 / 0.5);
-	dirtyWindow = 1;
-	glutPostRedisplay();
-	return 1;
+    clear_edit_mode_gui();
+    HiLightCurPiece(curpiece);
+    ldraw_commandline_opts.S *= (1.0 / 0.5);
+    dirtyWindow = 1;
+    glutPostRedisplay();
+    return 1;
       case 'c':
-	{
+    {
       clear_edit_mode_gui();
-	  if (Find1PartMatrix(curpiece, m))
-	  {
-	    //gluProject((GLdouble)x, (GLdouble)y, (GLdouble)z, model, proj, view, &sx, &sy, &sz);
-	    //printf("Center(%0.2f, %0.2f, %0.2f)\n", m[0][3],m[1][3],m[2][3]);
-	    m[0][3] -= (ldraw_commandline_opts.O.x + (zGetRowsize()/2));
-	    m[1][3] -= (ldraw_commandline_opts.O.y + (2*zGetColsize()/3));
-	    m[2][3] -= (ldraw_commandline_opts.O.z);
-	    //printf("Offset(%0.2f, %0.2f, %0.2f)\n", m[0][3],m[1][3],m[2][3]);
-	    ldraw_commandline_opts.O.x = -m[0][3];
-	    ldraw_commandline_opts.O.y = -m[1][3];
-	    ldraw_commandline_opts.O.z = -m[2][3];
-	    initCamera(); // Reset the camera position for any stock views.
-	    dirtyWindow = 1;
-	    glutPostRedisplay();
-	  }
-	  else
-	    edit_mode_gui();
-	}
-	return 1;
+      if (Find1PartMatrix(curpiece, m))
+      {
+        //gluProject((GLdouble)x, (GLdouble)y, (GLdouble)z, model, proj, view, &sx, &sy, &sz);
+        //printf("Center(%0.2f, %0.2f, %0.2f)\n", m[0][3],m[1][3],m[2][3]);
+        m[0][3] -= (ldraw_commandline_opts.O.x + (zGetRowsize()/2));
+        m[1][3] -= (ldraw_commandline_opts.O.y + (2*zGetColsize()/3));
+        m[2][3] -= (ldraw_commandline_opts.O.z);
+        //printf("Offset(%0.2f, %0.2f, %0.2f)\n", m[0][3],m[1][3],m[2][3]);
+        ldraw_commandline_opts.O.x = -m[0][3];
+        ldraw_commandline_opts.O.y = -m[1][3];
+        ldraw_commandline_opts.O.z = -m[2][3];
+        initCamera(); // Reset the camera position for any stock views.
+        dirtyWindow = 1;
+        glutPostRedisplay();
+      }
+      else
+        edit_mode_gui();
+    }
+    return 1;
       }
       if (newview)
       {
-	clear_edit_mode_gui();
-	HiLightCurPiece(curpiece); // unselect any moving parts
-	parse_view(m_viewMatrix);
-	initCamera(); // Reset the camera position for any stock views.
-	dirtyWindow = 1;
-	glutPostRedisplay();
+    clear_edit_mode_gui();
+    HiLightCurPiece(curpiece); // unselect any moving parts
+    parse_view(m_viewMatrix);
+    initCamera(); // Reset the camera position for any stock views.
+    dirtyWindow = 1;
+    glutPostRedisplay();
       }
       return 1;
     }
@@ -6712,55 +6715,55 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'f':
-	sprintf(eprompt[0], "New Part: ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 'p';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[0], "New Part: ");
+    eprompt[1][0] = 0;
+    ecommand[0] = 'p';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'c':
         sprintf(eprompt[0], "New Color: ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 'c';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    eprompt[1][0] = 0;
+    ecommand[0] = 'c';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'g':
-	sprintf(eprompt[0], "Goto Line: ");
-	eprompt[1][0] = 0;
-	ecommand[0] = toupper(key);
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[0], "Goto Line: ");
+    eprompt[1][0] = 0;
+    ecommand[0] = toupper(key);
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'l':
         sprintf(eprompt[0], "New Location (x y z): ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 'l';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    eprompt[1][0] = 0;
+    ecommand[0] = 'l';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 's':
         sprintf(eprompt[0], "New Scale (sx sy sz): ");
-	eprompt[1][0] = 0;
-	ecommand[0] = 's';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    eprompt[1][0] = 0;
+    ecommand[0] = 's';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'm':
         sprintf(eprompt[0], "New Matrix: ");
-	sprintf(eprompt[1], "(x y z)(a b c d e f h i j)");
-	//eprompt[1][0] = 0;
-	ecommand[0] = 'm';
-	ecommand[1] = 0;
-	edit_mode_gui();
-	return 1;
+    sprintf(eprompt[1], "(x y z)(a b c d e f h i j)");
+    //eprompt[1][0] = 0;
+    ecommand[0] = 'm';
+    ecommand[1] = 0;
+    edit_mode_gui();
+    return 1;
       case 'i':
-	// Inline the current piece
-	clear_edit_mode_gui();
-	UnLightCurPiece();
-	Inline1Part(curpiece);
-	HiLightNewPiece(curpiece);
-	return 1;
+    // Inline the current piece
+    clear_edit_mode_gui();
+    UnLightCurPiece();
+    Inline1Part(curpiece);
+    HiLightNewPiece(curpiece);
+    return 1;
       }
       return 1;
     }
@@ -6769,24 +6772,24 @@ int edit_mode_keyboard(int key, int x, int y)
       // Try to get submenu command
       switch(key) {
       case 'l':
-	clear_edit_mode_gui();
-	//ldraw_commandline_opts.F ^= TYPE_F_STUDLESS_MODE;
-	ldraw_commandline_opts.F ^= TYPE_F_STUDLINE_MODE;
-	dirtyWindow = 1;
-	glutPostRedisplay();
-	return 1;
+    clear_edit_mode_gui();
+    //ldraw_commandline_opts.F ^= TYPE_F_STUDLESS_MODE;
+    ldraw_commandline_opts.F ^= TYPE_F_STUDLINE_MODE;
+    dirtyWindow = 1;
+    glutPostRedisplay();
+    return 1;
       case 's':
-	// Start display at curpiece
-	StartLineNo = curpiece;
-	clear_edit_mode_gui();
-	edit_mode_gui();
-	return 1;
+    // Start display at curpiece
+    StartLineNo = curpiece;
+    clear_edit_mode_gui();
+    edit_mode_gui();
+    return 1;
       case 'd':
-	// Toggle draw to curpiece
-	DrawToCurPiece ^= 1;
-	clear_edit_mode_gui();
-	edit_mode_gui();
-	return 1;
+    // Toggle draw to curpiece
+    DrawToCurPiece ^= 1;
+    clear_edit_mode_gui();
+    edit_mode_gui();
+    return 1;
       }
       return 1;
     }
@@ -6801,358 +6804,358 @@ int edit_mode_keyboard(int key, int x, int y)
       clear_edit_mode_gui();
       switch (c){
       case 'G':
-	// Goto piece command
-	sscanf(&(ecommand[1]),"%d", &i);
-	if (DrawToCurPiece)
-	{
-	  if (i > curpiece+1)
-	  {
+    // Goto piece command
+    sscanf(&(ecommand[1]),"%d", &i);
+    if (DrawToCurPiece)
+    {
+      if (i > curpiece+1)
+      {
 #if 1
-	    int j;
-	    //rendersetup();
-	    UnLightCurPiece();
-	    for (j=curpiece+1; j<i; j++)
-	      Draw1Part(j, -1);
-	    HiLightNewPiece(i);
+        int j;
+        //rendersetup();
+        UnLightCurPiece();
+        for (j=curpiece+1; j<i; j++)
+          Draw1Part(j, -1);
+        HiLightNewPiece(i);
 #else
-	    dirtyWindow = 1;
-	    glutPostRedisplay();
-	    if (ldraw_commandline_opts.debug_level == 1)
-		Print1Part(curpiece, stdout);
-	    clear_edit_mode_gui();
+        dirtyWindow = 1;
+        glutPostRedisplay();
+        if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+        clear_edit_mode_gui();
 #endif
-	    break;
-	  }
-	}
-	HiLightCurPiece(i);
-	break;
+        break;
+      }
+    }
+    HiLightCurPiece(i);
+    break;
       case 'c':
-	sscanf(&(ecommand[1]),"%i", &color);
-	CopyStaticBuffer(0);//It would be nice to recolor without "moving" it.
-	movingpiece = curpiece;
-	Color1Part(curpiece, color);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%i", &color);
+    CopyStaticBuffer(0);//It would be nice to recolor without "moving" it.
+    movingpiece = curpiece;
+    Color1Part(curpiece, color);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 'p':
-	//sscanf(&(ecommand[1]),"%s", partname);
-	if (partlookup)
-	{
-	  // Use the part from the lookup list.
-	  strcpy(&(ecommand[1]), partlistptr[partlookup - 1]);
+    //sscanf(&(ecommand[1]),"%s", partname);
+    if (partlookup)
+    {
+      // Use the part from the lookup list.
+      strcpy(&(ecommand[1]), partlistptr[partlookup - 1]);
       if ((token = strpbrk(&(ecommand[1])," \t")))
-	    *token = 0;
+        *token = 0;
 
-	  prevlookup = saveprevlookup();
-	  partlookup = 0;
-	}
-	else if (ecommand[1] == 0)
-	{
-	  // Part lookup?
-	  sprintf(eprompt[0], "New Part: ");
-	  ecommand[0] = 'p';
-	  //StashPart0();
-	  loadpartlist();
-	  edit_mode_gui(); // Redisplay the GUI
-	  return 1;
-	}
-	getfilename(&(ecommand[1]), partname);
-	CopyStaticBuffer(0);
-	movingpiece = curpiece;
-	if (strrchr(partname, '.') == NULL)
-	  strcat(partname, use_uppercase ? ".DAT" : ".dat");
-	Swap1Part(curpiece, partname);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+      prevlookup = saveprevlookup();
+      partlookup = 0;
+    }
+    else if (ecommand[1] == 0)
+    {
+      // Part lookup?
+      sprintf(eprompt[0], "New Part: ");
+      ecommand[0] = 'p';
+      //StashPart0();
+      loadpartlist();
+      edit_mode_gui(); // Redisplay the GUI
+      return 1;
+    }
+    getfilename(&(ecommand[1]), partname);
+    CopyStaticBuffer(0);
+    movingpiece = curpiece;
+    if (strrchr(partname, '.') == NULL)
+      strcat(partname, use_uppercase ? ".DAT" : ".dat");
+    Swap1Part(curpiece, partname);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 'l':
-	v[0][0] = v[0][1] = v[0][2] = 0.0; // Default location to (0, 0, 0)
-	ScanPoints(v, 1, &(ecommand[1]));
-	m[0][3] = v[0][0];
-	m[1][3] = v[0][1];
-	m[2][3] = v[0][2];
-	printf("Locating at %f, %f, %f\n", v[0][0], v[0][1], v[0][2]);
-	CopyStaticBuffer(0);//It would be nice to relocate without "moving" it.
-	Locate1Part(curpiece, m, 1);
-	movingpiece = curpiece;
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	  Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    v[0][0] = v[0][1] = v[0][2] = 0.0; // Default location to (0, 0, 0)
+    ScanPoints(v, 1, &(ecommand[1]));
+    m[0][3] = v[0][0];
+    m[1][3] = v[0][1];
+    m[2][3] = v[0][2];
+    printf("Locating at %f, %f, %f\n", v[0][0], v[0][1], v[0][2]);
+    CopyStaticBuffer(0);//It would be nice to relocate without "moving" it.
+    Locate1Part(curpiece, m, 1);
+    movingpiece = curpiece;
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+      Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 's':
-	v[0][0] = v[0][1] = v[0][2] = 1.0; // Default scale to (1, 1, 1)
-	ScanPoints(v, 1, &(ecommand[1]));
-	m[0][0] = v[0][0];
-	m[1][1] = v[0][1];
-	m[2][2] = v[0][2];
-	printf("Scaling by %f, %f, %f\n", m[0][0], m[1][1], m[2][2]);
-	CopyStaticBuffer(0);//It would be nice to rescale without "moving" it.
-	movingpiece = curpiece;
+    v[0][0] = v[0][1] = v[0][2] = 1.0; // Default scale to (1, 1, 1)
+    ScanPoints(v, 1, &(ecommand[1]));
+    m[0][0] = v[0][0];
+    m[1][1] = v[0][1];
+    m[2][2] = v[0][2];
+    printf("Scaling by %f, %f, %f\n", m[0][0], m[1][1], m[2][2]);
+    CopyStaticBuffer(0);//It would be nice to rescale without "moving" it.
+    movingpiece = curpiece;
         //Move1Part(curpiece, m, 1);
-	Move1Part(curpiece, m, 2);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    Move1Part(curpiece, m, 2);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 'm':
-	memset(&v, 0, sizeof(v)); // Probably SHOULD default to identity matrix.
-	ScanPoints(v, 4, &(ecommand[1]));
-	m[0][0] = v[1][0]; m[1][0] = v[1][1]; m[2][0] = v[1][2];
-	m[0][1] = v[2][0]; m[1][1] = v[2][1]; m[2][1] = v[2][2];
-	m[0][2] = v[3][0]; m[1][2] = v[3][1]; m[2][2] = v[3][2];
-	m[0][3] = v[0][0]; m[1][3] = v[0][1]; m[2][3] = v[0][2];
-	printf("Orientation = %f, %f, %f %f, %f, %f %f, %f, %f %f, %f, %f\n",
-	       v[0][0], v[0][1], v[0][2],
-	       v[1][0], v[1][1], v[1][2],
-	       v[2][0], v[2][1], v[2][2],
-	       v[3][0], v[3][1], v[3][2]);
-	CopyStaticBuffer(0);//It would be nice to reorient without "moving" it.
-	Locate1Part(curpiece, m, 0);
-	movingpiece = curpiece;
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	  Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    memset(&v, 0, sizeof(v)); // Probably SHOULD default to identity matrix.
+    ScanPoints(v, 4, &(ecommand[1]));
+    m[0][0] = v[1][0]; m[1][0] = v[1][1]; m[2][0] = v[1][2];
+    m[0][1] = v[2][0]; m[1][1] = v[2][1]; m[2][1] = v[2][2];
+    m[0][2] = v[3][0]; m[1][2] = v[3][1]; m[2][2] = v[3][2];
+    m[0][3] = v[0][0]; m[1][3] = v[0][1]; m[2][3] = v[0][2];
+    printf("Orientation = %f, %f, %f %f, %f, %f %f, %f, %f %f, %f, %f\n",
+           v[0][0], v[0][1], v[0][2],
+           v[1][0], v[1][1], v[1][2],
+           v[2][0], v[2][1], v[2][2],
+           v[3][0], v[3][1], v[3][2]);
+    CopyStaticBuffer(0);//It would be nice to reorient without "moving" it.
+    Locate1Part(curpiece, m, 0);
+    movingpiece = curpiece;
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+      Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 'x':
-	sscanf(&(ecommand[1]),"%f", &f);
-	m[0][3] += f;
-	TranslateCurPiece(m);
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    m[0][3] += f;
+    TranslateCurPiece(m);
+    break;
       case 'z':
-	sscanf(&(ecommand[1]),"%f", &f);
-	m[2][3] += f;
-	TranslateCurPiece(m);
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    m[2][3] += f;
+    TranslateCurPiece(m);
+    break;
       case 'y':
-	sscanf(&(ecommand[1]),"%f", &f);
-	m[1][3] += f;
-	TranslateCurPiece(m);
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    m[1][3] += f;
+    TranslateCurPiece(m);
+    break;
       case 'v': // Translate x, y, z, or v = vector.
-	v[0][0] = v[0][1] = v[0][2] = 0.0;
-	ScanPoints(v, 1, &(ecommand[1]));
-	m[0][3] += v[0][0];
-	m[1][3] += v[0][1];
-	m[2][3] += v[0][2];
-	TranslateCurPiece(m);
-	break;
+    v[0][0] = v[0][1] = v[0][2] = 0.0;
+    ScanPoints(v, 1, &(ecommand[1]));
+    m[0][3] += v[0][0];
+    m[1][3] += v[0][1];
+    m[2][3] += v[0][2];
+    TranslateCurPiece(m);
+    break;
       case 'L':
-	// Load filename if new
-	getfilename(&(ecommand[1]), partname);
-	printf("loading file: %s\n", partname);
-	if (strcmp(partname,datfilename))
-	{
-	  strcpy(datfilename, partname);
-	  curstep = 0; // Reset to first step
-	  dirtyWindow = 1;
-	  UnSelect1Part(curpiece); // UnSelect part before Loading
-	  curpiece = 0;
-	  movingpiece = -1;
-	  list_made = 0; // Gotta reparse the file.
-	  SetTitle(1); // Change the title of the window.
-	  glutPostRedisplay();
-	}
-	else
-	  edit_mode_gui();
-	break;
+    // Load filename if new
+    getfilename(&(ecommand[1]), partname);
+    printf("loading file: %s\n", partname);
+    if (strcmp(partname,datfilename))
+    {
+      strcpy(datfilename, partname);
+      curstep = 0; // Reset to first step
+      dirtyWindow = 1;
+      UnSelect1Part(curpiece); // UnSelect part before Loading
+      curpiece = 0;
+      movingpiece = -1;
+      list_made = 0; // Gotta reparse the file.
+      SetTitle(1); // Change the title of the window.
+      glutPostRedisplay();
+    }
+    else
+      edit_mode_gui();
+    break;
       case 'S':
-	// Save as filename
-	getfilename(&(ecommand[1]), datfilename);
-	printf("Save as: %s\n", datfilename);
-	i = UnSelect1Part(curpiece); // Link part back in before printing
-	Print1Model(datfilename);
-	SetTitle(1); // Change the title of the window.
-	if (i != -1)
-	  Select1Part(curpiece); // Unlink part again if needed.
-	edit_mode_gui();
-	break;
+    // Save as filename
+    getfilename(&(ecommand[1]), datfilename);
+    printf("Save as: %s\n", datfilename);
+    i = UnSelect1Part(curpiece); // Link part back in before printing
+    Print1Model(datfilename);
+    SetTitle(1); // Change the title of the window.
+    if (i != -1)
+      Select1Part(curpiece); // Unlink part again if needed.
+    edit_mode_gui();
+    break;
       case 24:
-	c += 0x60;
+    c += 0x60;
       case 'X':
-	sscanf(&(ecommand[1]),"%f", &f);
-	angle = f;
-	printf("Rotate about %c by %f\n",c,angle);
-	CopyStaticBuffer(0);
-	angle *= PI_180;
-	m[1][1] = (float)cos(angle);
-	m[1][2] = (float)(-1.0*sin(angle));
-	m[2][1] = (float)sin(angle);
-	m[2][2] = (float)cos(angle);
-	movingpiece = curpiece;
-	if (c == 'X')
-	{
-	  m[0][3] = turnCenter[0][3];
-	  m[1][3] = turnCenter[1][3];
-	  m[2][3] = turnCenter[2][3];
-	  Move1Part(curpiece, m, 0);
-	}
-	else
-	  Move1Part(curpiece, m, 2);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    angle = f;
+    printf("Rotate about %c by %f\n",c,angle);
+    CopyStaticBuffer(0);
+    angle *= PI_180;
+    m[1][1] = (float)cos(angle);
+    m[1][2] = (float)(-1.0*sin(angle));
+    m[2][1] = (float)sin(angle);
+    m[2][2] = (float)cos(angle);
+    movingpiece = curpiece;
+    if (c == 'X')
+    {
+      m[0][3] = turnCenter[0][3];
+      m[1][3] = turnCenter[1][3];
+      m[2][3] = turnCenter[2][3];
+      Move1Part(curpiece, m, 0);
+    }
+    else
+      Move1Part(curpiece, m, 2);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 25:
-	c += 0x60;
+    c += 0x60;
       case 'Y':
-	sscanf(&(ecommand[1]),"%f", &f);
-	angle = f;
-	printf("Rotate about %c by %f\n",c,angle);
-	CopyStaticBuffer(0);
-	angle *= PI_180;
-	m[0][0] = (float)cos(angle);
-	m[0][2] = (float)sin(angle);
-	m[2][0] = (float)(-1.0*sin(angle));
-	m[2][2] = (float)cos(angle);
-	movingpiece = curpiece;
-	if (c == 'Y')
-	{
-	  m[0][3] = turnCenter[0][3];
-	  m[1][3] = turnCenter[1][3];
-	  m[2][3] = turnCenter[2][3];
-	  Move1Part(curpiece, m, 0);
-	}
-	else
-	  Move1Part(curpiece, m, 2);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    angle = f;
+    printf("Rotate about %c by %f\n",c,angle);
+    CopyStaticBuffer(0);
+    angle *= PI_180;
+    m[0][0] = (float)cos(angle);
+    m[0][2] = (float)sin(angle);
+    m[2][0] = (float)(-1.0*sin(angle));
+    m[2][2] = (float)cos(angle);
+    movingpiece = curpiece;
+    if (c == 'Y')
+    {
+      m[0][3] = turnCenter[0][3];
+      m[1][3] = turnCenter[1][3];
+      m[2][3] = turnCenter[2][3];
+      Move1Part(curpiece, m, 0);
+    }
+    else
+      Move1Part(curpiece, m, 2);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 26:
-	c += 0x60;
+    c += 0x60;
       case 'Z':
-	sscanf(&(ecommand[1]),"%f", &f);
-	angle = f;
-	printf("Rotate about %c by %f\n",c,angle);
-	CopyStaticBuffer(0);
-	angle *= PI_180;
-	m[0][0] = (float)cos(angle);
-	m[1][0] = (float)sin(angle);
-	m[0][1] = (float)(-1.0*sin(angle));
-	m[1][1] = (float)cos(angle);
-	movingpiece = curpiece;
-	if (c == 'Z')
-	{
-	  m[0][3] = turnCenter[0][3];
-	  m[1][3] = turnCenter[1][3];
-	  m[2][3] = turnCenter[2][3];
-	  Move1Part(curpiece, m, 0);
-	}
-	else
-	  Move1Part(curpiece, m, 2);
-	DrawMovingPiece();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    angle = f;
+    printf("Rotate about %c by %f\n",c,angle);
+    CopyStaticBuffer(0);
+    angle *= PI_180;
+    m[0][0] = (float)cos(angle);
+    m[1][0] = (float)sin(angle);
+    m[0][1] = (float)(-1.0*sin(angle));
+    m[1][1] = (float)cos(angle);
+    movingpiece = curpiece;
+    if (c == 'Z')
+    {
+      m[0][3] = turnCenter[0][3];
+      m[1][3] = turnCenter[1][3];
+      m[2][3] = turnCenter[2][3];
+      Move1Part(curpiece, m, 0);
+    }
+    else
+      Move1Part(curpiece, m, 2);
+    DrawMovingPiece();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    edit_mode_gui();
+    break;
       case 15:
-	v[0][0] = v[0][1] = v[0][2] = 0.0; // Default location to (0, 0, 0)
-	ScanPoints(v, 1, &(ecommand[1]));
-	turnCenter[0][3] = v[0][0];
-	turnCenter[1][3] = v[0][1];
-	turnCenter[2][3] = v[0][2];
-	printf("Turn Center at %f, %f, %f\n", v[0][0], v[0][1], v[0][2]);
-	if (turnAxisVisible)
-	{
-	  dirtyWindow = 1;
-	  glutPostRedisplay();
-	}
-	else
-	  edit_mode_gui();
-	break;
+    v[0][0] = v[0][1] = v[0][2] = 0.0; // Default location to (0, 0, 0)
+    ScanPoints(v, 1, &(ecommand[1]));
+    turnCenter[0][3] = v[0][0];
+    turnCenter[1][3] = v[0][1];
+    turnCenter[2][3] = v[0][2];
+    printf("Turn Center at %f, %f, %f\n", v[0][0], v[0][1], v[0][2]);
+    if (turnAxisVisible)
+    {
+      dirtyWindow = 1;
+      glutPostRedisplay();
+    }
+    else
+      edit_mode_gui();
+    break;
       case '1':
-	sscanf(&(ecommand[1]),"%f", &f);
-	ldraw_commandline_opts.O.x = -f;
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    ldraw_commandline_opts.O.x = -f;
+    edit_mode_gui();
+    break;
       case '2':
-	sscanf(&(ecommand[1]),"%f", &f);
-	ldraw_commandline_opts.O.y = -f;
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    ldraw_commandline_opts.O.y = -f;
+    edit_mode_gui();
+    break;
       case '3':
-	sscanf(&(ecommand[1]),"%f", &f);
-	ldraw_commandline_opts.O.z = -f;
-	edit_mode_gui();
-	break;
+    sscanf(&(ecommand[1]),"%f", &f);
+    ldraw_commandline_opts.O.z = -f;
+    edit_mode_gui();
+    break;
       case '4':
-	m[0][0] = m[0][1] = m[0][2] = 0.0;
-	ScanPoints(m, 1, &(ecommand[1]));
-	ldraw_commandline_opts.O.x = -m[0][0];
-	ldraw_commandline_opts.O.y = -m[0][1];
-	ldraw_commandline_opts.O.z = -m[0][2];
-	edit_mode_gui();
-	break;
+    m[0][0] = m[0][1] = m[0][2] = 0.0;
+    ScanPoints(m, 1, &(ecommand[1]));
+    ldraw_commandline_opts.O.x = -m[0][0];
+    ldraw_commandline_opts.O.y = -m[0][1];
+    ldraw_commandline_opts.O.z = -m[0][2];
+    edit_mode_gui();
+    break;
       case 'C':
-	strcpy(partname, &(ecommand[1]));
-	EraseCurPiece();
-	movingpiece = -1;
-	Comment1Part(curpiece, partname);
-	glDepthMask(GL_TRUE); // enable updates to depth buffer
-	dirtyWindow = 1;
-	glutPostRedisplay();
-	if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	clear_edit_mode_gui();
-	break;
+    strcpy(partname, &(ecommand[1]));
+    EraseCurPiece();
+    movingpiece = -1;
+    Comment1Part(curpiece, partname);
+    glDepthMask(GL_TRUE); // enable updates to depth buffer
+    dirtyWindow = 1;
+    glutPostRedisplay();
+    if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+    clear_edit_mode_gui();
+    break;
       case 'h':
-	// Hoser.  Get number of steps.  Similar to inline but for 4 lines.
-	sscanf(&(ecommand[1]),"%d", &i);
-	// Inline the current piece
-	clear_edit_mode_gui();
-	i = Hose1Part(curpiece, i); // Inline1Part(curpiece);
-	// Steal some code from the goto command.
-	if (i > curpiece+1)
-	  {
-	    int j;
-	    //rendersetup();
-	    UnLightCurPiece();
-	    for (j=curpiece+1; j<i; j++)
-	      Draw1Part(j, -1);
-	    HiLightNewPiece(i);
-	    break;
-	  }
-	else
-	  i = curpiece;
-	HiLightCurPiece(i);
-	return 1;
+    // Hoser.  Get number of steps.  Similar to inline but for 4 lines.
+    sscanf(&(ecommand[1]),"%d", &i);
+    // Inline the current piece
+    clear_edit_mode_gui();
+    i = Hose1Part(curpiece, i); // Inline1Part(curpiece);
+    // Steal some code from the goto command.
+    if (i > curpiece+1)
+      {
+        int j;
+        //rendersetup();
+        UnLightCurPiece();
+        for (j=curpiece+1; j<i; j++)
+          Draw1Part(j, -1);
+        HiLightNewPiece(i);
+        break;
+      }
+    else
+      i = curpiece;
+    HiLightCurPiece(i);
+    return 1;
       case 'g':
-	ecommand[0] = 0; // wipe the command char
-	clear_edit_mode_gui();
-	if (pluglookup)
-	{
-	  // Use the plug from the lookup list.
-	  runplugin(pluglookup);
-	  pluglookup = 0;
-	}
-	edit_mode_gui();
-	break;
+    ecommand[0] = 0; // wipe the command char
+    clear_edit_mode_gui();
+    if (pluglookup)
+    {
+      // Use the plug from the lookup list.
+      runplugin(pluglookup);
+      pluglookup = 0;
+    }
+    edit_mode_gui();
+    break;
       case 2:
       case 3:
       case 4:
       case 5:
-	EraseCurPiece();
-	if ((c == 3) || (c == 4))
-	  color = 16; // default color for filled primitives.
-	else
-	  color = 24; // default edge color for line primitives.
-	sprintf(partname, "%d %d %s", (int)c, color, &(ecommand[1]));
-	Make1Primitive(curpiece, partname);
-	HiLightCurPiece(curpiece);
-	edit_mode_gui();
-	break;
+    EraseCurPiece();
+    if ((c == 3) || (c == 4))
+      color = 16; // default color for filled primitives.
+    else
+      color = 24; // default edge color for line primitives.
+    sprintf(partname, "%d %d %s", (int)c, color, &(ecommand[1]));
+    Make1Primitive(curpiece, partname);
+    HiLightCurPiece(curpiece);
+    edit_mode_gui();
+    break;
       default:
-	edit_mode_gui();
-	break;
+    edit_mode_gui();
+    break;
       }
       break; // End of command finished processing.
 
@@ -7165,43 +7168,43 @@ int edit_mode_keyboard(int key, int x, int y)
     case 8: // Backspace
     case 127: // Delete
       if (i > 1) // Don't backspace past the command char.
-	ecommand[i-1] = 0;
+    ecommand[i-1] = 0;
       if (partlookup)
-	limitpartlist(&(ecommand[1]));
+    limitpartlist(&(ecommand[1]));
       if (pluglookup)
-	limitpluglist(&(ecommand[1]));
+    limitpluglist(&(ecommand[1]));
       edit_mode_gui(); // Redisplay the GUI
       break;
     case '?': // Part lookup?
       if (ecommand[0] == 'p')
       {
-	//StashPart0();
-	if (partlookup)
-	{
-	  // Got ? when already looking up part.  Display the selected part?
-	  // Use the part from the lookup list.
-	  strcpy(&(eresponse[1]), partlistptr[partlookup - 1]);
+    //StashPart0();
+    if (partlookup)
+    {
+      // Got ? when already looking up part.  Display the selected part?
+      // Use the part from the lookup list.
+      strcpy(&(eresponse[1]), partlistptr[partlookup - 1]);
       if ((token = strpbrk(&(eresponse[1])," \t")))
-	    *token = 0;
+        *token = 0;
 
-	  for (i = 1; eresponse[i] == ' '; i++); // Strip leading spaces
-	  strcpy(partname, &(eresponse[i]));
-	  CopyStaticBuffer(0);
-	  movingpiece = curpiece;
-	  if (strrchr(partname, '.') == NULL)
-	    strcat(partname, use_uppercase ? ".DAT" : ".dat");
-	  Swap1Part(curpiece, partname);
-	  DrawMovingPiece();
-	  if (ldraw_commandline_opts.debug_level == 1)
-	    Print1Part(curpiece, stdout);
-	  edit_mode_gui(); // Redisplay the GUI
-	  break;
-	}
-	loadpartlist();
-	if (ecommand[1])
-	  limitpartlist(&(ecommand[1]));
-	edit_mode_gui(); // Redisplay the GUI
-	break;
+      for (i = 1; eresponse[i] == ' '; i++); // Strip leading spaces
+      strcpy(partname, &(eresponse[i]));
+      CopyStaticBuffer(0);
+      movingpiece = curpiece;
+      if (strrchr(partname, '.') == NULL)
+        strcat(partname, use_uppercase ? ".DAT" : ".dat");
+      Swap1Part(curpiece, partname);
+      DrawMovingPiece();
+      if (ldraw_commandline_opts.debug_level == 1)
+        Print1Part(curpiece, stdout);
+      edit_mode_gui(); // Redisplay the GUI
+      break;
+    }
+    loadpartlist();
+    if (ecommand[1])
+      limitpartlist(&(ecommand[1]));
+    edit_mode_gui(); // Redisplay the GUI
+    break;
       }
     default:
       // printf("KEY = %d = '%c'\n",key,key);
@@ -7209,9 +7212,9 @@ int edit_mode_keyboard(int key, int x, int y)
       ecommand[i] = key;
       ecommand[i+1] = 0;
       if (partlookup)
-	limitpartlist(&(ecommand[1]));
+    limitpartlist(&(ecommand[1]));
       if (pluglookup)
-	limitpluglist(&(ecommand[1]));
+    limitpluglist(&(ecommand[1]));
       edit_mode_gui(); // Redisplay the GUI
       break;
     }
@@ -7239,7 +7242,7 @@ int edit_mode_keyboard(int key, int x, int y)
     Move1Part(curpiece, m, 1);
     DrawMovingPiece();
     if (ldraw_commandline_opts.debug_level == 1)
-	Print1Part(curpiece, stdout);
+    Print1Part(curpiece, stdout);
     edit_mode_gui();
     return 1;
   case 'i':
@@ -7514,7 +7517,7 @@ void fnkeys(int key, int x, int y)
     // if the width is different to -1
     if (glutGameModeGet(GLUT_GAME_MODE_WIDTH) != -1)
     {
-      glutEnterGameMode();		// enter full screen mode
+      glutEnterGameMode();      // enter full screen mode
       registerGlutCallbacks();
       init();
     }
@@ -7642,50 +7645,50 @@ void menuKeyEvent(int key, int x, int y)
 #ifdef AUTOSCALE_OPTION
     case 'S':
         autoscale();
-	reshape(Width, Height);
-	break;
+    reshape(Width, Height);
+    break;
 #endif
     case 6: // toggle edit mode
         if (editing)
-	  leaveEditMode();
-	else
-	{
-	  glutModifiers |= GLUT_ACTIVE_CTRL; //SOLID_EDIT_MODE = 1;
-	  glutModifiers &= ~GLUT_ACTIVE_ALT; // leave studs and drawtocur alone.
-	  enterEditMode();
-	}
-	break;
+      leaveEditMode();
+    else
+    {
+      glutModifiers |= GLUT_ACTIVE_CTRL; //SOLID_EDIT_MODE = 1;
+      glutModifiers &= ~GLUT_ACTIVE_ALT; // leave studs and drawtocur alone.
+      enterEditMode();
+    }
+    break;
     case 2: // Zoom out
         ldraw_commandline_opts.S *= 0.9;
-	dirtyWindow = 1; //reshape(Width, Height);
-	break;
+    dirtyWindow = 1; //reshape(Width, Height);
+    break;
     case 3: // Zoom in
         ldraw_commandline_opts.S *= (1.0 / 0.9);
-	dirtyWindow = 1; //reshape(Width, Height);
-	break;
+    dirtyWindow = 1; //reshape(Width, Height);
+    break;
     case '-': // Half Size (scale dn)
         //printf("key = %d = '%c' (%08x)\n",key,key, glutModifiers);
-	if ((glutModifiers & GLUT_ACTIVE_ALT) != 0)
-	  ldraw_commandline_opts.S *= 0.9;
-	else
-	  ldraw_commandline_opts.S *= 0.5;
-	dirtyWindow = 1; //reshape(Width, Height);
-	break;
+    if ((glutModifiers & GLUT_ACTIVE_ALT) != 0)
+      ldraw_commandline_opts.S *= 0.9;
+    else
+      ldraw_commandline_opts.S *= 0.5;
+    dirtyWindow = 1; //reshape(Width, Height);
+    break;
     case '+': // Double Size (scale up)
         //printf("key = %d = '%c' (%08x)\n",key,key, glutModifiers);
-	if ((glutModifiers & GLUT_ACTIVE_ALT) != 0)
-	  ldraw_commandline_opts.S *= (1.0 / 0.9);
-	else
-	  ldraw_commandline_opts.S *= (1.0 / 0.5);
-	dirtyWindow = 1; //reshape(Width, Height);
-	break;
+    if ((glutModifiers & GLUT_ACTIVE_ALT) != 0)
+      ldraw_commandline_opts.S *= (1.0 / 0.9);
+    else
+      ldraw_commandline_opts.S *= (1.0 / 0.5);
+    dirtyWindow = 1; //reshape(Width, Height);
+    break;
     case '0':
       m_viewMatrix = LdrawOblique;
       if (ldraw_projection_type)
       { // LdrawObliqe only makes sense with orthographic projection.
-	       ldraw_projection_type = 0;
-	       parse_view(m_viewMatrix);
-	       reshape(Width, Height);
+           ldraw_projection_type = 0;
+           parse_view(m_viewMatrix);
+           reshape(Width, Height);
       }
       newview = 1;
       break;
@@ -7729,8 +7732,8 @@ void menuKeyEvent(int key, int x, int y)
       ldraw_projection_type = 0;
       if (m_viewMatrix == LdrawOblique)
       {
-	     m_viewMatrix = Oblique;
-	     parse_view(m_viewMatrix);
+         m_viewMatrix = Oblique;
+         parse_view(m_viewMatrix);
       }
       reshape(Width, Height);
       break;
@@ -7738,8 +7741,8 @@ void menuKeyEvent(int key, int x, int y)
       ldraw_projection_type = 1;
       if (m_viewMatrix == LdrawOblique)
       {
-	m_viewMatrix = Oblique;
-	parse_view(m_viewMatrix);
+    m_viewMatrix = Oblique;
+    parse_view(m_viewMatrix);
       }
       reshape(Width, Height);
       break;
@@ -7766,15 +7769,15 @@ void menuKeyEvent(int key, int x, int y)
     case 'b':
       if (key == 'B')
       {
-	ldraw_image_type = IMAGE_TYPE_PNG_RGB;
-	if (glutModifiers & GLUT_ACTIVE_ALT)
-	  ldraw_image_type = IMAGE_TYPE_PNG_RGBA;
+    ldraw_image_type = IMAGE_TYPE_PNG_RGB;
+    if (glutModifiers & GLUT_ACTIVE_ALT)
+      ldraw_image_type = IMAGE_TYPE_PNG_RGBA;
       }
       else
       {
-	ldraw_image_type = IMAGE_TYPE_BMP8;
-	if (glutModifiers & GLUT_ACTIVE_ALT)
-	  ldraw_image_type = IMAGE_TYPE_BMP;
+    ldraw_image_type = IMAGE_TYPE_BMP8;
+    if (glutModifiers & GLUT_ACTIVE_ALT)
+      ldraw_image_type = IMAGE_TYPE_BMP;
       }
       c = ldraw_commandline_opts.M;
       ldraw_commandline_opts.M = 'S';
@@ -7783,17 +7786,17 @@ void menuKeyEvent(int key, int x, int y)
       return;
     case 'V':
       if (pan_visible == (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS) )
-	pan_visible = (TYPE_F_NO_POLYGONS | TYPE_F_STUDLESS_MODE);
+    pan_visible = (TYPE_F_NO_POLYGONS | TYPE_F_STUDLESS_MODE);
       else if (pan_visible == (TYPE_F_NO_POLYGONS | TYPE_F_STUDLESS_MODE) )
-	pan_visible = TYPE_F_INVISIBLE;
+    pan_visible = TYPE_F_INVISIBLE;
       else if (pan_visible == (TYPE_F_INVISIBLE) )
-	pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_SHADED_MODE);
+    pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_SHADED_MODE);
       else if (pan_visible == (TYPE_F_BBOX_MODE | TYPE_F_SHADED_MODE) )
-	pan_visible = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
+    pan_visible = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
       else if (pan_visible == (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE) )
-	pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
+    pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
       else
-	pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
+    pan_visible = (TYPE_F_BBOX_MODE | TYPE_F_NO_POLYGONS);
       return;
     case 's':
       // NOTE: I could toggle the menu strings but that would require
@@ -7802,13 +7805,13 @@ void menuKeyEvent(int key, int x, int y)
       //glutSetMenu(opts); // Reset the current menu to the main menu.
       if (ldraw_commandline_opts.M == 'C')
       {
-	ldraw_commandline_opts.M = 'P';
-	//glutChangeToMenuEntry(3, "Continuous         ", 'c');
+    ldraw_commandline_opts.M = 'P';
+    //glutChangeToMenuEntry(3, "Continuous         ", 'c');
       }
       else
       {
-	ldraw_commandline_opts.M = 'C'; //Switch to continuous output.
-	//glutChangeToMenuEntry(3, "Pause              ", 'c');
+    ldraw_commandline_opts.M = 'C'; //Switch to continuous output.
+    //glutChangeToMenuEntry(3, "Pause              ", 'c');
       }
       curstep = 0; // Reset to first step
       dirtyWindow = 1;
@@ -7822,16 +7825,16 @@ void menuKeyEvent(int key, int x, int y)
 #ifdef USE_L3_PARSER
     case 'r': // Reader (parser)
       if (editing)
-	return; // Do not switch parsers while editing.  Bad idea!
+    return; // Do not switch parsers while editing.  Bad idea!
       if (parsername == LDLITE_PARSER)
       {
-	parsername = L3_PARSER;
-	use_quads = 1;
+    parsername = L3_PARSER;
+    use_quads = 1;
       }
       else
       {
-	parsername = LDLITE_PARSER;
-	use_quads = 0;
+    parsername = LDLITE_PARSER;
+    use_quads = 0;
       }
       list_made = 0; // Gotta reparse the file.
       curstep = 0; // Reset to first step
@@ -7845,11 +7848,11 @@ void menuKeyEvent(int key, int x, int y)
       break;
     case 27:
     case UI_ESCAPE_EVENT:
-	exit(0);
-	break;
+    exit(0);
+    break;
     case '\r':
     case ' ':
-	break;
+    break;
 #ifdef WINDOWS
     case 22: // Paste on Windows (CTRL-V)
       // Consider doing something special here if they drag in multiple files.
@@ -7858,12 +7861,12 @@ void menuKeyEvent(int key, int x, int y)
       strcpy(ecommand, "L");
       pasteCommand(x, y);
       if (ecommand[1])
-	loadnewdatfile(dirname(ecommand+1),basename(ecommand+1));
+    loadnewdatfile(dirname(ecommand+1),basename(ecommand+1));
       ecommand[0] = 0;
       break;
 #endif
     default:
-	return;
+    return;
     }
     if (newview)
     {
@@ -7918,16 +7921,16 @@ void rotate_the_model(double y_angle, double x_angle)
   ym_rot.h = (float)sin(x_angle);
   ym_rot.i = (float)cos(x_angle);
   transform_multiply(&v_dummy,&ym_rot,
-		     &v_dummy,&xm_rot,
-		     &v_temp, &m_temp);
+             &v_dummy,&xm_rot,
+             &v_temp, &m_temp);
   xm_rot = *m_temp;
 
   free(m_temp);
   free(v_temp);
 
   transform_multiply(&v_dummy,&xm_rot,
-		     &v_dummy,&(ldraw_commandline_opts.A),
-		     &v_temp, &m_temp);
+             &v_dummy,&(ldraw_commandline_opts.A),
+             &v_temp, &m_temp);
   ldraw_commandline_opts.A = *m_temp;
 
   free(m_temp);
@@ -8071,8 +8074,8 @@ void old_rotate_about(float x, float y, float z, float angle)
   m_rot.i = (float)(z*z*(1-c)+c);
 
   transform_multiply(&v_dummy,&(ldraw_commandline_opts.A),
-		     &v_dummy,&m_rot,
-		     &v_temp, &m_temp);
+             &v_dummy,&m_rot,
+             &v_temp, &m_temp);
   ldraw_commandline_opts.A = *m_temp;
 
   free(m_temp);
@@ -8099,8 +8102,8 @@ void UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
   glGetDoublev(GL_PROJECTION_MATRIX, proj);
   glGetIntegerv(GL_VIEWPORT, view);
   gluUnProject((GLdouble)x, (GLdouble)y, 1.0,
-	       model, proj, view,
-	       &pan_x, &pan_y, &pan_z);
+           model, proj, view,
+           &pan_x, &pan_y, &pan_z);
   pan_y = -pan_y;
 
   *px = pan_x;
@@ -8110,16 +8113,16 @@ void UnProjectMouse(int x, int y, GLdouble *px, GLdouble *py, GLdouble *pz)
 #if 0
     printf("view(%d, %d, %d, %d)\n", view[0], view[1] , view[2], view[3]);
     printf("model(%g,%g,%g,%g, %g,%g,%g,%g %g,%g,%g,%g, %g,%g,%g,%g)\n",
-	   model[0], model[1] , model[2], model[3],
-	   model[4], model[5] , model[6], model[7],
-	   model[8], model[9] , model[10], model[11],
-	   model[12], model[13] , model[14], model[15]);
+       model[0], model[1] , model[2], model[3],
+       model[4], model[5] , model[6], model[7],
+       model[8], model[9] , model[10], model[11],
+       model[12], model[13] , model[14], model[15]);
     printf("proj(%g,%g,%g,%g, %g,%g,%g,%g, "
-	   "%g,%g,%g,%g, %g,%g,%g,%g)\n",
-	   proj[0], proj[1] , proj[2], proj[3],
-	   proj[4], proj[5] , proj[6], proj[7],
-	   proj[8], proj[9] , proj[10], proj[11],
-	   proj[12], proj[13] , proj[14], proj[15]);
+       "%g,%g,%g,%g, %g,%g,%g,%g)\n",
+       proj[0], proj[1] , proj[2], proj[3],
+       proj[4], proj[5] , proj[6], proj[7],
+       proj[8], proj[9] , proj[10], proj[11],
+       proj[12], proj[13] , proj[14], proj[15]);
 #endif
 }
 
@@ -8224,6 +8227,7 @@ void mouse(int button, int state, int x, int y)
 
     // Convert from world coords across screen plane to angle thru origin.
     depth = projection_depth;
+    UNUSED(depth);
 
 #if 0
     pan_z = pan_x - pan_start_x;
@@ -8314,10 +8318,10 @@ motion(int x, int y)
       // Should I use -1.0 for the z coord to get the front plane?
       if((fabs(pan_x -pan_start_x) < 4) && (fabs(pan_y -pan_start_y) < 4))
       {
-	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("hysteresis = %0.2f, %0.2f\n",
-		 fabs(pan_x -pan_start_x), fabs(pan_y -pan_start_y));
-	return;
+    if (ldraw_commandline_opts.debug_level == 1)
+      printf("hysteresis = %0.2f, %0.2f\n",
+         fabs(pan_x -pan_start_x), fabs(pan_y -pan_start_y));
+    return;
       }
       // Save draw modes, then switch to wireframe and turn off studs.
       pan_start_F = ldraw_commandline_opts.F;
@@ -8346,9 +8350,9 @@ motion(int x, int y)
     if (glutModifiers & GLUT_ACTIVE_ALT)
     {
       if (glutModifiers & GLUT_ACTIVE_SHIFT)
-	ldraw_commandline_opts.F = (TYPE_F_SHADED_MODE);
+    ldraw_commandline_opts.F = (TYPE_F_SHADED_MODE);
       else
-	ldraw_commandline_opts.F = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
+    ldraw_commandline_opts.F = (TYPE_F_STUDLESS_MODE | TYPE_F_SHADED_MODE);
     }
     else
       ldraw_commandline_opts.F = pan_visible;
@@ -8401,12 +8405,13 @@ motion(int x, int y)
       // Substitute Oblique view matrix so we can rotate it.
       if (m_viewMatrix == LdrawOblique)
       {
-	m_viewMatrix = Oblique;
-	parse_view(m_viewMatrix);
+    m_viewMatrix = Oblique;
+    parse_view(m_viewMatrix);
       }
 
       // Convert from world coords across screen plane to angle thru origin.
       depth = projection_depth;
+      UNUSED(depth);
 
       pan_x -= pan_start_x;
       pan_y -= pan_start_y;
@@ -8426,56 +8431,56 @@ motion(int x, int y)
 #  endif
 #endif
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("ROTATING about(%0.2f, %0.2f) by angle %0.2f\n", pan_y, -pan_x, angle);
+    printf("ROTATING about(%0.2f, %0.2f) by angle %0.2f\n", pan_y, -pan_x, angle);
 #ifdef USE_F00_CAMERA
       if (glutModifiers & GLUT_ACTIVE_CTRL)
       {
-	pan_x = x-(Width/2.0); // dx
-	pan_y = y-(Height/2.0); // dy
-	if ((pan_x != 0.0) || (pan_y != 0.0))
-	{
-	  if (glutModifiers & GLUT_ACTIVE_SHIFT)
-	  {
-	    y_angle = angle * (pan_x / (fabs(pan_x) + fabs(pan_y)));
-	    x_angle = angle * (pan_y / (fabs(pan_x) + fabs(pan_y)));
-	    y_angle /= 10.0; // make smaller turns
-	    x_angle /= 10.0;
-	    turnCamera( (GLfloat)(x_angle), (GLfloat)y_angle, 0.0 );
-	  }
-	  else if (glutModifiers & GLUT_ACTIVE_ALT)
-	  {
+    pan_x = x-(Width/2.0); // dx
+    pan_y = y-(Height/2.0); // dy
+    if ((pan_x != 0.0) || (pan_y != 0.0))
+    {
+      if (glutModifiers & GLUT_ACTIVE_SHIFT)
+      {
+        y_angle = angle * (pan_x / (fabs(pan_x) + fabs(pan_y)));
+        x_angle = angle * (pan_y / (fabs(pan_x) + fabs(pan_y)));
+        y_angle /= 10.0; // make smaller turns
+        x_angle /= 10.0;
+        turnCamera( (GLfloat)(x_angle), (GLfloat)y_angle, 0.0 );
+      }
+      else if (glutModifiers & GLUT_ACTIVE_ALT)
+      {
 #if 0
-	    if (pan_x != 0)
-	      truckCamera( pan_x, 1, 0, 0 ); // left, right
+        if (pan_x != 0)
+          truckCamera( pan_x, 1, 0, 0 ); // left, right
 #else
-	    if (pan_x != 0)
-	    {
-	      y_angle = angle * (pan_x / (fabs(pan_x) + fabs(pan_y)));
-	      y_angle /= 10.0; // make smaller turns
-	      turnCamera( 0.0, (GLfloat)y_angle, 0.0 );
-	    }
+        if (pan_x != 0)
+        {
+          y_angle = angle * (pan_x / (fabs(pan_x) + fabs(pan_y)));
+          y_angle /= 10.0; // make smaller turns
+          turnCamera( 0.0, (GLfloat)y_angle, 0.0 );
+        }
 #endif
-	    if (pan_y != 0)
-	    {
-	      if (ldraw_projection_type == 1)
-		      truckCamera( pan_y, 0, 0, 1 ); // forward, backward
-	      else
-	      {
-		      // Trucking camera is not visible in orthographic mode.  Scale instead.
-		      ldraw_commandline_opts.S *= (1.0 - (0.001 * pan_y));
-	      }
-	    }
+        if (pan_y != 0)
+        {
+          if (ldraw_projection_type == 1)
+              truckCamera( pan_y, 0, 0, 1 ); // forward, backward
+          else
+          {
+              // Trucking camera is not visible in orthographic mode.  Scale instead.
+              ldraw_commandline_opts.S *= (1.0 - (0.001 * pan_y));
+          }
+        }
 
-	  }
-	  else
-	  {
-	    if (pan_x != 0)
-	      truckCamera( pan_x, 1, 0, 0 ); // left, right
-	    if (pan_y != 0)
-	      truckCamera( -pan_y, 0, 1, 0 ); // up, down
-	  }
+      }
+      else
+      {
+        if (pan_x != 0)
+          truckCamera( pan_x, 1, 0, 0 ); // left, right
+        if (pan_y != 0)
+          truckCamera( -pan_y, 0, 1, 0 ); // up, down
+      }
 
-	}
+    }
       }
       else
 #endif
@@ -8490,10 +8495,10 @@ motion(int x, int y)
       // mouse gets to the edge of the screen.
       if ((p_x > 10) || (p_x < -10) || (p_y > 10) || (p_y < -10))
       {
-	//printf("WARP(%0.2f, %0.2f)\n", p_x, p_y);
-	glutWarpPointer(Width/2, Height/2);
-	pan_start_x = 0;
-	pan_start_y = 0;
+    //printf("WARP(%0.2f, %0.2f)\n", p_x, p_y);
+    glutWarpPointer(Width/2, Height/2);
+    pan_start_x = 0;
+    pan_start_y = 0;
       }
 #else
       pan_start_sx = x; // Save new start point.
@@ -8591,24 +8596,24 @@ void myGlutIdle( void )
     if (ldraw_commandline_opts.M == 'P')
       if (stepcount != curstep)
       {
-	// Do all the steps BEFORE twirling.
-	// make them click the steps when in pause mode like ldlite.
-	//glutPostRedisplay();
-	return;
+    // Do all the steps BEFORE twirling.
+    // make them click the steps when in pause mode like ldlite.
+    //glutPostRedisplay();
+    return;
       }
     // rotate model
     twirl_angle += twirl_increment;
     if (twirl_angle >= 360.0)
       {
-	// All done rotating
-	ldraw_commandline_opts.rotate = 0;
-	twirl_angle = 0.0;
-	// If we just want the output files then quit when idle.
-	if ((ldraw_commandline_opts.output == 1) ||
-	    (ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F'))
-	  exit(0); //quit the program
-	else
-	  return;
+    // All done rotating
+    ldraw_commandline_opts.rotate = 0;
+    twirl_angle = 0.0;
+    // If we just want the output files then quit when idle.
+    if ((ldraw_commandline_opts.output == 1) ||
+        (ldraw_commandline_opts.M == 'S') || (ldraw_commandline_opts.M == 'F'))
+      exit(0); //quit the program
+    else
+      return;
       }
     //stepcount = 0;
     // This looks funny (not orthogonal)
@@ -8643,18 +8648,18 @@ void myGlutIdle( void )
       printf("Reloading %s = %lld\n", filename, last_file_time);
       if (editing)
       {
-	// Unselect piece before reloading from poll.
-	EraseCurPiece();
-	movingpiece = -1;
+    // Unselect piece before reloading from poll.
+    EraseCurPiece();
+    movingpiece = -1;
       }
 #ifdef USE_L3_PARSER
       if (parsername == L3_PARSER)
-	list_made = 0; // Gotta reparse the file.
+    list_made = 0; // Gotta reparse the file.
       else
 #endif
       {
-	cached_file_stack_index=0;  // restart file cache.  Huge mem leak???
-	// yy_init_cache() // Fix the huge memory leak???
+    cached_file_stack_index=0;  // restart file cache.  Huge mem leak???
+    // yy_init_cache() // Fix the huge memory leak???
       }
       curstep = 0; // Reset to first step
       dirtyWindow = 1;
@@ -9646,7 +9651,7 @@ int InitInstance()
   // Probably should use basename(argv[0]) instead of "ldlite"
   // Big switch from ldlite.  Turn shading is on by default.
   zShading = GetProfileInt(L"ldlite",L"shading",1);
-  //	zDetailLevel = TYPE_P; // should checkmark the menu item later!
+  //    zDetailLevel = TYPE_P; // should checkmark the menu item later!
   zDetailLevel = GetProfileInt(L"ldlite",L"detail",TYPE_P);
   zWire = GetProfileInt(L"ldlite",L"wireframe",0);
 
@@ -9666,15 +9671,15 @@ int InitInstance()
     str = strdup(env_str);
     argv[0] = NULL;
     for (i = 1,token = strtok( str, seps );
-	 token != NULL;
-	 token = strtok( NULL, seps ))
+     token != NULL;
+     token = strtok( NULL, seps ))
     {
       argv[i] = token;
       i++;
       if (i == 32)
       {
-	ParseParams(&i, argv);
-	i = 1;
+    ParseParams(&i, argv);
+    i = 1;
       }
     }
 
@@ -9816,6 +9821,7 @@ int getDisplayProperties()
     fboSupport = strstr(extstr, "GL_ARB_framebuffer_object");
     formatted_extstr = str_replace (extstr, substr, replacement, &extcount);
   }
+  UNUSED(fboSupport);
 #endif
 
   // Reset all context dependent stuff when new context detected
@@ -9906,9 +9912,9 @@ int getDisplayProperties()
   if (strstr(extstr, "GL_WIN_swap_hint"))
   {
     if ((!strcmp(verstr, "1.1.0")) &&
-	(!strcmp(vendstr, "Microsoft Corporation")) &&
-	(!strcmp(rendstr, "GDI Generic"))
-	)
+    (!strcmp(vendstr, "Microsoft Corporation")) &&
+    (!strcmp(rendstr, "GDI Generic"))
+    )
     {
       // Assume Microsoft software opengl which blits rather than page flips.
       buffer_swap_mode = SWAP_TYPE_COPY;
@@ -9932,7 +9938,7 @@ int getDisplayProperties()
     {
       NVIDIA_XOR_HACK = 2;
       if (SOLID_EDIT_MODE == 0)
-	SOLID_EDIT_MODE = NVIDIA_XOR_HACK;
+    SOLID_EDIT_MODE = NVIDIA_XOR_HACK;
     }
   }
 #endif
@@ -10079,6 +10085,7 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     } *CopyRecord;
 
     char *foo;
+    UNUSED(foo);
 
     cds = (COPYDATASTRUCT *) lParam;
     // printf("WM_COPYDATA %d, %d, %p\n",cds->cbData, cds->dwData, cds->lpData);
@@ -10092,7 +10099,7 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     // 2nd msg from LDList contains screen(X,Y) drop point and the part text string.
     else if ((cds) && (cds->dwData == 1) &&
-	(cds->cbData == sizeof(*CopyRecord)) && (cds->lpData))
+    (cds->cbData == sizeof(*CopyRecord)) && (cds->lpData))
     {
       CopyRecord = cds->lpData;
       // printf("Copyrecord = %d, %d, %s\n", CopyRecord->X, CopyRecord->Y, CopyRecord->s);
@@ -10241,6 +10248,8 @@ main(int argc, char **argv)
   UNUSED(vendstr);
   UNUSED(rendstr);
   UNUSED(i);
+  UNUSED(needargs);
+  UNUSED(fd_new_stdout);
 
   printf("\n");
   printf("LDGLite %s\n", ldgliteVersion);
@@ -10323,9 +10332,9 @@ main(int argc, char **argv)
   if (strcmp(datfilename,  " ")) {
     if (needargs) {
       if (strlen(dirfilepath) > 2)
-	chdir(dirfilepath);
+    chdir(dirfilepath);
       else if (platform_getenv("HOME"))
-	chdir(platform_getenv("HOME"));
+    chdir(platform_getenv("HOME"));
     }
   }
 #endif
@@ -10350,36 +10359,36 @@ main(int argc, char **argv)
     {
       if ((Width < 0) && (Height < 0))
       {
-	//glutFullScreen();  // This shows no window decorations.
-	Width = ldraw_commandline_opts.V_x = glutGet(GLUT_SCREEN_WIDTH);
-	Height = ldraw_commandline_opts.V_y = glutGet(GLUT_SCREEN_HEIGHT);
+    //glutFullScreen();  // This shows no window decorations.
+    Width = ldraw_commandline_opts.V_x = glutGet(GLUT_SCREEN_WIDTH);
+    Height = ldraw_commandline_opts.V_y = glutGet(GLUT_SCREEN_HEIGHT);
       }
       else
       {
-	// get the screen size and subtract a fudge factor for window borders
-	Width = ldraw_commandline_opts.V_x = glutGet(GLUT_SCREEN_WIDTH) - 8;
-	Height = ldraw_commandline_opts.V_y = glutGet(GLUT_SCREEN_HEIGHT) - 32;
+    // get the screen size and subtract a fudge factor for window borders
+    Width = ldraw_commandline_opts.V_x = glutGet(GLUT_SCREEN_WIDTH) - 8;
+    Height = ldraw_commandline_opts.V_y = glutGet(GLUT_SCREEN_HEIGHT) - 32;
 #ifdef MACOS_X
-	{
-	  int w,h;
-	  void GetAvailablePos(int *w, int *h);
+    {
+      int w,h;
+      void GetAvailablePos(int *w, int *h);
 
-	  // Fix this to return top and left as well.
-	  // Then set XwinPos, YwinPos to avoid a side mounted dock.
-	  // By the way, glut docs say X,YWinpos should default to -1,-1.
-	  // Which lets the window mgr decide where to place it.
-	  // Maybe I should try that first?
+      // Fix this to return top and left as well.
+      // Then set XwinPos, YwinPos to avoid a side mounted dock.
+      // By the way, glut docs say X,YWinpos should default to -1,-1.
+      // Which lets the window mgr decide where to place it.
+      // Maybe I should try that first?
           //XwinPos = -1; YwinPos = -1;  // Yuck, makes OSX place it weird.
-	  GetAvailablePos(&w, &h);
-	  Width = ldraw_commandline_opts.V_x = w;
-	  Height = ldraw_commandline_opts.V_y = h;
-	  printf( "Screen resolution: %d, %d\n", w, h );
-	}
+      GetAvailablePos(&w, &h);
+      Width = ldraw_commandline_opts.V_x = w;
+      Height = ldraw_commandline_opts.V_y = h;
+      printf( "Screen resolution: %d, %d\n", w, h );
+    }
 #endif
 #if defined(MAC)
-	// Set default window small for MACs to get cmdline args.
-	Width = 640;
-	Height = 480;
+    // Set default window small for MACs to get cmdline args.
+    Width = 640;
+    Height = 480;
 #endif
       }
     }
@@ -10437,7 +10446,7 @@ main(int argc, char **argv)
   {
     parsername = LDLITE_PARSER; // default to ldlite parser.
     if ((stricmp("l3glite", progname) == 0) ||
-	(stricmp("l3glite.exe", progname) == 0))
+    (stricmp("l3glite.exe", progname) == 0))
     {
       parsername = L3_PARSER;
 
@@ -10515,7 +10524,7 @@ main(int argc, char **argv)
     // if the width is different to -1
     if (glutGameModeGet(GLUT_GAME_MODE_WIDTH) != -1)
     {
-      glutEnterGameMode();		// enter full screen mode
+      glutEnterGameMode();      // enter full screen mode
     }
   }
   else
@@ -10561,8 +10570,8 @@ main(int argc, char **argv)
     fontwidth = fontheight/Font.Char[0].dy;
 
     printf("Loaded glfont %s (%g, %g) (%d, %d, %d, %d)\n", fontname,
-	   fontwidth, fontheight,
-	   Font.TexWidth, Font.TexHeight, Font.IntStart, Font.IntEnd);
+       fontwidth, fontheight,
+       Font.TexWidth, Font.TexHeight, Font.IntStart, Font.IntEnd);
 #if 1
     fp = fopen(fontname, "rb");
     n = sizeof(GLFONT);
@@ -10577,22 +10586,22 @@ main(int argc, char **argv)
     if ((fp = fopen ("glfariel.c", "w")) != NULL)
     {
       fprintf(fp, "\nGLFONT arielFont = {\n  {%d, %d, %d, %d, %d},\n", Font.Tex,
-	     Font.TexWidth, Font.TexHeight, Font.IntStart, Font.IntEnd);
+         Font.TexWidth, Font.TexHeight, Font.IntStart, Font.IntEnd);
       fprintf(fp, "\nGLFONTCHAR arielChars = {\n");
       for (n = 0; n < 1+Font.IntEnd-Font.IntStart; n++)
       {
-	fprintf(fp,"  {%g, %g, %g, %g, %g, %g},\n",
-		Font.Char[n].dx, Font.Char[n].dy,
-		Font.Char[n].tx1, Font.Char[n].ty1,
-		Font.Char[n].tx2, Font.Char[n].ty2);
+    fprintf(fp,"  {%g, %g, %g, %g, %g, %g},\n",
+        Font.Char[n].dx, Font.Char[n].dy,
+        Font.Char[n].tx1, Font.Char[n].ty1,
+        Font.Char[n].tx2, Font.Char[n].ty2);
       }
       fprintf(fp, "  }\n");
       fprintf(fp, "\nchar arielTex[] = {\n  ");
       for (n = 0; n < (Font.TexWidth * Font.TexHeight * 2); n+=2)
       {
-	fprintf(fp, "0x%02X, 0x%02X, ", TexBytes[n], TexBytes[n+1]);
-	if (n % 8 == 0)
-	  fprintf(fp, "\n ");
+    fprintf(fp, "0x%02X, 0x%02X, ", TexBytes[n], TexBytes[n+1]);
+    if (n % 8 == 0)
+      fprintf(fp, "\n ");
       }
 
       fprintf(fp, "  }\n");
@@ -10604,8 +10613,8 @@ main(int argc, char **argv)
     // dy is always the same number (the ratio of height to the avg char)
     // dx varies depending on the width of the char.  It averages 1.
     printf("(%g, %g) (%g, %g, %g, %g)\n", Font.Char[n].dx, Font.Char[n].dy,
-	   Font.Char[n].tx1, Font.Char[n].ty1,
-	   Font.Char[n].tx2, Font.Char[n].ty2);
+       Font.Char[n].tx1, Font.Char[n].ty1,
+       Font.Char[n].tx2, Font.Char[n].ty2);
 
   }
 #endif
@@ -10662,7 +10671,7 @@ main(int argc, char **argv)
     {
       if (fp != NULL)
       {
-	fd_new_stdout = dup (fd); // redirect printfs to stdout to the file
+    fd_new_stdout = dup (fd); // redirect printfs to stdout to the file
       }
     }
   }

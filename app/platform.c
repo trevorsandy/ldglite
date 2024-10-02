@@ -1,6 +1,6 @@
 // ***************************************************************************
 //
-//  platform.c 
+//  platform.c
 //  platform-dependent path handling and supplemental string library routines
 //  platform_startup() is a place for any conditional code required by platform
 //
@@ -22,9 +22,9 @@
 // ***************************************************************
 int platform_startup(int *argcp, char ***argv)
 {
-	#if defined(MAC)
-	return macStartup(argcp, argv);
-	#endif
+    #if defined(MAC)
+    return macStartup(argcp, argv);
+    #endif
     return 0;
 }
 
@@ -34,17 +34,17 @@ int platform_startup(int *argcp, char ***argv)
 
 #if LACKS_STRDUP
 
-char *	strdup(const char *str)
+char *  strdup(const char *str)
 {
   char *newstr;
-	
+
   if (str == NULL)
   {
     return NULL;
   }
   newstr = malloc(strlen(str) + 1);
   strcpy(newstr, str);
-	
+
   return newstr;
 }
 
@@ -53,16 +53,16 @@ char *	strdup(const char *str)
 // NOTE: we could use strcasecmp() and strncasecmp() in linux.
 
 // ***************************************************************
-//  stricmp - case insensitive strcmp() 
+//  stricmp - case insensitive strcmp()
 // ***************************************************************
 #if LACKS_STRICMP
 
-int stricmp(const char *str1, const char *str2) 
+int stricmp(const char *str1, const char *str2)
 {
   const unsigned char * ptr1 = (unsigned char *) str1;
   const unsigned char * ptr2 = (unsigned char *) str2;
   unsigned char c1, c2;
-	
+
   while ((c1 = toupper(*ptr1++)) == (c2 = toupper(*ptr2++)))
   {
     if (!c1)
@@ -82,12 +82,12 @@ int stricmp(const char *str1, const char *str2)
 // ***************************************************************
 #if LACKS_STRNICMP
 
-int strnicmp(const char *str1, const char *str2, size_t n) 
+int strnicmp(const char *str1, const char *str2, size_t n)
 {
   const unsigned char * ptr1 = (unsigned char *) str1;
   const unsigned char * ptr2 = (unsigned char *) str2;
   unsigned char c1, c2;
-	
+
   while (--n)
   {
     if ((c1 = toupper(*ptr1++)) != (c2 = toupper(*ptr2++)))
@@ -124,7 +124,7 @@ char *dirname( const char *filepath )
   {
     return NULL;
   }
-  
+
 #if defined(MAC)
 
   if ( (ptr = strrchr(filepath, ':')) )
@@ -191,10 +191,10 @@ char *basename( const char *filepath )
     return NULL;
   }
 
-  
+
 #if defined(MAC)
 
-  if ( (ptr = strrchr(filepath, ':')) ) 
+  if ( (ptr = strrchr(filepath, ':')) )
 
 #elif defined(WINDOWS)
 
@@ -251,29 +251,29 @@ localize_path(char *inoutPath)
 
 #elif defined(MAC)
   char separator = ':';
-  
+
 #elif defined(WINDOWS)
   char separator = '\\';
-  
+
 #else
 #error unspecified platform in localize_path() definition
 #endif
-	
+
   int i;
-  
-  for(i=0; i<strlen(inoutPath); i++) 
+
+  for(i=0; i<strlen(inoutPath); i++)
   {
     /* Localize Directory Separators */
-    if ((inoutPath[i] == '/') 
-	|| (inoutPath[i] == '\\')
+    if ((inoutPath[i] == '/')
+    || (inoutPath[i] == '\\')
 #if defined(MACOS_X)
-	|| (inoutPath[i] == ':')
+    || (inoutPath[i] == ':')
 #endif
-	)
+    )
     {
-      inoutPath[i] = separator; 
+      inoutPath[i] = separator;
     }
-    
+
   }
   return inoutPath;
 }
@@ -286,7 +286,7 @@ char *concat_path(const char *path1, const char *path2, char *result)
 {
   char *ptr;
   int i;
-	
+
   if (!result)
   {
     result = malloc(strlen(path1)+strlen(path2)+2);
@@ -294,10 +294,10 @@ char *concat_path(const char *path1, const char *path2, char *result)
 
   ptr = result;
   ptr[0] = 0;
-	
-	
+
+
   strcat(ptr, path1); ptr += strlen(ptr);
-  
+
 #if defined(MAC)
   if (strlastchar(path1) != ':')
   {
@@ -309,7 +309,7 @@ char *concat_path(const char *path1, const char *path2, char *result)
   {
     strcat(ptr, "/"); ptr += strlen(ptr);
   }
-  
+
 #elif defined(UNIX)
   if (strlastchar(path1) != '/')
   {
@@ -321,13 +321,13 @@ char *concat_path(const char *path1, const char *path2, char *result)
   {
     strcat(ptr, "\\"); ptr += strlen(ptr);
   }
-  
+
 #else
 #error unspecified platform in format_path() definition
 #endif
-  
+
   strcat(ptr, path2); ptr += strlen(ptr);
-  
+
   localize_path(result); // Just in case of embedded separators.
   // Subparts use embedded \s and hires primitives use embedded \48
 
@@ -348,14 +348,14 @@ char *platform_getenv(const char *var)
 
 #elif defined(MAC)
   return macprefs_getenv(var);
-  
+
 #elif defined(WINDOWS)
   return getenv(var);
-  
+
 #else
 #error unspecified platform in platform_getenv() definition
 #endif
-		
+
 }
 
 /***************************************************************/
@@ -403,8 +403,8 @@ void platform_comment(char *message, int level)
 long get_file_mode(char *path)
 {
   struct stat     stats;
-  
-  if ( stat( path, &stats) < 0 ) 
+
+  if ( stat( path, &stats) < 0 )
     return ( -1 );
   return ( stats.st_mode );
 }
@@ -426,7 +426,7 @@ int GetExecName(char *argv0, char *buf, int buflen)
 {
   char    *path;
   char    *getenv();
-  
+
 #ifdef WINDOWS
   GetModuleFileName(NULL, buf, buflen);
   return(0);
@@ -464,30 +464,30 @@ int GetExecName(char *argv0, char *buf, int buflen)
       if((get_file_mode(buf) & S_IFMT) == S_IFDIR) continue;
       /* Got it.  Now if it is not absolute, just prepend cwd */
       if (*buf != '/') {
-	
-      found:
-	strncpy(tmpbuf, buf, PATHSIZE/sizeof(char));
-#if 0	
-	if ( getcwd(buf, (PATHSIZE/sizeof(char))-1) == 0 ) break;
-	strncat(buf, "/", PATHSIZE/sizeof(char));
-	strncat( buf, tmpbuf, PATHSIZE/sizeof(char));
-#else
-	if ( getcwd(buf, buflen-1) == 0 ) break;
-	strncat(buf, "/", buflen);
-	strncat( buf, tmpbuf, buflen);
-#endif	
-	if ( realpath(buf, tmpbuf) == NULL)
-	  return 1;
-	
-	//strncpy(buf, tmpbuf, PATHSIZE/sizeof(char));
-	strncpy(buf, tmpbuf, buflen);
 
-	return 2;
+      found:
+    strncpy(tmpbuf, buf, PATHSIZE/sizeof(char));
+#if 0
+    if ( getcwd(buf, (PATHSIZE/sizeof(char))-1) == 0 ) break;
+    strncat(buf, "/", PATHSIZE/sizeof(char));
+    strncat( buf, tmpbuf, PATHSIZE/sizeof(char));
+#else
+    if ( getcwd(buf, buflen-1) == 0 ) break;
+    strncat(buf, "/", buflen);
+    strncat( buf, tmpbuf, buflen);
+#endif
+    if ( realpath(buf, tmpbuf) == NULL)
+      return 1;
+
+    //strncpy(buf, tmpbuf, PATHSIZE/sizeof(char));
+    strncpy(buf, tmpbuf, buflen);
+
+    return 2;
       }
       return(0);
     }
   }
-  
+
   /* Not found */
   *buf = 0;
   return(-1);

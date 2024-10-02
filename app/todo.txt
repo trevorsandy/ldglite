@@ -18,16 +18,16 @@ callback glut patch for OS-X glut.  I think freeglut implemented
 something similar.
 
 Actually the Read Me for GLUT for Mac OS X (GLUT-3.2.8) says it
-added the glutCheckLoop() and GlutWMCloseFunc() APIs.  Gotta try 
-them.  (This may only be in the glut source distribution.)  
+added the glutCheckLoop() and GlutWMCloseFunc() APIs.  Gotta try
+them.  (This may only be in the glut source distribution.)
 
 ---------------------------
 
-Consider adding a -reg command line arg to register MIME types on 
+Consider adding a -reg command line arg to register MIME types on
 Windows to avoid this mess:
 
 This tutorial works for Windows 98 and I think it's close enough for
-2000, but naturally M$ made it even harder for XP. 
+2000, but naturally M$ made it even harder for XP.
 
   http://www.ldraw.org/reference/tutorials/tips/mime/
 
@@ -42,7 +42,7 @@ to work, but no luck.
 
 problem is that's only half of the solution.  Lugnet serves up LDR data
 with the application/x-ldraw MIME type.  In win95 and win98 you could
-create new MIME types in explorer.  See steps 5 and 6 of the tutorial. 
+create new MIME types in explorer.  See steps 5 and 6 of the tutorial.
 
   http://www.ldraw.org/reference/tutorials/tips/mime/
 
@@ -179,12 +179,12 @@ Add support for RUBBER and other materials in ldconfig.ldr
 Add a command line option for only using NEW colors from ldconfig.ldr
 because I like the default ldlite colors and especially the edge
 colors better than the official ldraw.org ones.  You know, I could
-make this really simple by just importing the NEW colors into 
+make this really simple by just importing the NEW colors into
 lcolors.c and doing a new release.
 
 Maybe consider parsing both ldconfig.ldr and ldliterc.dat.  I'm not
 sure which should get preference though.  I'm leaning towards giving
-preference to ldliterc.dat since ldconfig.ldr is distributed with 
+preference to ldliterc.dat since ldconfig.ldr is distributed with
 the official parts and is thus less geared towards personal tastes.
 
 ----------------------------------------------------------------------
@@ -196,16 +196,16 @@ mode to copy the screen to the back buffer and change drawing to there
 right before running the glutBitMapCharacter() calls for the edit menu.
 Hmmm, I've also seen uppercase RADEON 7000 in the GL_RENDERER string
 with the same bugs in the driver.  Maybe I should do a case insensitive
-check for "radeon 7000".  
+check for "radeon 7000".
 
 I wonder if I can force it to use the Windows software driver, or the
-mesa driver.  Either one of those should give acceptable performance 
+mesa driver.  Either one of those should give acceptable performance
 without the bugs on any PC with a radeon in it.
 
 ----------------------------------------------------------------------
 
 I have all sorts of trouble with the ATI Radeon 7000 SDR x86/SSE2 on Win XP.
-It has trouble when I draw in the GL_FRONT buffer.  Some of the early 
+It has trouble when I draw in the GL_FRONT buffer.  Some of the early
 geometry is just lost.  I can work around this with -n2 or -n4 which
 force drawing in the back buffer.  But even with this the antialiasing
 has problems.  The early geometry comes out the wrong width unless I
@@ -260,7 +260,7 @@ Fix the LEDIT mode File Save command to handle filenames with spaces.
 It currently truncates the filename at the first space.  I think it
 may also truncate filenames in the file if they don't have quotes.
 The l3 parser doesn't handle spaces in the filenames inside an ldraw
-file, but it handles them on the command line.  The ldlite parser 
+file, but it handles them on the command line.  The ldlite parser
 seems to handle both.
 
 ----------------------------------------------------------------------
@@ -274,16 +274,16 @@ Inserting a part and then changing the linetype is too clumsy.
 ----------------------------------------------------------------------
 When I try to display datfiles\foo.dat ldglite will instead display
 %LDRAWDIR%\models\foo.dat if it exists (overriding my explicit path
-on the command line).  This is perhaps OK for parts, but for the top 
+on the command line).  This is perhaps OK for parts, but for the top
 level file it should look in the specified path first.  Both parsers
-have this problem.  I should probably wait for the new Ldraw.ini 
+have this problem.  I should probably wait for the new Ldraw.ini
 configurable search strategy to happen before fixing this though.
 
 ----------------------------------------------------------------------
 I should probably make an LSYNTH plugin.
 
 ----------------------------------------------------------------------
-Fix the LD parser to handle Mac line endings on whatever platform I 
+Fix the LD parser to handle Mac line endings on whatever platform I
 might run it on.  In ldlite.l it seems to do something for [\n] but
 treats the chars [ \t\r] as whitespace.  I suppose a cheap hack would
 be to treat [\r] the same as [\n] even though that would mean extra
@@ -291,13 +291,13 @@ parsing for DOS/Windows files which use \r\n.
 
 Change this:
 
-[ \t\r]		;
-[\n]		{yylval.c = "EOL"; return tEOL;}
+[ \t\r]     ;
+[\n]        {yylval.c = "EOL"; return tEOL;}
 
 to this:
 
-[ \t]		;
-[\r\n]		{yylval.c = "EOL"; return tEOL;}
+[ \t]       ;
+[\r\n]      {yylval.c = "EOL"; return tEOL;}
 
 Then run lex/yacc, compile, and see what happens.
 
@@ -311,11 +311,11 @@ some way compatible with GLUT.  The same wrapper app could pass in
 default commandline args.  (Or I could use an LDGLITEARGS env var)
 
 Or maybe I can register an event handler (category method in cocoa?)
-after GLUT does, and filter out Drop (open document?) events before 
+after GLUT does, and filter out Drop (open document?) events before
 passing things on to GLUT.
 
 ----------------------------------------------------------------------
-Hey, for antialiased lines perhaps I could use a depth test of 
+Hey, for antialiased lines perhaps I could use a depth test of
 GL_LEQUAL to allow edge lines from adjacent quads to blend with
 each other instead of just randomly letting one supercede the other.
 
@@ -348,8 +348,8 @@ Remember to strip and UPX any Windows Executables for distribution.
 ----------------------------------------------------------------------
 Make some way to register ldglite since win2k and winXP do not allow
 creation of new MIME types via explorer.  Either do something like
-ldglite -reg or distribute a ldglite.reg file with instructions on how 
-to set the directory path of the executable. 
+ldglite -reg or distribute a ldglite.reg file with instructions on how
+to set the directory path of the executable.
 
 Oh, Oh, I know.  This could be a plugin.  The registerme plugin.
 That way I can distribute it with the windows binary only, and it'll
@@ -359,7 +359,7 @@ should provide a GUI to change it, and add command line arguments.
 This could get really fancy and incorporate the ldrawinfotip DLL and
 registry settings.  Would this be useful to the lddp folks?
 
-Hmm, maybe it could also create or add the ldraw.ini setting for 
+Hmm, maybe it could also create or add the ldraw.ini setting for
 the LDRAWDIR if it can't find it.
 
 Hey, I wonder if that OSX bundle junk can be used to register the .LDR
@@ -406,20 +406,20 @@ build it.  Include mklist, glut dlls, plugins, and readme.txt in any
 binary distributions from now on.
 
 ----------------------------------------------------------------------
-Think about allowing both the MUI and GLUT menus.  Maybe launch the 
+Think about allowing both the MUI and GLUT menus.  Maybe launch the
 MUI GUI from the GLUT menu?  If so, fix up the stinky glut menu a bit
 and make the File Open part of the glut menu an optional compilation
 
 ----------------------------------------------------------------------
-Figure out another way to highlight a part in Mesa.  It's painfully 
+Figure out another way to highlight a part in Mesa.  It's painfully
 slow to draw the XOR wireframe, at least it is on the PII-266 I tested
 it on.  It was still slow, even with the stencil buffer turned off.
-Moving parts in SOLID mode was quite reasonable though.  This might 
+Moving parts in SOLID mode was quite reasonable though.  This might
 also be handy for Apple and TNT displays which have trouble with the
 stencil buffer and thus have trouble with the double XOR from certain
-view points.  
+view points.
 
-An unblended magic halo may work for Mesa (and all the others).  
+An unblended magic halo may work for Mesa (and all the others).
 
 MLCAD draws a rectangle around the part in the front, side, and top
 views, and does nothing in the 3D views.  Perhaps I could adapt this
@@ -436,7 +436,7 @@ put the Fig preview between the left/right options (sorta like
 leocad).  Since it's a plugin, I guess C++ and Non-opengl toolkits
 like FLTK or wxwindows are OK as long as they work on all platforms.
 
-OpenGL GUI toolkit choices include GLUI, MUI, PLIB/p-guide, GLOW, 
+OpenGL GUI toolkit choices include GLUI, MUI, PLIB/p-guide, GLOW,
 NGL/NUI, LibUFO/UGT, glgooey, ...
 
 ----------------------------------------------------------------------
@@ -475,7 +475,7 @@ Use Paul Easter's logo studs to test this.
 ----------------------------------------------------------------------
 Make lddp plugins work with ldglite.  They should use the same sort
 of code to select a plugin as the PARTS.LST lookup with one plugin
-per line and searching for plugin names allowed.  
+per line and searching for plugin names allowed.
 
 Figure out how to deal with plugins that require a selection.  It
 might be nice to have a hint as to how many lines they require.  Maybe
@@ -515,16 +515,16 @@ loaded yet.  (FIXED: 06/09/03)
 
 ----------------------------------------------------------------------
 
-Add more MPD support to LEDIT mode.  Perhaps add a command to split 
+Add more MPD support to LEDIT mode.  Perhaps add a command to split
 off part of a file as MPD.  Or a command to start a new MPD section
 with a filename.  Add a command to jump into the MPD parts and back
-into the main file.  I think I already added support for saving the 
-file as an MPD if it was one when I read it in.  This should be 
-enhanced to save a newly MPDed file.  
+into the main file.  I think I already added support for saving the
+file as an MPD if it was one when I read it in.  This should be
+enhanced to save a newly MPDed file.
 
-The inliner can already be used to pull MPD content into the main 
+The inliner can already be used to pull MPD content into the main
 file.  However it doesn't remove the MPD part, nor should it because
-the MPD part may be used multiple times.  
+the MPD part may be used multiple times.
 
 The MPD splitter could split off from the current part to the end of
 the file (or to a 0 ENDMPD marker comment, whichever comes first).
@@ -534,14 +534,14 @@ wasn't MPD already.  Don't forget to set the Parts[i].IsMPD flags.
 I think I could allow editing inside the MPD portions by replacing
 Parts[0] everywhere in L3Edit.c with a FirstPartPtr which is set to
 point to Parts[n].  I could find my way to the MPD files by number
-or by searching Parts[n] for the IsMPD flag and then comparing the 
+or by searching Parts[n] for the IsMPD flag and then comparing the
 name.
 
 ----------------------------------------------------------------------
 
 Convert from Glut to SDL?  SDL seems to be available on ALL platforms
 except perhaps MSDOS (and who cares about that anyhow).  It has better
-keyboard support so I can get keystrokes while the mouse button is 
+keyboard support so I can get keystrokes while the mouse button is
 down (unlike in glut).  This should make the quake/freespace camera
 code easier to create.  Maybe I should start with the SDUT code which
 emulates parts of glut on SDL.  The only sticky point is the license
@@ -553,7 +553,7 @@ the makefile it'll solve the any license issues.
 
 ----------------------------------------------------------------------
 
-Convert offscreen rendering functions into shared library/DLL 
+Convert offscreen rendering functions into shared library/DLL
 functions.  Add entries to the makefile for DLL targets using
 dlltool and and the like.  Probably need to compile special versions
 of main.c and ldglpr.c for this.
@@ -573,13 +573,13 @@ look nice.
 
 ----------------------------------------------------------------------
 
-Implement drag and drop for unix (and MacOs?) so they can at least 
-pull in peeron style inventory lists, parts from an emacs window, 
+Implement drag and drop for unix (and MacOs?) so they can at least
+pull in peeron style inventory lists, parts from an emacs window,
 and perhaps the HTML version of the printable parts catalog.
 
 ----------------------------------------------------------------------
 
-Incorporate Andrews MacLdraw parser and it's nice premade display 
+Incorporate Andrews MacLdraw parser and it's nice premade display
 list parts.
 
 ----------------------------------------------------------------------
@@ -595,7 +595,7 @@ texture mapped font.  Consider borrowing this code.
 
 ----------------------------------------------------------------------
 
-Add bezier/hoser code to LEDIT mode. 
+Add bezier/hoser code to LEDIT mode.
 
 ----------------------------------------------------------------------
 
@@ -610,14 +610,14 @@ work for both on and offscreen rendering.
 
 ----------------------------------------------------------------------
 
-Implement the normal fixing curve smoothing algorithm based on 
+Implement the normal fixing curve smoothing algorithm based on
 type 5 lines, or the alternative algorithm that looks for the
 lack of type 2 edge lines.
 
 ----------------------------------------------------------------------
 
-Implement type 5 silhouette lines as a reverse BFC wireframe of 
-the shaded polys.  This algorithm has the advantage that it can 
+Implement type 5 silhouette lines as a reverse BFC wireframe of
+the shaded polys.  This algorithm has the advantage that it can
 be done *inside* a display list.  Thus it should be much faster.
 
 ----------------------------------------------------------------------
@@ -631,10 +631,10 @@ args.
 
 ----------------------------------------------------------------------
 
-Unify the VIEW code.  (Ortho/Perspective/LDRAW3D)  Pull any view 
+Unify the VIEW code.  (Ortho/Perspective/LDRAW3D)  Pull any view
 xformation info out of the LDRAW -A view/model matrix.  How does
 -A and -J on the command line work?  Should it be an error if -A
-introduces a view transformation style shear element?  Should I 
+introduces a view transformation style shear element?  Should I
 keep the rotation, but toss the shearing?
 
 Maybe the default view should be LdrawOrtho, -j ortho, -J perspective.
@@ -648,10 +648,10 @@ void reshape (int w, int h)
 //float shear[16]={1,0,87.14,0, 0,1,84.29,0, 0,0,1,0, 0,0,0,0};
 float shear[16]={1,0,87.14,0, 0,1,84.29,0, 0,0,1,0, 0,0,0,1};
 
-glViewport (0, 0, (GLsizei) w, (GLsizei) h); 
+glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 glMatrixMode (GL_PROJECTION);
 glLoadIdentity ();
-glMultMatrixf(shear); 
+glMultMatrixf(shear);
 glOrtho (-1.0, 1.0, -1.0, 1.0, 1.5, 20.0);
 glMatrixMode (GL_MODELVIEW);
 }
@@ -672,13 +672,13 @@ Left Mouse rotates the model.  (Same)
 Ctrl Left pans (different from l3lab and ldglite)
 Right Mouse zooms (different, and non-negotiable.  ldglite menu)
 (Middle button is mouse wheel in windows glut patch)
-Mouse Wheel zooms 
+Mouse Wheel zooms
 (glut seems to ignore wheel spin, press it gets a middle btn paste, yuk!)
 Ctrl Right moves clip plane (different)
 
 --------Fly-through Mode--------
 
-Left Mouse turns the camera look at point.  
+Left Mouse turns the camera look at point.
 (I could use Ctrl-Shift left mouse for this.  Like ctrl-shift-arrows)
 (Switch solid rotate to Alt-Lmouse)
 (Switch shift LeftMouse to pan?  Consistent with arrow keys)
@@ -686,18 +686,18 @@ Left Mouse turns the camera look at point.
 
 The camera can be moved using the keyboard.  Shift doubles the speed.
 (I could avoid conflicts by using CTRL with these, since CTRL means camera
-in ldglite) 
+in ldglite)
 
-Camera Movement 	Key 
-Forward:  		W 
-Backward:  		S 
-Left:  			A 
-Right:  		D 
-Up:  			R 
-Down:  			F                                                                         
-Camera Rotation		Key 
-Rotate Clockwise:  	E 
-Rotate Counter-Clockwise:  Q 
+Camera Movement     Key
+Forward:        W
+Backward:       S
+Left:           A
+Right:          D
+Up:             R
+Down:           F
+Camera Rotation     Key
+Rotate Clockwise:   E
+Rotate Counter-Clockwise:  Q
 
 
 ----------------------------------------------------------------------
@@ -714,7 +714,7 @@ Document what's in the various source files.  Here's a first pass
 at it.
 
 main.c contains most of the GLUT code.  It starts the app and runs
-the event loop.  It also contains some platform specific hooks and 
+the event loop.  It also contains some platform specific hooks and
 manages the view transform, lighting, etc.
 
 stub.c contains most of the opengl drawing calls.  Look at the
@@ -739,7 +739,7 @@ ldglpr.c is my image file printing routines.
 platform.c contains some platform specific functions.  Probably some
 more functions from main.c should be in here.
 
-dirscan.c contains the code used to search directories for the 
+dirscan.c contains the code used to search directories for the
 really cheesy GLUT menu file lookup.
 
 ldglgui contains a MUI version of the GLUT menus.  It's got a slightly
@@ -750,7 +750,7 @@ Overall my coding strategy is to make it portable, but not necessarily
 fast.  For example, there is some experimental code in main.c to use
 a single large display list for the model, but because of problems
 with type 5 lines and the default LDRAW view matrix I abandoned it
-until sometime in the future.  Also because the ldlite parser doesn't 
+until sometime in the future.  Also because the ldlite parser doesn't
 build a data structure, the individual quads, triangles, and lines
 are all passed to opengl one at a time.  I'd like to change this to
 be more efficient, but I've been putting it off since I don't have
@@ -762,11 +762,11 @@ supposedly slows down some hardware to a crawl.
 
 From: James Reynolds
 
-In using ldglite (on Mac OS X), I have noticed a few issues, mainly 
+In using ldglite (on Mac OS X), I have noticed a few issues, mainly
 with the keys.
 
-First, I don't think your webpage has been updated to show the 
-changed hotkeys (the changes that occurred when you added LEdit 
+First, I don't think your webpage has been updated to show the
+changed hotkeys (the changes that occurred when you added LEdit
 emulation).   PGUP and PGDN and arrow keys are now used by LEdit.
 
 Second, many of the keys don't work on the Macintosh.
@@ -781,21 +781,21 @@ I don't know what g does, so I couldn't tell.
 
 + and - are a bit of a mystery (_ and = seem to do the same thing...?)
 
-Alt and Cntr arrow keys do not work (LEdit receives the commands as 
+Alt and Cntr arrow keys do not work (LEdit receives the commands as
 "move the piece"..).
 
 Ctrl mouse drag doesn't work (but shift mouse drag does).
 
-1-button mice don't do the right button stuff (usually on the Mac, 
-cntr-click acts as the right button--this may explain why ctrl mouse 
+1-button mice don't do the right button stuff (usually on the Mac,
+cntr-click acts as the right button--this may explain why ctrl mouse
 drag doesn't work too).
 
 2-button mouse (supported by Mac OS X) don't work either.
 
 F10 and F9 don't work.
 
-Anyway, I don't know if you have time to look at it much.  I was 
-thinking you could have a text configuration file that could easily 
+Anyway, I don't know if you have time to look at it much.  I was
+thinking you could have a text configuration file that could easily
 be modified to set to commands keys.
 
 ----------------------------------------------------------------------
@@ -859,15 +859,15 @@ I really wish someone would create some nice control widgets written
 in C (not C++) that use opengl for all the drawing.  This would meet
 my portability goals for ldglite.  But I've been waiting a long time
 and it just isn't happening.  It looks like I'm gonna have to do it
-myself.  Rats! 
+myself.  Rats!
 
 >Window - Program starts with window bounds matching screen resolution; I'm
 >missing the title bar due to my task bar.  Why not start at a smaller size,
 >or have it remember window size between sessions?
 
 I've gotten into the habbit of always putting a -v3 on the command line
-because that's the size I like.  I even put it into the registry for 
-when I load a file straight from lugnet.  But I did that manually 
+because that's the size I like.  I even put it into the registry for
+when I load a file straight from lugnet.  But I did that manually
 because I don't want to put unportable registry code in ldglite.  I
 suppose I could invent a new LDRAW meta-command for this and stick
 it in the ldliterc.dat file.  But then I'd have to come up with a
@@ -916,11 +916,11 @@ Ah, Now we're getting to the speed issue.  It looks like it's not
 actually the redraw speed, but the response time that's the issue.
 LEdit scores high in this area.  It's quite good at responding
 to key strokes right away and then fixing the rest of the display
-later.  The glut Opengl library expects the redraw times to be in 
-frames per second and not seconds per frame so it's not designed 
+later.  The glut Opengl library expects the redraw times to be in
+frames per second and not seconds per frame so it's not designed
 to be interruptable by keystrokes.  That makes this one a tough
 problem to solve.  I can either break up the display loop somehow,
-or figure out a way to make it redraw so fast I don't need to 
+or figure out a way to make it redraw so fast I don't need to
 worry about it.
 
 ----------------------------------------------------------------------
@@ -929,7 +929,7 @@ I did some work on the other solution, rendering in the background.
 Use -n2 to render each part in the backbuffer, -n4 does the whole
 model.  Also the backbuffer is retained for faster refreshes on window
 expose events.  I haven't gotten this to work in LEDIT mode yet
-though.  
+though.
 
 I also fixed the -b<color> bug.
 
@@ -940,9 +940,9 @@ I also fixed the -b<color> bug.
 >Similarly, the -co doesn't seem to be moving the model origin.  Tested with
 >both the release version and the "silver beta" version.
 
-What's -cg?  I'm gonna assume you mean -ccX,Y,Z.  Anyhow, it's been a 
+What's -cg?  I'm gonna assume you mean -ccX,Y,Z.  Anyhow, it's been a
 while, but I think it's X,Y,Z in opengl world coordinates (Which I think
-are like ldraw world coords except the Y direction is reversed)  Some 
+are like ldraw world coords except the Y direction is reversed)  Some
 effects like distance from the camera aren't visible in orthographic
 mode.  Try -J for perspective mode.  I think the default camera position
 is 0,0,1000 so using -cc0,500,1000 will be looking at the model more
@@ -997,15 +997,15 @@ Don
 Sproat's wish list:
 
 - L3View.cpp, function DrawPart()
-   - linetype 3 and 4 render in constant color (can be bg color) 
-   -- see render_triangle() in switch (LinePtr->LineType) case 3 
+   - linetype 3 and 4 render in constant color (can be bg color)
+   -- see render_triangle() in switch (LinePtr->LineType) case 3
    -- see render_quad()in switch (LinePtr->LineType) case 4
-   - color 24 can be same as color 16 
+   - color 24 can be same as color 16
    -- see switch (LinePtr->Color)
-   - amaze your CAD friends with tron-like graphics, among other things!  
+   - amaze your CAD friends with tron-like graphics, among other things!
    -- see http://www.sproat.us/l3glite-tron.png
 
-- jitter in render_line, may cause sketch effects! 
+- jitter in render_line, may cause sketch effects!
   -- see http://www.sproat.us/l3glite-sketch.png
     - number of jitter lines, from 0+
     - endpoint jitter factor

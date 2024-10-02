@@ -34,7 +34,7 @@ static int SplitLDSearch(const char *LDrawSearchString, int *nDirs, char ***Dirs
    *Dirs = (char **) malloc(n * sizeof(char *));
    if (!*Dirs)
       return 0;
-   
+
    for (n = 0; n < *nDirs; n++)
       (*Dirs)[n] = iniDirs[n];
    free(iniDirs);

@@ -74,32 +74,32 @@ void qbufDestroy(QBUF_ID *qbuf_id)
 // returns 0 if not.
 int qbufBelongs(QBUF_ID *qbuf_id, char *ptr)
 {
-	if ((ptr >= qbuf_id->base_addr) && 
-		(ptr < (qbuf_id->base_addr + qbuf_id->num_buffers*qbuf_id->buffer_size))) {
-		return 1;
-	} else {
-		return 0;
-	}
+    if ((ptr >= qbuf_id->base_addr) &&
+        (ptr < (qbuf_id->base_addr + qbuf_id->num_buffers*qbuf_id->buffer_size))) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 char *qbufGetPtr(QBUF_ID *qbuf_id)
 {
   char *next_free_ptr;
-  
+
   if (qbuf_id->index_head == qbuf_id->index_tail) {
-	// use standard malloc as a fallback
+    // use standard malloc as a fallback
     next_free_ptr = (char *)malloc(qbuf_id->buffer_size);
 #if 0 // turn off, since decision to stop caching should be made elsewhere.
-	{
-		char buf[256];
-		extern void stop_caching();
+    {
+        char buf[256];
+        extern void stop_caching();
 
-		if (ldraw_commandline_opts.debug_level > 0) {
-			sprintf(buf,"qbuf %08x is out of memory",qbuf_id);
-			zWrite(buf);
-		}
-		stop_caching();
-	}
+        if (ldraw_commandline_opts.debug_level > 0) {
+            sprintf(buf,"qbuf %08x is out of memory",qbuf_id);
+            zWrite(buf);
+        }
+        stop_caching();
+    }
 #endif
   } else {
     next_free_ptr = (char *)(qbuf_id->index_p[qbuf_id->index_head]);
@@ -110,11 +110,11 @@ char *qbufGetPtr(QBUF_ID *qbuf_id)
 
 void qbufReleasePtr(QBUF_ID *qbuf_id, char *ptr)
 {
-	if (qbufBelongs(qbuf_id, ptr) == 1) {
-		qbuf_id->index_p[qbuf_id->index_tail] = (long)(ptr);
-		qbuf_id->index_tail = (qbuf_id->index_tail+1) % (qbuf_id->num_buffers+1);
-	} else {
-		// must have been allocated with malloc, so free
-		free(ptr);
-	}
+    if (qbufBelongs(qbuf_id, ptr) == 1) {
+        qbuf_id->index_p[qbuf_id->index_tail] = (long)(ptr);
+        qbuf_id->index_tail = (qbuf_id->index_tail+1) % (qbuf_id->num_buffers+1);
+    } else {
+        // must have been allocated with malloc, so free
+        free(ptr);
+    }
 }

@@ -1,13 +1,13 @@
 /*
  * Copyright (c) 1993-1997, Silicon Graphics, Inc.
- * ALL RIGHTS RESERVED 
- * Permission to use, copy, modify, and distribute this software for 
+ * ALL RIGHTS RESERVED
+ * Permission to use, copy, modify, and distribute this software for
  * any purpose and without fee is hereby granted, provided that the above
  * copyright notice appear in all copies and that both the copyright notice
- * and this permission notice appear in supporting documentation, and that 
+ * and this permission notice appear in supporting documentation, and that
  * the name of Silicon Graphics, Inc. not be used in advertising
  * or publicity pertaining to distribution of the software without specific,
- * written prior permission. 
+ * written prior permission.
  *
  * THE MATERIAL EMBODIED ON THIS SOFTWARE IS PROVIDED TO YOU "AS-IS"
  * AND WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR OTHERWISE,
@@ -21,8 +21,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH LOSS, HOWEVER CAUSED AND ON
  * ANY THEORY OF LIABILITY, ARISING OUT OF OR IN CONNECTION WITH THE
  * POSSESSION, USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- * US Government Users Restricted Rights 
+ *
+ * US Government Users Restricted Rights
  * Use, duplication, or disclosure by the Government is subject to
  * restrictions set forth in FAR 52.227.19(c)(2) or subparagraph
  * (c)(1)(ii) of the Rights in Technical Data and Computer Software
@@ -92,7 +92,7 @@ muiObject *l1, *l2, *l3, *l4, *l5, *l6, *l7, *l8;
 muiObject *t, *t1, *t2, *tl;
 muiObject *pd, *hs, *vs;
 
-int M1, M2, M3;	/* menus */
+int M1, M2, M3; /* menus */
 
 //#define THUMBHEIGHT 20
 #define THUMBHEIGHT 10
@@ -103,13 +103,13 @@ int dh = 200;
 int ow = 0;
 int oh = 0;
 
-#define MAIN_UILIST	1
-#define FILE_UILIST	2
-#define VIEW_UILIST	3 
-#define DRAW_UILIST	4
-#define OPTS_UILIST	5
-#define BACK_UILIST	6
-#define HELP_UILIST	7
+#define MAIN_UILIST 1
+#define FILE_UILIST 2
+#define VIEW_UILIST 3
+#define DRAW_UILIST 4
+#define OPTS_UILIST 5
+#define BACK_UILIST 6
+#define HELP_UILIST 7
 
 int fileOpenSave = 0;
 
@@ -138,11 +138,11 @@ void muiHide(muiObject *obj, int state)
 #else
 typedef struct muicons {
     struct muicons  *next;
-    muiObject	    *object;
+    muiObject       *object;
 } muiCons;
 
-void	    muiBackgroundClear(void);
-muiCons	    *muiGetListCons(int uilist);
+void        muiBackgroundClear(void);
+muiCons     *muiGetListCons(int uilist);
 #endif
 
 /***************************************************************/
@@ -183,7 +183,7 @@ void mui_cleanup(void)
 {
   //printf("MUI OK callback\n");
   // Gotta clean up mui and go back to whatever.
-  // Must free up mui menu stuff.  
+  // Must free up mui menu stuff.
   glEnable( GL_DEPTH_TEST );
   glScissor(0, 0, Width, Height); // x,y,width,height
   glDisable(GL_SCISSOR_TEST);
@@ -337,7 +337,7 @@ void makemainui(void)
 
   if (MUIstarted == 0)
   {
-    muiNewUIList(MAIN_UILIST);	/* makes a MUI display list (number 1) */
+    muiNewUIList(MAIN_UILIST);  /* makes a MUI display list (number 1) */
     muiNewUIList(FILE_UILIST);
     muiNewUIList(VIEW_UILIST);
     muiNewUIList(DRAW_UILIST);
@@ -446,7 +446,7 @@ void tbcallback(muiObject *obj, enum muiReturnValue value)
     double fov = 0.0;
 
     if (value != MUI_TEXTBOX_RETURN) return;
-    s = strdup(muiGetTBString(obj));  
+    s = strdup(muiGetTBString(obj));
     fov = atof(s);
 
     if (fov <= 0.0)
@@ -477,9 +477,9 @@ void vbcallback(muiObject *obj, enum muiReturnValue r)
     muiSetActiveUIList(MAIN_UILIST);
     mui_cleanup();
     if (viewchoice)
-      menuKeyEvent(viewchoice, 0, 0);    
+      menuKeyEvent(viewchoice, 0, 0);
     if (projchoice)
-      menuKeyEvent(projchoice, 0, 0);    
+      menuKeyEvent(projchoice, 0, 0);
     break;
   default:
     muiHideAll(muiGetUIList(obj), 0);
@@ -671,9 +671,9 @@ void bbcallback(muiObject *obj, enum muiReturnValue r)
     muiSetActiveUIList(MAIN_UILIST);
     mui_cleanup();
     if (viewchoice > 11)
-      colormenu(viewchoice-4);    
+      colormenu(viewchoice-4);
     else if (viewchoice)
-      colormenu(viewchoice-2);    
+      colormenu(viewchoice-2);
     break;
   default:
     muiHideAll(muiGetUIList(obj), 0);
@@ -829,7 +829,7 @@ void makebackui(void)
 void dreadbutton(muiObject *obj, enum muiReturnValue r)
 {
   int i, active;
-  
+
   i = muiGetID(obj);
   active = muiGetActive(obj);
 
@@ -859,17 +859,17 @@ void dreadbutton(muiObject *obj, enum muiReturnValue r)
 
   case 8:
     // Normal studs
-    viewchoice &= ~(TYPE_F_STUDLINE_MODE); 
-    viewchoice &= ~(TYPE_F_STUDLESS_MODE); 
+    viewchoice &= ~(TYPE_F_STUDLINE_MODE);
+    viewchoice &= ~(TYPE_F_STUDLESS_MODE);
     break;
   case 9:
     // Line studs
     viewchoice |= TYPE_F_STUDLINE_MODE;
-    viewchoice &= ~(TYPE_F_STUDLESS_MODE); 
+    viewchoice &= ~(TYPE_F_STUDLESS_MODE);
     break;
   case 10:
     // No studs
-    viewchoice &= ~(TYPE_F_STUDLINE_MODE); 
+    viewchoice &= ~(TYPE_F_STUDLINE_MODE);
     viewchoice |= TYPE_F_STUDLESS_MODE;
     break;
 
@@ -1294,7 +1294,7 @@ void makeoptsui(void)
     muiSetActive(rb2, 0);
   else
     muiSetActive(rb2, 1);
-  if (ldraw_commandline_opts.poll == 1) 
+  if (ldraw_commandline_opts.poll == 1)
     muiSetActive(rb3, 1);
   else
     muiSetActive(rb3, 0);
@@ -1337,16 +1337,16 @@ void makeoptsui(void)
 #define MAXNAMLEN 256
 #endif
 
-char	**filelist = NULL;
-char	err[80];
-char	*dot = ".";
-char	*dotdot = "..";
-char	directory[300], originaldir[300];
-struct stat	d, dd;
-struct dirent	*dir;
+char    **filelist = NULL;
+char    err[80];
+char    *dot = ".";
+char    *dotdot = "..";
+char    directory[300], originaldir[300];
+struct stat d, dd;
+struct dirent   *dir;
 
-DIR	*file;
-int	off;
+DIR *file;
+int off;
 
 int selectedfile = -1;
 int selectedprev = -1;
@@ -1360,10 +1360,10 @@ void errormsg(char *s)
 /***************************************************************/
 void prname(void)
 {
-	directory[0] = '/';
-	if (off == 0)
-		off = 1;
-	directory[off] = 0;
+    directory[0] = '/';
+    if (off == 0)
+        off = 1;
+    directory[off] = 0;
 }
 
 /***************************************************************/
@@ -1372,30 +1372,30 @@ int dirlevels(char *s)
     int levels;
 
     for (levels = 0; *s; s++)
-	if (*s == '/')
-	    levels++;
+    if (*s == '/')
+        levels++;
     return(levels);
 }
 
 /***************************************************************/
 int cat(void)
 {
-	register i, j;
-	char *name = directory + 1;	/* I love C */
+    register i, j;
+    char *name = directory + 1; /* I love C */
 
-	i = -1;
-	while (dir->d_name[++i] != 0) 
-	if ((off+i+2) > MAXNAMLEN - 1) {
-		prname();
-		return 1;
-	}
-	for(j=off+1; j>=0; --j)
-		name[j+i+1] = name[j];
-	off=i+off+1;
-	name[i] = '/';
-	for(--i; i>=0; --i)
-		name[i] = dir->d_name[i];
-	return 0;
+    i = -1;
+    while (dir->d_name[++i] != 0)
+    if ((off+i+2) > MAXNAMLEN - 1) {
+        prname();
+        return 1;
+    }
+    for(j=off+1; j>=0; --j)
+        name[j+i+1] = name[j];
+    off=i+off+1;
+    name[i] = '/';
+    for(--i; i>=0; --i)
+        name[i] = dir->d_name[i];
+    return 0;
 }
 
 /***************************************************************/
@@ -1417,7 +1417,7 @@ int pwd(void)
     if(fstat(file->dd_fd, &dd) < 0) {
       fprintf(stderr, "pwd: cannot stat ..!\n");
       return(2);
-      
+
     }
     if(stat(dotdot, &dd) < 0) {
       fprintf(stderr, "pwd: cannot stat ..!\n");
@@ -1429,21 +1429,21 @@ int pwd(void)
     }
     if(d.st_dev == dd.st_dev) {
       if(d.st_ino == dd.st_ino) {
-	prname();
-	chdir(directory);
-	return(0);
+    prname();
+    chdir(directory);
+    return(0);
       }
       do
-	if ((dir = readdir(file)) == NULL) {
-	  fprintf(stderr, "pwd: read error in ..\n");
-	  return(2);
-	}
+    if ((dir = readdir(file)) == NULL) {
+      fprintf(stderr, "pwd: read error in ..\n");
+      return(2);
+    }
       while (dir->d_ino != d.st_ino);
     }
     else do {
       if((dir = readdir(file)) == NULL) {
-	fprintf(stderr, "pwd: read error in ..\n");
-	return(2);
+    fprintf(stderr, "pwd: read error in ..\n");
+    return(2);
       }
       stat(dir->d_name, &dd);
     } while(dd.st_ino != d.st_ino || dd.st_dev != d.st_dev);
@@ -1467,9 +1467,9 @@ void freels(void)
     if (!p)
       return;
     while (*p != 0) {
-	free(*p);
-	*p = 0;
-	p++;
+    free(*p);
+    *p = 0;
+    p++;
     }
 }
 
@@ -1487,9 +1487,9 @@ int mystrcmp(char **s1, char **s2)
   filetype = isDir(*s2) - isDir(*s1);
 #else
   // isDir() does not work because we already stuck the slash at the end of dirs.
-  if ((*s1)[strlen(*s1)-1] == '/') 
+  if ((*s1)[strlen(*s1)-1] == '/')
     filetype -= 1;
-  if ((*s2)[strlen(*s2)-1] == '/') 
+  if ((*s2)[strlen(*s2)-1] == '/')
     filetype += 1;
 #endif
 
@@ -1502,16 +1502,16 @@ int mystrcmp(char **s1, char **s2)
 /***************************************************************/
 void ls(void)
 {
-    DIR			*dirp;
-    int			i = 0;
-    int			len;
+    DIR         *dirp;
+    int         i = 0;
+    int         len;
     int                 maxfile = 0;
-    struct dirent	*dir;
-    struct stat		statbuf;
+    struct dirent   *dir;
+    struct stat     statbuf;
 
     if ((dirp = opendir(directory)) == NULL) {
-	errormsg("bad directory\n");
-	return;
+    errormsg("bad directory\n");
+    return;
     }
     freels();
 
@@ -1524,31 +1524,31 @@ void ls(void)
 
     chdir(directory);
     while ((dir = readdir(dirp)) != NULL) {
-	if (dir->d_name[0] == '.')
-	    continue;
-	/*f = open(dir->d_name, O_RDONLY);
-	if (!f) 
-	    continue;
-	if (!okfiletype(getfiletype(f)))
-	    continue;
-	close(f);*/
-	stat(dir->d_name,&statbuf);
-	len = strlen(dir->d_name) + 1 + (statbuf.st_mode & S_IFDIR? 1 : 0);
-	filelist[i] = (char *)malloc(len);
-	strcpy(filelist[i], dir->d_name);
-	if (statbuf.st_mode & S_IFDIR) {
-	    filelist[i][len-2] = '/'; filelist[i][len-1] = 0;
-	}
-	i++;
-	if (i >= maxfile)
-	{
-	  // UH OH!  Too many files in directory.
-	  break;
-	}
+    if (dir->d_name[0] == '.')
+        continue;
+    /*f = open(dir->d_name, O_RDONLY);
+    if (!f)
+        continue;
+    if (!okfiletype(getfiletype(f)))
+        continue;
+    close(f);*/
+    stat(dir->d_name,&statbuf);
+    len = strlen(dir->d_name) + 1 + (statbuf.st_mode & S_IFDIR? 1 : 0);
+    filelist[i] = (char *)malloc(len);
+    strcpy(filelist[i], dir->d_name);
+    if (statbuf.st_mode & S_IFDIR) {
+        filelist[i][len-2] = '/'; filelist[i][len-1] = 0;
+    }
+    i++;
+    if (i >= maxfile)
+    {
+      // UH OH!  Too many files in directory.
+      break;
+    }
     }
     filelist[i] = 0;
-    qsort(&filelist[0], i, sizeof (char *), 
-	  (int (*)(const void *, const void *))mystrcmp);
+    qsort(&filelist[0], i, sizeof (char *),
+      (int (*)(const void *, const void *))mystrcmp);
     closedir(dirp);
 }
 
@@ -1560,10 +1560,10 @@ int cd(char *s)
     extern int strwidth(char *s);
 
     //printf("cd %s\n", s);
-    muiClearTBString(t1);  // Clear out the text box 
+    muiClearTBString(t1);  // Clear out the text box
     if(chdir(s) < 0) {
-	fprintf(stderr,"cannot open %s\n",s);
-	return -1;
+    fprintf(stderr,"cannot open %s\n",s);
+    return -1;
     }
     pwd();
     ls();
@@ -1602,14 +1602,14 @@ void writeoutputfile(char *dir, char *file)
 }
 
 /***************************************************************/
-void	controltltop(muiObject *obj, enum muiReturnValue value)
+void    controltltop(muiObject *obj, enum muiReturnValue value)
 {
     float sliderval;
 
     //printf("vs fn %d\n", value);
 
     if ((value != MUI_SLIDER_RETURN) && (value != MUI_SLIDER_THUMB)
-	)
+    )
       return;
 
     sliderval = muiGetVSVal(obj);
@@ -1620,7 +1620,7 @@ void	controltltop(muiObject *obj, enum muiReturnValue value)
 }
 
 /***************************************************************/
-void	handlefileselection(muiObject *obj, enum muiReturnValue value)
+void    handlefileselection(muiObject *obj, enum muiReturnValue value)
 {
     char *fname;
     int len;
@@ -1639,19 +1639,19 @@ void	handlefileselection(muiObject *obj, enum muiReturnValue value)
     {
 #if 0
         if (doubleclick)
-	  printf("DblClick! ");
-	printf("Selected file %s\n", fname);
+      printf("DblClick! ");
+    printf("Selected file %s\n", fname);
 #endif
-	len = strlen(fname);
-	if ((fname[len-1] == '/') || (fname[len-1] == '\\'))
-	{
-	    fname[len-1] = 0;
-	    cd(fname);
-	    return;
-	} else {
-	    writeoutputfile(directory, fname);
-	    return; //exit(0);
-	}
+    len = strlen(fname);
+    if ((fname[len-1] == '/') || (fname[len-1] == '\\'))
+    {
+        fname[len-1] = 0;
+        cd(fname);
+        return;
+    } else {
+        writeoutputfile(directory, fname);
+        return; //exit(0);
+    }
     }
     else if (value != MUI_TEXTLIST_RETURN) return;
 
@@ -1677,18 +1677,18 @@ void handleaccept(muiObject *obj, enum muiReturnValue value)
     len = strlen(fname);
     if ((fname[len-1] == '/') || (fname[len-1] == '\\'))
     {
-	fname[len-1] = 0;
-	cd(fname);
-	return;
+    fname[len-1] = 0;
+    cd(fname);
+    return;
     }
     else if (isDir(fname)) {
-	cd(fname);
-	return;
+    cd(fname);
+    return;
     } else {
-	writeoutputfile(directory, fname);
-	return; //exit(0);
+    writeoutputfile(directory, fname);
+    return; //exit(0);
     }
-    obj = 0;	/* for lint's sake */
+    obj = 0;    /* for lint's sake */
 }
 
 /***************************************************************/
@@ -1696,7 +1696,7 @@ void handleoriginal(muiObject *obj, enum muiReturnValue value)
 {
     if (value != MUI_BUTTON_PRESS) return;
     cd(originaldir);
-    obj = 0;	/* for lint's sake */
+    obj = 0;    /* for lint's sake */
 }
 
 /***************************************************************/
@@ -1704,7 +1704,7 @@ void handleupdir(muiObject *obj, enum muiReturnValue value)
 {
     if (value != MUI_BUTTON_PRESS) return;
     cd("..");
-    obj = 0;	/* for lint's sake */
+    obj = 0;    /* for lint's sake */
 }
 
 /***************************************************************/
@@ -1724,23 +1724,23 @@ void handletextbox(muiObject *obj, enum muiReturnValue value)
 
     if (value != MUI_TEXTBOX_RETURN) return;
     // Use strdup() because cd(s) frees the string returned by muiGetTBString.
-    s = strdup(muiGetTBString(obj));  
+    s = strdup(muiGetTBString(obj));
     if (0 == cd(s)) {
         if (s) free(s);
-	return;
+    return;
     }
     /* hack up the path, if any */
     slash = strrchr(s, '/');
     if (slash == 0) {
-	slash = s-1;	/* to make filename == slash+1 */
+    slash = s-1;    /* to make filename == slash+1 */
     } else {
-	if (*s == '/') { /* absolute path */
-	    strncpy(directory, s, slash-s);
-	    directory[slash-s] = 0;
-	} else {
-	    strcat(directory, "/");
-	    strncat(directory, s, slash-s);
-	}
+    if (*s == '/') { /* absolute path */
+        strncpy(directory, s, slash-s);
+        directory[slash-s] = 0;
+    } else {
+        strcat(directory, "/");
+        strncat(directory, s, slash-s);
+    }
     }
      /* now filename == slash+1 */
     writeoutputfile(directory, slash+1);
@@ -1877,7 +1877,7 @@ void unMUI_fnkeys(int key, int x, int y)
   case GLUT_KEY_RIGHT:
   case GLUT_KEY_LEFT:
     break;
-  }  
+  }
 }
 
 /***************************************************************/
@@ -1896,7 +1896,7 @@ void unMUI_viewport()
   {
     int dx = ow;        // Save old offset (x, y)
     int dy = oh;
-    
+
     ow = (Width-dw)/2;
     oh = (Height-dh)/2; // Calculate new offset (x, y)
 
@@ -1949,12 +1949,12 @@ void unMUI_Reshape(int width, int height)
 
   mui_Reshape(width, height); // Sets glViewport();
 
-  // MUI does not know about the SCISSOR 
+  // MUI does not know about the SCISSOR
   // so we need to clear the window then adjust the SCISSOR.
   glDisable(GL_SCISSOR_TEST);
   //muiBackgroundClear();
   //NOTE: This should use the current background color, but we need to save it in main.c
-  glClearColor(1.0, 1.0, 1.0, 0.0);  
+  glClearColor(1.0, 1.0, 1.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);
   unMUI_viewport();
 
@@ -2019,7 +2019,7 @@ void mui_menu(int menunum)
   // Setup nice rendering context for MUI.
   glDisable( GL_DEPTH_TEST ); /* don't test for depth -- just put in front  */
   glDisable(GL_LIGHTING);
-  // glPolygonMode(GL_FRONT, GL_FILL); 
+  // glPolygonMode(GL_FRONT, GL_FILL);
   // glPolygonMode(GL_BACK, GL_LINE);
   glDisable(GL_STENCIL_TEST);
   glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE); //enable color buffer updates

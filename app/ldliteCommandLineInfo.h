@@ -26,12 +26,12 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-class CldliteCommandLineInfo : public CCommandLineInfo  
+class CldliteCommandLineInfo : public CCommandLineInfo
 {
 public:
-	void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast);
-	CldliteCommandLineInfo();
-	virtual ~CldliteCommandLineInfo();
+    void ParseParam(const TCHAR* pszParam, BOOL bFlag, BOOL bLast);
+    CldliteCommandLineInfo();
+    virtual ~CldliteCommandLineInfo();
 
 };
 

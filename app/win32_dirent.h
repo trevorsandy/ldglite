@@ -24,7 +24,7 @@ opendir(char *pSpec)
      fine?  Open "*" instead of "." to be safe. -mjk */
   pDir->hFind = FindFirstFile(strcmp(pSpec, ".") ? pSpec : "*",
     &pDir->wfd);
-  if( pDir->hFind == INVALID_HANDLE_VALUE ) 
+  if( pDir->hFind == INVALID_HANDLE_VALUE )
   {
     pDir->hFind = NULL;
   }

@@ -24,7 +24,7 @@ void WINAPI plugCallBack (char *strCBCompleteText, char *strCBSelText)
 
   printf("Results:\n%s\n", strCBCompleteText);
   printf("selected:\n%s\n", strCBSelText);
-  if ((!strCBCompleteText || !strlen(strCBCompleteText)) && 
+  if ((!strCBCompleteText || !strlen(strCBCompleteText)) &&
       (!strCBSelText || !strlen(strCBSelText)))
   {
     // Got nothing back from the plugin, so skip the temp file.
@@ -50,12 +50,12 @@ void WINAPI plugCallBack (char *strCBCompleteText, char *strCBSelText)
 
 //*****************************************************************************
 char *plugin(plugstruct *plug,
-	   unsigned char *CompleteText,
-	   unsigned char *SelText,
-	   unsigned long *SelStart,
-	   unsigned long *SelLength,
-	   unsigned long *CursoRow,
-	   unsigned long *CursorColum)
+       unsigned char *CompleteText,
+       unsigned char *SelText,
+       unsigned long *SelStart,
+       unsigned long *SelLength,
+       unsigned long *CursoRow,
+       unsigned long *CursorColum)
 {
   HANDLE   hTME=NULL; //DLL handle
   PROCESS_TEXT  ProcessText;
@@ -72,9 +72,9 @@ char *plugin(plugstruct *plug,
     return NULL;
   }
 
-  //get the function we want and lock to our function pointer	
+  //get the function we want and lock to our function pointer
   ProcessText = (PROCESS_TEXT) GetProcAddress(hTME,"ProcessText");
-    
+
   //error check
   if(ProcessText == NULL)
   {
@@ -88,14 +88,14 @@ char *plugin(plugstruct *plug,
     *p = 0;
   sprintf(plugoutfilename + strlen(plugoutfilename), "%d", ++plugoutnum);
   strcat(plugoutfilename, ".ldr");
-  
-  ProcessText(CompleteText, SelText, SelStart, SelLength, 
-	      CursoRow, CursorColum, plugCallBack);
+
+  ProcessText(CompleteText, SelText, SelStart, SelLength,
+          CursoRow, CursorColum, plugCallBack);
 
   FreeLibrary(hTME); //free library after use
 
   _fpreset(); // Borland DLL fix.
-  
+
   if (strlen(plugoutfilename))
     return plugoutfilename;
   else
@@ -121,7 +121,7 @@ plugstruct *pluginfo(char *dllname)
     return NULL;
   }
 
-  //get the function we want and lock to our function pointer	
+  //get the function we want and lock to our function pointer
   PluginInfo = (PLUGIN_INFO) GetProcAddress(hTME,"Plugin_Info");
   if (PluginInfo == NULL)
   {
@@ -142,27 +142,27 @@ plugstruct *pluginfo(char *dllname)
   PluginInfo('\0', buffer, 100);
   printf("PluginInfo(0) = %s\n", buffer);
   plug->name = strdup(buffer);
-  
+
   buffer[0] = 0;
   PluginInfo('\1', buffer, 100);
   printf("PluginInfo(1) = %s\n", buffer);
   plug->menuentry = strdup(buffer);
-  
+
   buffer[0] = 0;
   PluginInfo('\2', buffer, 100);
   printf("PluginInfo(2) = %s\n", buffer);
   plug->version = strdup(buffer);
-  
+
   buffer[0] = 0;
   PluginInfo('\3', buffer, 100);
   printf("PluginInfo(3) = %s\n", buffer);
   plug->description = strdup(buffer);
-  
+
   buffer[0] = 0;
   PluginInfo('\4', buffer, 100);
   printf("PluginInfo(4) = %s\n", buffer);
   plug->author = strdup(buffer);
-  
+
   buffer[0] = 0;
   PluginInfo('\5', buffer, 100);
   printf("PluginInfo(5) = %s\n", buffer);
@@ -180,7 +180,7 @@ plugstruct *pluginfo(char *dllname)
   FreeLibrary(hTME); //free library after use
 
   _fpreset(); // Borland DLL fix.
-  
+
   return plug;
 }
- 
+

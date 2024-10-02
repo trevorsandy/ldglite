@@ -50,18 +50,18 @@ extern int zWire;
 extern char *mpd_subfile_name;
 
 // Drawing modes
-#define TYPE_F_NORMAL 		0x0000
-#define TYPE_F_LOW_RES 		0x0001
-#define TYPE_F_NO_POLYGONS 	0x0002
-#define TYPE_F_NO_LINES 	0x0004
-#define TYPE_F_BBOX_MODE 	0x0008
-#define TYPE_F_INVISIBLE 	(TYPE_F_NO_POLYGONS | TYPE_F_NO_LINES)
-#define TYPE_F_STUDLESS_MODE 	0x0010
-#define TYPE_F_STUDONLY_MODE 	0x0020
-#define TYPE_F_STUDLINE_MODE 	0x0040
-#define TYPE_F_SHADED_MODE 	0x0080
-#define TYPE_F_XOR_MODE 	0x0100
-#define TYPE_F_XOR_PRIMITIVE 	0x0200
+#define TYPE_F_NORMAL       0x0000
+#define TYPE_F_LOW_RES      0x0001
+#define TYPE_F_NO_POLYGONS  0x0002
+#define TYPE_F_NO_LINES     0x0004
+#define TYPE_F_BBOX_MODE    0x0008
+#define TYPE_F_INVISIBLE    (TYPE_F_NO_POLYGONS | TYPE_F_NO_LINES)
+#define TYPE_F_STUDLESS_MODE    0x0010
+#define TYPE_F_STUDONLY_MODE    0x0020
+#define TYPE_F_STUDLINE_MODE    0x0040
+#define TYPE_F_SHADED_MODE  0x0080
+#define TYPE_F_XOR_MODE     0x0100
+#define TYPE_F_XOR_PRIMITIVE    0x0200
 
 char * strsave(char *);
 
@@ -164,14 +164,14 @@ typedef struct zcolor_table_entry_struct {
 
 // ldraw command line options
 typedef struct {
-	matrix3d A;  // transform matrix
-	int B;       // background color
-	int F;		// global drawing mode
-	char M;     // drawing mode {P|C|S}
-	vector3d O; // set x and y position (z unused)
-	float S;    // scale factor
-	int V_x; // video mode
-	int V_y;
+    matrix3d A;  // transform matrix
+    int B;       // background color
+    int F;      // global drawing mode
+    char M;     // drawing mode {P|C|S}
+    vector3d O; // set x and y position (z unused)
+    float S;    // scale factor
+    int V_x; // video mode
+    int V_y;
 	int C; // default part color
     // non-LDRAW values
 	int poll; // watch file for changes.

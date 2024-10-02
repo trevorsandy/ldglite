@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -74,7 +74,7 @@ IDR_LDLITETYPE          ICON    DISCARDABLE     "res\\ldliteDoc.ico"
 // Menu
 //
 
-IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE
 BEGIN
     POPUP "&File"
     BEGIN
@@ -117,7 +117,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE
 BEGIN
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
     "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
@@ -131,7 +131,7 @@ BEGIN
     VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
     VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
-    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
 END
 
@@ -167,7 +167,7 @@ BEGIN
     LTEXT           "Zoom/Scale",IDC_STATIC,7,12,40,8
     EDITTEXT        IDC_EDIT1,53,6,44,14,ES_AUTOHSCROLL | ES_NUMBER
     LTEXT           "Viewpoint",IDC_STATIC,7,35,32,8
-    COMBOBOX        IDC_COMBO1,53,31,126,71,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_COMBO1,53,31,126,71,CBS_DROPDOWNLIST | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     CONTROL         "Spin1",IDC_SCALESPIN1,"msctls_updown32",UDS_ARROWKEYS,
                     100,7,11,13
@@ -183,16 +183,16 @@ BEGIN
     LTEXT           "View M&atrix",IDC_STATIC,7,7,41,8
     EDITTEXT        IDC_View_Edit,7,18,184,14,ES_AUTOHSCROLL
     LTEXT           "Predefined:",IDC_STATIC,7,40,37,8
-    COMBOBOX        IDC_PREDEFINED,49,38,142,105,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_PREDEFINED,49,38,142,105,CBS_DROPDOWNLIST | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Background Color",IDC_STATIC,7,54,68,8
-    COMBOBOX        IDC_BGCOLOR_LIST,7,66,81,103,CBS_DROPDOWNLIST | CBS_SORT | 
+    COMBOBOX        IDC_BGCOLOR_LIST,7,66,81,103,CBS_DROPDOWNLIST | CBS_SORT |
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Default Piece &Color",IDC_STATIC,95,54,68,8
-    COMBOBOX        IDC_PIECECOLOR_LIST,95,66,95,103,CBS_DROPDOWNLIST | 
+    COMBOBOX        IDC_PIECECOLOR_LIST,95,66,95,103,CBS_DROPDOWNLIST |
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
     GROUPBOX        "Drawing &Mode",IDC_STATIC,7,84,81,84
-    CONTROL         "Single Step",IDC_STEP_RADIO,"Button",BS_AUTORADIOBUTTON | 
+    CONTROL         "Single Step",IDC_STEP_RADIO,"Button",BS_AUTORADIOBUTTON |
                     WS_GROUP,13,94,52,10
     CONTROL         "Continuous",IDC_CONT_RADIO,"Button",BS_AUTORADIOBUTTON,
                     13,106,51,10
@@ -209,7 +209,7 @@ BEGIN
     CONTROL         "Spin2",IDC_SCALE_BIGDELTA,"msctls_updown32",
                     UDS_ARROWKEYS,132,102,11,14
     LTEXT           "Distance (&Z)",IDC_STATIC,146,88,40,8
-    EDITTEXT        IDC_DISTANCE_EDIT,146,102,23,14,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_DISTANCE_EDIT,146,102,23,14,ES_AUTOHSCROLL |
                     ES_NUMBER
     CONTROL         "Spin3",IDC_DISTANCE_SMALLDELTA,"msctls_updown32",
                     UDS_ARROWKEYS,170,102,11,14
@@ -218,7 +218,7 @@ BEGIN
     GROUPBOX        "Debugging",IDC_STATIC,95,128,95,40
     CONTROL         "Debu&g messages",IDC_DEBUG_CHECK,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,103,138,73,10
-    CONTROL         "&Log to file",IDC_LOG_CHECK,"Button",BS_AUTOCHECKBOX | 
+    CONTROL         "&Log to file",IDC_LOG_CHECK,"Button",BS_AUTOCHECKBOX |
                     WS_TABSTOP,103,151,62,10
     GROUPBOX        "&Video Mode",IDC_STATIC,7,173,82,44
     LTEXT           "X",IDC_STATIC,13,184,25,8
@@ -227,10 +227,10 @@ BEGIN
     EDITTEXT        IDC_VIDEOY_EDIT,45,195,30,14,ES_AUTOHSCROLL | ES_NUMBER
     GROUPBOX        "&Offset",IDC_STATIC,95,173,96,44
     LTEXT           "X",IDC_STATIC,101,184,25,8
-    EDITTEXT        IDC_OFFSETX_EDIT,101,195,38,14,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_OFFSETX_EDIT,101,195,38,14,ES_AUTOHSCROLL |
                     ES_NUMBER
     LTEXT           "Y",IDC_STATIC,143,184,25,8
-    EDITTEXT        IDC_OFFSETY_EDIT,143,195,42,14,ES_AUTOHSCROLL | 
+    EDITTEXT        IDC_OFFSETY_EDIT,143,195,42,14,ES_AUTOHSCROLL |
                     ES_NUMBER
     DEFPUSHBUTTON   "OK",IDOK,35,224,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,115,224,50,14
@@ -289,7 +289,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO DISCARDABLE
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -323,18 +323,18 @@ END
 // String Table
 //
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE PRELOAD DISCARDABLE
 BEGIN
     IDR_MAINFRAME           "ldlite\n\nldlite\nLDraw file (*.dat)\n.dat\nldlite.Document\nldlite Document"
 END
 
-STRINGTABLE PRELOAD DISCARDABLE 
+STRINGTABLE PRELOAD DISCARDABLE
 BEGIN
     AFX_IDS_APP_TITLE       "ldlite"
     AFX_IDS_IDLEMESSAGE     "Ready"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -344,7 +344,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_FILE_NEW             "Create a new document\nNew"
     ID_FILE_OPEN            "Open an existing document\nOpen"
@@ -357,13 +357,13 @@ BEGIN
     ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_FILE_MRU_FILE1       "Open this document"
     ID_FILE_MRU_FILE2       "Open this document"
@@ -383,18 +383,18 @@ BEGIN
     ID_FILE_MRU_FILE16      "Open this document"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -409,13 +409,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -426,18 +426,18 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_MENUITEM32771        "Toggle shading on model."
     ID_SHOW_PARTS           "Enable screen updates whenever a primiitive is drawn"
@@ -450,13 +450,13 @@ BEGIN
     IDR_PAUSE               "Controls whether LDLite waits for input at STEP lines."
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     IDR_WIRE                "Toggle wireframe display"
     ID_DRAW_STEPS           "Update screen after each STEP"
 END
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     ID_INDICATOR_TYPE0      "LDLITE Copyright 1998-2001 Paul Gyugyi. Distributed by Gyugyi Cybernetics"
     ID_INDICATOR_STEP       "Step ######"

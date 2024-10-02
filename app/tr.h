@@ -115,13 +115,13 @@ extern void trDelete(TRcontext *tr);
 extern void trTileSize(TRcontext *tr, GLint width, GLint height, GLint border);
 
 extern void trTileBuffer(TRcontext *tr, GLenum format, GLenum type,
-			 GLvoid *image);
+             GLvoid *image);
 
 
 extern void trImageSize(TRcontext *tr, GLint width, GLint height);
 
 extern void trImageBuffer(TRcontext *tr, GLenum format, GLenum type,
-			  GLvoid *image);
+              GLvoid *image);
 
 
 extern void trRowOrder(TRcontext *tr, TRenum order);
@@ -131,18 +131,18 @@ extern GLint trGet(TRcontext *tr, TRenum param);
 
 
 extern void trOrtho(TRcontext *tr,
-		    GLdouble left, GLdouble right,
-		    GLdouble bottom, GLdouble top,
-		    GLdouble zNear, GLdouble zFar);
+            GLdouble left, GLdouble right,
+            GLdouble bottom, GLdouble top,
+            GLdouble zNear, GLdouble zFar);
 
 extern void trFrustum(TRcontext *tr,
-		      GLdouble left, GLdouble right,
-		      GLdouble bottom, GLdouble top,
-		      GLdouble zNear, GLdouble zFar);
+              GLdouble left, GLdouble right,
+              GLdouble bottom, GLdouble top,
+              GLdouble zNear, GLdouble zFar);
 
 extern void trPerspective(TRcontext *tr,
-			  GLdouble fovy, GLdouble aspect,
-			  GLdouble zNear, GLdouble zFar );
+              GLdouble fovy, GLdouble aspect,
+              GLdouble zNear, GLdouble zFar );
 
 
 extern void trBeginTile(TRcontext *tr);

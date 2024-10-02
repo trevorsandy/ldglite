@@ -1,5 +1,5 @@
 //************************************************************************
-// hoser.c  
+// hoser.c
 //
 // Based on BezierDoc.cpp by Chris Daelman
 // which was based on the hoser spreadsheet by John VanZwieten Jr. and III
@@ -47,25 +47,25 @@ void V3Scale(float r[4], float a[4], double t)
 }
 
 //************************************************************************
-// Calculate the 3rd degree polynomial based on an array of 4 points and 
-// a variable (u) which is generally between 0 And 1.  By stepping u in 
-// equal increments from 0 to 1 we get a nice approximation of the curve.   
+// Calculate the 3rd degree polynomial based on an array of 4 points and
+// a variable (u) which is generally between 0 And 1.  By stepping u in
+// equal increments from 0 to 1 we get a nice approximation of the curve.
 //************************************************************************
-void Bernstein(float r[4], float u, float m[4][4]) 
+void Bernstein(float r[4], float u, float m[4][4])
 {
   float a[4], b[4], c[4], d[4];
 
 #if 0
-  V3Scale(a, m[0], pow(u,3));		// m[0] is the 1st control point
-  V3Scale(b, m[1], 3*pow(u,2)*(1-u));	// m[1] is the 2nd control point
-  V3Scale(c, m[2], 3*u*pow((1-u),2));	// m[2] is the 3rd control point
-  V3Scale(d, m[3], pow((1-u),3));	// m[3] is the 4th control point
+  V3Scale(a, m[0], pow(u,3));       // m[0] is the 1st control point
+  V3Scale(b, m[1], 3*pow(u,2)*(1-u));   // m[1] is the 2nd control point
+  V3Scale(c, m[2], 3*u*pow((1-u),2));   // m[2] is the 3rd control point
+  V3Scale(d, m[3], pow((1-u),3));   // m[3] is the 4th control point
 #else
   // I dont know why, but I must reverse the order of the control points.
-  V3Scale(a, m[3], pow(u,3));		// m[3] is the 1st control point
-  V3Scale(b, m[2], 3*pow(u,2)*(1-u));	// m[2] is the 2nd control point
-  V3Scale(c, m[1], 3*u*pow((1-u),2));	// m[1] is the 3rd control point
-  V3Scale(d, m[0], pow((1-u),3));	// m[0] is the 4th control point
+  V3Scale(a, m[3], pow(u,3));       // m[3] is the 1st control point
+  V3Scale(b, m[2], 3*pow(u,2)*(1-u));   // m[2] is the 2nd control point
+  V3Scale(c, m[1], 3*u*pow((1-u),2));   // m[1] is the 3rd control point
+  V3Scale(d, m[0], pow((1-u),3));   // m[0] is the 4th control point
 #endif
 
   V3Add(r, a, b);
@@ -100,7 +100,7 @@ char helper[256];
 // and press <Enter> to send the goodies to this fn, which hoses it.
 //************************************************************************
 void hoser(float m[4][4], int color, int steps, int drawline,
-	   char *parttext, char *firstparttext)
+       char *parttext, char *firstparttext)
 {
   float m1[4][4];
   float p[4],prevp[4],nextp[4],nextnextp[4];
@@ -141,10 +141,10 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     Bernstein(p, ((float)i / steps), m);
     Bernstein(nextp, ((float)(i+1) / steps), m);
     pointtopointdistance=sqrt(((nextp[0]-p[0])*(nextp[0]-p[0]))+
-			      ((nextp[1]-p[1])*(nextp[1]-p[1]))+
-			      ((nextp[2]-p[2])*(nextp[2]-p[2])));
+                  ((nextp[1]-p[1])*(nextp[1]-p[1]))+
+                  ((nextp[2]-p[2])*(nextp[2]-p[2])));
     cumulatedptpdistance += pointtopointdistance;
-  }			
+  }
 
   cumulatedptpdistanceperstep=cumulatedptpdistance/steps;
   cumulatedITV = 0;
@@ -153,8 +153,8 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     Bernstein(p, ((float)i / steps), m);
     Bernstein(nextp, ((float)(i+1) / steps), m);
     pointtopointdistance=sqrt(((nextp[0]-p[0])*(nextp[0]-p[0]))+
-			      ((nextp[1]-p[1])*(nextp[1]-p[1]))+
-			      ((nextp[2]-p[2])*(nextp[2]-p[2])));
+                  ((nextp[1]-p[1])*(nextp[1]-p[1]))+
+                  ((nextp[2]-p[2])*(nextp[2]-p[2])));
     RatioofDistancetoIdeal=pointtopointdistance/cumulatedptpdistanceperstep;
     cumulatedITV += ((1/(double)steps)/RatioofDistancetoIdeal);
   }
@@ -170,22 +170,22 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     Bernstein(nextnextp, ((float)(i+2) / steps), m);
     Bernstein(prevp, ((float)(i-1) / steps), m);
     Prevpointtopointdistance=sqrt(((p[0]-prevp[0])*(p[0]-prevp[0]))+
-				  ((p[1]-prevp[1])*(p[1]-prevp[1]))+
-				  ((p[2]-prevp[2])*(p[2]-prevp[2])));
+                  ((p[1]-prevp[1])*(p[1]-prevp[1]))+
+                  ((p[2]-prevp[2])*(p[2]-prevp[2])));
     pointtopointdistance=sqrt(((nextp[0]-p[0])*(nextp[0]-p[0]))+
-			      ((nextp[1]-p[1])*(nextp[1]-p[1]))+
-			      ((nextp[2]-p[2])*(nextp[2]-p[2])));
+                  ((nextp[1]-p[1])*(nextp[1]-p[1]))+
+                  ((nextp[2]-p[2])*(nextp[2]-p[2])));
     nextpointtopointdistance=sqrt(((nextnextp[0]-nextp[0])*(nextnextp[0]-nextp[0]))+
-				  ((nextnextp[1]-nextp[1])*(nextnextp[1]-nextp[1]))+
-				  ((nextnextp[2]-nextp[2])*(nextnextp[2]-nextp[2])));
+                  ((nextnextp[1]-nextp[1])*(nextnextp[1]-nextp[1]))+
+                  ((nextnextp[2]-nextp[2])*(nextnextp[2]-nextp[2])));
 
     PrevRatioofDistancetoIdeal=Prevpointtopointdistance/cumulatedptpdistanceperstep;
     RatioofDistancetoIdeal=pointtopointdistance/cumulatedptpdistanceperstep;
     nextRatioofDistancetoIdeal=nextpointtopointdistance/cumulatedptpdistanceperstep;
 
     if (i>0)
-      NTV=PrevNTV+((1/(double)steps)/PrevRatioofDistancetoIdeal/cumulatedITV); 
-    else 
+      NTV=PrevNTV+((1/(double)steps)/PrevRatioofDistancetoIdeal/cumulatedITV);
+    else
       NTV=0;
     nextNTV=NTV+((1/(double)steps)/RatioofDistancetoIdeal/cumulatedITV);
 
@@ -194,7 +194,7 @@ void hoser(float m[4][4], int color, int steps, int drawline,
 
     // Now we need to create the rotation matrix for this hose step.
     // Im sure theres an easier to understand way to write this, but since
-    // I cant follow it, I cant make it easier for someone else to read. 
+    // I cant follow it, I cant make it easier for someone else to read.
 
     // Perhaps a quaternion would help here.
     // We already have the location vector p for this segment.
@@ -282,9 +282,9 @@ void hoser(float m[4][4], int color, int steps, int drawline,
       Xaxisrotation=pi-(atan(sqrt(((nextp[0]-p[0])*(nextp[0]-p[0]))+((nextp[2]-p[2])*(nextp[2]-p[2])))/(nextp[1]-p[1])));
       Yaxisrotation=(-pi+(atan((nextp[0]-p[0])/(nextp[2]-p[2]))));}
 
-    if ((i==0) || (i==(steps-1))) 
+    if ((i==0) || (i==(steps-1)))
       segname = firstparttext;
-    else 
+    else
       segname = parttext;
     if (!stricmp(parttext, "209.dat")) // Chain links
     {
@@ -300,9 +300,9 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     {
       // Turn the last part 180 degrees to make it face out of the hose.
       if (Xaxisrotation < 0)
-	  Xaxisrotation += pi; 
+      Xaxisrotation += pi;
       else
-	  Xaxisrotation -= pi; 
+      Xaxisrotation -= pi;
     }
 
     // Format the new hose segment.
@@ -312,14 +312,14 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     sprintf(helper,"%g %g %g " ,p[0] ,p[1], p[2]);
     strcat(maintext, helper);
     sprintf(helper,"%g %g %g " , cos(Yaxisrotation),
-	    (sin(Xaxisrotation)*sin(Yaxisrotation)),
-	    (cos(Xaxisrotation)*sin(Yaxisrotation)));
+        (sin(Xaxisrotation)*sin(Yaxisrotation)),
+        (cos(Xaxisrotation)*sin(Yaxisrotation)));
     strcat(maintext, helper);
     sprintf(helper,"0 %g %g " ,cos(Xaxisrotation) ,-sin(Xaxisrotation));
     strcat(maintext, helper);
     sprintf(helper,"%g %g %g " ,-sin(Yaxisrotation),
-	    (sin(Xaxisrotation)*cos(Yaxisrotation)),
-	    (cos(Xaxisrotation)*cos(Yaxisrotation)));
+        (sin(Xaxisrotation)*cos(Yaxisrotation)),
+        (cos(Xaxisrotation)*cos(Yaxisrotation)));
     strcat(maintext, helper);
     sprintf(helper,"%s\n" ,segname);
 #else
@@ -344,16 +344,16 @@ void hoser(float m[4][4], int color, int steps, int drawline,
       // Roll alternate chain links 90 degrees around Y axis
       // (before applying the hoser matrix).
       float m0[4][4] = {
-	{1.0,0.0,0.0,0.0},
-	{0.0,1.0,0.0,0.0},
-	{0.0,0.0,1.0,0.0},
-	{0.0,0.0,0.0,1.0}
+    {1.0,0.0,0.0,0.0},
+    {0.0,1.0,0.0,0.0},
+    {0.0,0.0,1.0,0.0},
+    {0.0,0.0,0.0,1.0}
       };
       float m2[4][4] = {
-	{1.0,0.0,0.0,0.0},
-	{0.0,1.0,0.0,0.0},
-	{0.0,0.0,1.0,0.0},
-	{0.0,0.0,0.0,1.0}
+    {1.0,0.0,0.0,0.0},
+    {0.0,1.0,0.0,0.0},
+    {0.0,0.0,1.0,0.0},
+    {0.0,0.0,0.0,1.0}
       };
       m0[0][0] = 0.0;  //(float)cos(pidiv2);
       m0[0][2] = 1.0;  //(float)sin(pidiv2);
@@ -366,12 +366,12 @@ void hoser(float m[4][4], int color, int steps, int drawline,
     hoseseg(segname, color, m1);
 #endif
 
-    p[0] = nextp[0]; 
-    p[1] = nextp[1]; 
+    p[0] = nextp[0];
+    p[1] = nextp[1];
     p[2] = nextp[2];
     PrevNTV = NTV;
   }
-  
+
 #ifdef TESTING
   sprintf(helper,"0 Bezier curve end\n");
   strcat(maintext, helper);
@@ -379,25 +379,25 @@ void hoser(float m[4][4], int color, int steps, int drawline,
   sprintf(maintext, "");
 #endif
 
-  if (drawline) 
-  {	
+  if (drawline)
+  {
     sprintf(helper,"2 %d %g %g %g %g %g %g\n",color,
-	    m[0][0],m[0][1],m[0][2],
-	    m[1][0],m[1][1],m[1][2]);
+        m[0][0],m[0][1],m[0][2],
+        m[1][0],m[1][1],m[1][2]);
     strcat(maintext, helper);
     sprintf(helper,"2 %d %g %g %g %g %g %g\n",color,
-	    m[2][0],m[2][1],m[2][2],
-	    m[3][0],m[3][1],m[3][2]);
+        m[2][0],m[2][1],m[2][2],
+        m[3][0],m[3][1],m[3][2]);
     strcat(maintext, helper);
   }
 
 #ifdef TESTING
   sprintf(helper,"0\n");
-  strcat(maintext, helper);	
+  strcat(maintext, helper);
 
   hoseout();
 #else
-  if (drawline) 
+  if (drawline)
     hoseout();
 #endif
 
@@ -416,10 +416,10 @@ void hoseout(void)
 
     printf(maintext);
   }
-    
+
 #ifdef TESTING
 /***************************************************************/
-int 
+int
 main(int argc, char **argv)
 {
   float m[4][4];
@@ -439,12 +439,12 @@ main(int argc, char **argv)
   m[1][1] = 30;
   m[1][2] = -1;
   m[1][3] = 0;
-  
+
   m[2][0] = 30;
   m[2][1] = 100;
   m[2][2] = 0;
   m[2][3] = 0;
-  
+
   m[3][0] = -60;
   m[3][1] = -61;
   m[3][2] = 240;
@@ -461,7 +461,7 @@ main(int argc, char **argv)
   hoser( m, color, steps, drawline, parttext, firstparttext );
 }
 
-#endif    
+#endif
 
 
 

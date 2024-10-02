@@ -42,8 +42,8 @@ rendering.  BSD should be just about the same, although you may need
 to manually add -L/usr/local/lib -L/usr/local/lib/pth to the PNG_LIBS
 line to pull in the PNG and ZLIB libraries.
 
-  PNG_FLAGS=-I/usr/local/include -DUSE_PNG 
-  PNG_LIBS= -L/usr/local/lib -L/usr/local/lib/pth -lpng -lz 
+  PNG_FLAGS=-I/usr/local/include -DUSE_PNG
+  PNG_LIBS= -L/usr/local/lib -L/usr/local/lib/pth -lpng -lz
 
 You also may need to use gmake on BSD instead of make.  Since it's all
 software rendering, an OSX build should not be much different from a

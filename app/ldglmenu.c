@@ -96,7 +96,7 @@ void fovmenu(int c)
     projection_fov = 67.38;
     break;
   }
-  
+
   if (projection_fov < 0.0)
     projection_fov = 1.0;
 
@@ -119,17 +119,17 @@ void studsmenu(int c)
   {
   case 1:
     // Normal studs
-    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLINE_MODE); 
-    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLESS_MODE); 
+    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLINE_MODE);
+    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLESS_MODE);
     break;
   case 2:
     // Line studs
     ldraw_commandline_opts.F |= TYPE_F_STUDLINE_MODE;
-    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLESS_MODE); 
+    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLESS_MODE);
     break;
   case 3:
     // No studs
-    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLINE_MODE); 
+    ldraw_commandline_opts.F &= ~(TYPE_F_STUDLINE_MODE);
     ldraw_commandline_opts.F |= TYPE_F_STUDLESS_MODE;
     break;
   default:
@@ -242,23 +242,23 @@ void dirmenu(int item)
     if ((FolderCount == 0) && (minfilenum > 0))
     { // Dont PgDn past the last file in the directory.
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("Rescanning from file %d", minfilenum);
-      minfilenum -= MAX_DIR_ENTRIES; 
+    printf("Rescanning from file %d", minfilenum);
+      minfilenum -= MAX_DIR_ENTRIES;
       if (minfilenum < 0)
-	minfilenum = 0;
+    minfilenum = 0;
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("to %d\n", minfilenum);
+    printf("to %d\n", minfilenum);
       FolderCount = ScanFolder(myDir, dirpattern, minfilenum, FolderList);
     }
     if (ldraw_commandline_opts.debug_level == 1)
       printf ("Found %d folders starting at %d in %s\n", FolderCount,minfilenum, myDir);
 
     glutSetMenu(dirmenunum);
-    for(j = 1; j <= MAX_DIR_ENTRIES; j++) 
+    for(j = 1; j <= MAX_DIR_ENTRIES; j++)
       glutChangeToMenuEntry(j, basename(FolderList[j-1]), j);
     glutSetMenu(mainmenunum); // Reset the current menu to the main menu.
   }
-  else 
+  else
   {
     if (ldraw_commandline_opts.debug_level == 1)
       printf("selected dir %d = %s\n", item, FolderList[item-1]);
@@ -267,19 +267,19 @@ void dirmenu(int item)
       strcpy(dirfilepath, FolderList[item-1]);
       strcpy(myDir, basename(dirfilepath));
       if (stricmp(myDir, ".") == 0)
-	strcpy(dirfilepath, dirname(FolderList[item-1]));
+    strcpy(dirfilepath, dirname(FolderList[item-1]));
       if (stricmp(myDir, "..") == 0)
       {
-	// Fetch the absolute path to get to ".\.."
-	if (stricmp(dirname(FolderList[item-1]), ".") == 0)
-	{
-	  getcwd(myDir, WORDLENGTH);
-	  strcpy(dirfilepath, dirname(myDir));
-	}
-	else
-	  strcpy(dirfilepath, dirname(dirname(FolderList[item-1])));
-	if (ldraw_commandline_opts.debug_level == 1)
-	  printf("Now using dir = %s\n", dirfilepath);
+    // Fetch the absolute path to get to ".\.."
+    if (stricmp(dirname(FolderList[item-1]), ".") == 0)
+    {
+      getcwd(myDir, WORDLENGTH);
+      strcpy(dirfilepath, dirname(myDir));
+    }
+    else
+      strcpy(dirfilepath, dirname(dirname(FolderList[item-1])));
+    if (ldraw_commandline_opts.debug_level == 1)
+      printf("Now using dir = %s\n", dirfilepath);
       }
       dirmenu(15); // refresh the folder list with folders in new dir.
       filemenu(15); // refresh the file list with files in new dir.
@@ -325,23 +325,23 @@ void filemenu(int item)
     if ((DateiCount == 0) && (minfilenum > 0))
     { // Dont PgDn past the last file in the directory.
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("Rescanning from file %d", minfilenum);
-      minfilenum -= MAX_DIR_ENTRIES; 
+    printf("Rescanning from file %d", minfilenum);
+      minfilenum -= MAX_DIR_ENTRIES;
       if (minfilenum < 0)
-	minfilenum = 0;
+    minfilenum = 0;
       if (ldraw_commandline_opts.debug_level == 1)
-	printf("to %d\n", minfilenum);
+    printf("to %d\n", minfilenum);
       DateiCount = ScanDirectory(myDir, filepattern, minfilenum, DateiListe);
     }
     if (ldraw_commandline_opts.debug_level == 1)
       printf ("Found %d files starting at %d in %s\n", DateiCount,minfilenum, myDir);
 
     glutSetMenu(filemenunum);
-    for(j = 1; j <= MAX_DIR_ENTRIES; j++) 
+    for(j = 1; j <= MAX_DIR_ENTRIES; j++)
       glutChangeToMenuEntry(j, basename(DateiListe[j-1]), j);
     glutSetMenu(mainmenunum); // Reset the current menu to the main menu.
   }
-  else 
+  else
   {
     if (ldraw_commandline_opts.debug_level == 1)
       printf("selected file %d = %s\n", item, DateiListe[item-1]);
@@ -425,7 +425,7 @@ void initializeMenus(void)
 
   // Hey, this might work with a tab before the On or Off
   // On Windows Glut, tabs ('\t') jump to the accelerator key field.
-  // I can use this to put a check char (* or + or nothing) 
+  // I can use this to put a check char (* or + or nothing)
   // followed by a tab and text.
   // I seem to be allowed one tab on Windows (for accelerator key?)
   // I can use this to line up 2 columns in a menu.
@@ -433,7 +433,7 @@ void initializeMenus(void)
   // Or I can use it to list the accelerator keys.
   // NOTE: on Windows an & will be hidden but will activate a hotkey
   // that only works when that menu is displayed.  Weird!
-  // 
+  //
   // NOTE:  Unfortuntely on Linux the tab renders as a hollow box
 
   glutAddMenuEntry("OrthoGraphic \tOn ", 'j');
@@ -446,7 +446,7 @@ void initializeMenus(void)
   glutAddMenuEntry("[ - ]   Studless   ", 0);
   glutAddMenuEntry("[ - ]   Everything ", 0);
   // Underscores render as a solid line in most fonts, but they are WIDE.
-  glutAddMenuEntry("___________________", 0); 
+  glutAddMenuEntry("___________________", 0);
   glutAddMenuEntry("                   ", 0);
 
   glutAddMenuEntry("*\t Wire Boxes ", 0);

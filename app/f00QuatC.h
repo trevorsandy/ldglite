@@ -1,6 +1,6 @@
 // This originally came from f00Dave's camera demos.
 // I converted it from the nice C++ OOP style (sorry)
-// to this mess because the MingW32 version of gcc makes 
+// to this mess because the MingW32 version of gcc makes
 // win32 exes 1/3 the size of those created by g++.
 // Someday I'll re-OOP it when compiler bloat is reduced...
 
@@ -25,9 +25,9 @@
   // M_PI work-around, required for MS's and some *n?x's compilers.
   // (No, "*n?x" is not a typo, it's a regex ... think about it ;-)
   #ifdef PI
-    #define M_PI					PI
+    #define M_PI                    PI
   #else
-    #define M_PI					3.141592653
+    #define M_PI                    3.141592653
   #endif
 #endif
 
