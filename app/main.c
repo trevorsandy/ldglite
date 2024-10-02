@@ -3997,13 +3997,13 @@ void TiledDisplay(void)
       {
         long offset = foffset;
         offset += (height-k) * width * 3;
-	    fseek(f, offset, SEEK_SET);
-	    k++;
+        fseek(f, offset, SEEK_SET);
+        k++;
 
-	    p = rowPtr;
-	    for (j = 0; j < width; j++) // RGB -> BGR
-	    {
-	      c = p[0];
+        p = (char *)rowPtr;
+        for (j = 0; j < width; j++) // RGB -> BGR
+        {
+          c = p[0];
           p[0] = p[2];
           p[2] = c;
           p+=3;
@@ -4173,7 +4173,7 @@ void test_wgl_arb_buffer_region(char *str)
   {
     hDC = wglGetCurrentDC();
     wglstr = wglGetExtensionsStringARB(hDC);
-    str = wglstr;
+    str = (char *)wglstr;
     printf("WGL_EXTENSIONS = %s\n", wglstr);
 
   }
@@ -5446,16 +5446,16 @@ char *loadpartlist(void)
   partliststr = (char **) calloc(sizeof (char *), partlistmax);
 
   // Save a pointer to each line
-  for (i = 0, s = strtok( buffer, seps );
+  for (i = 0, s = (unsigned char *)strtok( buffer, seps );
        s != NULL;
-       s = strtok( NULL, seps ), i++ )
+       s = (unsigned char *)strtok( NULL, seps ), i++ )
   {
     if (i >= partlistmax)
     {
       partlistmax += 1000;
       partliststr = realloc(partliststr, partlistmax * sizeof(char *));
     }
-    partliststr[i] = s;
+    partliststr[i] = (char *)s;
   }
   printf("Found %d parts\n", i);
 
@@ -5651,16 +5651,16 @@ char *loadpluglist(void)
   plugliststr = (char **) calloc(sizeof (char *), pluglistmax);
 
   // Save a pointer to each line
-  for (i = 0, s = strtok( buffer, seps );
+  for (i = 0, s = (unsigned char *)strtok( buffer, seps );
        s != NULL;
-       s = strtok( NULL, seps ), i++ )
+       s = (unsigned char *)strtok( NULL, seps ), i++ )
   {
     if (i >= pluglistmax)
     {
       pluglistmax += 1000;
       plugliststr = realloc(plugliststr, pluglistmax * sizeof(char *));
     }
-    plugliststr[i] = s;
+    plugliststr[i] = (char *)s;
   }
   printf("Found %d plugins\n", i);
 
@@ -5733,19 +5733,19 @@ int runplugin(int n)
 
     if ( !strncmp(pluglistptr[pluglookup - 1], "BezierCurves", 12))
     {
-      strcpy(CompleteText, pline[1]);
-      strcat(CompleteText, "\n");
-      strcat(CompleteText, pline[2]);
-      strcat(CompleteText, "\n");
-      strcpy(SelText, CompleteText);
-      SelLength = strlen(SelText);
+      strcpy((char *)CompleteText, pline[1]);
+      strcat((char *)CompleteText, "\n");
+      strcat((char *)CompleteText, pline[2]);
+      strcat((char *)CompleteText, "\n");
+      strcpy((char *)SelText, (char *)CompleteText);
+      SelLength = strlen((char *)SelText);
     }
     else
     {
-      strcpy(CompleteText, pline[1]);
-      strcpy(SelText, CompleteText);
-      strcat(CompleteText, "\n");
-      SelLength = strlen(SelText);
+      strcpy((char *)CompleteText, pline[1]);
+      strcpy((char *)SelText, (char *)CompleteText);
+      strcat((char *)CompleteText, "\n");
+      SelLength = strlen((char *)SelText);
     }
 
   }
@@ -6523,15 +6523,15 @@ int edit_mode_keyboard(int key, int x, int y)
       edit_mode_gui();
     return 1;
       case 's':
-	if (tinyfd_gui_test() < 0x100)
-	{
-	  clear_edit_mode_gui();
-	  sprintf(eprompt[0], "Save as: ");
-	  ecommand[0] = toupper(key);
-	  sprintf(&(ecommand[1]), datfilename);
-	  edit_mode_gui();
-	  return 1;
-	}
+    if (tinyfd_gui_test() < 0x100)
+    {
+      clear_edit_mode_gui();
+      sprintf(eprompt[0], "Save as: ");
+      ecommand[0] = toupper(key);
+      sprintf(&(ecommand[1]), "%s", datfilename);
+      edit_mode_gui();
+      return 1;
+    }
     ecommand[0] = 0; // wipe the command char
     clear_edit_mode_gui();
     tfd_saveas();
@@ -9329,7 +9329,7 @@ void ParseParams(int *argc, char **argv)
                 break;
             case 'R':
             case 'r':
-                sscanf(pszParam,"%c%s",&type, &output_file_name);
+                sscanf(pszParam,"%c%s",&type, (char *)output_file_name);
                 ldraw_commandline_opts.output=1;
                 ldraw_commandline_opts.output_depth=1;
                 printf("Save (%s)\n", output_file_name);
@@ -10138,8 +10138,8 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
       // Get the next filename from the HDROP info.
       if ( DragQueryFile ( hdrop, uFile, szNextFile, MAX_PATH ) > 0 )
       {
-	printf("WM_DROPFILE <%s>\n", szNextFile);
-	n += strlen(szNextFile) + 1;
+        printf("WM_DROPFILE <%s>\n", (char *)szNextFile);
+        n += strlen((char *)szNextFile) + 1;
       }
     }
 
@@ -10147,22 +10147,22 @@ MsgSubClassProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     for ( uFile = 0; uFile < uNumFiles; uFile++ )
     {
       if (uFile > 0)
-	strcat(pastelist, "\n");
+    strcat(pastelist, "\n");
       if ( DragQueryFile ( hdrop, uFile, szNextFile, MAX_PATH ) > 0 )
       {
-	s = strdup (szNextFile);
-	platform_fixcase(s);
-    if ((p = strstr(s, partspath)))
-	  strcpy(szNextFile, p + strlen(partspath) + 1);
-    else if ((p = strstr(s, modelspath)))
-	  strcpy(szNextFile, p + strlen(modelspath) + 1);
-    else if ((p = strstr(s, primitivepath)))
-	  strcpy(szNextFile, p + strlen(primitivepath) + 1);
-    else if ((p = strstr(s, datfilepath)))
-	  strcpy(szNextFile, p + strlen(datfilepath) + 1);
-	printf("WM_dropfile <%s>\n", szNextFile);
-	strcat(pastelist, szNextFile);
-	free(s);
+        s = strdup ((char *)szNextFile);
+        platform_fixcase(s);
+        if ((p = strstr(s, partspath)))
+          strcpy((char *)szNextFile, p + strlen(partspath) + 1);
+        else if ((p = strstr(s, modelspath)))
+          strcpy((char *)szNextFile, p + strlen(modelspath) + 1);
+        else if ((p = strstr(s, primitivepath)))
+          strcpy((char *)szNextFile, p + strlen(primitivepath) + 1);
+        else if ((p = strstr(s, datfilepath)))
+          strcpy((char *)szNextFile, p + strlen(datfilepath) + 1);
+        printf("WM_dropfile <%s>\n", (char *)szNextFile);
+        strcat(pastelist, (char *)szNextFile);
+        free(s);
       }
     }
 
