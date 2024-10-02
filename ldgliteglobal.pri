@@ -124,6 +124,8 @@ macx {
   _LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
 }
 
+CONFIG += incremental force_debug_info
+
 win32 {
   CONFIG += console
   CONFIG += USE_FREEGLUT_LOCAL
@@ -137,7 +139,7 @@ win32 {
      QMAKE_CFLAGS_WARN_ON -= -W3
      QMAKE_ADDL_MSVC_FLAGS = -GS -Gd -fp:precise -Zc:forScope
      CONFIG(debug, debug|release) {
-       QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
+     QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
        QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
        QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
        QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
