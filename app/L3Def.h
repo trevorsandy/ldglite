@@ -42,6 +42,8 @@
 #ifndef L3DEF_INCLUDED
 #define L3DEF_INCLUDED
 
+#include <stdio.h>
+
 #ifdef L3P
 typedef unsigned short WORD;
 typedef unsigned int UINT;
@@ -55,7 +57,7 @@ typedef DWORD        COLORREF;
 #define GetGValue(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
 #define GetBValue(rgb)      ((BYTE)((rgb)>>16))
 #ifdef __TURBOC__
-#define _MAX_PATH 256
+#define _MAX_PATH 260
 #ifdef UNIX
 #define BACKSLASH_CHAR   '/'
 #define BACKSLASH_STR    "/"
@@ -94,6 +96,8 @@ extern void          CheckMemoryUsage(void);
 #define true 1
 #endif
 #endif
+
+#define _MAX_PATH 260
 
 struct L3LineS                            /* Not too economic with memory... */
 {
@@ -378,5 +382,10 @@ extern char         *L3Strdup(int Usage, const char *Str);
 extern void          L3Free(int Usage, void *MemBlock, unsigned long Size);
 extern int           L3Logging;
 extern void          L3Log(char *format,...);
+
+extern void FixDatName(register char *DatName);
+extern int  LoadPart(struct L3PartS *PartPtr,
+              int IsModel,
+              char *ReferencingDatfile);
 
 #endif

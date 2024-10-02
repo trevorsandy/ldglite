@@ -14,6 +14,7 @@
 #include "string.h"
 
 #include "platform.h"
+#include "ldliteVR.h"
 
 #ifndef false
 #define false 0
@@ -35,6 +36,7 @@ int RestorePart0(void)
 {
   memcpy(&Parts[0], &Parts0, sizeof(struct L3PartS));
   memset(&Parts0, 0, sizeof(struct L3PartS));
+  return 0;
 }
 
 /*****************************************************************************/
@@ -43,11 +45,12 @@ int StashPart0(void)
   if (Parts0.DatName)
   {
     RestorePart0();
-	// fix osx error: non-void function 'edit_mode_gui' should return a value
+    // fix osx error: non-void function 'edit_mode_gui' should return a value
     return 0;
   }
   memcpy(&Parts0, &Parts[0], sizeof(struct L3PartS));
   memset(&Parts[0], 0, sizeof(struct L3PartS));
+  return 0;
 }
 
 /*****************************************************************************/
@@ -1187,7 +1190,7 @@ int Switch1Part(int partnum)
 extern void FreePart(struct L3PartS * PartPtr);
 
 /*****************************************************************************/
-void FreeSomeParts(firstpart, lastpart)
+void FreeSomeParts(int firstpart,int lastpart)
 {
    register int         i;
    for (i = firstpart; i < lastpart; i++)
@@ -1205,11 +1208,11 @@ extern GLint view_mat[4];
 extern GLint Width;
 extern GLint Height;
 
-typedef struct vector3d_struct {
-	float x;
-	float y;
-	float z;
-} vector3d;
+//typedef struct vector3d_struct {
+//    float x;
+//    float y;
+//    float z;
+//} vector3d;
 
 extern void MakePartBox(struct L3PartS *PartPtr,float m[4][4],vector3d bb3[8]);
 

@@ -22,21 +22,21 @@
 #include "stdio.h"
 
 typedef struct vector3d_struct {
-	float x;
-	float y;
-	float z;
+    float x;
+    float y;
+    float z;
 } vector3d;
 
 typedef struct matrix3d_struct {
-	float a;
-	float b;
-	float c;
-	float d;
-	float e;
-	float f;
-	float g;
-	float h;
-	float i;
+    float a;
+    float b;
+    float c;
+    float d;
+    float e;
+    float f;
+    float g;
+    float h;
+    float i;
 } matrix3d;
 
 extern int yylineno;
@@ -72,8 +72,8 @@ char * strsave(char *);
 vector3d * savevec(float x, float y, float z);
 
 matrix3d * savemat(float a, float b, float c,
-		   float d, float e, float f,
-		   float g, float h, float i);
+           float d, float e, float f,
+           float g, float h, float i);
 
 extern vector3d *current_translation[MAX_INCLUDE_DEPTH];
 extern matrix3d *current_transform[MAX_INCLUDE_DEPTH];
@@ -106,41 +106,41 @@ void zSave(int);
 int zcolor_lookup(char *name);
 
 typedef struct zimage_struct {
-	int *zbuffer;
-	unsigned char *r;
-	unsigned char *g;
-	unsigned char *b;
-	int rows;
-	int cols;
-	int dirty_x1;
-	int dirty_x2;
-	int dirty_y1;
-	int dirty_y2;
-	int extent_x1;
-	int extent_x2;
-	int extent_y1;
-	int extent_y2;
-	unsigned char *dib;
+    int *zbuffer;
+    unsigned char *r;
+    unsigned char *g;
+    unsigned char *b;
+    int rows;
+    int cols;
+    int dirty_x1;
+    int dirty_x2;
+    int dirty_y1;
+    int dirty_y2;
+    int extent_x1;
+    int extent_x2;
+    int extent_y1;
+    int extent_y2;
+    unsigned char *dib;
 } ZIMAGE;
 
 typedef struct zpoint_struct {
-	int x;
-	int y;
-	int z;
+    int x;
+    int y;
+    int z;
 } ZPOINT;
 
 typedef struct zplane_struct {
-	float A;
-	float B;
-	float C;
-	float D;
+    float A;
+    float B;
+    float C;
+    float D;
 } ZPLANE;
 
 typedef struct zcolor_struct {
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-	unsigned char a;  // alpha.  255 == solid, 0 = transparent
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+    unsigned char a;  // alpha.  255 == solid, 0 = transparent
 } ZCOLOR;
 
 #define ZCOLOR_TABLE_DEFAULT_SIZE 64
@@ -149,17 +149,17 @@ typedef struct zcolor_struct {
 #include <stdbool.h>
 
 typedef struct zcolor_def_table_entry_struct {
-	char *name;
-	int inverse_index;
-	ZCOLOR primary;
-	ZCOLOR dither;
+    char *name;
+    int inverse_index;
+    ZCOLOR primary;
+    ZCOLOR dither;
 } ZCOLOR_DEF_TABLE_ENTRY;
 
 typedef struct zcolor_table_entry_struct {
-	int inverse_index;
+    int inverse_index;
     bool adjusted;
-	ZCOLOR primary;
-	ZCOLOR dither;
+    ZCOLOR primary;
+    ZCOLOR dither;
 } ZCOLOR_TABLE_ENTRY;
 
 // ldraw command line options
@@ -172,21 +172,21 @@ typedef struct {
     float S;    // scale factor
     int V_x; // video mode
     int V_y;
-	int C; // default part color
+    int C; // default part color
     // non-LDRAW values
-	int poll; // watch file for changes.
-	int output; // emit LDRAW, POV or Rayshade code
-	int output_depth; // max number of type 1 lines to recurse into
-	int rotate; // spin the model after rendering
-	int debug_level; // 0==no messages, 1 == all
-	char log_output; // 0==no logging, 1==log output to file.
-	int W; //line width
-	int Z; // Z distance of viewpoint, in scaled units
-	int clip; // set to 1 to clip off unused pixels in SAVED images, ala LDRAW
-	int image_filetype; // -i4 creates BMP24 images.  -i-4 creates clipped BMP24 images (default)
-	int center_at_origin; // set to 0 for LDRAW-compatible centering (default), 1 for 0,0
+    int poll; // watch file for changes.
+    int output; // emit LDRAW, POV or Rayshade code
+    int output_depth; // max number of type 1 lines to recurse into
+    int rotate; // spin the model after rendering
+    int debug_level; // 0==no messages, 1 == all
+    char log_output; // 0==no logging, 1==log output to file.
+    int W; //line width
+    int Z; // Z distance of viewpoint, in scaled units
+    int clip; // set to 1 to clip off unused pixels in SAVED images, ala LDRAW
+    int image_filetype; // -i4 creates BMP24 images.  -i-4 creates clipped BMP24 images (default)
+    int center_at_origin; // set to 0 for LDRAW-compatible centering (default), 1 for 0,0
     int emitter; //non-zero for advanced shading.
-	int maxlevel; // ignore steps beyond this depth of include files when -MS
+    int maxlevel; // ignore steps beyond this depth of include files when -MS
 } LDRAW_COMMANDLINE_OPTS;
 
 extern LDRAW_COMMANDLINE_OPTS ldraw_commandline_opts;
@@ -244,4 +244,9 @@ int defer_stop_include_file(void);
 
 void platform_comment(char *comment_string, int level);
 int cache_mpd_subfiles(char *mpd_subfile_name);
+
+int edge_color(int c);
+void FreeSomeParts(int firstpart,int lastpart);
+void get_opengl_transforms(void);
+char * strsave(char *s);
 #endif
