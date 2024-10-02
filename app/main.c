@@ -36,6 +36,8 @@
 #  ifndef WINDOWS
      // This stuff gets pulled in by glut.h for windows.
 #    include "wstubs.h"
+     // This is used to get the sleep struct timespec type.
+#    include <time.h>
 #  else
      // glut 3.7 no longer includes windows.h
 #    if (GLUT_XLIB_IMPLEMENTATION >= 13)
@@ -10259,6 +10261,32 @@ main(int argc, char **argv)
   for (i = 0; i < argc; i++)
     printf("%s ", argv[i]);
   printf("\n");
+
+  char *env_str;
+  env_str = platform_getenv("LDGLITE_MILLISECONDS_SLEEP");
+
+  if (env_str != NULL)
+  {
+    long ms_sleep = strtol(env_str, NULL, 10);
+    if (ms_sleep)
+    {
+      printf("Sleeping for [%ld] milliseconds...\n",ms_sleep);
+#ifdef _WIN32
+      Sleep(ms_sleep);              // uses #include <Windows.h> on Windows
+#else
+      struct timespec rem;          // uses #include <time.h> on Unix
+      struct timespec req= {
+        (int)(ms_sleep / 1000),     // secs (must be non-negative)
+        (ms_sleep % 1000) * 1000000 // nano (must be in range of 0 to 999999999)
+      };
+      nanosleep(&req, &rem);
+#endif
+    } 
+    else
+    {
+      printf("Failed to initiate sleep for [%s] milliseconds.\n",env_str);
+    }
+  }
 
   platform_startup(&argc, &argv);
 
