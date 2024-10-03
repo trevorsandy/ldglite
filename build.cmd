@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: September 10, 2024
+rem  Last Update: October 02, 2024
 rem  Copyright (c) 2019 - 2024 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -440,10 +440,10 @@ IF %1==x86_64 SET PL=64
 SET "LPUB3D_DATA=%LOCALAPPDATA%\LPub3D Software\LPub3D"
 SET "LDRAW_UNOFFICIAL=%LDRAW_DIR%\Unofficial"
 REM SET "LDSEARCHDIRS=%LPUB3D_DATA%\fade^|%LDRAW_UNOFFICIAL%\customParts^|%LDRAW_UNOFFICIAL%\fade^|%LDRAW_UNOFFICIAL%\testParts"
-SET ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l
+SET ARGS=-l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1
 SET LDCONFIG_FILE=tests\LDConfigCustom01.ldr
 SET IN_FILE=tests\Foo2.ldr
-SET OUT_FILE=tests\%PL%bit_%CONFIGURATION%-TestOK_1.3.5_Foo2.png
+SET OUT_FILE=tests\%PL%bit_%CONFIGURATION%-TestOK_%VERSION%_Foo2.png
 SET PACKAGE_PATH=app\%PL%bit_%CONFIGURATION%\%PACKAGE%.exe
 SET COMMAND_LINE_ARGS=%ARGS% -ldcF%LDCONFIG_FILE% -mF%OUT_FILE% %IN_FILE%
 SET COMMAND=%PACKAGE_PATH% %COMMAND_LINE_ARGS%
@@ -462,14 +462,20 @@ IF %CHECK%==1 (
   IF EXIST "%OUT_FILE%" (
     DEL /Q "%OUT_FILE%"
   )
-  %COMMAND% > Check.out
+  %COMMAND% > Check.out 2>&1
   IF EXIST "Check.out" (
     FOR %%R IN (Check.out) DO IF NOT %%~zR LSS 1 ECHO. & TYPE "Check.out"
     DEL /Q "Check.out"
   )
+  IF EXIST "%OUT_FILE%.%PACKAGE%.log" (
+    ECHO.
+    TYPE "%OUT_FILE%.%PACKAGE%.log"
+  	DEL /Q "%OUT_FILE%.%PACKAGE%.log"
+  )
   IF EXIST "%OUT_FILE%" (
     ECHO.
     ECHO -Build Check, create %OUT_FILE% from %IN_FILE% - Test successful!
+	DEL /Q "%OUT_FILE%"
   )
 ) ELSE (
   ECHO -Check is not possible
