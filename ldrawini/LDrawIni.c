@@ -56,6 +56,7 @@ Handle quotes in symbolic searchdirs
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #ifdef __TURBOC__
 #include <alloc.h>
 #endif
@@ -114,7 +115,7 @@ snprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 #define BACKSLASH_CHAR '\\'
 #define BACKSLASH_STRING "\\"
 #define SLASH_CHAR '/'
-#define MAX_PATH_LENGTH 260
+#define MAX_PATH_LENGTH 1024 //_MAX_PATH
 #define HOME_ENV_VAR "USERPROFILE"
 #else
 #define BACKSLASH_CHAR '/'
