@@ -67,14 +67,25 @@ Handle quotes in symbolic searchdirs
 
 LDRAWINI_BEGIN_STDC
 
+#ifdef WIN32
+#pragma warning(disable: 6308 6001)
+
+#if _MSC_VER < 1400	// VC < VC 2005
+#define strcasecmp stricmp
+#else //  VC < VC 2005
+#define strcasecmp _stricmp
+#endif // VC < VC 2005
+
+#endif // WIN32
+
 /* External references:
 calloc fclose ferror fopen free getc getenv malloc memcpy memmove realloc
-sprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
+snprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 */
 
 /* Preprocessor flags:
  _WIN32      VC++
- WIN_UTF8_PATHS Paths are UTF-8, and build is Windows
+ _WIN_UTF8_PATHS Paths are UTF-8, and build is Windows
  __TURBOC__  Borland TurboC
  __linux__   RedHat7.3 gcc -E -dM reveals: __ELF__ __i386 __i386__ i386
                  __i586 __i586__ i586 __linux __linux__ linux
@@ -86,10 +97,14 @@ sprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 */
 /* Naming refers to Windows platform */
 #if defined(_WIN32)
-#define WIN_UTF8_PATHS
+#ifndef _WIN_UTF8_PATHS
+#define _WIN_UTF8_PATHS
 #endif
-#ifdef WIN_UTF8_PATHS
-#pragma comment (lib, "shlwapi.lib")
+#endif
+#ifdef _WIN_UTF8_PATHS
+// LPub3D Mod - Shlwapi lib declaration
+#pragma comment(lib, "Shlwapi.lib")
+// LPub3D Mod End
 #include <Windows.h>
 #include <Shlwapi.h>
 #endif
@@ -249,9 +264,9 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
             free(LDrawIni);
             return NULL;        /* No more memory, just give up              */
          }
-         while (pd->nSymbolicSearchDirs <= 99)
+         while (pd->nSymbolicSearchDirs < 99)
          {
-            sprintf(Key, "LDRAWSEARCH%02d", pd->nSymbolicSearchDirs + 1);
+            snprintf(Key, sizeof(Key), "LDRAWSEARCH%02d", pd->nSymbolicSearchDirs + 1);
             e = getenv(Key);
             if (!e)
                break;
@@ -308,7 +323,7 @@ struct LDrawIniS *LDrawIniGet(const char *LDrawDir,
                   free(LDrawIni);
                   return NULL;  /* No more memory, just give up              */
                }
-               sprintf(Key, "%d", pd->nSymbolicSearchDirs + 1);
+               snprintf(Key, sizeof(Key), "%d", pd->nSymbolicSearchDirs + 1);
                /* Be sure to read all from same ini file */
                if (!LDrawIniReadIniFile(IniFile, "LDrawSearch", Key,
                                         Str, sizeof(Str)))
@@ -453,6 +468,7 @@ static int SplitLDrawSearch(const char *LDrawSearchString, int *nDirs, char ***D
    const char    *t;
    char          *Dir;
    int            n;
+   int            i;
    size_t         Len;
 
    /* Count number of dir separators '|' */
@@ -461,7 +477,7 @@ static int SplitLDrawSearch(const char *LDrawSearchString, int *nDirs, char ***D
    *Dirs = (char **) malloc(n * sizeof(char *));
    if (!*Dirs)
       return 0;
-   for (n = 0, s = LDrawSearchString; *s;)
+   for (i = 0, s = LDrawSearchString; *s && i < n;)
    {
       t = s;
       while (*t && *t != '|')
@@ -472,8 +488,8 @@ static int SplitLDrawSearch(const char *LDrawSearchString, int *nDirs, char ***D
          return 0;
       memcpy(Dir, s, Len);
       Dir[Len] = '\0';
-      (*Dirs)[n] = Dir;
-      if (!(*Dirs)[n++])
+      (*Dirs)[i] = Dir;
+      if (!(*Dirs)[i++])
          return 0;
       s = *t ? t + 1 : t;
    }
@@ -517,9 +533,9 @@ BaseDirectory=d:\Lars\Lego\LDraw\LDRAW
 
 #ifdef __APPLE__
 /* Returns 1 if OK, 0 if Section/Key not found or error */
-int LDrawIniReadPreferences(const char *ApplicationID,
-                            const char *Section, const char *Key,
-                            char *Str, int sizeofStr)
+static int LDrawIniReadPreferences(const char *ApplicationID,
+                                   const char *Section, const char *Key,
+                                   char *Str, int sizeofStr)
 {
    CFStringRef    AppID;
    Boolean        Res;
@@ -596,6 +612,7 @@ int LDrawIniReadIniFile(const char *IniFile,
    size_t         SectionLen;
    size_t         KeyLen;
 
+   memset(&Buf, 0, sizeof(Buf));
 #ifdef __APPLE__
    KeyLen = strlen(IniFile);
    if (KeyLen > 6 && KeyLen < sizeof(Buf) &&
@@ -773,9 +790,11 @@ int LDrawIniComputeRealDirs(struct LDrawIniS * LDrawIni,
    struct LDrawIniPrivateDataS *pd;
    const char    *HomeDir;
    int            i;
+   struct LDrawSearchDirS *ModelSearchDir = NULL;
    int            Res;
    struct LDrawSearchDirS SearchDir;
 
+   memset(&SearchDir, 0, sizeof(SearchDir));
    if (!LDrawIni)
       return 0;
    if (!LDrawIni->LDrawDir)
@@ -816,7 +835,7 @@ c:\car.ldr   c:
          ModelPath = ".";
          i = 1;
       }
-      LDrawIni->ModelDir = (char *) malloc(i + 1);
+      LDrawIni->ModelDir = (char *) malloc((size_t)i + 1);
       if (!LDrawIni->ModelDir)
          return 0;
       memcpy(LDrawIni->ModelDir, ModelPath, i);
@@ -854,6 +873,28 @@ c:\car.ldr   c:
       if (SearchDir.Dir[0] && AddTrailingSlash)
          strcat(SearchDir.Dir, BACKSLASH_STRING);  /* Dir has room for this  */
       LDrawIni->SearchDirs[LDrawIni->nSearchDirs++] = SearchDir;
+      if (SearchDir.Flags & LDSDF_MODELDIR)
+      {
+         ModelSearchDir = &LDrawIni->SearchDirs[LDrawIni->nSearchDirs - 1];
+      }
+   }
+   if (ModelSearchDir != NULL)
+   {
+      for (i = 0; i < LDrawIni->nSearchDirs; i++)
+      {
+         struct LDrawSearchDirS *OtherSearchDir = &LDrawIni->SearchDirs[i];
+         /* NOTE: Technically the string-insensitive compare below could cause,
+            problems, but in reality, it almost never will, and there is no real
+            alternative. */
+         if (ModelSearchDir != OtherSearchDir && strcasecmp(OtherSearchDir->Dir,
+             ModelSearchDir->Dir) == 0)
+         {
+            /* If you load a model from one of the other search dirs, combine
+               the flags from that dir with the model dir. */
+            ModelSearchDir->Flags = ModelSearchDir->Flags |
+               OtherSearchDir->Flags;
+         }
+      }
    }
    return 1;
 }                               /* LDrawIniComputeRealDirs                   */
@@ -973,8 +1014,8 @@ int LDrawIniParseSymbolicSearchDir(struct LDrawSearchDirS * Result,
             Flags |= LDSDF_DEFPART;
       }
       {
-	extern LDrawIniBoolT platform_fixcase(char *);
-	platform_fixcase(s); /* ldglite dont like uppercase. */
+        extern LDrawIniBoolT platform_fixcase(char *);
+        platform_fixcase((char *)s); /* ldglite dont like uppercase. */
       }
    }
    else if (strncmp(s, "<MODELDIR>", 10) == 0)
@@ -1033,9 +1074,9 @@ static int TryTypicalLDrawDirs(char *Str, int sizeofStr)
    {
       strcpySafe(Str, sizeofStr, e);
       if (!use_uppercase) // ldglite
-	strcatSafe(Str, sizeofStr, "/ldraw");
+         strcatSafe(Str, sizeofStr, "/ldraw");
       else
-      strcatSafe(Str, sizeofStr, "/LDRAW");
+         strcatSafe(Str, sizeofStr, "/LDRAW");
       if (DirHasPandPARTS(Str))
          return 1;
 #ifdef __APPLE__
@@ -1055,8 +1096,8 @@ static int TryTypicalLDrawDirs(char *Str, int sizeofStr)
       // As of Win7 a similar approach should also be used for Windows.
       // because a writeable C:/LDRAW is frowned upon.
       // Maybe use USERPROFILE and/or APPDATA for models & bitmaps.
-      strcpySafe(Str, sizeofStr, e); 
-	strcatSafe(Str, sizeofStr, "/.ldraw");
+      strcpySafe(Str, sizeofStr, e);
+      strcatSafe(Str, sizeofStr, "/.ldraw");
       if (DirHasPandPARTS(Str))
          return 1;
 #endif
@@ -1075,7 +1116,7 @@ static int TryTypicalLDrawDirs(char *Str, int sizeofStr)
    // for ldglite Linux Packages on github
    strcpySafe(Str, sizeofStr, "/usr/share/ldraw");
    if (DirHasPandPARTS(Str))
-         return 1;
+      return 1;
 #endif
    return 0;
 }                               /* TryTypicalLDrawDirs                       */
@@ -1095,7 +1136,7 @@ int DirHasPandPARTS(const char *PossibleLDrawDir)
    strcatSafe(Str, sizeof(Str), BACKSLASH_STRING "P");
    if (!L3IsDir(Str))
       return 0;
-   if (!use_uppercase) 
+   if (!use_uppercase)
      strcatSafe(Str, sizeof(Str), "arts");
    else
    strcatSafe(Str, sizeof(Str), "ARTS");
@@ -1114,11 +1155,15 @@ static void L3FixSlashes(register char *Path)
 
 static int L3IsDirHelper(char *Path)
 {
-#ifdef WIN_UTF8_PATHS
+#ifdef _WIN_UTF8_PATHS
    int pathBufSize = MultiByteToWideChar(CP_UTF8, 0, Path, -1, NULL, 0);
    if (pathBufSize > 0)
    {
       LPWSTR WPath = malloc(pathBufSize * sizeof(WCHAR));
+      if (WPath == NULL)
+      {
+          return 0;
+      }
       MultiByteToWideChar(CP_UTF8, 0, Path, -1, WPath, pathBufSize);
       if (PathIsDirectoryW(WPath))
       {
