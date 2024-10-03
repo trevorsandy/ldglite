@@ -45,6 +45,13 @@
 #    endif
 #  endif
 
+#ifdef _WIN32
+#include <io.h>
+#define access _access
+#else
+#include <unistd.h>
+#endif
+
 #ifdef VERSION_INFO
 #ifdef ARCH
 char ldgliteVersion[] = "Version "VERSION_INFO" ("ARCH")      ";
@@ -10486,7 +10493,6 @@ main(int argc, char **argv)
   }
 #endif
 
-
   //DEBUG stuff
   if (OffScreenRendering)
     printf("Rendering OffScreen\n");
@@ -10688,22 +10694,27 @@ main(int argc, char **argv)
 
   if (ldraw_commandline_opts.log_output)
   {
-    printf("Redirecting stdout to %s\n", "ldglite.log");
-    if ((fp = fopen ("ldglite.log", "w")) != NULL)
+    char logfile_path[256];
+    char logfile_name[128];
+    strcpy(logfile_name, basename(picfilename));
+    strcat(logfile_name, ".ldglite.log");
+    concat_path(localize_path(dirfilepath), logfile_name, logfile_path);
+    printf("Redirecting stdout to log %s\n", logfile_path);
+    if ((fp = fopen (logfile_path, "w")) != NULL)
     {
       fd = fileno (fp);
     }
     close(2);            // close stderr
-    dup(1);               // redirect stderr to stdout?
+    dup(1);              // redirect stderr to stdout?
     if (close (1) != -1) // close stdout
     {
       if (fp != NULL)
       {
-    fd_new_stdout = dup (fd); // redirect printfs to stdout to the file
+        fd_new_stdout = dup (fd); // redirect printfs to stdout to the file
       }
     }
   }
-
+  
   capturePasteEvents();
 
   glutMainLoop();
@@ -10712,4 +10723,3 @@ main(int argc, char **argv)
 
   return exitcode;
 }
-
