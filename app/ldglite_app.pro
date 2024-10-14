@@ -6,7 +6,7 @@ include($$PWD/../ldgliteglobal.pri)
 # The ABI version.
 VER_MAJ = 1
 VER_MIN = 3
-VER_PAT = 6
+VER_PAT = 7
 VER_BLD = 0
 
 win32 {
