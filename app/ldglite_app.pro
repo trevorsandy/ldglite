@@ -6,7 +6,7 @@ include($$PWD/../ldgliteglobal.pri)
 # The ABI version.
 VER_MAJ = 1
 VER_MIN = 3
-VER_PAT = 7
+VER_PAT = 8
 VER_BLD = 0
 
 win32 {
@@ -14,7 +14,7 @@ win32 {
 
   QMAKE_TARGET_COMPANY = "Don Heyse"
   QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
-  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017 - 2024 Don Heyse, Trevor SANDY"
+  QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017 - 2024 Trevor SANDY, Don Heyse"
   QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
   RC_LANG = "English (United Kingdom)"
   RC_ICONS = "ldglite.ico"
@@ -208,7 +208,7 @@ macx {
 
 # set config to enable build check
 # CONFIG+=BUILD_CHECK
-# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.7_Foo2.png tests/Foo2.ldr
+# ldglite -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests/LDConfigCustom01.ldr -mFtests/TestOK_1.3.8_Foo2.png tests/Foo2.ldr
 #
 # Build Check on Windows:
 # Console:
@@ -216,10 +216,10 @@ macx {
 # SET LDRAW_DIR=%USERPROFILE%\LDraw
 # SET LDRAWDIR=%LDRAW_DIR%
 # ECHO -Set LDRAWDIR to %LDRAWDIR%.
-# -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.7_Foo2.png tests\Foo2.ldr
+# -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.8_Foo2.png tests\Foo2.ldr
 # QtCreator
 # Add to Environment: LDRAWDIR   C:\Users\Trevor\LDraw
-# Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.7_Foo2.png tests\Foo2.ldr
+# Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.8_Foo2.png tests\Foo2.ldr
 # Copy tests folder to OUTPUT folder - e.g. .../app/32bit_debug/tests
 WINDOWS_CHECK = $$(LP3D_WINDOWS_CHECK)
 BUILD_CHECK: unix|contains(WINDOWS_CHECK, 1) {
@@ -231,7 +231,7 @@ BUILD_CHECK: unix|contains(WINDOWS_CHECK, 1) {
                        cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01         \
                        -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l \
                        -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                \
-                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.7_Foo2.png       \
+                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.8_Foo2.png       \
                        $$_PRO_FILE_PWD_/../tests/Foo2.ldr
   } else {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")

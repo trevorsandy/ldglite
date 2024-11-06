@@ -10,7 +10,7 @@
 # LDGL_SKIP_APPVEYOR_VAR     ; skip AppVeyor build
 
 # Build and check LDGLite x86 and x86_64 architectures unsing Qt platform
-version: 'LDGLite-AV-1.3.7.{build}'
+version: 'LDGLite-AV-1.3.8.{build}'
 
 clone_folder: c:\projects\ldglite
 

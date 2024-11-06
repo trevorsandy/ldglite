@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: October 02, 2024
+rem  Last Update: November 06, 2024
 rem  Copyright (c) 2019 - 2024 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -155,7 +155,7 @@ SET LP3D_SYS_DIR=%WINDIR%\System32
 SET OfficialCONTENT=complete.zip
 
 SET PACKAGE=LDGLite
-SET VERSION=1.3.7
+SET VERSION=1.3.8
 
 SET THIRD_INSTALL=unknown
 SET INSTALL_32BIT=unknown
