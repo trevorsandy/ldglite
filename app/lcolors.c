@@ -1309,11 +1309,13 @@ int get_stud_style_or_auto_edge_color(int c)
     }
     else                    // High Contrast Style
     {
-        if (c == 0)
+        if (black_edge_color_enabled && c == 0)
             return get_edge_color_number_from_RGB(&black_edge_color);
-        else if (c != 4242 && value_luminescence < light_dark_control)
+        else if (dark_edge_color_enabled && c != 4242 && value_luminescence < light_dark_control)
             return get_edge_color_number_from_RGB(&dark_edge_color);
-        else
+        else if (part_edge_color_enabled)
             return get_edge_color_number_from_RGB(&part_edge_color);
+        else
+            return lookup_edge_code(c);
     }
 }

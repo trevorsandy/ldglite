@@ -2106,7 +2106,8 @@ int          LoadPart(struct L3PartS * PartPtr, int IsModel, char *ReferencingDa
       {
           /* if stud_style, get stud primitives */
           int set_stud_style = 0;
-          if (PartPtr->IsStud && stud_style) {
+          if (PartPtr->IsStud && stud_style)
+          {
               if ((set_stud_style = IsStudStylePrimitive(PartPtr->DatName)))
               {
                   fp = GetStudStyleFile(PartPtr->DatName, (set_stud_style == 2));
@@ -2450,16 +2451,76 @@ int IsStudStylePrimitive(const char* FileName)
     return 0;
 }
 
-FILE                *GetStudStyleFile(char *DatName, int open_stud)
+#ifndef USE_OPENGL
+static
+#endif
+char * SetCylinderColor(char *input)
+{
+    if (stud_cylinder_color_enabled)
+        return input;
+
+    static char *substring = "4242";
+    static char *replace = "16";
+    int     number_of_matches = 0;
+    size_t  substring_size = strlen(substring), replace_size = strlen(replace), buffer_size;
+    char    *buffer, *bp, *ip;
+
+    if (substring_size)
+    {
+        ip = strstr(input, substring);
+        while (ip != NULL)
+        {
+            number_of_matches++;
+            ip = strstr(ip+substring_size, substring);
+        }
+    }
+    else
+        number_of_matches = strlen (input) + 1;
+
+    buffer_size = strlen(input) + number_of_matches*(replace_size - substring_size) + 1;
+
+    if ((buffer = ((char *) malloc(buffer_size))) == NULL)
+    {
+        return NULL;
+    }
+
+    bp = buffer;
+    ip = strstr(input, substring);
+    while ((ip != NULL) && (*input != '\0'))
+    {
+        if (ip == input)
+        {
+            memcpy (bp, replace, replace_size+1);
+            bp += replace_size;
+            if (substring_size)
+                input += substring_size;
+            else
+                *(bp++) = *(input++);
+            ip = strstr(input, substring);
+        }
+        else
+            while (input != ip)
+                *(bp++) = *(input++);
+    }
+
+    if (substring_size)
+        strcpy (bp, input);
+    else
+        memcpy (bp, replace, replace_size+1);
+
+    return buffer;
+}
+
+FILE *GetStudStyleFile(char *DatName, int open_stud)
 {
     register unsigned int i;
     FILE            *fp;
     char data[MAX_DATA_LEN];
     char StudFile[_MAX_PATH];
 #ifdef WIN32
-    sprintf(StudFile, "%s\\ldglite_stud_style%d_%s", getenv("TEMP"), stud_style, DatName);
+    sprintf(StudFile, "%s\\ldglite_stud_style%d_%d_%s", getenv("TEMP"), stud_style, stud_cylinder_color_enabled, DatName);
 #else
-    sprintf(StudFile, "/tmp/ldglite_stud_style%d_%s", stud_style, DatName);
+    sprintf(StudFile, "/tmp/ldglite_stud_style%d_%d_%s", stud_style, stud_cylinder_color_enabled, DatName);
 #endif
 
     // return stud logo primitive if already exists
@@ -2482,9 +2543,9 @@ FILE                *GetStudStyleFile(char *DatName, int open_stud)
             if (strcmp(DatName, StudStylePrimitives[i].Name) == 0)
             {
                 if (stud_style == 6)
-                    strcpy(data, StudStylePrimitives[i].Data);
+                    strcpy(data, SetCylinderColor(StudStylePrimitives[i].Data));
                 else
-                    strcpy(data, StudStylePrimitives[i].DataLogo1);
+                    strcpy(data, SetCylinderColor(StudStylePrimitives[i].DataLogo1));
                 break;
             }
         }

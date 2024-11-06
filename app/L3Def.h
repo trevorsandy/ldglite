@@ -343,6 +343,7 @@ extern int          IsStudStylePrimitive(const char* FileName);
 
 /* Expose to Main.c and L3Input.c */
 extern int           stud_style;      // there are seven stud styles including 5 stud logos
+extern int           stud_cylinder_color_enabled;
 extern char          ldconfig[256];
 extern char          ldconfigfilename[256];
 

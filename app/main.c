@@ -416,6 +416,10 @@ ZCOLOR stud_cylinder_color = {27, 42, 52, 255};
 ZCOLOR part_edge_color = {0, 0, 0, 255};
 ZCOLOR black_edge_color = {255, 255, 255, 255};
 ZCOLOR dark_edge_color = {27, 42, 52, 255};
+int stud_cylinder_color_enabled = 1;
+int part_edge_color_enabled = 1;
+int black_edge_color_enabled = 1;
+int dark_edge_color_enabled = 1;
 float part_color_value_ld_index = 0.5f;
 float part_edge_contrast = 0.5f;
 int automate_edge_color = 0;
@@ -9257,39 +9261,71 @@ void ParseParams(int *argc, char **argv)
                     v[0][0] = v[0][1] = v[0][2] = v[0][3] = 0.0f;
                     if (pszParam[2] == 'S')
                     {
-                        ScanRGBA(v, 1, &(pszParam[3]));
-                        printf("StudCylinderColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
-                        stud_cylinder_color.r = v[0][0];
-                        stud_cylinder_color.g = v[0][1];
-                        stud_cylinder_color.b = v[0][2];
-                        stud_cylinder_color.a = v[0][3];
+                        if (pszParam[3] == 'd')
+                        {
+                            printf("StudCylinderColor Disabled\n");
+                            stud_cylinder_color_enabled = 0;
+                        }
+                        else
+                        {
+                            ScanRGBA(v, 1, &(pszParam[3]));
+                            printf("StudCylinderColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                            stud_cylinder_color.r = v[0][0];
+                            stud_cylinder_color.g = v[0][1];
+                            stud_cylinder_color.b = v[0][2];
+                            stud_cylinder_color.a = v[0][3];
+                        }
                     }
                     if (pszParam[2] == 'P')
                     {
-                        ScanRGBA(v, 1, &(pszParam[3]));
-                        printf("PartEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
-                        part_edge_color.r = v[0][0];
-                        part_edge_color.g = v[0][1];
-                        part_edge_color.b = v[0][2];
-                        part_edge_color.a = v[0][3];
+                        if (pszParam[3] == 'd')
+                        {
+                            printf("PartEdgeColor Disabled\n");
+                            part_edge_color_enabled = 0;
+                        }
+                        else
+                        {
+                            ScanRGBA(v, 1, &(pszParam[3]));
+                            printf("PartEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                            part_edge_color.r = v[0][0];
+                            part_edge_color.g = v[0][1];
+                            part_edge_color.b = v[0][2];
+                            part_edge_color.a = v[0][3];
+                        }
                     }
                     if (pszParam[2] == 'B')
                     {
-                        ScanRGBA(v, 1, &(pszParam[3]));
-                        printf("BlackEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
-                        black_edge_color.r = v[0][0];
-                        black_edge_color.g = v[0][1];
-                        black_edge_color.b = v[0][2];
-                        black_edge_color.a = v[0][3];
+                        if (pszParam[3] == 'd')
+                        {
+                            printf("BlackEdgeColor Disabled\n");
+                            black_edge_color_enabled = 0;
+                        }
+                        else
+                        {
+                            ScanRGBA(v, 1, &(pszParam[3]));
+                            printf("BlackEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                            black_edge_color.r = v[0][0];
+                            black_edge_color.g = v[0][1];
+                            black_edge_color.b = v[0][2];
+                            black_edge_color.a = v[0][3];
+                        }
                     }
                     if (pszParam[2] == 'D')
                     {
-                        ScanRGBA(v, 1, &(pszParam[3]));
-                        printf("DarkEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
-                        dark_edge_color.r = v[0][0];
-                        dark_edge_color.g = v[0][1];
-                        dark_edge_color.b = v[0][2];
-                        dark_edge_color.a = v[0][3];
+                        if (pszParam[3] == 'd')
+                        {
+                            printf("DarkEdgeColor Disabled\n");
+                            dark_edge_color_enabled = 0;
+                        }
+                        else
+                        {
+                            ScanRGBA(v, 1, &(pszParam[3]));
+                            printf("DarkEdgeColor = (%g, %g, %g, %g)\n", v[0][0], v[0][1], v[0][2], v[0][3]);
+                            dark_edge_color.r = v[0][0];
+                            dark_edge_color.g = v[0][1];
+                            dark_edge_color.b = v[0][2];
+                            dark_edge_color.a = v[0][3];
+                        }
                     }
                 }
                 else

@@ -227,7 +227,8 @@ Command line options (see also the original ldlite docs for more):
 -fsl draws studs as lines. (l3glite only)
 -fssN draws stud style. 'N' can be 0-7, 0 no style is the default value.
     style 6 and 7 are high contrast and can be fine tuned using the
-    -lhS -lhP -lhB and -lhD command line options.
+    -lhS -lhP -lhB and -lhD command line options. These options can
+	be disabled using -lhSd -lhPd -lhBd and -lhDd.
 -fe turns off edge lines 
 -fr same as -fe (Render mode?  Rough draft?  I don't know what R stands for.)
 -ffT,E,S,R,G,B turns on fogging 
