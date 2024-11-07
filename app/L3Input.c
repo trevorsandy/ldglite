@@ -162,14 +162,14 @@ void GetLDrawSearchDirs(int *ErrorCode)
 
   //LDrawIniSetFileCaseCallback(&platform_fixcase);
 
-  LDrawIni = LDrawIniGet(NULL, NULL, &LDrawIniErrorCode);
+  LDrawIni = LDrawIniGet(strlen(pathname) ? pathname : NULL, NULL, &LDrawIniErrorCode);
   if (!LDrawIni)
   {
     if (LDrawIniErrorCode == LDRAWINI_ERROR_LDRAWDIR_NOT_SET)
     {
       /* Neither environment variable, nor ldraw.ini, simply try current dir */
       if (DirHasPandPARTS("."))
-    LDrawIni = LDrawIniGet(".", NULL, &LDrawIniErrorCode);
+      LDrawIni = LDrawIniGet(".", NULL, &LDrawIniErrorCode);
     }
   }
   if (!LDrawIni)

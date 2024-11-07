@@ -23,6 +23,7 @@
 #include <math.h>
 
 #include <sys/stat.h> // for polling datfile for updates.
+#include <errno.h>
 
 #include "glwinkit.h" //#include <GL/glut.h>
 
@@ -2262,14 +2263,33 @@ void platform_setpath()
   else if (GetPrivateProfileString(L"LDraw",L"BaseDirectory",L"",
               pathname,256,L"ldraw.ini") == 0)
   {
+#ifndef F_OK
+    int F_OK = 0;
+#endif
 #if defined MACOS_X
-    sprintf(pathname, "/Library/ldraw");
+    sprintf(pathname, "/Library/ldraw/");
+    if (0 != access(pathname, F_OK))
+      if (ENOENT == errno || ENOTDIR == errno) {
+        pathname[0] = '\0';
+        if ((env_str = platform_getenv("HOME")))
+          concat_path(env_str, use_uppercase ? "LIBRARY/LDRAW" : "Library/LDraw", pathname);
+      }
 #elif defined(UNIX)
-    sprintf(pathname, "/usr/local/ldraw");
-#elif defined(MAC)
-    sprintf(pathname, "Aulus:Code:Lego.CAD:LDRAW");
+    sprintf(pathname, "/usr/local/ldraw/");
+    if (0 != access(pathname, F_OK))
+      if (ENOENT == errno || ENOTDIR == errno) {
+        pathname[0] = '\0';
+        if ((env_str = platform_getenv("HOME")))
+            concat_path(env_str, use_uppercase ? "LDRAW" : "ldraw", pathname);
+      }
 #elif defined(WINDOWS)
-    sprintf(pathname, "c:/ldraw/");
+    sprintf(pathname, "C:/ProgramData/LDraw/");
+    if (0 != access(pathname, F_OK))
+      if (ENOENT == errno || ENOTDIR == errno) {
+        pathname[0] = '\0';
+        if ((env_str = platform_getenv("USERPROFILE")))
+          concat_path(env_str, use_uppercase ? "LDRAW" : "LDraw", pathname);
+      }
 #else
 #error unspecified platform in platform_getenv() definition
 #endif
@@ -2316,7 +2336,7 @@ void platform_sethome()
     }
     else if ((env_str = platform_getenv("USERPROFILE")))
     {
-      concat_path(env_str, use_uppercase ? "MY DOCUMENTS" : "My Documents", newpath);
+      concat_path(env_str, use_uppercase ? "DOCUMENTS" : "Documents", newpath);
       printf("chdir(%s)\n", newpath);
       chdir(newpath);
     }
