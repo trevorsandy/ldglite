@@ -84,7 +84,7 @@ static int SplitLDSearch(const char *LDrawSearchString, int *nDirs, char ***Dirs
 /*
 Add dirs from LPub3D LDSEARCHDIRS environment var to the dirs in LDrawIni.
 */
-int LDSearchDirsGet(struct LDrawIniS * LDrawIni)
+int LDSearchDirsGet(struct LDrawIniS * LDrawIni, char *searchpath)
 {
    struct LDrawIniPrivateDataS *pd;
    const char    *e;
@@ -93,7 +93,7 @@ int LDSearchDirsGet(struct LDrawIniS * LDrawIni)
    pd = LDrawIni->PrivateData;
 
    /* Now read extra LDSEARCHDIRS for LPub3D. */
-   if (e = getenv("LDSEARCHDIRS"))
+   if ((e = strlen(searchpath) ? searchpath : getenv("LDSEARCHDIRS")))
       return SplitLDSearch(e, &pd->nSymbolicSearchDirs, &pd->SymbolicSearchDirs);
 
    return 1;                    /* None found.  That's ok. */

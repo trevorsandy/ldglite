@@ -89,6 +89,7 @@ extern char primitivepath[256];
 extern char partspath[256];
 extern char modelspath[256];
 extern char datfilepath[256];
+extern char searchpath[1024];
 
 char ldconfig[256] = {0};
 char ldconfigfilename[256] = {0};
@@ -115,7 +116,7 @@ char progname[256];
 char progpath[256];
 
 char buf[16*1024]; // sizeof buf copied from render_file() in ldliteView.cpp
-int use_uppercase = 0;
+int use_uppercase = 0; // default
 
 #define IMAGE_TYPE_PNG_RGB 1
 #define IMAGE_TYPE_PNG_RGBA 2
@@ -2245,54 +2246,56 @@ int platform_setdir()
 /***************************************************************/
 void platform_setpath()
 {
-  char *env_str;
+  char *env_str = NULL;
 
-  use_uppercase = 0; // default
-  env_str = platform_getenv("LDRAWDIRCASE");
+  if (use_uppercase != 1)
+      env_str = platform_getenv("LDRAWDIRCASE");
   if (env_str != NULL)
   {
     if (stricmp(env_str, "UPPERCASE") == 0)
       use_uppercase = 1;
   }
 
-  env_str = platform_getenv("LDRAWDIR");
-  if (env_str != NULL)
-  {
-    strcpy(pathname, env_str);
-  }
-  else if (GetPrivateProfileString(L"LDraw",L"BaseDirectory",L"",
-              pathname,256,L"ldraw.ini") == 0)
-  {
+  if (!strlen(pathname)) {
+    env_str = platform_getenv("LDRAWDIR");
+    if (env_str != NULL)
+    {
+      strcpy(pathname, env_str);
+    }
+    else if (GetPrivateProfileString(L"LDraw",L"BaseDirectory",L"",
+                pathname,256,L"ldraw.ini") == 0)
+    {
 #ifndef F_OK
-    int F_OK = 0;
+      int F_OK = 0;
 #endif
 #if defined MACOS_X
-    sprintf(pathname, "/Library/ldraw/");
-    if (0 != access(pathname, F_OK))
-      if (ENOENT == errno || ENOTDIR == errno) {
-        pathname[0] = '\0';
-        if ((env_str = platform_getenv("HOME")))
-          concat_path(env_str, use_uppercase ? "LIBRARY/LDRAW" : "Library/LDraw", pathname);
-      }
+      sprintf(pathname, "/Library/ldraw/");
+      if (0 != access(pathname, F_OK))
+        if (ENOENT == errno || ENOTDIR == errno) {
+          pathname[0] = '\0';
+          if ((env_str = platform_getenv("HOME")))
+            concat_path(env_str, use_uppercase ? "LIBRARY/LDRAW" : "Library/LDraw", pathname);
+        }
 #elif defined(UNIX)
-    sprintf(pathname, "/usr/local/ldraw/");
-    if (0 != access(pathname, F_OK))
-      if (ENOENT == errno || ENOTDIR == errno) {
-        pathname[0] = '\0';
-        if ((env_str = platform_getenv("HOME")))
-            concat_path(env_str, use_uppercase ? "LDRAW" : "ldraw", pathname);
-      }
+      sprintf(pathname, "/usr/local/ldraw/");
+      if (0 != access(pathname, F_OK))
+        if (ENOENT == errno || ENOTDIR == errno) {
+          pathname[0] = '\0';
+          if ((env_str = platform_getenv("HOME")))
+              concat_path(env_str, use_uppercase ? "LDRAW" : "ldraw", pathname);
+        }
 #elif defined(WINDOWS)
-    sprintf(pathname, "C:/ProgramData/LDraw/");
-    if (0 != access(pathname, F_OK))
-      if (ENOENT == errno || ENOTDIR == errno) {
-        pathname[0] = '\0';
-        if ((env_str = platform_getenv("USERPROFILE")))
-          concat_path(env_str, use_uppercase ? "LDRAW" : "LDraw", pathname);
-      }
+      sprintf(pathname, "C:/ProgramData/LDraw/");
+      if (0 != access(pathname, F_OK))
+        if (ENOENT == errno || ENOTDIR == errno) {
+          pathname[0] = '\0';
+          if ((env_str = platform_getenv("USERPROFILE")))
+            concat_path(env_str, use_uppercase ? "LDRAW" : "LDraw", pathname);
+        }
 #else
 #error unspecified platform in platform_getenv() definition
 #endif
+    }
   }
 
   // Get search directories from environment
@@ -9181,9 +9184,9 @@ void ParseParams(int *argc, char **argv)
                     printf("Parser = L3\n");
                 }
                 // pass LDConfig as a command line argument.
-                else if ((toupper(pszParam[1]) == 'D') &&
-                         (toupper(pszParam[2]) == 'C') &&
-                         (toupper(pszParam[3]) == 'F'))
+                else if ((pszParam[1] == 'd') &&
+                         (pszParam[2] == 'c') &&
+                         (pszParam[3] == 'F'))
                 {
                     // remove '-ldcF' path prefix
                     memmove(pszParam, pszParam+4, strlen(pszParam));
@@ -9194,6 +9197,32 @@ void ParseParams(int *argc, char **argv)
                         concat_path(dirname(pszParam), basename(pszParam), ldconfigfilepath);
                         strcpy(ldconfig, localize_path(ldconfigfilepath));
                         printf("Commandline LDConfig = %s\n", ldconfig);
+                    }
+                }
+                // pass LDraw path as a command line argument.
+                else if ((pszParam[1] == 'd') &&
+                         (pszParam[2] == 'i') &&
+                         (pszParam[3] == 'R'))
+                {
+                    // remove '-ldiR' path prefix
+                    memmove(pszParam, pszParam+4, strlen(pszParam));
+                    if (pszParam[0])
+                    {
+                        strcpy(pathname, localize_path(pszParam));
+                        printf("Commandline LDraw path = %s\n", pathname);
+                    }
+                }
+                // pass extra LDraw Search paths as a command line argument.
+                else if ((pszParam[1] == 'd') &&
+                         (pszParam[2] == 's') &&
+                         (pszParam[3] == 'E'))
+                {
+                    // remove '-ldsE' path prefix
+                    memmove(pszParam, pszParam+4, strlen(pszParam));
+                    if (pszParam[0])
+                    {
+                        strcpy(searchpath, localize_path(pszParam));
+                        printf("Commandline extra LDraw search paths = %s\n", searchpath);
                     }
                 }
                 else if (toupper(pszParam[1]) == 'D')
@@ -9419,15 +9448,21 @@ void ParseParams(int *argc, char **argv)
             case 't':
                 ldraw_commandline_opts.rotate = 1;
                 break;
+            case 'u':
+                // -uC use upper case LDraw part and file output strings.
+                if (pszParam[1] == 'C')
+                {
+                    use_uppercase = 1;
+                    printf("Use UPPERCASE");
+                }
 #ifdef TILE_RENDER_OPTION
             case 'U':
-            case 'u':
                 // We only do this for non-interactive modes like -MS. (check later)
                 tiledRendering = 1;
                 sscanf(pszParam,"%c%d,%d",
                        &type, &TILE_IMAGE_WIDTH, &TILE_IMAGE_HEIGHT);
-                break;
 #endif
+                break;
             case 'V':
             case 'v':
                 if (strstr(pszParam, ","))
@@ -10360,6 +10395,12 @@ main(int argc, char **argv)
 #endif
 
   InitInstance();
+#ifdef WINDOWS
+  // On LPub3D Windows build we call ldglite using ShellExecute without the
+  // ability to set environment variables, so we parse command arguments here
+  // to capture required inputs like LDraw path and search directories etc...
+  ParseParams(&argc, argv);
+#endif
   platform_setpath();
 
 #if !defined(MAC)
@@ -10379,7 +10420,7 @@ main(int argc, char **argv)
 #    ifdef USING_CARBON
 #include "getargv.h"
   // This replaces all args with stuff from the finder.
-  // Assume there will be no other args if if comes from the finder.
+  // Assume there will be no other args if it comes from the finder.
   // That may not be the case if I figure out how to get ldglite.command
   // script to call the ldglite executable in the bundle.
   // Maybe I should call the bundled executable l3glite.
@@ -10408,7 +10449,9 @@ main(int argc, char **argv)
 
   //PrintParams(&argc, argv);
 
+#ifndef WINDOWS
   ParseParams(&argc, argv);
+#endif
 
 #ifdef MACOS_X
   // Go work in HOME dir for icon clickers.

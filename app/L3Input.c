@@ -88,6 +88,7 @@ extern char primitivepath[256];
 extern char partspath[256];
 extern char modelspath[256];
 extern char datfilepath[256];
+extern char searchpath[1024];
 extern int use_uppercase;
 
 extern char ldconfig[256];
@@ -184,11 +185,13 @@ You may type the set command at the DOS prompt or put it into C:\\AUTOEXEC.BAT\n
 );
     exit(1);
   }
-  else {
-    extern int LDSearchDirsGet(struct LDrawIniS * LDrawIni);
+  else
+  {
+    extern int LDSearchDirsGet(struct LDrawIniS *LDrawIni, char *searchpath);
 
-    i = LDSearchDirsGet(LDrawIni);
-    if (!i){
+    i = LDSearchDirsGet(LDrawIni, searchpath);
+    if (!i) 
+    {
       printf("Out of memory adding search dirs.\n");
       exit(1);
     }
@@ -199,7 +202,8 @@ You may type the set command at the DOS prompt or put it into C:\\AUTOEXEC.BAT\n
   // That NULL at the end is the modelpath.  Do we have it yet?
   // If not, then we may need to redo this when we do have it.
   i = LDrawIniComputeRealDirs(LDrawIni, 1, 0, NULL);
-  if (!i){
+  if (!i)
+  {
     printf("Failed to compute search dirs.\n");
     exit(1);
   }

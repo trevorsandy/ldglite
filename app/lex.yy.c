@@ -649,6 +649,7 @@ CACHED_STREAM *cached_file_stack[MAX_INCLUDE_DEPTH];
 int cached_file_stack_index=0;  // points to unused entry
 
 char pathname[256];
+char searchpath[1024];
 
 #ifdef USE_OPENGL
 char primitivepath[256];

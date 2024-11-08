@@ -1,4 +1,5 @@
-                                LdGLite
+                              LdGLite
+					        LPub3D Build
                (a platform independent version of LdLite)
 
 Contents of readme.txt:
@@ -46,6 +47,8 @@ such.
 Possibly the most important feature of ldglite is that all of the
 source code is available.
 
+This instance of ldglite has been substantially modified specifically
+for LPub3D. 
 
                         LdGLite for Windows README
 
@@ -70,11 +73,17 @@ You must also install the ldraw parts files from www.ldraw.org.
     ldraw.exe -y
     complete.exe -y
 
-For ldglite to find the parts you must set the environment variable
-LDRAWDIR.  Add this line to your C:\AUTOEXEC.BAT file and reboot your
-PC.  
+For ldglite to find the parts you can use the ldglite argument - see
+arguments below - or perform one of the following:
+
+1. Set the environment variable LDRAWDIR.
+	Add this line to your C:\AUTOEXEC.BAT file and
+	reboot your PC.  
 
     SET LDRAWDIR=C:\LDRAW
+
+2. Alternatively, ldglite will look in C:\ProgramData and
+   %USERPROFILE%, if not found, for the LDraw parts folder.
 
 As of version 7.1 ldglite can also use the BaseDirectory setting in 
 ldraw.ini to find the parts files.  The ldraw.ini file is created by
@@ -133,6 +142,12 @@ variable LDRAWDIR
     LDRAWDIR=/var/ldraw
     export LDRAWDIR
 
+Alternatively, ldglite will look in $HOME - if LDraw was not
+found - for the LDraw parts folder.
+
+Lastly, you can use the ldglite argument - see
+arguments below to specify the LDraw folder
+   
 The default case for dat files in the p and parts subdirectories
 is lowercase.  If you want to use uppercase set the environment
 variable LDRAWIRCASE
@@ -221,8 +236,26 @@ instructions for your flavor of MacOS.
 
 
 Command line options (see also the original ldlite docs for more):
-+X,Y sets the initial window position offset to (X,Y).
--fh turns on shading mode.
+-& windows mode.  Detach from the console window.  Windows version only.
+-- if no DAT filename is given on the command line ldglite will read
+   from stdin.  (l3glite does not do this)  Try this:
+     cat file.dat | ldglite -v3 -ms -- 
+   Kinda neat, but I don't know if this is good for much.  Perhaps if you
+   have an application that generates dat files you can pipe the output
+   through ldglite and produce an image file.  For example ldrawmode for
+   emacs could possibly be extended to use this to send a dat file in the
+   buffer out to the printer.  (especially if I add postscript output)
++X,Y sets the initial window position offset to (X,Y).-caN sets the camera FOV angle in degrees.
+-2g downsamples output images by 2 with a Gaussian blur filter (png only).
+-2g,2x will also scale up the image (and edge lines) by 2 first.
+   The result is a nice pretty antialiased image.  Edges are smooth.
+   Transparent parts are blended instead of dithered.  (like l3p, default = 67.38)
+-ccX,Y,Z sets the camera location.  (like l3p, except default = 0,0,1000)
+-cg<la>,<lo>,<r> sets the camera location on globe.  (like l3p)
+-coX,Y,Z sets the model origin for the camera to look at.  (default = 0,0,0)
+-claX,Y,Z same as -coX,Y,Z
+-cuX,Y,Z sets the camera up vector.  (default = 0,1,0)-fh turns on shading mode.
+-eN.NN fixes polyline offset driver errors.  Try -e0.95 if lines look bad.
 -fs turns off stud drawing. (l3glite only)
 -fsl draws studs as lines. (l3glite only)
 -fssN draws stud style. 'N' can be 0-7, 0 no style is the default value.
@@ -249,41 +282,34 @@ Command line options (see also the original ldlite docs for more):
    TYPE_F_STUDONLY_MODE 	0x0020
    TYPE_F_STUDLINE_MODE 	0x0040
    TYPE_F_SHADED_MODE	 	0x0080
--v0 displays in a 320x200 window.
--v-1 displays in fullscreen with no decorations.
--v-2 displays in fullscreen gamemode (no menus in gamemode).
--v7 displays in 1600x1024
--v8 displays in 1600x1200
--vX,Y displays in an X wide by Y high window.
--x displays the x,y,z axis.
--n2 renders each part in the backbuffer before transfering it to the screen.
--n4 renders the whole model in the backbuffer and then copies it to the screen.
+-iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24 
+    5 = PPM.  Use -N to turn off output image cropping.
+-j picks the orthographic projection.
+-J picks the perspective projection.
 -ms Saves an image for each STEP and quits.
 -mS Does the same, but without opening a window (on most systems).
     You can also include an optional output filename.
     eg. -mSpicture.png
--iN picks output image type. 1 = PNG, 2 = Transparent PNG, 3 = BMP8, 4 = BMP24 
-    5 = PPM.  Use -N to turn off output image cropping.
--eN.NN fixes polyline offset driver errors.  Try -e0.95 if lines look bad.
+-n2 renders each part in the backbuffer before transfering it to the screen.
+-n4 renders the whole model in the backbuffer and then copies it to the screen.
 -p turns on polling mode.
 -l logs messages to the ldglite.log file instead of stdout.
 -ld forces the program to use the ldlite parser.
+-ldcF<ldconfig.ldr file> Include an LDConfig.ldr file as a command line argument. 
+   e.g. -ldcF/usr/local/foo/CustomLDConfig.ldr. If not used, ldglite will attempt  
+   to load the LDConfig.ldr from the default locations (LDRAWDIR and CWD).
+-ldiR<LDraw path> LDraw part library path as a command line argument.
+   e.g. -ldiR/usr/local/ldraw. If not used, ldglite will attempt to load the
+   the library from the LDRAWDIR environment variable, the default location or
+   the user profile path.
+-ldsE<LDraw search path(s)> Include a | delimited string of extra LDraw search paths.
+   e.g. C:/Users/LPub3D/LDraw/Unoff/helper|C:/Users/LPub3D/LDraw/Unoff/LSynth. If
+   not used, ldglite will attempt the load extra search directories from the
+   LDRAWSEARCH environment variable.
 -l3 forces the program to use the l3 parser.
 -le starts the program in LEDIT emulation mode. 
 -lE starts the program in LEDIT emulation mode with solid moving pieces.
 -ledit or -LEDIT do the same but with draw-to-current and stud-as-line on.
--wN sets linewidth to N.
--q quality lines (antialiased)
--j picks the orthographic projection.
--J picks the perspective projection.
--zN sets the near clipping plane.  (default = 10.  100 if GL_DEPTH_BITS < 24)
--ZN sets the far clipping plane.  (default = 4000)
--caN sets the camera FOV angle in degrees.  (like l3p, default = 67.38)
--ccX,Y,Z sets the camera location.  (like l3p, except default = 0,0,1000)
--cg<la>,<lo>,<r> sets the camera location on globe.  (like l3p)
--coX,Y,Z sets the model origin for the camera to look at.  (default = 0,0,0)
--claX,Y,Z same as -coX,Y,Z
--cuX,Y,Z sets the camera up vector.  (default = 0,1,0)
 -lcX,Y,Z sets the light location.  (like l3p, except default = -1000,1000,1000)
 -lcX,Y,Z,R,G,B sets the light location and color.
 -lCR,G,B sets the ambient lighting color.
@@ -302,23 +328,20 @@ Command line options (see also the original ldlite docs for more):
 -laA enable automate edge colors. This flag enables the application to
     automatically adjust part edge colors using the user configurable light/
     dark colour value, and contrast settings.
+-q quality lines (antialiased)
+-uC Use upper case LDraw part and file output strings. If not used, ldglite will
+   attempt to populate this flag using the LDRAWDIRCASE environment variable.
 -uX,Y saves a huge output image from window sized tiles.  (see notes below)
--& windows mode.  Detach from the console window.  Windows version only.
--- if no DAT filename is given on the command line ldglite will read
-   from stdin.  (l3glite does not do this)  Try this:
-     cat file.dat | ldglite -v3 -ms -- 
-   Kinda neat, but I don't know if this is good for much.  Perhaps if you
-   have an application that generates dat files you can pipe the output
-   through ldglite and produce an image file.  For example ldrawmode for
-   emacs could possibly be extended to use this to send a dat file in the
-   buffer out to the printer.  (especially if I add postscript output)
--2g downsamples output images by 2 with a Gaussian blur filter (png only).
--2g,2x will also scale up the image (and edge lines) by 2 first.
-   The result is a nice pretty antialiased image.  Edges are smooth.
-   Transparent parts are blended instead of dithered.
--ldcF<ldconfig.ldr file> Include an LDConfig.ldr file as a command line argument. 
-   e.g. -ldcF/usr/local/foo/CustomLDConfig.ldr. If not used, ldglite will attempt  
-   to load the LDConfig.ldr from the default locations (LDRAWDIR and CWD).
+-v0 displays in a 320x200 window.
+-v-1 displays in fullscreen with no decorations.
+-v-2 displays in fullscreen gamemode (no menus in gamemode).
+-v7 displays in 1600x1024
+-v8 displays in 1600x1200
+-vX,Y displays in an X wide by Y high window.
+-wN sets linewidth to N.
+-x displays the x,y,z axis.
+-zN sets the near clipping plane.  (default = 10.  100 if GL_DEPTH_BITS < 24)
+-ZN sets the far clipping plane.  (default = 4000)
 
 Hot Keys (especially useful in fullscreen gamemode):
 NOTE:  A few keys were changed in 0.9.0 to accomodate LEDIT emulation mode.
