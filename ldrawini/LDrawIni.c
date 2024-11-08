@@ -451,14 +451,27 @@ static void FreeSymbolicDirs(struct LDrawIniS * LDrawIni)
 
 static const char *GetDefaultLDrawSearch(void)
 {
-   // LPub3D Mod - add Unofficial folder
+   // LPub3D Mod - add Unofficial, Helper, LSynth and custom folders
+#ifdef WIN32
    return "<MODELDIR>"
    "|<HIDE><DEFPRIM><LDRAWDIR>\\P"
    "|<DEFPART><LDRAWDIR>\\PARTS"
    "|<LDRAWDIR>\\MODELS"
    "|<UNOFFIC><HIDE><DEFPRIM><LDRAWDIR>\\Unofficial\\P"
    "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\PARTS"
-   "|<UNOFFIC><HIDE><DEFPRIM><LDRAWDIR>\\Unofficial";
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\HELPER"
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\LSYNTH"
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\CUSTOM"
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial";
+#else
+   return "<MODELDIR>"
+   "|<HIDE><DEFPRIM><LDRAWDIR>\\P"
+   "|<DEFPART><LDRAWDIR>\\PARTS"
+   "|<LDRAWDIR>\\MODELS"
+   "|<UNOFFIC><HIDE><DEFPRIM><LDRAWDIR>\\Unofficial\\P"
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial\\PARTS"
+   "|<UNOFFIC><DEFPART><LDRAWDIR>\\Unofficial";
+#endif
    // LPub3D Mod End
 }
 

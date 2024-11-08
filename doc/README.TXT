@@ -305,7 +305,9 @@ Command line options (see also the original ldlite docs for more):
 -ldsE<LDraw search path(s)> Include a | delimited string of extra LDraw search paths.
    e.g. C:/Users/LPub3D/LDraw/Unoff/helper|C:/Users/LPub3D/LDraw/Unoff/LSynth. If
    not used, ldglite will attempt the load extra search directories from the
-   LDRAWSEARCH environment variable.
+   LDRAWSEARCH environment variable. NOTE: This environment variable renders
+   ldglite unstable on Windows. The problem seems to originate from the LDrawIni
+   module which is used to process the search paths.
 -l3 forces the program to use the l3 parser.
 -le starts the program in LEDIT emulation mode. 
 -lE starts the program in LEDIT emulation mode with solid moving pieces.
