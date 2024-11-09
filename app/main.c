@@ -9300,7 +9300,7 @@ void ParseParams(int *argc, char **argv)
                     }
                     if (pszParam[2] == 'A')
                     {
-                        printf("part_edge_contrast = (A)\n");
+                        printf("AutomateEdgeColor = 1\n");
                         automate_edge_color = 1;
                     }
                 }
