@@ -1,26 +1,3 @@
-# qmake Configuration options
-# CONFIG+=ENABLE_PNG
-# CONFIG+=ENABLE_TILE_RENDERING
-# CONFIG+=ENABLE_OFFSCREEN_RENDERING
-# CONFIG+=ENABLE_TEST_GUI
-# CONFIG+=MAKE_APP_BUNDLE
-# CONFIG+=USE_OSMESA_STATIC
-# CONFIG+=USE_FREEGLUT_LOCAL # use local freeglut (e.g. Windows, Alma Linux)
-# CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
-# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
-# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
-# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
-
-QT      += core
-QT      -= opengl
-QT      -= gui
-CONFIG  -= qt
-CONFIG  -= opengl
-CONFIG  += thread
-CONFIG  += warn_on
-CONFIG  += static
-CONFIG  += skip_target_version_ext
-
 DEFINES += QT_THREAD_SUPPORT
 
 win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
@@ -30,6 +7,9 @@ isEmpty(HOST):HOST = UNKNOWN HOST
 
 # platform switch
 BUILD_ARCH = $$(TARGET_CPU)
+isEmpty(BUILD_ARCH): \
+!contains(QT_ARCH, unknown): \
+BUILD_ARCH = $$QT_ARCH
 if (contains(QT_ARCH, x86_64)|contains(QT_ARCH, arm64)|contains(BUILD_ARCH, aarch64)) {
   ARCH     = 64
   LIB_ARCH = 64
@@ -124,65 +104,65 @@ macx {
   _LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
 }
 
-CONFIG += incremental force_debug_info
+CONFIG += incremental
 
 win32 {
-  CONFIG += console
-  CONFIG += USE_FREEGLUT_LOCAL
-
-  !win32-msvc* {
-    QMAKE_LFLAGS += -static
-    QMAKE_LFLAGS += -static-libgcc
-    QMAKE_LFLAGS += -static-libstdc++
+  win32-msvc* {
+    CONFIG       += force_debug_info
+    QMAKE_LFLAGS += -NODEFAULTLIB:LIBCMT
+    QMAKE_CFLAGS_WARN_ON -= -W3
+    QMAKE_ADDL_MSVC_FLAGS = -GS -Gd -fp:precise -Zc:forScope
+    CONFIG(debug, debug|release) {
+    QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
+      QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
+      QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
+      QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
+    }
+    CONFIG(release, debug|release) {
+      QMAKE_ADDL_MSVC_RELEASE_FLAGS = $$QMAKE_ADDL_MSVC_FLAGS -GF -Gy
+      QMAKE_CFLAGS_OPTIMIZE += -Ob1 -Oi -Ot
+      QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
+      QMAKE_CFLAGS_RELEASE  += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
+      QMAKE_CXXFLAGS_RELEASE += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
+    }
+    QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_ON
   } else {
-     QMAKE_LFLAGS += -NODEFAULTLIB:LIBCMT
-     QMAKE_CFLAGS_WARN_ON -= -W3
-     QMAKE_ADDL_MSVC_FLAGS = -GS -Gd -fp:precise -Zc:forScope
-     CONFIG(debug, debug|release) {
-     QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
-       QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
-       QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
-       QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
-     }
-     CONFIG(release, debug|release) {
-       QMAKE_ADDL_MSVC_RELEASE_FLAGS = $$QMAKE_ADDL_MSVC_FLAGS -GF -Gy
-       QMAKE_CFLAGS_OPTIMIZE += -Ob1 -Oi -Ot
-       QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
-       QMAKE_CFLAGS_RELEASE  += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
-       QMAKE_CXXFLAGS_RELEASE += $$QMAKE_ADDL_MSVC_RELEASE_FLAGS
-     }
-     QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_ON
+    QMAKE_LFLAGS += -static
   }
-
-  ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
 
   DEFINES += USING_FREEGLUT
   DEFINES += FREEGLUT_STATIC
 
-  win32-msvc*: {
-  DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
+  win32-msvc* {
+    CONFIG += USE_FREEGLUT_LOCAL
+
+    ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
+
+    DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
+
+    INCLUDEPATH += $$PWD/win/freeglut/include
+
+    equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
+    else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
+
+    _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32 -lcomdlg32 -lole32
   }
-
-  INCLUDEPATH += \
-  $$PWD/win/freeglut/include
-
-  equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
-  else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
-
-  _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32 -lcomdlg32 -lole32
 } else {
   QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unknown-pragmas
 }
 
-unix:!macx {
+unix|msys:!macx {
   # detect system libraries paths
-  SYSTEM_PREFIX_      = /usr
-  SYS_LIBINC_         = $${SYSTEM_PREFIX_}/include
+  msys: \
+  SYSTEM_PREFIX_    = $${PREFIX}
+  else: \
+  SYSTEM_PREFIX_    = $${PREFIX}/usr
+  SYS_LIBINC_       = $${SYSTEM_PREFIX_}/include
   exists($${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu) {               # Debian
     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib/$$QT_ARCH-linux-gnu
   } else: exists($${SYSTEM_PREFIX_}/lib$${LIB_ARCH}) {               # RedHat, Arch - lIB_ARCH is empyt for 32bit
     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib$${LIB_ARCH}
-  } else {                                                           # Arch - acutally should never get here
+  } else {                                                           # Arch, MSYS2
     SYS_LIBDIR_     = $${SYSTEM_PREFIX_}/lib
   }
 
@@ -201,8 +181,18 @@ unix:!macx {
   DEFINES += USE_ALPHA_BUFFER
 
   ENABLE_OFFSCREEN_RENDERING {
-
-    DEFINES += OSMESA_OPTION
+    # message("~~~ LDGLITE DEBUG OFFSCREEN_RENDERING ~~~")
+    msys {
+      DEFINES += WIN_DIB_OPTION
+      # GCC ignores pragma comment(lib, "Shlwapi.lib") in LDrawIni.c
+      # https://stackoverflow.com/questions/78607979/problems-of-linking-ws2-32-lib-using-gcc
+      _LIBS   += -lshlwapi
+      _LIBS   += -lglu32 -lfreeglut -lglew32 -lgdi32
+      _LIBS   += $${SYS_LIBDIR_}/opengl32.dll.a 
+      _LIBS   += -lwinmm -lcomdlg32 -lole32 -lm
+    } else {
+      DEFINES += OSMESA_OPTION
+    }
 
     # OSMesa with Gallium support - static library built from source
     USE_OSMESA_STATIC {
@@ -242,9 +232,7 @@ unix:!macx {
       _LIBS         += $${FREEGLUT_LIBS}
       _LIBS         += -lm
 
-    } # USE_OSMESA_STATIC
-    else
-    {
+    } else:!msys {
       USE_OSMESA_LOCAL {
         INCLUDEPATH   += $${OSMESA_LOCAL_PREFIX_}/include
         OSMESA_LIBDIR  = -L$${OSMESA_LOCAL_PREFIX_}/lib$${LIB_ARCH}
@@ -260,10 +248,9 @@ unix:!macx {
       _LIBS         += -lm
     }
 
-  } # ENABLE_OFFSCREEN_RENDERING
-  else
-  {
+  } else {
     # Mesa (OnScreen) - OpenGL
+    # message("~~~ LDGLITE DEBUG ONSCREEN_RENDERING ~~~")
     !isEmpty(FREEGLUT_LIBDIR): \
     _LIBS         += $${FREEGLUT_LIBDIR}
     _LIBS         += -lGL -lGLU -lglut -lX11 -lXext
@@ -272,52 +259,56 @@ unix:!macx {
   }
 }
 
-PRECOMPILED_DIR = $$DESTDIR/.pch
 OBJECTS_DIR     = $$DESTDIR/.obj
-MOC_DIR         = $$DESTDIR/.moc
 RCC_DIR         = $$DESTDIR/.qrc
-UI_DIR          = $$DESTDIR/.ui
 
 # suppress warnings
 !win32-msvc* {
 QMAKE_CFLAGS_WARN_ON =  \
                      -Wall -W \
-                     -Wno-unused-parameter \
-                     -Wno-unused-result \
-                     -Wno-implicit-int \
-                     -Wno-implicit-fallthrough \
-                     -Wno-unused-variable \
-                     -Wno-implicit-function-declaration \
-                     -Wno-parentheses \
-                     -Wno-switch \
-                     -Wno-sign-compare \
-                     -Wno-incompatible-pointer-types \
-                     -Wno-return-type \
-                     -Wno-uninitialized \
+                     -Wno-address \
+                     -Wno-calloc-transposed-args \
+                     -Wno-comment \
+                     -Wno-discarded-qualifiers \
                      -Wno-format \
+                     -Wno-format-extra-args \
                      -Wno-format-security \
-                     -Wno-pointer-sign \
+                     -Wno-format-zero-length \
+                     -Wno-implicit-fallthrough \
+                     -Wno-implicit-function-declaration \
+                     -Wno-implicit-int \
+                     -Wno-incompatible-pointer-types \
                      -Wno-missing-braces \
+                     -Wno-parentheses \
+                     -Wno-pointer-sign \
+                     -Wno-return-local-addr \
+                     -Wno-return-type \
+                     -Wno-sign-compare \
+                     -Wno-strict-aliasing \
+                     -Wno-switch \
+                     -Wno-uninitialized \
+                     -Wno-unknown-pragmas \
+                     -Wno-unused-but-set-parameter \
+                     -Wno-unused-but-set-variable \
                      -Wno-unused-function \
                      -Wno-unused-label \
-                     -Wno-strict-aliasing \
-                     -Wno-format-zero-length \
-                     -Wno-format-extra-args \
-                     -Wno-unknown-pragmas \
-                     -Wno-comment \
-                     -Wno-unused-value
+                     -Wno-unused-parameter \
+                     -Wno-unused-result \
+                     -Wno-unused-value \
+                     -Wno-unused-variable
+}
+msys {
+QMAKE_CFLAGS_WARN_ON +=  \
+                     -Wno-cast-function-type \
+                     -Wno-int-to-pointer-cast \
+                     -Wno-pointer-to-int-cast \
+                     -Wno-stringop-truncation
 }
 macx {
 QMAKE_CFLAGS_WARN_ON +=  \
-                     -Wno-macro-redefined \
+                     -Wno-absolute-value \
                      -Wno-deprecated-declarations \
-                     -Wno-absolute-value
+                     -Wno-macro-redefined
 } else {
-!win32-msvc* {
-QMAKE_CFLAGS_WARN_ON +=  \
-                     -Wno-discarded-qualifiers \
-                     -Wno-unused-but-set-variable \
-                     -Wno-unused-but-set-parameter
-}
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
 }

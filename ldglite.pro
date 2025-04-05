@@ -1,3 +1,17 @@
+# qmake Configuration options
+# CONFIG+=BUILD_CHECK
+# CONFIG+=ENABLE_PNG
+# CONFIG+=ENABLE_TILE_RENDERING
+# CONFIG+=ENABLE_OFFSCREEN_RENDERING
+# CONFIG+=ENABLE_TEST_GUI
+# CONFIG+=MAKE_APP_BUNDLE
+# CONFIG+=USE_OSMESA_STATIC
+# CONFIG+=USE_FREEGLUT_LOCAL # use local freeglut (e.g. Windows, Alma Linux)
+# CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
+# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_msys_3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
+# CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_windows_3rdparty
 # LDGLite directory and project file structre
 # --------------
 # /ldglite.pro
@@ -75,10 +89,13 @@ OTHER_FILES += \
     $$PWD/obs/ldglite.spec \
     $$PWD/obs/PKGBUILD
 
-
 BUILD_ARCH = $$(TARGET_CPU)
-!contains(QT_ARCH, unknown):  BUILD_ARCH = $$QT_ARCH
-else: isEmpty(BUILD_ARCH):    BUILD_ARCH = UNKNOWN ARCH
+isEmpty(BUILD_ARCH): \
+!contains(QT_ARCH, unknown): \
+BUILD_ARCH = $$QT_ARCH
+isEmpty(BUILD_ARCH): BUILD_ARCH = UNKNOWN ARCH
 CONFIG(debug, debug|release): BUILD = DEBUG BUILD
 else:                         BUILD = RELEASE BUILD
+msys:                         BUILD = MSYS $${BUILD}
 message("~~~ LDGLITE $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
+msys: message("~~~ MSYS2 SYSTEM_PREFIX $${PREFIX} ~~~ ")

@@ -104,7 +104,9 @@ snprintf stat strcat strchr strcmp strcpy strdup strlen strncmp strncpy ungetc
 #endif
 #ifdef _WIN_UTF8_PATHS
 // LPub3D Mod - Shlwapi lib declaration
+#ifndef __MINGW64__
 #pragma comment(lib, "Shlwapi.lib")
+#endif
 // LPub3D Mod End
 #include <Windows.h>
 #include <Shlwapi.h>

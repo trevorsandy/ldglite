@@ -1,5 +1,16 @@
-TEMPLATE = app
-TARGET   =
+TEMPLATE       = app
+TARGET         = LDGLite
+QT            += core
+QT            -= opengl
+QT            -= gui
+CONFIG        -= qt
+CONFIG        -= opengl
+CONFIG        += thread
+CONFIG        += static
+CONFIG        += warn_on
+CONFIG        += skip_target_version_ext
+win32: CONFIG += console
+macx:  CONFIG -= app_bundle # do not bundle macOS app
 
 include($$PWD/../ldgliteglobal.pri)
 
@@ -11,37 +22,33 @@ VER_BLD = 0
 
 win32 {
   VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT"."$$VER_BLD # major.minor.patch.build
-
   QMAKE_TARGET_COMPANY = "Don Heyse"
   QMAKE_TARGET_DESCRIPTION = "LDraw Image Renderer"
   QMAKE_TARGET_COPYRIGHT = "Copyright (c) 2017 - 2025 Trevor SANDY, Don Heyse"
-  QMAKE_TARGET_PRODUCT = "LDGLite ($$join(ARCH,,,bit))"
-  RC_LANG = "English (United Kingdom)"
+  QMAKE_TARGET_PRODUCT = "$${TARGET} ($$join(ARCH,,,bit))"
+  RC_LANG  = "English (United Kingdom)"
   RC_ICONS = "ldglite.ico"
 } else {
   VERSION = $$VER_MAJ"."$$VER_MIN"."$$VER_PAT              # major.minor.patch
 }
 DEFINES += VERSION_INFO=\\\"$$VERSION\\\"
 
-DEPENDPATH  += .
-INCLUDEPATH += .
-INCLUDEPATH += ../ldrawini
-ENABLE_TEST_GUI: INCLUDEPATH += ../mui
-win32-msvc* {
-INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
-}
+unix|msys:!macx: \
+TARGET = ldglite
 
-unix:!macx:TARGET = ldglite
-else:      TARGET = LDGLite
+DEPENDPATH  += .
+INCLUDEPATH += . ../ldrawini
+ENABLE_TEST_GUI: \
+INCLUDEPATH += ../mui
+win32-msvc*: \
+INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
 
 # messages
-message("~~~ LDGLITE $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
+message("~~~ $$upper($$TARGET) $$upper($$BUILD_ARCH) $${BUILD} ON $$upper($$HOST) ~~~")
 USE_FREEGLUT_LOCAL: message("~~~ USING LOCAL STATIC FREEGLUT LIBRARY ~~~")
 !isEmpty(OSMESA_LIBDIR): message("~~~ OSMESA - USING LOCAL LIBRARIES AT $${OSMESA_LOCAL_PREFIX_}/lib$$LIB_ARCH ~~~")
 else:USE_OSMESA_STATIC: message("~~~ NOTICE: USING OSMESA BUILT FROM SOURCE LIBRARY ~~~")
 else:!win32: message("~~~ NOTICE: USING OSMESA SYSTEM LIBRARY")
-
-include($$PWD/ldgliteapp.pri)
 
 ENABLE_TILE_RENDERING {
   DEFINES += TILE_RENDER_OPTION
@@ -50,13 +57,13 @@ ENABLE_TILE_RENDERING {
 
 ENABLE_PNG {
   DEFINES += USE_PNG
-  win32 {
+  win32-msvc* {
     message("~~~ USING LOCAL COPY OF PNG AND Z LIBRARIES ~~~")
 
     INCLUDEPATH += \
     $$PWD/../win/png/include \
     $$PWD/../win/zlib/include
-    
+
     BUILD_WORKER_VERSION = $$(LP3D_VSVERSION)
     isEmpty(BUILD_WORKER_VERSION): BUILD_WORKER_VERSION = 2019
     message("~~~ Build worker: Visual Studio $$BUILD_WORKER_VERSION ~~~")
@@ -66,7 +73,7 @@ ENABLE_PNG {
     } else {
         VSVER=vs2015
     }
-    message("~~~ $$upper($$QT_ARCH) MSVS library version: $$VSVER ~~~") 
+    message("~~~ $$upper($$QT_ARCH) MSVS library version: $$VSVER ~~~")
 
     equals (ARCH, 64) {
         LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -llibpng16-$${VSVER}
@@ -109,17 +116,19 @@ ENABLE_PNG {
   }
 }
 
-LIBS_  += -L$$DESTDIR/../../ldrawini/$$DESTDIR -lldrawini
+LIBS_ += -L../ldrawini/$$DESTDIR -lldrawini
 
-ENABLE_TEST_GUI {
-  LIBS_ += -L$$DESTDIR/../../mui/$$DESTDIR -lmui
-}
+ENABLE_TEST_GUI: \
+LIBS_ += -L../mui/$$DESTDIR -lmui
 
-LIBS += $${LIBS_} $${_LIBS}
+LIBS  += -L$${SYS_LIBDIR_} $${LIBS_} $${_LIBS}
 
-!win32-msvc* {
-    LIBS += -lz
-}
+!win32-msvc*: \
+LIBS  += -lz
+#message("~~~ DEBUG_LIBS: $$LIBS ~~~")
+#message("~~~ DEBUG_CONFIG: $$CONFIG ~~~")
+
+include($$PWD/ldgliteapp.pri)
 
 macx {
   MAKE_APP_BUNDLE {
@@ -157,10 +166,8 @@ macx {
                        $$escape_expand(\n\t)   \
                        $$shell_quote$${LDRAWDIR_CHMOD_COMMAND}
   } else {
-    macx {
-        CONFIG     -= app_bundle   # don't creatre app bundle
-        CONFIG     +=sdk_no_version_check
-    }
+    CONFIG     -= app_bundle   # don't creatre app bundle
+    CONFIG     += sdk_no_version_check
   }
 }
 
@@ -179,7 +186,7 @@ macx {
                                 $$_PRO_FILE_PWD_/../doc/README.TXT
 
   INSTALLS += target documentation
-  
+
   macx {
     resources.path              = $${3RD_RESOURCES}
     resources.files             = set-ldrawdir.command
@@ -188,13 +195,13 @@ macx {
     INSTALLS += resources
   }
 
-} else:linux:!macx {
+} else:unix|msys:!macx {
   # someone asked for the standard linux install routine so here it is...
-  isEmpty(PREFIX):PREFIX      = /usr
-  isEmpty(BINDIR):BINDIR      = $$PREFIX/bin
-  isEmpty(DATADIR):DATADIR    = $$PREFIX/share
-  isEmpty(DOCDIR):DOCDIR      = $$DATADIR/doc
-  isEmpty(MANDIR):MANDIR      = $$DATADIR/man
+  isEmpty(PREFIX_):PREFIX_    = $${PREFIX}/usr
+  isEmpty(BINDIR):BINDIR      = $${PREFIX_}/bin
+  isEmpty(DATADIR):DATADIR    = $${PREFIX_}/share
+  isEmpty(DOCDIR):DOCDIR      = $${DATADIR}/doc
+  isEmpty(MANDIR):MANDIR      = $${DATADIR}/man
 
   target.path                 = $${BINDIR}
   documentation.path          = $${DOCDIR}/$${TARGET}
@@ -217,23 +224,31 @@ macx {
 # SET LDRAWDIR=%LDRAW_DIR%
 # ECHO -Set LDRAWDIR to %LDRAWDIR%.
 # -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.8_Foo2.png tests\Foo2.ldr
-# QtCreator
-# Add to Environment: LDRAWDIR   C:\Users\Trevor\LDraw
-# Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcFtests\LDConfigCustom01.ldr -mFtests\32bit_release-TestOK_1.3.8_Foo2.png tests\Foo2.ldr
+# QtCreator:
+# Add to Environment:
+#   LDRAWDIR=%USERPROFILE%\LDraw
+# Add to Run command line arguments: -l3 -i2 -ca0.01 -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l -ldcF..\..\tests\LDConfigCustom01.ldr -mF..\..\tests\32bit_release-TestOK_1.3.8_Foo2.png ..\..\tests\Foo2.ldr
 # Copy tests folder to OUTPUT folder - e.g. .../app/32bit_debug/tests
 WINDOWS_CHECK = $$(LP3D_WINDOWS_CHECK)
-BUILD_CHECK: unix|contains(WINDOWS_CHECK, 1) {
-  # LDraw library path - needed for tests
-  LDRAW_PATH = $$(LDRAWDIR)
-  !isEmpty(LDRAW_PATH) {
+BUILD_CHECK: unix|msys|contains(WINDOWS_CHECK, 1) {
+  msys: LDGLITE_EXE = $${TARGET}.exe
+  else: LDGLITE_EXE = ./$${TARGET}
+  CHECK_DIR   = $${_PRO_FILE_PWD_}/../tests
+  RESULT_FILE = $${DESTDIR}-TestOK_$${VERSION}_Foo2.png
+  CONFIG_DIR  = $$shell_path($$absolute_path($${CHECK_DIR}/LDConfigCustom01.ldr))
+  LDRFILE_DIR = $$shell_path($$absolute_path($${CHECK_DIR}/Foo2.ldr))
+  LDRAW_PATH  = $$absolute_path($$(LDRAWDIR))
+  exists($${LDRAW_PATH}) {
     message("~~~ LDRAW LIBRARY $${LDRAW_PATH} ~~~")
+    equals(PWD, $${OUT_PWD}): RESULT_DIR = $$shell_path(../../tests/$${RESULT_FILE})
+    else: RESULT_DIR = $$shell_path($$absolute_path($${CHECK_DIR}/$${RESULT_FILE}))
     QMAKE_POST_LINK += $$escape_expand(\n\t)                                              \
-                       cd $${OUT_PWD}/$${DESTDIR} && ./$${TARGET} -l3 -i2 -ca0.01         \
+                       cd $${OUT_PWD}/$${DESTDIR} && $${LDGLITE_EXE} -l3 -i2 -ca0.01      \
                        -cg23,-45,3031328 -J -v1240,1753 -o0,-292 -W2 -q -fh -2g,2x -w1 -l \
-                       -ldcF$$_PRO_FILE_PWD_/../tests/LDConfigCustom01.ldr                \
-                       -mF$$_PRO_FILE_PWD_/../tests/$$DESTDIR-TestOK_1.3.8_Foo2.png       \
-                       $$_PRO_FILE_PWD_/../tests/Foo2.ldr
+                       -ldcF$${CONFIG_DIR} -mF$${RESULT_DIR} $${LDRFILE_DIR}
   } else {
     message("WARNING: LDRAW LIBRARY PATH NOT DEFINED - LDGLite CUI cannot be tested")
+    QMAKE_POST_LINK += $$escape_expand(\n\t)                                              \
+                       cd $${OUT_PWD}/$${DESTDIR} && $${LDGLITE_EXE} -mS -ldcF$${CONFIG_DIR}
   }
 }
