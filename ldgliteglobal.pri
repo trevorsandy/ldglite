@@ -168,12 +168,12 @@ unix|msys:!macx {
 
   INCLUDEPATH += $${SYS_LIBINC_}
 
-  USE_FREEGLUT_LOCAL {
+  USE_FREEGLUT_LOCAL:!msys {
     INCLUDEPATH += $$PWD/linux/freeglut/include
     contains(BUILD_ARCH, aarch64) {
-      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib/aarch64
+      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib/aarch64 -lglut
     } else {
-      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib
+      FREEGLUT_LIBDIR = -L$$PWD/linux/freeglut/lib -lglut
     }
     FREEGLUT_LIBS  = -lXxf86vm -lXrandr -lXi
   }
@@ -226,7 +226,8 @@ unix|msys:!macx {
       else: \
       _LIBS         += $${OSMESA_LDFLAGS}
       !isEmpty(FREEGLUT_LIBDIR): \
-      _LIBS         += $${FREEGLUT_LIBDIR}
+      _LIBS         += -lOSMesa -lGLU $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
+	  else: \
       _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
@@ -241,7 +242,8 @@ unix|msys:!macx {
 
       # OSMesa (OffScreen) - system, dynamic libraries and static local freeglut
       !isEmpty(FREEGLUT_LIBDIR): \
-      _LIBS         += $${FREEGLUT_LIBDIR}
+      _LIBS         += -lOSMesa -lGLU $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
+	  else: \
       _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
@@ -252,7 +254,8 @@ unix|msys:!macx {
     # Mesa (OnScreen) - OpenGL
     # message("~~~ LDGLITE DEBUG ONSCREEN_RENDERING ~~~")
     !isEmpty(FREEGLUT_LIBDIR): \
-    _LIBS         += $${FREEGLUT_LIBDIR}
+    _LIBS         += -lGL -lGLU $${FREEGLUT_LIBDIR} -lX11 -lXext
+	else: \
     _LIBS         += -lGL -lGLU -lglut -lX11 -lXext
     _LIBS         += $${FREEGLUT_LIBS}
     _LIBS         += -lm
