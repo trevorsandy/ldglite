@@ -121,7 +121,7 @@ LIBS_ += -L../ldrawini/$$DESTDIR -lldrawini
 ENABLE_TEST_GUI: \
 LIBS_ += -L../mui/$$DESTDIR -lmui
 
-LIBS  += -L$${SYS_LIBDIR_} $${LIBS_} $${_LIBS}
+LIBS  += $${LIBS_} $${_LIBS}
 
 !win32-msvc*: \
 LIBS  += -lz
