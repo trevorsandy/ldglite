@@ -188,7 +188,7 @@ unix|msys:!macx {
       # https://stackoverflow.com/questions/78607979/problems-of-linking-ws2-32-lib-using-gcc
       _LIBS   += -lshlwapi
       _LIBS   += -lglu32 -lfreeglut -lglew32 -lgdi32
-      _LIBS   += $${SYS_LIBDIR_}/opengl32.dll.a 
+      _LIBS   += $${SYS_LIBDIR_}/opengl32.dll.a
       _LIBS   += -lwinmm -lcomdlg32 -lole32 -lm
     } else {
       DEFINES += OSMESA_OPTION
@@ -227,7 +227,7 @@ unix|msys:!macx {
       _LIBS         += $${OSMESA_LDFLAGS}
       !isEmpty(FREEGLUT_LIBDIR): \
       _LIBS         += -lOSMesa -lGLU $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
-	  else: \
+      else: \
       _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
@@ -243,7 +243,7 @@ unix|msys:!macx {
       # OSMesa (OffScreen) - system, dynamic libraries and static local freeglut
       !isEmpty(FREEGLUT_LIBDIR): \
       _LIBS         += -lOSMesa -lGLU $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
-	  else: \
+      else: \
       _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
@@ -255,7 +255,7 @@ unix|msys:!macx {
     # message("~~~ LDGLITE DEBUG ONSCREEN_RENDERING ~~~")
     !isEmpty(FREEGLUT_LIBDIR): \
     _LIBS         += -lGL -lGLU $${FREEGLUT_LIBDIR} -lX11 -lXext
-	else: \
+    else: \
     _LIBS         += -lGL -lGLU -lglut -lX11 -lXext
     _LIBS         += $${FREEGLUT_LIBS}
     _LIBS         += -lm
@@ -270,9 +270,7 @@ RCC_DIR         = $$DESTDIR/.qrc
 QMAKE_CFLAGS_WARN_ON =  \
                      -Wall -W \
                      -Wno-address \
-                     -Wno-calloc-transposed-args \
                      -Wno-comment \
-                     -Wno-discarded-qualifiers \
                      -Wno-format \
                      -Wno-format-extra-args \
                      -Wno-format-security \
@@ -284,7 +282,6 @@ QMAKE_CFLAGS_WARN_ON =  \
                      -Wno-missing-braces \
                      -Wno-parentheses \
                      -Wno-pointer-sign \
-                     -Wno-return-local-addr \
                      -Wno-return-type \
                      -Wno-sign-compare \
                      -Wno-strict-aliasing \
@@ -299,19 +296,25 @@ QMAKE_CFLAGS_WARN_ON =  \
                      -Wno-unused-result \
                      -Wno-unused-value \
                      -Wno-unused-variable
-}
 msys {
 QMAKE_CFLAGS_WARN_ON +=  \
                      -Wno-cast-function-type \
                      -Wno-int-to-pointer-cast \
                      -Wno-pointer-to-int-cast \
                      -Wno-stringop-truncation
-}
+} # msys
 macx {
 QMAKE_CFLAGS_WARN_ON +=  \
                      -Wno-absolute-value \
                      -Wno-deprecated-declarations \
                      -Wno-macro-redefined
 } else {
+QMAKE_CFLAGS_WARN_ON +=  \
+                     -Wno-calloc-transposed-args \
+                     -Wno-discarded-qualifiers \
+                     -Wno-return-local-addr
+
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
-}
+} # macx
+} # !win32-msvc*
+
