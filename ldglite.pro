@@ -8,6 +8,7 @@
 # CONFIG+=USE_OSMESA_STATIC
 # CONFIG+=USE_FREEGLUT_LOCAL # use local freeglut (e.g. Windows, Alma Linux)
 # CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
+# CONFIG+=OSMESA_NO_LLVM     # LLVM not needed for specified OSMesa configuration
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_linux_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_msys_3rdparty
 # CONFIG+=3RD_PARTY_INSTALL=../../lpub3d_macos_3rdparty
