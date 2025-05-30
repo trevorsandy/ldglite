@@ -203,8 +203,8 @@ unix|msys:!macx {
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
       _LIBS               += $${OSMESA_LIBS}
 
-      NO_GALLIUM {
-        message("~~~ LLVM not needed - Gallium driver not used ~~~")
+      OSMESA_NO_LLVM {
+        message("~~~ LLVM not needed for specified OSMesa configuration ~~~")
       } else {
         isEmpty(LLVM_PREFIX_): LLVM_PREFIX_ = $${SYSTEM_PREFIX_}
         exists($${LLVM_PREFIX_}/bin/llvm-config) {
