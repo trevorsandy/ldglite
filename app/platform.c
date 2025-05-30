@@ -425,7 +425,7 @@ char *getPathElement(char *path, char *buf)
 int GetExecName(char *argv0, char *buf, int buflen)
 {
   char    *path;
-  char    *getenv();
+  char    *getenv(const char *);
 
 #ifdef WINDOWS
   GetModuleFileName(NULL, buf, buflen);
