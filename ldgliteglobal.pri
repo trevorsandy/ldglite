@@ -194,12 +194,12 @@ unix|msys:!macx {
       DEFINES += OSMESA_OPTION
     }
 
-    # OSMesa with Gallium support - static library built from source
+    # OSMesa static libraries (libOSMesa, libGLU, libstd) built from source
     USE_OSMESA_STATIC {
       OSMESA_INC           = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --cflags)
       INCLUDEPATH         += $${OSMESA_INC}
       isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
-      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --libs)
+      OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --libs-explicit)
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
       _LIBS               += $${OSMESA_LIBS}
 
@@ -220,11 +220,6 @@ unix|msys:!macx {
         }
       }
 
-      OSMESA_LDFLAGS = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --ldflags)
-      isEmpty(OSMESA_LDFLAGS): \
-      message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~") \
-      else: \
-      _LIBS         += $${OSMESA_LDFLAGS}
       !isEmpty(FREEGLUT_LIBDIR): \
       _LIBS         += $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
       else: \
@@ -232,7 +227,11 @@ unix|msys:!macx {
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
       _LIBS         += -lm
-
+      OSMESA_LDFLAGS = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --ldflags)
+      isEmpty(OSMESA_LDFLAGS): \
+      message("~~~ OSMESA - ERROR OSMesa link flags not defined ~~~") \
+      else: \
+      _LIBS         += $${OSMESA_LDFLAGS}
     } else:!msys {
       USE_OSMESA_LOCAL {
         INCLUDEPATH   += $${OSMESA_LOCAL_PREFIX_}/include
