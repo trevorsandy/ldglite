@@ -201,7 +201,7 @@ unix|msys:!macx {
       isEmpty(OSMESA_INC): message("~~~ OSMESA - ERROR OSMesa include path not found ~~~")
       OSMESA_LIBS          = $$system($${3RD_PREFIX}/mesa/$${PLATFORM}/osmesa-config --libs)
       isEmpty(OSMESA_LIBS): message("~~~ OSMESA - ERROR OSMesa libraries not defined ~~~")
-      _LIBS               += $${OSMESA_LIBS} -lglut -lX11 -lXext
+      _LIBS               += $${OSMESA_LIBS}
 
       OSMESA_NO_LLVM {
         message("~~~ LLVM not needed for specified OSMesa configuration ~~~")
@@ -226,9 +226,9 @@ unix|msys:!macx {
       else: \
       _LIBS         += $${OSMESA_LDFLAGS}
       !isEmpty(FREEGLUT_LIBDIR): \
-      _LIBS         += -lOSMesa -lGLU $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
+      _LIBS         += $${FREEGLUT_LIBDIR} -lGL -lX11 -lXext
       else: \
-      _LIBS         += -lOSMesa -lGLU -lglut -lGL -lX11 -lXext
+      _LIBS         += -lglut -lGL -lX11 -lXext
       !isEmpty(FREEGLUT_LIBS): \
       _LIBS         += $${FREEGLUT_LIBS}
       _LIBS         += -lm
