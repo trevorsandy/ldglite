@@ -57,7 +57,6 @@ typedef DWORD        COLORREF;
 #define GetGValue(rgb)      ((BYTE)(((WORD)(rgb)) >> 8))
 #define GetBValue(rgb)      ((BYTE)((rgb)>>16))
 #ifdef __TURBOC__
-#define _MAX_PATH 260
 #ifdef UNIX
 #define BACKSLASH_CHAR   '/'
 #define BACKSLASH_STR    "/"
@@ -97,7 +96,9 @@ extern void          CheckMemoryUsage(void);
 #endif
 #endif
 
+#ifndef _MAX_PATH
 #define _MAX_PATH 260
+#endif
 
 struct L3LineS                            /* Not too economic with memory... */
 {
