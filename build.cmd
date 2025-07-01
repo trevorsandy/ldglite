@@ -173,7 +173,7 @@ rem Verify 1st input flag options
 IF NOT [%1]==[] (
   IF NOT "%1"=="x86" (
     IF NOT "%1"=="x86_64" (
-      IF NOT "%1"=="-all" (
+      IF NOT "%1"=="-all_amd" (
         IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
       )
     )
@@ -182,7 +182,7 @@ IF NOT [%1]==[] (
 
 rem Parse platform input flags
 IF [%1]==[] (
-  SET PLATFORM_ARCH=-all
+  SET PLATFORM_ARCH=-all_amd
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="x86" (
@@ -193,8 +193,8 @@ IF /I "%1"=="x86_64" (
   SET PLATFORM_ARCH=%1
   GOTO :SET_CONFIGURATION
 )
-IF /I "%1"=="-all" (
-  SET PLATFORM_ARCH=-all
+IF /I "%1"=="-all_amd" (
+  SET PLATFORM_ARCH=-all_amd
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="-help" (
@@ -265,8 +265,8 @@ IF /I "%3"=="-chk" (
 )
 
 rem Check if build all platforms
-IF /I "%PLATFORM_ARCH%"=="-all" (
-  GOTO :BUILD_ALL
+IF /I "%PLATFORM_ARCH%"=="-all_amd" (
+  GOTO :BUILD_ALL_AMD
 )
 
 ECHO.
@@ -297,7 +297,7 @@ rem Package 3rd party install content
 IF %THIRD_INSTALL%==1 (CALL :3RD_PARTY_INSTALL)
 GOTO :END
 
-:BUILD_ALL
+:BUILD_ALL_AMD
 rem Launch qmake/make across all platform builds
 ECHO.
 ECHO -Build x86 and x86_64 platforms...
@@ -657,7 +657,7 @@ EXIT /b
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64 or -all [%~nx0 %*].
+ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64 or -all_amd [%~nx0 %*].
 ECHO      See Usage.
 GOTO :ERROR_END
 
@@ -685,32 +685,32 @@ ECHO.
 ECHO ----------------------------------------------------------------
 ECHO Usage:
 ECHO  build [ -help]
-ECHO  build [ x86 ^| x86_64 ^| -all ] [ -ins ^| -chk ] [ -chk ]
+ECHO  build [ x86 ^| x86_64 ^| -all_amd ] [ -ins ^| -chk ] [ -chk ]
 ECHO.
 ECHO ----------------------------------------------------------------
-ECHO Build 64bit, Release and perform build check
+ECHO Build AMD 64bit, Release and perform build check
 ECHO build x86_64 -chk
 ECHO.
-ECHO Build 64bit, Release and perform install and build check
+ECHO Build AMD 64bit, Release and perform install and build check
 ECHO build x86_64 -ins -chk
 ECHO.
-ECHO Build 32bit, Release and perform build check
+ECHO Build AMD 32bit, Release and perform build check
 ECHO build x86 -chk
 ECHO.
-ECHO Build 64bit and32bit, Release and perform build check
-ECHO build -all -chk
+ECHO Build AMD 64bit and32bit, Release and perform build check
+ECHO build -all_amd -chk
 ECHO.
-ECHO Build 64bit and32bit, Release, perform install and build check
-ECHO build -all -ins -chk
+ECHO Build AMD 64bit and32bit, Release, perform install and build check
+ECHO build -all_amd -ins -chk
 ECHO.
 ECHO Flags:
 ECHO ----------------------------------------------------------------
-ECHO ^| Flag    ^| Pos ^| Type             ^| Description
+ECHO ^| Flag    ^| Pos ^| Type                ^| Description
 ECHO ----------------------------------------------------------------
 ECHO  -help......1......Useage flag         [Default=Off] Display useage.
-ECHO  x86........1......Platform flag       [Default=Off] Build 32bit architecture.
-ECHO  x86_64.....1......Platform flag       [Default=Off] Build 64bit architecture.
-ECHO  -all.......1......Configuraiton flag  [Default=On ] Build both  32bit and 64bit architectures
+ECHO  x86........1......Platform flag       [Default=Off] Build AMD 32bit architecture.
+ECHO  x86_64.....1......Platform flag       [Default=Off] Build AMD 64bit architecture.
+ECHO  -all_amd...1......Configuraiton flag  [Default=On ] Build both AMD 32bit and 64bit architectures
 ECHO  -ins.......2......Project flag        [Default=Off] Install distribution as LPub3D 3rd party installation
 ECHO  -chk.......2,3....Project flag        [Default=On ] Perform a quick image redering check using command line ini file
 ECHO.
