@@ -40,7 +40,7 @@ DEPENDPATH  += .
 INCLUDEPATH += . ../ldrawini
 ENABLE_TEST_GUI: \
 INCLUDEPATH += ../mui
-win32-msvc*: \
+win32-msvc*:!BUILD_LIBZ_FROM_SRC: \
 INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
 
 # messages
@@ -55,34 +55,52 @@ ENABLE_TILE_RENDERING {
   include($$PWD/tiles.pri)
 }
 
+LIBS_ += -L../ldrawini/$$DESTDIR -lldrawini
+
+ENABLE_TEST_GUI: \
+LIBS_ += -L../mui/$$DESTDIR -lmui
+
+BUILD_FREEGLUT_FROM_SRC {
+  message("~~~ BUILD FREEGLUT LIBRARY FROM SOURCE ~~~")
+  CONFIG(debug, debug|release): \
+  FREEGLUT_LIB = freeglut_staticd
+  else: \
+  FREEGLUT_LIB = freeglut_static
+  LIBS_ += -L$${LDG3RD_LIBDIR}/freeglut/$$DESTDIR -l$${FREEGLUT_LIB}
+}
+
 ENABLE_PNG {
   DEFINES += USE_PNG
   win32-msvc* {
-    message("~~~ USING LOCAL COPY OF PNG AND Z LIBRARIES ~~~")
-
-    INCLUDEPATH += \
-    $$PWD/../win/png/include \
-    $$PWD/../win/zlib/include
-
-    BUILD_WORKER_VERSION = $$(LP3D_VSVERSION)
-    isEmpty(BUILD_WORKER_VERSION): BUILD_WORKER_VERSION = 2019
-    message("~~~ Build worker: Visual Studio $$BUILD_WORKER_VERSION ~~~")
-    equals(BUILD_WORKER_VERSION, 2019) | greaterThan(BUILD_WORKER_VERSION, 2019) {
-        contains(QT_ARCH,i386): VSVER=vs2017
-        else: VSVER=vs2019
+    BUILD_PNG_FROM_SRC {
+      message("~~~ BUILD PNG LIBRARY FROM SOURCE ~~~")
+      LIBS_ += -L$${LDG3RD_LIBDIR}/libpng/$$DESTDIR -lpng16
     } else {
-        VSVER=vs2015
-    }
-    message("~~~ $$upper($$QT_ARCH) MSVS library version: $$VSVER ~~~")
+      message("~~~ USING LOCAL COPY OF PNG AND Z LIBRARIES ~~~")
 
-    equals (ARCH, 64) {
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -llibpng16-$${VSVER}
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib/x64 -lzlib-$${VSVER}
-    } else {
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -llibpng16-$${VSVER}
-        LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib-$${VSVER}
-    }
+      INCLUDEPATH += \
+      $$PWD/../win/png/include \
+      $$PWD/../win/zlib/include
 
+      BUILD_WORKER_VERSION = $$(LP3D_VSVERSION)
+      isEmpty(BUILD_WORKER_VERSION): BUILD_WORKER_VERSION = 2019
+      message("~~~ Build worker: Visual Studio $$BUILD_WORKER_VERSION ~~~")
+      equals(BUILD_WORKER_VERSION, 2019) | greaterThan(BUILD_WORKER_VERSION, 2019) {
+          contains(QT_ARCH,i386): VSVER=vs2017
+          else: VSVER=vs2019
+      } else {
+          VSVER=vs2015
+      }
+      message("~~~ $$upper($$QT_ARCH) MSVS library version: $$VSVER ~~~")
+
+      equals (ARCH, 64) {
+          LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib/x64 -llibpng16-$${VSVER}
+          LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib/x64 -lzlib-$${VSVER}
+      } else {
+          LIBS_ += -L$$_PRO_FILE_PWD_/../win/png/lib -llibpng16-$${VSVER}
+          LIBS_ += -L$$_PRO_FILE_PWD_/../win/zlib -lzlib-$${VSVER}
+      }
+    }
   } else:macx {
     contains(QT_ARCH,arm64) {
         SYSTEM_PNG_HEADERS = /opt/homebrew/include
@@ -116,10 +134,10 @@ ENABLE_PNG {
   }
 }
 
-LIBS_ += -L../ldrawini/$$DESTDIR -lldrawini
-
-ENABLE_TEST_GUI: \
-LIBS_ += -L../mui/$$DESTDIR -lmui
+BUILD_LIBZ_FROM_SRC {
+  message("~~~ BUILD Z LIBRARY FROM SOURCE ~~~")
+  LIBS_ += -L$${LDG3RD_LIBDIR}/zlib/$$DESTDIR -lz
+}
 
 LIBS  += $${LIBS_} $${_LIBS}
 

@@ -102,18 +102,20 @@ macx {
   DEFINES += MACOS_X_TEST2
 
   _LIBS += $$MACOSX_FRAMEWORKS -lobjc -lstdc++ -lm
+
+  EXT_D = dylib
 }
 
 CONFIG += incremental
 
 win32 {
   win32-msvc* {
-    CONFIG       += force_debug_info
+    #CONFIG       += force_debug_info
     QMAKE_LFLAGS += -NODEFAULTLIB:LIBCMT
     QMAKE_CFLAGS_WARN_ON -= -W3
     QMAKE_ADDL_MSVC_FLAGS = -GS -Gd -fp:precise -Zc:forScope
     CONFIG(debug, debug|release) {
-    QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 -Gm $$QMAKE_ADDL_MSVC_FLAGS
+    QMAKE_ADDL_MSVC_DEBUG_FLAGS = -RTC1 $$QMAKE_ADDL_MSVC_FLAGS
       QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4005" -wd"4013" -wd"4018" -wd"4047" -wd"4057" -wd"4068" -wd"4090" -wd"4099" -wd"4100" -wd"4101" -wd"4102" -wd"4113" -wd"4127" -wd"4131" -wd"4133" -wd"4189" -wd"4210" -wd"4244" -wd"4245" -wd"4305" -wd"4431" -wd"4456" -wd"4457" -wd"4458" -wd"4459" -wd"4474" -wd"4477" -wd"4533" -wd"4700" -wd"4701" -wd"4703" -wd"4706" -wd"4706" -wd"4714" -wd"4715" -wd"4716"
       QMAKE_CFLAGS_DEBUG   += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
       QMAKE_CXXFLAGS_DEBUG += $$QMAKE_ADDL_MSVC_DEBUG_FLAGS
@@ -134,18 +136,21 @@ win32 {
   DEFINES += FREEGLUT_STATIC
 
   win32-msvc* {
-    CONFIG += USE_FREEGLUT_LOCAL
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
 
     DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
 
+    CONFIG += USE_FREEGLUT_LOCAL
+    LDG3RD_LIBDIR  = $$absolute_path( $$OUT_PWD/../3rdParty )
     INCLUDEPATH += $$PWD/win/freeglut/include
-
     equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
     else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
 
     _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32 -lcomdlg32 -lole32
+
+    EXT_S = lib
+    EXT_D = dll
   }
 } else {
   QMAKE_CFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unknown-pragmas
@@ -259,6 +264,40 @@ unix|msys:!macx {
     _LIBS         += $${FREEGLUT_LIBS}
     _LIBS         += -lm
   }
+
+  EXT_S = a
+  msys: \
+  EXT_D = dll
+  else: \
+  EXT_D = so
+}
+
+contains(QT_VERSION, ^5\\..*) {
+    unix|msys:!macx {
+        GCC_VERSION = $$system(g++ -dumpversion)
+        greaterThan(GCC_VERSION, 4.8) {
+            QMAKE_CXXFLAGS += -std=c++11
+        } else {
+            QMAKE_CXXFLAGS += -std=c++0x
+        }
+    }
+}
+
+contains(QT_VERSION, ^6\\..*) {
+    win32-msvc* {
+        QMAKE_CXXFLAGS += /std:c++17
+    }
+    macx {
+        QMAKE_CXXFLAGS+= -std=c++17
+    }
+    unix|msys:!macx {
+        GCC_VERSION = $$system(g++ -dumpversion)
+        greaterThan(GCC_VERSION, 5) {
+            QMAKE_CXXFLAGS += -std=c++17
+        } else {
+            QMAKE_CXXFLAGS += -std=c++0x
+        }
+    }
 }
 
 OBJECTS_DIR     = $$DESTDIR/.obj

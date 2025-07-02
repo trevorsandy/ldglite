@@ -5,6 +5,9 @@
 # CONFIG+=ENABLE_OFFSCREEN_RENDERING
 # CONFIG+=ENABLE_TEST_GUI
 # CONFIG+=MAKE_APP_BUNDLE
+# CONFIG+=BUILD_FREEGLUT_FROM_SRC
+# CONFIG+=BUILD_PNG_FROM_SRC
+# CONFIG+=BUILD_LIBZ_FROM_SRC
 # CONFIG+=USE_OSMESA_STATIC
 # CONFIG+=USE_FREEGLUT_LOCAL # use local freeglut (e.g. Windows, Alma Linux)
 # CONFIG+=USE_OSMESA_LOCAL   # use local OSmesa and LLVM libraries - for OBS images w/o OSMesa stuff (e.g. RHEL)
@@ -17,23 +20,31 @@
 # --------------
 # /ldglite.pro
 # /ldgliteglobal.pri
+# /3rdParty.pri.pri
 #   |
 #   |---/app
-#   |     |---inherits:ldgliteglobal.pri
-#   |     |---ldglite_app.pro
+#   |     |---ldglite_app.pro - inherits ldgliteglobal.pri
 #   |     |---ldgliteapp.pri
 #   |     |---tiles.pri
 #   |
 #   |---/ldrawini
-#   |     |---inherits:ldgliteglobal.pri
-#   |     |---ldglite_ldrawini.pro
+#   |     |---ldglite_ldrawini.pro - inherits ldgliteglobal.pri
 #   |     |---ldgliteldrawini.pri
 #   |
 #   `---/mui
-#         |---inherits:ldgliteglobal.pri
-#         |---ldglite_mui.pro
-#         |---ldglitemui.pri
-#
+#   |      |---ldglite_mui.pro - inherits ldgliteglobal.pri
+#   |      |---ldglitemui.pri
+#   |
+#   `---/3rdParty
+#          |
+#          `--- /freeglut
+#          |     |--- 3rdParty_freeglut.pro - inherits 3rdParty.pri
+#          |
+#          `--- /libpng
+#          |     |--- 3rdParty_png.pro      - inherits 3rdParty.pri
+#          |
+#          `--- /zlib
+#                |--- 3rdParty_zlib.pro     - inherits 3rdParty.pri
 
 win32:HOST = $$system(systeminfo | findstr /B /C:\"OS Name\")
 unix:!macx:HOST = $$system(. /etc/os-release && if test \"$PRETTY_NAME\" != \"\"; then echo \"$PRETTY_NAME\"; else echo `uname`; fi)
@@ -47,7 +58,31 @@ TEMPLATE=subdirs
 # This tells Qt to compile the following SUBDIRS in order
 CONFIG  += ordered
 
-SUBDIRS  = ldglite_ldrawini
+BUILD_FREEGLUT_LIB {
+    SUBDIRS += 3rdParty_freeglut
+    3rdParty_freeglut.file     = $$PWD/3rdParty/freeglut/3rdParty_freeglut.pro
+    3rdParty_freeglut.makefile = Makefile.freeglut
+    3rdParty_freeglut.target   = sub-3rdParty_freeglut
+    3rdParty_freeglut.depends  =
+}
+
+BUILD_PNG_LIB {
+    SUBDIRS += 3rdParty_png
+    3rdParty_png.file         = $$PWD/3rdParty/libpng/3rdParty_png.pro
+    3rdParty_png.makefile     = Makefile.png
+    3rdParty_png.target       = sub-3rdParty_png
+    3rdParty_png.depends      =
+}
+
+BUILD_Z_LIB {
+    SUBDIRS += 3rdParty_zlib
+    3rdParty_zlib.file         = $$PWD/3rdParty/zlib/3rdParty_zlib.pro
+    3rdParty_zlib.makefile     = Makefile.zlib
+    3rdParty_zlib.target       = sub-3rdParty_zlib
+    3rdParty_zlib.depends      =
+}
+
+SUBDIRS += ldglite_ldrawini
 ldglite_ldrawini.file     = $$PWD/ldrawini/ldglite_ldrawini.pro
 ldglite_ldrawini.makefile = Makefile.ldrawini
 ldglite_ldrawini.target   = sub-ldglite_ldrawini
