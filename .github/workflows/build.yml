@@ -1,6 +1,6 @@
 # Build, check and LDGLite
 # Trevor SANDY <trevor.sandy@gmail.com>
-# Last Update: September 26, 2024
+# Last Update: July 03, 2025
 # Copyright (c) 2022 - 2025 by Trevor SANDY
 #
 name: Build LDGLite
@@ -27,7 +27,7 @@ jobs:
           version: 5.15.2
           host: linux
           target: desktop
-          arch: gcc_64
+          arch: linux_gcc_64
           archives: qtbase
           cache: true
           cache-key-prefix: install-qt-action
@@ -59,8 +59,32 @@ jobs:
 
   build-windows:
     # if: ${{ false }} # uncomment to disable
-    name: Build Windows 2022
-    runs-on: windows-2022
+    name: Build Windows ${{ matrix.name }}
+    runs-on: ${{ matrix.runner-os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner-os: [ windows-2022, windows-11-arm ]
+        platform: [ AMD, ARM ]
+        exclude:
+          - runner-os: windows-2022
+            platform: ARM
+          - runner-os: windows-11-arm
+            platform: AMD
+        include:
+          - runner-os: windows-2022
+          - runner-os: windows-11-arm
+          - platform: AMD
+            name: 2022 AMD
+            host: ''
+            arch: _64
+            build: -all_amd
+          - platform: ARM
+            name: 11 ARM
+            host: _arm64
+            arch: _arm64
+            build: arm64
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,13 +102,14 @@ jobs:
         with:
           path: ${{ env.LP3D_LDRAW_DIR_PATH }}
           key: ldraw-lib
-      - name: Cache QtMSVC 2019
+      - name: Cache QtMSVC
         id: cache-qt
         uses: actions/cache@v4
         with:
           path: ${{ env.LP3D_BUILD_BASE }}\Qt
           key: qt-windows-${{ env.QT_CACHE }}
-      - name: VC 141 Build Tools
+      - name: MSVC 141 Build Tools AMD
+        if: "${{ matrix.platform == 'AMD' }}"
         run: |
           Set-Location "C:\Program Files (x86)\Microsoft Visual Studio\Installer\"
           $InstallPath = "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
@@ -95,32 +120,42 @@ jobs:
           $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
           $process = Start-Process -FilePath cmd.exe -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
         shell: powershell
-      - name: Windows 8.1 SDK
+      - name: Windows 8.1 SDK AMD
+        if: "${{ matrix.platform == 'AMD' }}"
         run: |
           Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/p/?LinkId=323507 -OutFile sdksetup.exe -UseBasicParsing
           Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit"
         shell: powershell
-      - name: Qt MSVC 2019 64bit # path: ..\Qt\5.15.2\msvc2019_64\bin
+      - name: Qt MSVC 2019 32bit AMD # path: ..\Qt\5.15.2\msvc2019\bin
+        if: "${{ matrix.platform == 'AMD' }}"
         uses: jurplel/install-qt-action@v4
         with:
           version: 5.15.2
           host: windows
-          arch: win64_msvc2019_64
-          dir: ${{ env.LP3D_BUILD_BASE }}
-          cache: true
-          cache-key-prefix: install-qt-action
-      - name: Qt MSVC 2019 32bit # path: ..\Qt\5.15.2\msvc2019\bin
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: 5.15.2
-          host: windows
+          target: desktop
           arch: win32_msvc2019
           dir: ${{ env.LP3D_BUILD_BASE }}
           cache: true
           cache-key-prefix: install-qt-action
-      - name: Build LDGLite
+      - name: Qt MSVC 2019 64bit ${{ matrix.platform }} # path: ..\Qt\5.15.2\msvc2019_64\bin
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: 5.15.2
+          host: windows${{ matrix.host }}
+          target: desktop
+          arch: win64_msvc2019${{ matrix.arch }}
+          dir: ${{ env.LP3D_BUILD_BASE }}
+          cache: true
+          cache-key-prefix: install-qt-action
+      - name: Build LDGLite ${{ matrix.platform }}
         shell: cmd
-        run: .\build.cmd -all -chk
+        run: .\build.cmd ${{ matrix.build }} -chk
+        env:
+          LP3D_QT32VCVERSION: 2019
+          LP3D_QT64VCVERSION: 2019
+          LP3D_QT32VERSION: 5.15.2
+          LP3D_QT64VERSION: 5.15.2
+          LP3D_VSVERSION: 2022
 
   build-macos:
     # if: ${{ false }} # uncomment to disabl

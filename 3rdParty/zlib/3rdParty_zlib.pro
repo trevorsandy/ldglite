@@ -15,6 +15,16 @@ win32 {
   QMAKE_TARGET_DESCRIPTION = "General purpose compression library"
   QMAKE_TARGET_COPYRIGHT = "Copyright (C) 1995-2024 Jean-loup Gailly and Mark Adler"
   QMAKE_TARGET_PRODUCT = "Zlib ($$join(ARCH,,,bit))"
+
+  win32-arm64-msvc {
+    CONFIG(debug, debug|release) {
+      QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4267"
+    }
+    CONFIG(release, debug|release) {
+      QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4267"
+    }
+    QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_ON
+  }
 }
 
 # Input

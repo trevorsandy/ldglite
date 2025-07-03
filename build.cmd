@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 01, 2024
+rem  Last Update: July 03, 2024
 rem  Copyright (c) 2019 - 2025 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -49,70 +49,6 @@ IF "%LP3D_CONDA_BUILD%" EQU "True" (
 IF "%CONFIGURATION%" == "" SET CONFIGURATION=release
 IF "%LP3D_3RD_DIST_DIR%" == "" SET LP3D_3RD_DIST_DIR=lpub3d_windows_3rdparty
 
-IF "%BUILD_WORKER%" EQU "True" (
-  IF "%LP3D_DIST_DIR_PATH%" == "" (
-    ECHO.
-    ECHO  -ERROR - Distribution directory path not defined.
-    GOTO :ERROR_END
-  )
-  PUSHD %LP3D_BUILD_BASE%
-  IF NOT EXIST "%LP3D_3RD_DIST_DIR%" (
-    IF EXIST "%LP3D_DIST_DIR_PATH%" (
-      MKLINK /d %LP3D_3RD_DIST_DIR% %LP3D_DIST_DIR_PATH% 2>&1
-    ) ELSE (
-      ECHO.
-      ECHO - ERROR - %LP3D_DIST_DIR_PATH% path not defined
-      GOTO :ERROR_END
-    )
-  )
-  POPD
-  SET ABS_WD=%BUILD_WORKSPACE%
-  rem DIST_DIR must be relative to App folder in LDGLite repo
-  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
-  SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
-  SET LDRAW_DIR=%USERPROFILE%\LDraw
-  IF "%LP3D_QT32_MSVC%" == "" (
-    SET LP3D_QT32_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
-  )
-  IF "%LP3D_QT64_MSVC%" == "" (
-    SET LP3D_QT64_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_64\bin
-  )
-)
-
-IF "%APPVEYOR%" EQU "True" (
-  IF "%LP3D_DIST_DIR_PATH%" == "" (
-    ECHO.
-    ECHO  -ERROR: Distribution directory path not defined.
-    GOTO :ERROR_END
-  )
-  SET APPVEYOR_BUILD_WORKER_IMAGE=Visual Studio %LP3D_VSVERSION%
-  rem DIST_DIR must be relative to App folder in LDGLite repo
-  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
-  SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
-  SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
-  IF "%LP3D_QT32_MSVC%" == "" (
-    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
-  )
-  IF "%LP3D_QT64_MSVC%" == "" (
-    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_64\bin
-  )
-)
-
-IF "%BUILD_WORKER%" NEQ "True" (
-  IF "%APPVEYOR%" NEQ "True" (
-    rem DIST_DIR must be relative to App folder in LDGLite repo
-    SET DIST_DIR=..\..\lpub3d_windows_3rdparty
-    SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
-    SET LDRAW_DIR=%USERPROFILE%\LDraw
-    IF "%LP3D_QT32_MSVC%" == "" (
-      SET LP3D_QT32_MSVC=C:\Qt\IDE\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
-    )
-    IF "%LP3D_QT64_MSVC%" == "" (
-      SET LP3D_QT64_MSVC=C:\Qt\IDE\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_64\bin
-    )
-  )
-)
-
 IF "%LP3D_CONDA_BUILD%" NEQ "True" (
   IF EXIST "C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build" (
     SET LP3D_VCVARSALL_DIR=C:\Program Files\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build
@@ -122,7 +58,7 @@ IF "%LP3D_CONDA_BUILD%" NEQ "True" (
   )
   IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\%LP3D_VSVERSION%\Professional\VC\Auxiliary\Build" (
     SET LP3D_VCVARSALL_DIR=C:\Program Files ^(x86^)\Microsoft Visual Studio\%LP3D_VSVERSION%\Professional\VC\Auxiliary\Build
-  )  
+  )
   IF EXIST "C:\Program Files (x86)\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build" (
     SET LP3D_VCVARSALL_DIR=C:\Program Files ^(x86^)\Microsoft Visual Studio\%LP3D_VSVERSION%\Community\VC\Auxiliary\Build
   )
@@ -173,8 +109,10 @@ rem Verify 1st input flag options
 IF NOT [%1]==[] (
   IF NOT "%1"=="x86" (
     IF NOT "%1"=="x86_64" (
-      IF NOT "%1"=="-all_amd" (
-        IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
+      IF NOT "%1"=="arm64" (
+        IF NOT "%1"=="-all_amd" (
+          IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
+        )
       )
     )
   )
@@ -191,6 +129,10 @@ IF /I "%1"=="x86" (
 )
 IF /I "%1"=="x86_64" (
   SET PLATFORM_ARCH=%1
+  GOTO :SET_CONFIGURATION
+)
+IF /I "%1"=="arm64" (
+  SET PLATFORM_ARCH=arm64
   GOTO :SET_CONFIGURATION
 )
 IF /I "%1"=="-all_amd" (
@@ -214,6 +156,76 @@ IF NOT [%2]==[] (
 rem Verify 3rd input flag options
 IF NOT [%3]==[] (
   IF NOT "%3"=="-chk" GOTO :CONFIGURATION_ERROR
+)
+
+rem setup library options
+IF %PLATFORM_ARCH%==arm64 (
+  SET LP3D_QTARCH=%PLATFORM_ARCH%
+) ELSE (
+  SET LP3D_QTARCH=64
+)
+IF "%BUILD_WORKER%" EQU "True" (
+  IF "%LP3D_DIST_DIR_PATH%" == "" (
+    ECHO.
+    ECHO  -ERROR - Distribution directory path not defined.
+    GOTO :ERROR_END
+  )
+  PUSHD %LP3D_BUILD_BASE%
+  IF NOT EXIST "%LP3D_3RD_DIST_DIR%" (
+    IF EXIST "%LP3D_DIST_DIR_PATH%" (
+      MKLINK /d %LP3D_3RD_DIST_DIR% %LP3D_DIST_DIR_PATH% 2>&1
+    ) ELSE (
+      ECHO.
+      ECHO - ERROR - %LP3D_DIST_DIR_PATH% path not defined
+      GOTO :ERROR_END
+    )
+  )
+  POPD
+  SET ABS_WD=%BUILD_WORKSPACE%
+  rem DIST_DIR must be relative to App folder in LDGLite repo
+  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
+  SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
+  SET LDRAW_DIR=%USERPROFILE%\LDraw
+  IF "%LP3D_QT32_MSVC%" == "" (
+    SET LP3D_QT32_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
+  )
+  IF "%LP3D_QT64_MSVC%" == "" (
+    SET LP3D_QT64_MSVC=%LP3D_BUILD_BASE%\Qt\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_%LP3D_QTARCH%\bin
+  )
+)
+
+IF "%APPVEYOR%" EQU "True" (
+  IF "%LP3D_DIST_DIR_PATH%" == "" (
+    ECHO.
+    ECHO  -ERROR: Distribution directory path not defined.
+    GOTO :ERROR_END
+  )
+  SET APPVEYOR_BUILD_WORKER_IMAGE=Visual Studio %LP3D_VSVERSION%
+  rem DIST_DIR must be relative to App folder in LDGLite repo
+  SET DIST_DIR=..\..\%LP3D_3RD_DIST_DIR%
+  SET LDRAW_DOWNLOAD_DIR=%APPVEYOR_BUILD_FOLDER%
+  SET LDRAW_DIR=%APPVEYOR_BUILD_FOLDER%\LDraw
+  IF "%LP3D_QT32_MSVC%" == "" (
+    SET LP3D_QT32_MSVC=C:\Qt\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
+  )
+  IF "%LP3D_QT64_MSVC%" == "" (
+    SET LP3D_QT64_MSVC=C:\Qt\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_%LP3D_QTARCH%\bin
+  )
+)
+
+IF "%BUILD_WORKER%" NEQ "True" (
+  IF "%APPVEYOR%" NEQ "True" (
+    rem DIST_DIR must be relative to App folder in LDGLite repo
+    SET DIST_DIR=..\..\lpub3d_windows_3rdparty
+    SET LDRAW_DOWNLOAD_DIR=%USERPROFILE%
+    SET LDRAW_DIR=%USERPROFILE%\LDraw
+    IF "%LP3D_QT32_MSVC%" == "" (
+      SET LP3D_QT32_MSVC=C:\Qt\IDE\%LP3D_QT32VERSION%\msvc%LP3D_QT32VCVERSION%\bin
+    )
+    IF "%LP3D_QT64_MSVC%" == "" (
+      SET LP3D_QT64_MSVC=C:\Qt\IDE\%LP3D_QT64VERSION%\msvc%LP3D_QT64VCVERSION%_%LP3D_QTARCH%\bin
+    )
+  )
 )
 
 rem Set third party install as default behaviour
@@ -286,6 +298,7 @@ nmake.exe %LDGLITE_MAKE_ARGS%
 rem Check build status
 IF %PLATFORM_ARCH%==x86 (SET EXE=app\32bit_%CONFIGURATION%\%PACKAGE%.exe)
 IF %PLATFORM_ARCH%==x86_64 (SET EXE=app\64bit_%CONFIGURATION%\%PACKAGE%.exe)
+IF %PLATFORM_ARCH%==arm64 (SET EXE=app\64bit_%CONFIGURATION%\%PACKAGE%%d%.exe)
 IF NOT EXIST "%EXE%" (
   ECHO.
   ECHO "-ERROR - %EXE% was not successfully built."
@@ -332,27 +345,37 @@ ECHO.
 ECHO -Set MSBuild platform toolset...
 IF %1==x86_64 (
   IF "%LP3D_CONDA_BUILD%" NEQ "True" (
-    SET LP3D_MSC_VER=1941
+    SET LP3D_MSC_VER=1944
     SET LP3D_VCSDKVER=10.0
-    SET LP3D_VCTOOLSET=v143
+    SET LP3D_VCTOOLSET=v144
     SET LP3D_VCVARSALL_VER=-vcvars_ver=14.4
   )
 ) ELSE (
-  SET LP3D_VCSDKVER=8.1
-  SET LP3D_VCTOOLSET=v141
-  SET LP3D_VCVARSALL_VER=-vcvars_ver=14.1
+  IF %1==arm64 (
+    SET LP3D_MSC_VER=1943
+    SET LP3D_VCSDKVER=10.0A
+    SET LP3D_VCTOOLSET=v144
+    SET LP3D_VCVARSALL_VER=-vcvars_ver=14.4
+  ) ELSE (
+    SET LP3D_VCSDKVER=8.1
+    SET LP3D_VCTOOLSET=v141
+    SET LP3D_VCVARSALL_VER=-vcvars_ver=14.1
+  )
 )
 ECHO.
 ECHO   PLATFORM_ARCHITECTURE..[%1]
 ECHO   MSVS_VERSION...........[%LP3D_VSVERSION%]
-IF "%PLATFORM_ARCH%"=="-all_amd" (
+IF %1==-all_amd (
   ECHO   MSVC_QT32_VERSION......[%LP3D_QT32VCVERSION%]
   ECHO   MSVC_QT64_VERSION......[%LP3D_QT64VCVERSION%]
 ) ELSE (
-  IF %PLATFORM_ARCH%==x86 (
+  IF %1==x86 (
     ECHO   MSVC_QT32_VERSION......[%LP3D_QT32VCVERSION%]
   )
-  IF %PLATFORM_ARCH%==x86_64 (
+  IF %1==x86_64 (
+    ECHO   MSVC_QT64_VERSION......[%LP3D_QT64VCVERSION%]
+  )
+  IF %1==arm64 (
     ECHO   MSVC_QT64_VERSION......[%LP3D_QT64VCVERSION%]
   )
 )
@@ -363,6 +386,7 @@ IF "%LP3D_CONDA_BUILD%" NEQ "True" (
   IF %1==x86 (ECHO   LP3D_QT32_MSVC.........[%LP3D_QT32_MSVC%])
 )
 IF %1==x86_64 (ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%])
+IF %1==arm64 (ECHO   LP3D_QT64_MSVC.........[%LP3D_QT64_MSVC%])
 ECHO   MSVC_VCVARSALL_VER.....[%LP3D_VCVARSALL_VER%]
 ECHO   MSVC_VCVARSALL_DIR.....[%LP3D_VCVARSALL_DIR%]
 EXIT /b
@@ -449,6 +473,7 @@ ECHO -Perform build check...
 CALL :CHECK_LDRAW_DIR
 IF %1==x86 SET PL=32
 IF %1==x86_64 SET PL=64
+IF %1==arm64 SET PL=64
 SET "LPUB3D_DATA=%LOCALAPPDATA%\LPub3D Software\LPub3D"
 SET "LDRAW_UNOFFICIAL=%LDRAW_DIR%\Unofficial"
 REM SET "LDSEARCHDIRS=%LPUB3D_DATA%\fade^|%LDRAW_UNOFFICIAL%\customParts^|%LDRAW_UNOFFICIAL%\fade^|%LDRAW_UNOFFICIAL%\testParts"
@@ -482,12 +507,12 @@ IF %CHECK%==1 (
   IF EXIST "%OUT_FILE%.%PACKAGE%.log" (
     ECHO.
     TYPE "%OUT_FILE%.%PACKAGE%.log"
-  	DEL /Q "%OUT_FILE%.%PACKAGE%.log"
+    DEL /Q "%OUT_FILE%.%PACKAGE%.log"
   )
   IF EXIST "%OUT_FILE%" (
     ECHO.
     ECHO -Build Check, create %OUT_FILE% from %IN_FILE% - Test successful!
-	DEL /Q "%OUT_FILE%"
+    DEL /Q "%OUT_FILE%"
   )
 ) ELSE (
   ECHO -Check is not possible
@@ -657,7 +682,7 @@ EXIT /b
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64 or -all_amd [%~nx0 %*].
+ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64, arm64 or -all_amd [%~nx0 %*].
 ECHO      See Usage.
 GOTO :ERROR_END
 
@@ -685,14 +710,14 @@ ECHO.
 ECHO ----------------------------------------------------------------
 ECHO Usage:
 ECHO  build [ -help]
-ECHO  build [ x86 ^| x86_64 ^| -all_amd ] [ -ins ^| -chk ] [ -chk ]
+ECHO  build [ x86 ^| x86_64 ^| arm64 ^| -all_amd ] [ -ins ^| -chk ] [ -chk ]
 ECHO.
 ECHO ----------------------------------------------------------------
 ECHO Build AMD 64bit, Release and perform build check
 ECHO build x86_64 -chk
 ECHO.
-ECHO Build AMD 64bit, Release and perform install and build check
-ECHO build x86_64 -ins -chk
+ECHO Build ARM 64bit, Release and perform install and build check
+ECHO build arm64 -ins -chk
 ECHO.
 ECHO Build AMD 32bit, Release and perform build check
 ECHO build x86 -chk
@@ -710,6 +735,7 @@ ECHO ----------------------------------------------------------------
 ECHO  -help......1......Useage flag         [Default=Off] Display useage.
 ECHO  x86........1......Platform flag       [Default=Off] Build AMD 32bit architecture.
 ECHO  x86_64.....1......Platform flag       [Default=Off] Build AMD 64bit architecture.
+ECHO  arm64......1......Platform flag       [Default=Off] Build ARM 64bit architecture.
 ECHO  -all_amd...1......Configuraiton flag  [Default=On ] Build both AMD 32bit and 64bit architectures
 ECHO  -ins.......2......Project flag        [Default=Off] Install distribution as LPub3D 3rd party installation
 ECHO  -chk.......2,3....Project flag        [Default=On ] Perform a quick image redering check using command line ini file

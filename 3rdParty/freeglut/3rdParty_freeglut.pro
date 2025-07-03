@@ -32,6 +32,16 @@ win32 {
   QMAKE_TARGET_DESCRIPTION = "Freeglut OpenGL Utility Toolkit"
   QMAKE_TARGET_COPYRIGHT = "Copyright © 1999-2000 Pawel W. Olszta, 2000-2012 Stephen J. Baker"
   QMAKE_TARGET_PRODUCT = "Freeglut ($$join(ARCH,,,bit))"
+
+  win32-arm64-msvc {
+    CONFIG(debug, debug|release) {
+      QMAKE_CFLAGS_WARN_ON += -W4 -WX- -wd"4018" -wd"4267" -wd"4293" -wd"4828"
+    }
+    CONFIG(release, debug|release) {
+      QMAKE_CFLAGS_WARN_ON  += -W1 -WX- -wd"4018" -wd"4267" -wd"4293" -wd"4828"
+    }
+    QMAKE_CXXFLAGS_WARN_ON = $$QMAKE_CFLAGS_WARN_ON
+  }
 }
 
 INCLUDEPATH += include src
