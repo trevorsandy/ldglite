@@ -58,6 +58,11 @@ TEMPLATE=subdirs
 # This tells Qt to compile the following SUBDIRS in order
 CONFIG  += ordered
 
+win32-arm64-msvc: \
+CONFIG += BUILD_FREEGLUT_LIB \
+          BUILD_PNG_LIB \
+          BUILD_Z_LIB
+
 BUILD_FREEGLUT_LIB {
     SUBDIRS += 3rdParty_freeglut
     3rdParty_freeglut.file     = $$PWD/3rdParty/freeglut/3rdParty_freeglut.pro

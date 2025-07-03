@@ -109,7 +109,7 @@ macx {
 CONFIG += incremental
 
 win32 {
-  win32-msvc* {
+  win32-arm64-msvc|win32-msvc* {
     #CONFIG       += force_debug_info
     QMAKE_LFLAGS += -NODEFAULTLIB:LIBCMT
     QMAKE_CFLAGS_WARN_ON -= -W3
@@ -135,17 +135,26 @@ win32 {
   DEFINES += USING_FREEGLUT
   DEFINES += FREEGLUT_STATIC
 
-  win32-msvc* {
+  win32-arm64-msvc|win32-msvc* {
 
     ENABLE_OFFSCREEN_RENDERING: DEFINES += WIN_DIB_OPTION
 
     DEFINES += _CRT_SECURE_NO_WARNINGS _CRT_SECURE_NO_DEPRECATE=1 _CRT_NONSTDC_NO_WARNINGS=1
 
-    CONFIG += USE_FREEGLUT_LOCAL
-    LDG3RD_LIBDIR  = $$absolute_path( $$OUT_PWD/../3rdParty )
-    INCLUDEPATH += $$PWD/win/freeglut/include
-    equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
-    else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
+    win32-arm64-msvc {
+      LDG3RD_LIBDIR  = $$absolute_path( $$OUT_PWD/../3rdParty )
+      INCLUDEPATH   += $$PWD/3rdParty/freeglut/include \
+                       $$PWD/3rdParty/libpng \
+                       $$PWD/3rdParty/zlib
+      CONFIG += BUILD_FREEGLUT_FROM_SRC
+      CONFIG += BUILD_PNG_FROM_SRC
+      CONFIG += BUILD_LIBZ_FROM_SRC
+    } else {
+      CONFIG += USE_FREEGLUT_LOCAL
+      INCLUDEPATH += $$PWD/win/freeglut/include
+      equals (ARCH, 64): _LIBS += -L$$PWD/win/freeglut/lib/x64 -lfreeglut_static
+      else:              _LIBS += -L$$PWD/win/freeglut/lib -lfreeglut_static
+    }
 
     _LIBS += -lshell32 -lglu32 -lopengl32 -lwinmm -lgdi32 -lcomdlg32 -lole32
 
@@ -284,7 +293,7 @@ contains(QT_VERSION, ^5\\..*) {
 }
 
 contains(QT_VERSION, ^6\\..*) {
-    win32-msvc* {
+    win32-arm64-msvc|win32-msvc* {
         QMAKE_CXXFLAGS += /std:c++17
     }
     macx {
@@ -304,7 +313,7 @@ OBJECTS_DIR     = $$DESTDIR/.obj
 RCC_DIR         = $$DESTDIR/.qrc
 
 # suppress warnings
-!win32-msvc* {
+!win32-arm64-msvc:!win32-msvc* {
 QMAKE_CFLAGS_WARN_ON =  \
                      -Wall -W \
                      -Wno-address \
@@ -354,5 +363,4 @@ QMAKE_CFLAGS_WARN_ON +=  \
 
 QMAKE_CXXFLAGS_WARN_ON = $${QMAKE_CFLAGS_WARN_ON}
 } # macx
-} # !win32-msvc*
-
+} # !win32-arm64-msvc|!win32-msvc*
