@@ -71,7 +71,7 @@ BUILD_FREEGLUT_FROM_SRC {
 
 ENABLE_PNG {
   DEFINES += USE_PNG
-  win32-msvc* {
+  win32-arm64-msvc|win32-msvc* {
     BUILD_PNG_FROM_SRC {
       message("~~~ BUILD PNG LIBRARY FROM SOURCE ~~~")
       LIBS_ += -L$${LDG3RD_LIBDIR}/libpng/$$DESTDIR -lpng16
@@ -141,7 +141,7 @@ BUILD_LIBZ_FROM_SRC {
 
 LIBS  += $${LIBS_} $${_LIBS}
 
-!win32-msvc*: \
+!win32-arm64-msvc:!win32-msvc*: \
 LIBS  += -lz
 #message("~~~ DEBUG_LIBS: $$LIBS ~~~")
 #message("~~~ DEBUG_CONFIG: $$CONFIG ~~~")
