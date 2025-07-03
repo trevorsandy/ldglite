@@ -11,8 +11,8 @@ on:
 jobs:
   build-linux:
     # if: ${{ false }} # uncomment to disabl
-    name: Build Ubuntu 22.04
-    runs-on: ubuntu-22.04
+    name: Build Ubuntu 24.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,18 +64,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner-os: [ windows-2022, windows-11-arm ]
+        runner-os: [ windows-2025, windows-11-arm ]
         platform: [ AMD, ARM ]
         exclude:
-          - runner-os: windows-2022
+          - runner-os: windows-2025
             platform: ARM
           - runner-os: windows-11-arm
             platform: AMD
         include:
-          - runner-os: windows-2022
+          - runner-os: windows-2025
           - runner-os: windows-11-arm
           - platform: AMD
-            name: 2022 AMD
+            name: 2025 AMD
             host: ''
             arch: _64
             build: -all_amd
