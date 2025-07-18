@@ -8,7 +8,7 @@ rem LDGLite distributions and package the build contents (exe, doc and
 rem resources ) as LPub3D 3rd Party components.
 rem --
 rem  Trevor SANDY <trevor.sandy@gmail.com>
-rem  Last Update: July 17, 2024
+rem  Last Update: July 20, 2025
 rem  Copyright (c) 2019 - 2025 by Trevor SANDY
 rem --
 rem This script is distributed in the hope that it will be useful,
@@ -19,11 +19,11 @@ CALL :ELAPSED_BUILD_TIME Start
 
 SET PWD=%CD%
 
-IF "%LP3D_VSVERSION%" == "" SET "LP3D_VSVERSION=2022"
-IF "%LP3D_QT32VERSION%" == "" SET "LP3D_QT32VERSION=5.15.2"
-IF "%LP3D_QT64VERSION%" == "" SET "LP3D_QT64VERSION=6.9.1"
-IF "%LP3D_QT32VCVERSION%" == "" SET "LP3D_QT32VCVERSION=2019"
-IF "%LP3D_QT64VCVERSION%" == "" SET "LP3D_QT64VCVERSION=2022"
+IF "%LP3D_VSVERSION%" == "" SET LP3D_VSVERSION=2022
+IF "%LP3D_QT32VERSION%" == "" SET LP3D_QT32VERSION=5.15.2
+IF "%LP3D_QT64VERSION%" == "" SET LP3D_QT64VERSION=6.9.1
+IF "%LP3D_QT32VCVERSION%" == "" SET LP3D_QT32VCVERSION=2019
+IF "%LP3D_QT64VCVERSION%" == "" SET LP3D_QT64VCVERSION=2022
 
 IF "%GITHUB%" EQU "True" (
   SET "BUILD_WORKER=True"
@@ -98,11 +98,23 @@ IF "%LP3D_VCARM64SDKVER%" == "" SET LP3D_VCARM64SDKVER=10.0
 IF "%LP3D_VCARM64TOOLSET%" == "" SET LP3D_VCARM64TOOLSET=v143
 IF "%LP3D_VCARM64VARSALL_VER%" == "" SET LP3D_VCARM64VARSALL_VER=-vcvars_ver=14.4
 
-IF "%LP3D_VALID_7ZIP%" =="" SET LP3D_VALID_7ZIP=0
-IF "%LP3D_7ZIP_WIN64%" == "" SET "LP3D_7ZIP_WIN64=%ProgramFiles%\7-zip\7z.exe"
+IF "%LP3D_VALID_TAR%" == "" SET LP3D_VALID_TAR=0
+IF "%LP3D_SYS_DIR%" == "" (
+  SET LP3D_SYS_DIR=%WINDIR%\System32
+)
+IF "%LP3D_WIN_TAR%" == "" (
+  SET LP3D_WIN_TAR=%LP3D_SYS_DIR%\Tar.exe
+)
+IF NOT EXIST "%LP3D_WIN_TAR%" (
+  SET LP3D_WIN_TAR=
+  SET LP3D_WIN_TAR_MSG=Not Found
+) ELSE (
+  SET LP3D_VALID_TAR=1 
+  SET LP3D_WIN_TAR_MSG=%LP3D_WIN_TAR%
+)
 
-SET LP3D_SYS_DIR=%WINDIR%\System32
 SET OfficialCONTENT=complete.zip
+SET LP3D_AMD64_ARM64_CROSS=0
 
 SET PACKAGE=LDGLite
 SET VERSION=1.3.8
@@ -119,11 +131,11 @@ ECHO -Start %PACKAGE% %~nx0 with commandline args: [%*].
 
 rem Verify 1st input flag options
 IF NOT [%1]==[] (
-  IF NOT "%1"=="x86" (
-    IF NOT "%1"=="x86_64" (
-      IF NOT "%1"=="arm64" (
-        IF NOT "%1"=="-all_amd" (
-          IF NOT "%1"=="-help" GOTO :PLATFORM_ERROR
+  IF /I NOT "%1"=="x86" (
+    IF /I NOT "%1"=="x86_64" (
+      IF /I NOT "%1"=="arm64" (
+        IF /I NOT "%1"=="-all_amd" (
+          IF /I NOT "%1"=="-help" GOTO :PLATFORM_ERROR
         )
       )
     )
@@ -160,19 +172,24 @@ GOTO :COMMAND_ERROR
 :SET_CONFIGURATION
 rem Verify 2nd input flag options
 IF NOT [%2]==[] (
-  IF NOT "%2"=="-ins" (
-    IF NOT "%2"=="-chk" GOTO :CONFIGURATION_ERROR
+  IF /I NOT "%2"=="-ins" (
+    IF /I NOT "%2"=="-chk" GOTO :CONFIGURATION_ERROR
   )
 )
 
 rem Verify 3rd input flag options
 IF NOT [%3]==[] (
-  IF NOT "%3"=="-chk" GOTO :CONFIGURATION_ERROR
+  IF /I NOT "%3"=="-chk" GOTO :CONFIGURATION_ERROR
 )
 
-rem setup library options
-IF %PLATFORM_ARCH%==ARM64 (
-  SET LP3D_QTARCH=%PLATFORM_ARCH%
+rem Setup library options and set ARM64 cross compilation
+IF /I "%PLATFORM_ARCH%" == "ARM64" (
+  IF /I "%COMMANDPROMPTTYPE%" == "Cross" (
+    IF /I "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
+      SET LP3D_AMD64_ARM64_CROSS=1
+    )
+  )
+  SET LP3D_QTARCH=arm64
 ) ELSE (
   SET LP3D_QTARCH=64
 )
@@ -282,6 +299,10 @@ ECHO   WORKING_DIRECTORY......[%PWD%]
 ECHO   DIST_DIRECTORY.........[%DIST_DIR:/=\%]
 ECHO   LDRAW_DIRECTORY........[%LDRAW_DIR%]
 ECHO.  LDRAW_DOWNLOAD_DIR.....[%LDRAW_DOWNLOAD_DIR%]
+ECHO   LP3D_WIN_TAR...........[%LP3D_WIN_TAR_MSG%]
+IF %LP3D_AMD64_ARM64_CROSS% EQU 1 (
+  ECHO   COMPILATION............[ARM64 on AMD64 host]
+)
 
 rem Perform build check
 IF /I "%3"=="-chk" (
@@ -419,71 +440,78 @@ FOR /R %%I IN (
 ) DO DEL /S /Q "%%~I" >NUL 2>&1
 ECHO.
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
-ECHO   LDGLITE_CONFIG_ARGS.....[%LDGLITE_CONFIG_ARGS%]
 rem /c flag suppresses the copyright
 SET LDGLITE_MAKE_ARGS=/c /f Makefile
-ECHO   LDGLITE_MAKE_ARGS.......[%LDGLITE_MAKE_ARGS%]
+ECHO   LDGLITE_CONFIG_ARGS............[%LDGLITE_CONFIG_ARGS%]
+ECHO   LDGLITE_MAKE_ARGS..............[%LDGLITE_MAKE_ARGS%]
+ECHO.
+rem Set vcvars for AppVeyor or local build environments
+IF "%PATH_PREPENDED%" EQU "True" (
+  ECHO   "PATH_ALREADY_PREPENDED..[%PATH%]"
+  EXIT /b
+)
+IF "%LP3D_CONDA_BUILD%" EQU "True" (
+  GOTO :COMPILER_SETTINGS
+)
+SET "PATH_ADDITIONS=%LP3D_SYS_DIR%"
+IF "%LP3D_WIN_GIT%" NEQ "" (
+  SET "PATH_ADDITIONS=%PATH_ADDITIONS%;%LP3D_WIN_GIT%"
+)
+SET "PATH=%PATH_ADDITIONS%;%PATH%"
 IF %PLATFORM_ARCH% EQU x86_64 (
   SET LP3D_VCVARS=vcvars64.bat
 )
 IF %PLATFORM_ARCH% EQU ARM64 (
   SET LP3D_VCVARS=vcvarsamd64_arm64.bat
 )
-rem Set vcvars for AppVeyor or local build except conda-build
-IF "%PATH_PREPENDED%" NEQ "True" (
-  IF "%LP3D_CONDA_BUILD%" EQU "True" (
-    SET "PATH=%PATH%"
+IF %PLATFORM_ARCH% EQU x86 (
+  IF EXIST "%LP3D_VCVARSALL_DIR%\vcvars32.bat" (
+	SET "LP3D_VCVARSALL_BAT=%LP3D_VCVARSALL_DIR%\vcvars32.bat"
   ) ELSE (
-    SET "PATH=%LP3D_SYS_DIR%;%LP3D_WIN_GIT%"
-    IF %PLATFORM_ARCH% EQU x86 (
-      ECHO.
-      SET WINDOWS_TARGET_PLATFORM_VERSION=%LP3D_VCSDKVER%
-      IF EXIST "%LP3D_QT32_MSVC%\qtenv2.bat" (
-        CALL "%LP3D_QT32_MSVC%\qtenv2.bat"
-      ) ELSE (
-        SETLOCAL ENABLEDELAYEDEXPANSION
-        SET PATH=%LP3D_QT32_MSVC%;!PATH!
-        ENDLOCAL
-      )
-      IF EXIST "%LP3D_VCVARSALL_DIR%\vcvars32.bat" (
-        CALL "%LP3D_VCVARSALL_DIR%\vcvars32.bat" %LP3D_VCVARSALL_VER%
-      ) ELSE (
-        ECHO -ERROR: vcvars32.bat not found.
-        GOTO :ERROR_END
-      )
-    ) ELSE (
-      ECHO.
-      IF EXIST "%LP3D_QT64_MSVC%\qtenv2.bat" (
-        CALL "%LP3D_QT64_MSVC%\qtenv2.bat"
-      ) ELSE (
-        SETLOCAL ENABLEDELAYEDEXPANSION
-        SET PATH=%LP3D_QT64_MSVC%;!PATH!
-        ENDLOCAL
-      )
-      IF EXIST "%LP3D_VCVARSALL_DIR%\%LP3D_VCVARS%" (
-        CALL "%LP3D_VCVARSALL_DIR%\%LP3D_VCVARS%" %LP3D_VCVARSALL_VER%
-      ) ELSE (
-        ECHO -ERROR: %LP3D_VCVARS% not found.
-        GOTO :ERROR_END
-      )
-    )
+    ECHO.
+    ECHO -ERROR - vcvars32.bat not found.
+    GOTO :ERROR_END
   )
-  ECHO.
-  SET PATH_PREPENDED=True
-  SETLOCAL ENABLEDELAYEDEXPANSION
-  ECHO(   PATH_PREPEND............[!PATH!]
-    ENDLOCAL
+  IF EXIST "%LP3D_QT32_MSVC%\qtenv2.bat" (
+	SET "LP3D_QTENV_BAT=%LP3D_QT32_MSVC%\qtenv2.bat"
+  ) ELSE (
+    SET "LP3D_QT_MSVC_PATH=%LP3D_QT32_MSVC%"
   )
-  rem Display MSVC Compiler settings
-  ECHO.
-  ECHO -Display _MSC_VER %LP3D_MSC_VER% compiler settings
-  ECHO.
-  ECHO.%LP3D_MSC_VER% > %TEMP%\settings.c
-  cl.exe -Bv -EP %TEMP%\settings.c >NUL
-  ECHO.
 ) ELSE (
-  ECHO   PATH_ALREADY_PREPENDED..[%PATH%]
+  IF EXIST "%LP3D_VCVARSALL_DIR%\%LP3D_VCVARS%" (
+	SET "LP3D_VCVARSALL_BAT=%LP3D_VCVARSALL_DIR%\%LP3D_VCVARS%"
+  ) ELSE (
+    ECHO.
+    ECHO -ERROR - %LP3D_VCVARS% not found.
+    GOTO :ERROR_END
+  )
+  IF EXIST "%LP3D_QT64_MSVC%\qtenv2.bat" (
+	SET "LP3D_QTENV_BAT=%LP3D_QT64_MSVC%\qtenv2.bat"
+  ) ELSE (
+    SET "LP3D_QT_MSVC_PATH=%LP3D_QT64_MSVC%"
+  )
 )
+SET PATH_PREPENDED=True
+CALL "%LP3D_VCVARSALL_BAT%" %LP3D_VCVARSALL_VER%
+ECHO.
+IF "%LP3D_QTENV_BAT%" NEQ "" (
+  CALL "%LP3D_QTENV_BAT%"
+  ECHO(   PATH_PREPEND............["%PATH%"])
+) ELSE (
+  IF "%LP3D_QT_MSVC_PATH%" EQU "" (
+    GOTO :COMPILER_SETTINGS
+  )
+)
+SET "PATH=%LP3D_QT_MSVC_PATH%;%PATH%"
+ECHO(   PATH_PREPEND............[%PATH%])
+
+:COMPILER_SETTINGS
+rem Display MSVC Compiler settings
+ECHO.
+ECHO -Display _MSC_VER %LP3D_MSC_VER% compiler settings
+ECHO.
+ECHO.%LP3D_MSC_VER% > %TEMP%\settings.c
+cl.exe -Bv -EP %TEMP%\settings.c >NUL
 EXIT /b
 
 :CHECK_BUILD
@@ -549,21 +577,6 @@ EXIT /b
 :CHECK_LDRAW_DIR
 ECHO.
 ECHO -%PACKAGE% - Check for LDraw library...
-IF %LP3D_VALID_7ZIP% == 0 (
-  "%LP3D_7ZIP_WIN64%" > %TEMP%\output.tmp 2>&1
-  FOR /f "usebackq eol= delims=" %%a IN (%TEMP%\output.tmp) DO (
-    ECHO.%%a | findstr /C:"7-Zip">NUL && (
-      SET LP3D_VALID_7ZIP=1
-      ECHO.
-      ECHO -7zip exectutable found at "%LP3D_7ZIP_WIN64%"
-    ) || (
-      ECHO.
-      ECHO [WARNING] Could not find 7zip executable at %LP3D_7ZIP_WIN64%.
-    )
-    GOTO :END_7ZIP_LOOP
-  )
-)
-:END_7ZIP_LOOP
 IF NOT EXIST "%LDRAW_DIR%\parts" (
   REM SET CHECK=0
   IF NOT EXIST "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" (
@@ -573,11 +586,11 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
     CALL :DOWNLOAD_LDRAW_LIBS
   )
   IF EXIST "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" (
-    IF %LP3D_VALID_7ZIP% == 1 (
+    IF %LP3D_VALID_TAR% == 1 (
       ECHO.
       ECHO -Extracting %OfficialCONTENT%...
       ECHO.
-      "%LP3D_7ZIP_WIN64%" x -o"%LDRAW_DOWNLOAD_DIR%\" "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" | findstr /i /r /c:"^Extracting\>" /c:"^Everything\>"
+      "%LP3D_WIN_TAR%" x -o"%LDRAW_DOWNLOAD_DIR%\" "%LDRAW_DOWNLOAD_DIR%\%OfficialCONTENT%" | findstr /i /r /c:"^Extracting\>" /c:"^Everything\>"
       IF EXIST "%LDRAW_DIR%\parts" (
         ECHO.
         ECHO -LDraw directory %LDRAW_DIR% extracted.
@@ -604,7 +617,6 @@ IF NOT EXIST "%LDRAW_DIR%\parts" (
   ECHO -Set LDRAWDIR to %LDRAW_DIR%.
   SET LDRAWDIR=%LDRAW_DIR%
 )
-:END_7ZIP_LOOP
 EXIT /b
 
 :DOWNLOAD_LDRAW_LIBS
@@ -701,7 +713,7 @@ EXIT /b
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -01. (FLAG ERROR) Platform or usage flag is invalid. Use x86, x86_64, arm64 or -all_amd [%~nx0 %*].
+ECHO -01. (PLATFORM_ERROR) Platform or usage flag is invalid. Use x86, x86_64, arm64 or -all_amd [%~nx0 %*].
 ECHO      See Usage.
 GOTO :ERROR_END
 
@@ -709,7 +721,7 @@ GOTO :ERROR_END
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -02. (FLAG ERROR) Configuration flag is invalid [%~nx0 %*].
+ECHO -02. (CONFIGURATION_ERROR) Configuration flag is invalid [%~nx0 %*].
 ECHO      See Usage.
 GOTO :ERROR_END
 
@@ -717,7 +729,7 @@ GOTO :ERROR_END
 ECHO.
 CALL :USAGE
 ECHO.
-ECHO -03. (COMMAND ERROR) Invalid command string [%~nx0 %*].
+ECHO -03. (COMMAND_ERROR) Invalid command string [%~nx0 %*].
 ECHO      See Usage.
 GOTO :ERROR_END
 
