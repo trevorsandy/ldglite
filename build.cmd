@@ -1,4 +1,4 @@
-@ECHO OFF &SETLOCAL
+@ECHO ON &SETLOCAL
 
 Title LDGLite Windows auto build script Debug
 
@@ -83,7 +83,7 @@ rem Visual C++ 2015 -vcvars_ver=14.0 Toolset v140 VSVersion 14.0    _MSC_VER 190
 rem Visual C++ 2017 -vcvars_ver=14.1 Toolset v141 VSVersion 15.9    _MSC_VER 1916
 rem Visual C++ 2019 -vcvars_ver=14.2 Toolset v142 VSVersion 16.11.3 _MSC_VER 1929
 rem Visual C++ 2022 -vcvars_ver=14.4 Toolset v143 VSVersion 17.14.0 _MSC_VER 1944
-IF "%LP3D_MSC32_VER%" == "" SET LP3D_MSC32_VER=1941
+IF "%LP3D_MSC32_VER%" == "" SET LP3D_MSC32_VER=1929
 IF "%LP3D_VC32SDKVER%" == "" SET LP3D_VC32SDKVER=8.1
 IF "%LP3D_VC32TOOLSET%" == "" SET LP3D_VC32TOOLSET=v141
 IF "%LP3D_VC32VARSALL_VER%" == "" SET LP3D_VC32VARSALL_VER=-vcvars_ver=14.1
@@ -442,10 +442,17 @@ ECHO.
 SET LDGLITE_CONFIG_ARGS=CONFIG+=3RD_PARTY_INSTALL=%DIST_DIR% CONFIG+=%CONFIGURATION% CONFIG-=debug_and_release
 rem /c flag suppresses the copyright
 SET LDGLITE_MAKE_ARGS=/c /f Makefile
+rem Set vcvars for AppVeyor or local build environments
+IF %PLATFORM_ARCH% EQU x86_64 (
+  SET LP3D_VCVARS=vcvars64.bat
+)
+IF %PLATFORM_ARCH% EQU ARM64 (
+  SET LP3D_VCVARS=vcvarsamd64_arm64.bat
+  SET LDGLITE_CONFIG_ARGS=-config %CONFIGURATION% %LDGLITE_CONFIG_ARGS%
+)
 ECHO   LDGLITE_CONFIG_ARGS............[%LDGLITE_CONFIG_ARGS%]
 ECHO   LDGLITE_MAKE_ARGS..............[%LDGLITE_MAKE_ARGS%]
 ECHO.
-rem Set vcvars for AppVeyor or local build environments
 IF "%PATH_PREPENDED%" EQU "True" (
   ECHO   "PATH_ALREADY_PREPENDED..[%PATH%]"
   EXIT /b
@@ -458,12 +465,6 @@ IF "%LP3D_WIN_GIT%" NEQ "" (
   SET "PATH_ADDITIONS=%PATH_ADDITIONS%;%LP3D_WIN_GIT%"
 )
 SET "PATH=%PATH_ADDITIONS%;%PATH%"
-IF %PLATFORM_ARCH% EQU x86_64 (
-  SET LP3D_VCVARS=vcvars64.bat
-)
-IF %PLATFORM_ARCH% EQU ARM64 (
-  SET LP3D_VCVARS=vcvarsamd64_arm64.bat
-)
 IF %PLATFORM_ARCH% EQU x86 (
   IF EXIST "%LP3D_VCVARSALL_DIR%\vcvars32.bat" (
 	SET "LP3D_VCVARSALL_BAT=%LP3D_VCVARSALL_DIR%\vcvars32.bat"
@@ -502,6 +503,8 @@ IF "%LP3D_QTENV_BAT%" NEQ "" (
     GOTO :COMPILER_SETTINGS
   )
 )
+IF "%QTDIR%" EQU "" (FOR %%I IN ("%LP3D_QT_MSVC_PATH%") DO SET QTDIR=%%~dpI)
+IF "%QTDIR:~-1%" EQU "\" (SET QTDIR=%QTDIR:~0,-1%)
 SET "PATH=%LP3D_QT_MSVC_PATH%;%PATH%"
 ECHO(   PATH_PREPEND............[%PATH%])
 
