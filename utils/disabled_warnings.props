@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Disable specific warnings.
+  
+  Useage:
+  - In Visual Studio, select the menu item View->Property Manager
+  - select the desired Project and do 'Add Existing Property Sheet'
+  
+  Disabled warnings:
+  - C4005 'identifier': macro redefinition
+  - C4013
+  - C4018 'token': signed/unsigned mismatch
+  - C4047
+  - C4057
+  - C4063
+  - C4068
+  - C4090
+  - C4099
+  - C4100 'identifier': unreferenced formal parameter
+  - C4101 'identifier': unreferenced local variable
+  - C4102
+  - C4113
+  - C4127 conditional expression is constant
+  - C4131
+  - C4133 'expression': incompatible types - from 'type1' to 'type2'
+  - C4189
+  - C4206
+  - C4210
+  - C4244 'conversion': conversion from 'type1' to 'type2', possible loss of data
+  - C4245
+  - C4267
+  - C4293
+  - C4305 'conversion': truncation from 'type1' to 'type2'
+  - C4311 'variable': pointer truncation from 'type' to 'type'
+  - C4312 'operation': conversion from 'type1' to 'type2' of greater size
+  - C4313
+  - C4431
+  - C4456
+  - C4457
+  - C4458
+  - C4459
+  - C4467
+  - C4474
+  - C4477
+  - C4533
+  - C4577
+  - C4675
+  - C4700
+  - C4701
+  - C4703
+  - C4706
+  - C4706
+  - C4714
+  - C4715
+  - C4716
+  - C4828
+
+-->
+ 
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DisableSpecificWarnings>4005;4013;4018;4047;4057;4063;4068;4090;4099;4100;4101;4102;4113;4127;4131;4133;4189;4206;4210;4244;4245;4267;4293;4305;4311;4312;4313;4431;4456;4457;4458;4459;4467;4474;4477;4533;4577;4675;4700;4701;4703;4706;4706;4714;4715;4716;4828;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>

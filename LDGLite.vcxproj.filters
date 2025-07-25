@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="app\camera.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\dirscan.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\f00QuatC.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\gleps.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\hoser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\L3Edit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\L3Input.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\L3Math.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\L3View.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\lcolors.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ldglgui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ldglmenu.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ldglpr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ldsearch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\lex.yy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\platform.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\plugstub.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\qbuf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\quant.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\stub.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\tinyfiledialogs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\tr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\y.tab.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="app\ldliteVR_main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="app\dirscan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\f00QuatC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\functionheaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\getargv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\glext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\glui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\glwinkit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\L3Def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\ldlite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\ldliteVR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\qbuf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\quant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\StdAfx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\stub.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\tinyfiledialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\tr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\wglext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\win32_dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\wstubs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app\y.tab.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{fa9965c0-1822-4482-81e6-d98b5a658924}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{734cfc62-67e7-4668-b134-074e3b3535ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{a679e738-0e9b-4397-8dd0-fa2738b5042d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="app\LDGLite_resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
