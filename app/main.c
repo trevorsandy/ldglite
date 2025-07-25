@@ -3217,17 +3217,17 @@ int ldlite_parse_with_rc(char *filename)
   fp = fopen(ldconfigfilename,"rb"); // Try the official LDConfig.ldr first.
   if (fp == NULL)
   {
-    char filename[256];
-    concat_path(datfilepath, ldconfigfilename, filename);
-    if (filename[0] == '.') // I hate the ./filename thing.
-      strcpy(filename, ldconfigfilename);
-    fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
+    char file_name[256];
+    concat_path(datfilepath, ldconfigfilename, file_name);
+    if (file_name[0] == '.') // I hate the ./filename thing.
+      strcpy(file_name, ldconfigfilename);
+    fp = OpenDatFile(file_name); // Try the l3p paths after current working dir.
     if (fp == NULL)
     {
-      strcpy(filename, primitivepath);
-      filename[strlen(filename)-1] = 0;
-      strcat(filename, ldconfigfilename);
-      fp = OpenDatFile(filename); // Try the l3p paths after current working dir.
+      strcpy(file_name, primitivepath);
+      file_name[strlen(file_name)-1] = 0;
+      strcat(file_name, ldconfigfilename);
+      fp = OpenDatFile(file_name); // Try the l3p paths after current working dir.
     }
   }
   if (fp == NULL)
@@ -3846,11 +3846,12 @@ void TiledDisplay(void)
    GLubyte *tile;
    FILE *f;
    int more;
-   int i,j,k = 0;
+   //int i;
+   //UNUSED(i);
+   int j, k = 0;
    long foffset = 0;
    char *p, c;
    char filename[256];
-   UNUSED(i);
 
 #ifdef USE_PNG
    png_structp png_ptr;
@@ -4010,15 +4011,15 @@ void TiledDisplay(void)
     /* write this buffered row of tiles to the file */
     int curTileHeight = trGet(tr, TR_CURRENT_TILE_HEIGHT);
     int bytesPerImageRow = TILE_IMAGE_WIDTH*3*sizeof(GLubyte);
-    int i;
+    int l;
     GLubyte *rowPtr;
 
     // NOTE: This works, but appears to be off by a single pixel on
     // the horizontal seams.  (even when TILE_BORDER is 0)
     // It looks like we're getting 1 extra row of pixels.
-    for (i=TILE_BORDER*2;i<curTileHeight;i++) {
+    for (l=TILE_BORDER*2;l<curTileHeight;l++) {
       /* Remember, OpenGL images are bottom to top.  Have to reverse. */
-      rowPtr = buffer + (curTileHeight-1-i) * bytesPerImageRow;
+      rowPtr = buffer + (curTileHeight-1-l) * bytesPerImageRow;
 
 #ifdef USE_PNG
       if ((ldraw_image_type == IMAGE_TYPE_PNG_RGB) ||
@@ -8859,11 +8860,11 @@ void ParseParams(int *argc, char **argv)
         pszParam = argv[i];
         if (pszParam[0] == '+')
         {
-            int n, wx, wy;
-            n = sscanf(pszParam,"%c%d,%d",&type, &wx, &wy);
-            if ((n > 1) && (wx >= 0))
+            int o, wx, wy;
+            o = sscanf(pszParam,"%c%d,%d",&type, &wx, &wy);
+            if ((o > 1) && (wx >= 0))
                 XwinPos = wx;
-            if ((n > 2) && (wy >= 0))
+            if ((o > 2) && (wy >= 0))
                 YwinPos = wy;
         }
         // pass LDConfig as a command line argument. [=<LDConfig file> flag is deprecated - see reimplementation below]
@@ -9572,8 +9573,9 @@ void ParseParams(int *argc, char **argv)
                 char *p;
                 for (p = pszParam; p; p = strchr(p, ','))
                 {
-                    int j, n;
-                    UNUSED(n);
+                    int j;
+                    //int n;
+                    //UNUSED(n);
 
                     if (*p == ',')
                         p++; // skip over the comma char.
@@ -9656,13 +9658,13 @@ void ParseParams(int *argc, char **argv)
     if (camera_globe_set)
     {
         float v[4][4];
-        double distance;
         double lo, la;
-        double x, y, z;
-        UNUSED(distance);
-        UNUSED(x);
-        UNUSED(y);
-        UNUSED(z);
+        //double distance;
+        //double x, y, z;
+        //UNUSED(distance);
+        //UNUSED(x);
+        //UNUSED(y);
+        //UNUSED(z);
 
         if (camera_distance <= 0.0)
         {
