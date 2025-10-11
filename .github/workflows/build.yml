@@ -1,6 +1,6 @@
 # Build, check and LDGLite
 # Trevor SANDY <trevor.sandy@gmail.com>
-# Last Update: July 14, 2025
+# Last Update: October 11, 2025
 # Copyright (c) 2022 - 2025 by Trevor SANDY
 #
 name: Build LDGLite
@@ -140,7 +140,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner-version: [ 13, 14 ]
+        runner-version: [ 15-intel, 15 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
