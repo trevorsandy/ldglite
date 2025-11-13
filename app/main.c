@@ -424,9 +424,11 @@ int black_edge_color_enabled = 1;
 int dark_edge_color_enabled = 1;
 float part_color_value_ld_index = 0.5f;
 float part_edge_contrast = 0.5f;
+float part_edge_saturation = 0.5f;
 int automate_edge_color = 0;
 int is_lpub_highlight_color = 0;
-int stud_style  = 0; // default is no stud style
+int stud_style  = 0; // default is plain stud style
+char lpub_highlight_color_prefix[] = "107";
 
 #ifdef TILE_RENDER_OPTION
 #include "tr.h"
@@ -9282,36 +9284,46 @@ void ParseParams(int *argc, char **argv)
                     lightcolor1[1] = v[0][1];
                     lightcolor1[2] = v[0][2];
                 }
-                else if (pszParam[1] == 'a') // Automate Edge Lines
+                else if (pszParam[1] == 'a') // Automate Edge Line Color and Highlight Color Prefix
                 {
                     float p;
-                    if (pszParam[2] == 'C')
+                    if (pszParam[2] == 'C')  // Color Contrast
                     {
                         sscanf(&pszParam[3],"%f",&p);
                         printf("PartEdgeContrast = %g\n", p);
                         if ((p >= 0.0) && (p <= 1.0))
                             part_edge_contrast = p;
                     }
-                    if (pszParam[2] == 'I')
+                    else if (pszParam[2] == 'I') // Color Saturation
                     {
                         sscanf(&pszParam[3],"%f",&p);
-                        printf("PartColorValueLDIndex = %g\n", p);
+                        printf("PartEdgeSaturation = %g\n", p);
                         if ((p >= 0.0) && (p <= 1.0))
-                            part_color_value_ld_index = p;
+                            part_edge_saturation = p;
                     }
-                    if (pszParam[2] == 'A')
+                    else if (pszParam[2] == 'A') // Enable Automate Edge Colors
                     {
                         printf("AutomateEdgeColor = 1\n");
                         automate_edge_color = 1;
+                    }
+                    else if (pszParam[2] == 'P') // Highlight Color Prefix
+                    {
+                        // remove '-laP' argument prefix
+                        memmove(pszParam, pszParam+3, strlen(pszParam));
+                        if (pszParam[0])
+                        {
+                            strcpy(lpub_highlight_color_prefix, pszParam);
+                            printf("Commandline highlight color prefix = %s\n", lpub_highlight_color_prefix);
+                        }
                     }
                 }
                 else if (pszParam[1] == 'h') // High Contrast Style
                 {
                     float v[4][4];
                     v[0][0] = v[0][1] = v[0][2] = v[0][3] = 0.0f;
-                    if (pszParam[2] == 'S')
+                    if (pszParam[2] == 'S')  // Stud Cylinder Color
                     {
-                        if (pszParam[3] == 'd')
+                        if (pszParam[3] == 'd') // Disable Stud Cylinder Color
                         {
                             printf("StudCylinderColor Disabled\n");
                             stud_cylinder_color_enabled = 0;
@@ -9326,9 +9338,9 @@ void ParseParams(int *argc, char **argv)
                             stud_cylinder_color.a = v[0][3];
                         }
                     }
-                    if (pszParam[2] == 'P')
+                    else if (pszParam[2] == 'P') // Edge Color for Parts
                     {
-                        if (pszParam[3] == 'd')
+                        if (pszParam[3] == 'd')  // Disable Edge Color for Parts
                         {
                             printf("PartEdgeColor Disabled\n");
                             part_edge_color_enabled = 0;
@@ -9343,9 +9355,9 @@ void ParseParams(int *argc, char **argv)
                             part_edge_color.a = v[0][3];
                         }
                     }
-                    if (pszParam[2] == 'B')
+                    else if (pszParam[2] == 'B') // Edge Color for Black Parts
                     {
-                        if (pszParam[3] == 'd')
+                        if (pszParam[3] == 'd')  // Disable Edge Color for Black Parts
                         {
                             printf("BlackEdgeColor Disabled\n");
                             black_edge_color_enabled = 0;
@@ -9360,9 +9372,9 @@ void ParseParams(int *argc, char **argv)
                             black_edge_color.a = v[0][3];
                         }
                     }
-                    if (pszParam[2] == 'D')
+                    else if (pszParam[2] == 'D') // Edge Color for Dark Parts
                     {
-                        if (pszParam[3] == 'd')
+                        if (pszParam[3] == 'd')  // Disable Edge Color for Dark Parts
                         {
                             printf("DarkEdgeColor Disabled\n");
                             dark_edge_color_enabled = 0;
@@ -9376,6 +9388,14 @@ void ParseParams(int *argc, char **argv)
                             dark_edge_color.b = v[0][2];
                             dark_edge_color.a = v[0][3];
                         }
+                    }
+                    else if (pszParam[2] == 'I') // Light or Dark Color Index
+                    {
+                        float p;
+                        sscanf(&pszParam[3],"%f",&p);
+                        printf("PartColorLDIndex = %g\n", p);
+                        if ((p >= 0.0) && (p <= 1.0))
+                            part_color_value_ld_index = p;
                     }
                 }
                 else

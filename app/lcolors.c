@@ -31,7 +31,6 @@
 #define L3_RGB_EPSILON (0.5f / 255.0f)
 #define L3_RGB_TO_DEC(v) (v / 255.0f)
 
-#define LPUB3D_COLOUR_HIGHLIGHT_PREFIX "110"
 #define LPUB3D_COLOUR_NAME_PREFIX      "LPub3D_"
 
 int zcolor_unalias(int index, char *name);
@@ -1139,7 +1138,8 @@ int L3_HSL2RGB(V3F* v, const V3F hSL)
     return 0;
 }
 
-int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum, const float EdgeLum, const float Contrast, const float Saturation)
+int get_algorithmic_edge_color(const ZCOLOR Value, const float ValueLum,
+    const float EdgeLum, const float Contrast, const float Saturation)
 {
     float y1, yt;
     float y0 = ValueLum;
@@ -1282,7 +1282,7 @@ int get_stud_style_or_auto_edge_color(int c)
         }
     }
 
-    is_lpub_highlight_color = strncmp(LPUB3D_COLOUR_HIGHLIGHT_PREFIX, c_number, 3) == 0;
+    is_lpub_highlight_color = strncmp(lpub_highlight_color_prefix, c_number, 3) == 0;
     is_lpub_highlight_color &= strncmp(LPUB3D_COLOUR_NAME_PREFIX, c_name, 7) == 0;
 
     if (is_lpub_highlight_color) {
@@ -1298,20 +1298,21 @@ int get_stud_style_or_auto_edge_color(int c)
     v.g = L3_RGB_TO_DEC((int)zcp.g);
     v.b = L3_RGB_TO_DEC((int)zcp.b);
     const float value_luminescence = L3_LUM_FROM_SRGB(v.r,v.g,v.b);
-    const float light_dark_control = automate_edge_color ? part_color_value_ld_index : L3_SRGB_TO_LINEAR(part_color_value_ld_index);
 
     if (automate_edge_color) // Automate Edge Colours
     {
         const float edge_luminescence = get_edge_luminescence(c);
-        int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, light_dark_control);
+        int adjusted_inverse_index = get_algorithmic_edge_color(zcp, value_luminescence, edge_luminescence, part_edge_contrast, part_edge_saturation);
         zcolor_modify(c, NULL, adjusted_inverse_index, true, zcp.r, zcp.g, zcp.b, zcp.a, zcs.r, zcs.g, zcs.b, zcs.a);
         return adjusted_inverse_index;
     }
     else                    // High Contrast Style
     {
+        const float light_dark_control = L3_SRGB_TO_LINEAR(part_color_value_ld_index);
         if (black_edge_color_enabled && c == 0)
             return get_edge_color_number_from_RGB(&black_edge_color);
-        else if (dark_edge_color_enabled && c != 4242 && value_luminescence < light_dark_control)
+        else if (dark_edge_color_enabled && c != 4242 &&
+            value_luminescence < light_dark_control)
             return get_edge_color_number_from_RGB(&dark_edge_color);
         else if (part_edge_color_enabled)
             return get_edge_color_number_from_RGB(&part_edge_color);
