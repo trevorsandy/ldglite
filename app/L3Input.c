@@ -2494,7 +2494,7 @@ char * SetCylinderColor(char *input)
     {
         if (ip == input)
         {
-            memcpy (bp, replace, replace_size+1);
+            memcpy (bp, replace, replace_size);
             bp += replace_size;
             if (substring_size)
                 input += substring_size;
